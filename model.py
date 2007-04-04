@@ -16,12 +16,28 @@ class Pessoa(Entity):
 	one_to_many('contatos', of_kind = 'Contato', inverse = 'pessoa')
 	one_to_many('telefones', of_kind = 'Telefone', inverse = 'responsavel')
 
+
+
+
+
+
+
+
+
 class Contato(Entity):
 	has_field('contato', Unicode(100), nullable = False),
 	has_field('tipo', Integer, nullable = False),
 	many_to_one('pessoa', of_kind = 'Pessoa', inverse = 'contatos', colname = 'id_pessoa',
 		column_kwargs = dict(nullable = False))
 	using_options(tablename = 'contato')
+
+
+
+
+
+
+
+
 
 class Telefone(Entity):
 	has_field('numero', Numeric(12, 0), primary_key = True)
@@ -30,6 +46,13 @@ class Telefone(Entity):
 	many_to_one('responsavel', of_kind = 'Pessoa',
 		inverse = 'telefones', colname = 'id_pessoa_resp',
 		column_kwargs = dict(primary_key = True))
+
+
+
+
+
+
+
 
 class Republica(Entity):
 	has_field('nome', Unicode(80), nullable = False)
@@ -67,7 +90,7 @@ class Republica(Entity):
 		return data
 
 
-	def moradores(self, data_inicial = None, data_final = None):
+	def moradores(self, data_inicial, data_final):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
@@ -86,22 +109,42 @@ class Republica(Entity):
 				)
 
 
+
+
+
+
+
+
+
 class Fechamento(Entity):
 	has_field('data', Date, primary_key = True)
 	using_options(tablename = 'fechamento')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'fechamentos', colname = 'id_republica',
 		column_kwargs = dict(primary_key = True))
 
+
+
+
+
+
 class ContaTelefone(Entity):
+	has_field('telefone', Numeric(12, 0), primary_key = True)
 	has_field('companhia', Integer, nullable = False)
-	has_field('telefone', Numeric(12, 0), nullable = False)
-	has_field('dia_vencimento', Integer, nullable = False)
 	using_options(tablename = 'conta_telefone')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone',
 		column_kwargs = dict(nullable = False))
-#    one_to_many('telefonemas', of_kind = 'Telefonema', inverse = 'conta_telefone')
-	def telefonemas(periodo):
-		pass
+
+	def telefonemas(self, data_inicial, data_final):
+		if not data_final:
+			data_final = data_inicial
+		periodo_inicial = data_inicial.year * 100 + data_inicial.month
+		periodo_final   = data_final.year * 100 + data_final.month
+		return Telefonema.select( and_(Telefonema.c.periodo_ref >= periodo_inicial,
+				Telefone.c.periodo_ref <= periodo_final))
+
+
+
+
 
 class Telefonema(Entity):
 	has_field('periodo_ref', Integer, primary_key = True)
@@ -114,6 +157,10 @@ class Telefonema(Entity):
 	many_to_one('responsavel', of_kind = 'Pessoa', inverse = 'telefonemas')
 	many_to_one('conta_telefone', of_kind = 'ContaTelefone', inverse = 'telefonemas',
 		colname = 'id_conta_telefone', column_kwargs = dict(primary_key = True))
+
+
+
+
 
 class Morador(Entity):
 	has_field('data_entrada', Date, default = date.today, primary_key = True)
