@@ -24,7 +24,7 @@ class Contato(Entity):
 	using_options(tablename = 'contato')
 
 class Telefone(Entity):
-	has_field('numero', Numeric(10, 0), primary_key = True)
+	has_field('numero', Numeric(12, 0), primary_key = True)
 	has_field('descricao', Unicode)
 	using_options(tablename = 'telefone')
 	many_to_one('responsavel', of_kind = 'Pessoa',
@@ -94,7 +94,7 @@ class Fechamento(Entity):
 
 class ContaTelefone(Entity):
 	has_field('companhia', Integer, nullable = False)
-	has_field('telefone', Numeric(10, 0), nullable = False)
+	has_field('telefone', Numeric(12, 0), nullable = False)
 	has_field('dia_vencimento', Integer, nullable = False)
 	using_options(tablename = 'conta_telefone')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone',
@@ -105,7 +105,7 @@ class ContaTelefone(Entity):
 
 class Telefonema(Entity):
 	has_field('periodo_ref', Integer, primary_key = True)
-	has_field('telefone', Numeric(10, 0), primary_key = True)
+	has_field('telefone', Numeric(12, 0), primary_key = True)
 	has_field('tipo_fone', Integer, nullable = False)			# fixo, celular, net fone
 	has_field('tipo_distancia', Integer, nullable = False)	# Local, DDD, DDI
 	has_field('duracao', Time, nullable = False)

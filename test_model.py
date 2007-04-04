@@ -53,7 +53,8 @@ class TestaModelo(object):
 		## each test, and since the class is not redefined, it will not be
 		## reinitialized so we can't kill it
 		#drop_all()
-	
+
+
 	def test_responsavel_por_telefonemas(self):
 		p1 = Pessoa.get_by(nome = 'André')
 		
@@ -74,6 +75,7 @@ class TestaModelo(object):
 		assert Pessoa.get_by(nome = 'André') in m
 		assert Pessoa.get_by(nome = 'Marcos') in m
 
+
 	def test_ultimo_fechamento_contas(self):
 		r = Republica(nome = 'Teste',
 			data_criacao = date.today(),
@@ -89,8 +91,6 @@ class TestaModelo(object):
 		
 		data_fechamento = date.today() - relativedelta(months = 1)
 		assert data_fechamento == r.ultimo_fechamento()
-		
-		
 
 
 
