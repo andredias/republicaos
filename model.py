@@ -90,7 +90,7 @@ class Republica(Entity):
 		return data
 
 
-	def moradores(self, data_inicial, data_final):
+	def moradores(self, data_inicial = None, data_final = None):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
@@ -135,6 +135,8 @@ class ContaTelefone(Entity):
 		column_kwargs = dict(nullable = False))
 
 	def telefonemas(self, data_inicial, data_final):
+		if not data_inicial:
+			data_inicial = self.republica.ultimo_fechamento()
 		if not data_final:
 			data_final = data_inicial
 		periodo_inicial = data_inicial.year * 100 + data_inicial.month
