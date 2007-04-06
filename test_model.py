@@ -72,30 +72,6 @@ class TestaModelo(object):
 		objectstore.clear()
 
 
-
-	def test_responsavel_por_telefonemas(self):
-		self.massa_teste_1()
-		p1 = Pessoa.get_by(nome = 'André')
-		
-		t = Telefone.get_by(numero = 1234)
-		assert t.responsavel is p1
-		
-		t = Telefone.get_by(numero = 4444)
-		assert t.responsavel is p1
-		
-		t = Telefone.get_by(numero = 5555)
-		assert not t.responsavel is p1
-
-
-	def test_moradores(self):
-		self.massa_teste_1()
-		r = Republica.get_by(nome = 'Jerônimo')
-		m = r.moradores(date(2007, 03, 02))
-		
-		assert Pessoa.get_by(nome = 'André') in m
-		assert Pessoa.get_by(nome = 'Marcos') in m
-
-
 	def test_ultimo_fechamento_contas(self):
 		r = Republica(nome = 'Teste',
 			data_criacao = date.today(),
