@@ -21,7 +21,7 @@ class TestaModelo(object):
 	def setup(self):
 		#metadata.connect('postgres://turbo_gears:tgears@localhost/tg_teste')
 		metadata.connect('sqlite:///')
-		#metadata.engine.echo = True
+		metadata.engine.echo = True
 		create_all()
 		
 	
@@ -33,29 +33,39 @@ class TestaModelo(object):
 		objectstore.clear()
 	
 	
-	def test_ultimo_fechamento_contas(self):
+	def test_ultimo_fechamento_contas_vazio(self):
+		data_criacao = date.today() - relativedelta(months = 4)
 		r = Republica(nome = 'Teste',
-			data_criacao = date.today(),
+			data_criacao = data_criacao,
 			logradouro = 'R. dos Bobos, nº 0')
 			
 		objectstore.flush()
 		
-		assert date.today() == r.ultimo_fechamento()
+		assert (data_criacao, date.today()) == r.ultimo_fechamento()
+		assert r.ultimo_fechamento() == r.proximo_fechamento()
+		
+	def test_fechamento_contas(self):		
+		data_criacao = date.today() - relativedelta(months = 4)
+		r = Republica(nome = 'Teste',
+			data_criacao = data_criacao,
+			logradouro = 'R. dos Bobos, nº 0')
 		
 		for delta in range(1, 4):
 			Fechamento(data = (date.today() - relativedelta(months = delta)), republica = r)
 		objectstore.flush()
 		
-		data_fechamento = date.today() - relativedelta(months = 1)
-		assert data_fechamento == r.ultimo_fechamento()
+		fechamento_anterior1 = date.today() - relativedelta(months = 1)
+		fechamento_anterior2 = date.today() - relativedelta(months = 2)
+		assert (fechamento_anterior2, fechamento_anterior1) == r.ultimo_fechamento()
+		assert (fechamento_anterior1, date.today()) == r.proximo_fechamento()
 	
 	
 	def test_telefonemas_de_conta(self):
 		'''
-		Testa o método da classe ContaTelefone para encontrar os telefonemas do período
+		Teste do método para encontrar os telefonemas do período
 		'''
 		r = Republica(nome = 'Teste',
-			data_criacao = date.today(),
+			data_criacao = date(2007, 03, 06),
 			logradouro = 'R. dos Bobos, nº 0')
 		
 		c1 = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
@@ -103,8 +113,9 @@ class TestaModelo(object):
 		
 		objectstore.flush()
 		
-		tels1 = c1.telefonemas(date(2007, 03, 01))
-		tels2 = c1.telefonemas(date(2007, 04, 01))
+		tels1 = c1.telefonemas(ano = 2007, mes = 03)
+		tels2 = c1.telefonemas(2007, 04)
+		tels3 = c2.telefonemas(2007, 04)
 		
 		assert t1 in tels1
 		assert t1 not in tels2
@@ -112,8 +123,9 @@ class TestaModelo(object):
 		assert t3 in tels2
 		assert t2 not in tels1
 		assert t3 not in tels1
-		assert t4 not in tels2
 		assert t4 not in tels1
+		assert t4 not in tels2
+		assert t4 in tels3
 	
 	
 	def test_determinar_responsavel_telefonema(self):
@@ -178,7 +190,7 @@ class TestaModelo(object):
 		
 		objectstore.flush()
 		
-		c.determinar_responsaveis_telefonemas()
+		c.determinar_responsaveis_telefonemas(2007, 04)
 		
 		assert t1.responsavel == None
 		assert t2.responsavel == p2
