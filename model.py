@@ -5,7 +5,7 @@ from elixir      import Entity, has_field, using_options, using_table_options, u
 from elixir      import has_many as one_to_many
 from elixir      import belongs_to as many_to_one
 from elixir      import has_and_belongs_to_many as many_to_many
-from elixir      import metadata
+from elixir      import metadata, objectstore
 from sqlalchemy  import *
 from datetime    import date, datetime
 import time
@@ -67,8 +67,8 @@ class Republica(Entity):
 	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica')
 	one_to_many('contas_telefone', of_kind = 'ContaTelefone', inverse = 'republica')
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica')
-
-
+	
+	
 	def ultimo_fechamento(self):
 		'''
 		Último fechamento da república. Caso não haja nenhum, retorna a data em que a república foi criada
@@ -88,8 +88,8 @@ class Republica(Entity):
 			partes = time.strptime(data,'%Y-%m-%d')
 			data = date(partes[0], partes[1], partes[2])
 		return data
-
-
+	
+	
 	def moradores(self, data_inicial = None, data_final = None):
 		'''
 		Retorna os moradores da república no período de tempo
@@ -131,7 +131,7 @@ class ContaTelefone(Entity):
 	has_field('telefone', Numeric(12, 0), primary_key = True)
 	has_field('companhia', Integer, nullable = False)
 	using_options(tablename = 'conta_telefone')
-	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone',
+	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
 		column_kwargs = dict(nullable = False))
 		
 	def _determinar_periodo(self, data_inicial, data_final):
@@ -141,7 +141,8 @@ class ContaTelefone(Entity):
 			data_final = data_inicial
 		self._periodo_inicial = data_inicial.year * 100 + data_inicial.month
 		self._periodo_final   = data_final.year * 100 + data_final.month
-
+	
+	
 	def telefonemas(self, data_inicial = None, data_final = None):
 		self._determinar_periodo(data_inicial, data_final)
 		return Telefonema.select(
@@ -151,11 +152,23 @@ class ContaTelefone(Entity):
 					Telefonema.c.id_conta_telefone == self.telefone
 					)
 				)
-				
-	def encontrar_responsaveis_telefonemas(self, data_inicial = None, data_final = None):
-		self._determinar_periodo(data_inicial, data_final)
+	
+	
+	def determinar_responsaveis_telefonemas(self, data_inicial = None, data_final = None):
+		telefonemas = self.telefonemas(data_inicial, data_final)
+		responsavel_telefone = dict( 
+						select([Telefone.c.numero, Telefone.c.id_pessoa_resp],
+								and_(
+									Telefone.c.id_pessoa_resp == Morador.c.id_pessoa,
+									Morador.c.id_republica == self.id_republica
+									)
+							).execute().fetchall()
+						)
+		for telefonema in telefonemas:
+			if telefonema.responsavel == None and responsavel_telefone.has_key(telefonema.numero):
+				telefonema.responsavel = Pessoa.get_by(id = responsavel_telefone[telefonema.numero])
 		
-		
+		objectstore.flush()
 
 
 
@@ -168,12 +181,9 @@ class Telefonema(Entity):
 	has_field('duracao', Time, nullable = False)
 	has_field('valor', Numeric(8, 2), nullable = False)
 	using_options(tablename = 'telefonema')
-	many_to_one('responsavel', of_kind = 'Pessoa', inverse = 'telefonemas')
-	many_to_one('conta_telefone', of_kind = 'ContaTelefone', inverse = 'telefonemas',
+	many_to_one('responsavel', of_kind = 'Pessoa', colname = 'id_pessoa_resp')
+	many_to_one('conta_telefone', of_kind = 'ContaTelefone',
 		colname = 'id_conta_telefone', column_kwargs = dict(primary_key = True))
-
-
-
 
 
 
@@ -186,6 +196,9 @@ class Morador(Entity):
 		column_kwargs = dict(primary_key = True))
 	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa',
 		column_kwargs = dict(primary_key = True))
+
+
+
 
 class TipoDespesa(Entity):
 	has_field('tipo', Unicode(40), nullable = False)

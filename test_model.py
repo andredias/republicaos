@@ -21,43 +21,9 @@ class TestaModelo(object):
 	def setup(self):
 		#metadata.connect('postgres://turbo_gears:tgears@localhost/tg_teste')
 		metadata.connect('sqlite:///')
-		metadata.engine.echo = True
+		#metadata.engine.echo = True
 		create_all()
 		
-	
-	def massa_teste_1(self):
-		objectstore.clear()
-		
-		p1 = Pessoa(nome = 'André')
-		p2 = Pessoa(nome = 'Marcos')
-		
-		t1 = Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1)
-		t2 = Telefone(numero = 4444, descricao = 'Celular do Fulano', responsavel = p1)
-		t3 = Telefone(numero = 5555, descricao = 'Casa dos pais', responsavel = p2)
-		
-		r = Republica(nome = 'Jerônimo',
-					data_criacao = date(year = 1998, month = 02, day = 01),
-					logradouro = 'R. Jerônimo Pattaro, 186',
-					bairro = 'Barão Geraldo',
-					cidade = 'Campinas',
-					uf = 'SP',
-					cep = '13084110')
-		
-		Morador(
-			pessoa = p1,
-			republica = r,
-			data_entrada = date(1998, 02, 01)
-		)
-	
-		Morador(
-			pessoa = p2,
-			republica = r,
-			data_entrada = date(2005, 10, 13)
-		)
-		
-		ContaTelefone(telefone = 2409, companhia = 1, republica = r)
-		objectstore.flush()
-
 	
 	def teardown(self):
 		# we don't use cleanup_all because setup and teardown are called for 
@@ -65,8 +31,8 @@ class TestaModelo(object):
 		# reinitialized so we can't kill it
 		drop_all()
 		objectstore.clear()
-
-
+	
+	
 	def test_ultimo_fechamento_contas(self):
 		r = Republica(nome = 'Teste',
 			data_criacao = date.today(),
@@ -82,8 +48,8 @@ class TestaModelo(object):
 		
 		data_fechamento = date.today() - relativedelta(months = 1)
 		assert data_fechamento == r.ultimo_fechamento()
-
-
+	
+	
 	def test_telefonemas_de_conta(self):
 		'''
 		Testa o método da classe ContaTelefone para encontrar os telefonemas do período
@@ -148,15 +114,17 @@ class TestaModelo(object):
 		assert t3 not in tels1
 		assert t4 not in tels2
 		assert t4 not in tels1
-
-
+	
+	
 	def test_determinar_responsavel_telefonema(self):
 		p1 = Pessoa(nome = 'André')
 		p2 = Pessoa(nome = 'Felipe')
+		p3 = Pessoa(nome = 'Dias')
 		
 		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1)
 		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = p1)
 		Telefone(numero = 3333, responsavel = p2)
+		Telefone(numero = 777, responsavel = p3)
 		
 		r = Republica(nome = 'Teste',
 			data_criacao = date.today(),
@@ -166,8 +134,6 @@ class TestaModelo(object):
 		Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
 		
 		c = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
-		
-		objectstore.flush()
 		
 		t1 = Telefonema(
 				numero = 1234,
@@ -198,14 +164,28 @@ class TestaModelo(object):
 				duracao = time(0, 1, 30),
 				valor = 0.15
 			)
+			
+		t4 = Telefonema(
+				numero = 1234,
+				periodo_ref = 200704,
+				conta_telefone = c,
+				tipo_fone = 1,
+				tipo_distancia = 1,
+				duracao = time(0, 5, 30),
+				valor = 2.5
+			)
 		
-		c.encontrar_responsaveis_telefonemas()
 		
 		objectstore.flush()
 		
-		assert True
-
-
+		c.determinar_responsaveis_telefonemas()
+		
+		assert t1.responsavel == None
+		assert t2.responsavel == p2
+		assert t3.responsavel == None
+		assert t4.responsavel == p1
+	
+	
 	def test_conta_telefone(self):
 		r = Republica(nome = 'Jerônimo',
 					data_criacao = date(year = 1998, month = 02, day = 01),
@@ -221,7 +201,7 @@ class TestaModelo(object):
 		assert True
 		
 		
-
+	
 	def test_importacao_conta_telefone_csv(self):
 		csv = '''Detalhes da fatura
 
@@ -236,3 +216,10 @@ class TestaModelo(object):
 
 		csv = csv.splitlines()
 		assert True
+
+
+if __name__ == '__main__':
+    teste = TestaModelo()
+    teste.setup()
+    teste.test_determinar_responsavel_telefonema()
+    teste.teardown()
