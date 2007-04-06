@@ -133,24 +133,36 @@ class ContaTelefone(Entity):
 	using_options(tablename = 'conta_telefone')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone',
 		column_kwargs = dict(nullable = False))
-
-	def telefonemas(self, data_inicial, data_final):
+		
+	def _determinar_periodo(self, data_inicial, data_final):
 		if not data_inicial:
 			data_inicial = self.republica.ultimo_fechamento()
 		if not data_final:
 			data_final = data_inicial
-		periodo_inicial = data_inicial.year * 100 + data_inicial.month
-		periodo_final   = data_final.year * 100 + data_final.month
-		return Telefonema.select( and_(Telefonema.c.periodo_ref >= periodo_inicial,
-				Telefone.c.periodo_ref <= periodo_final))
+		self._periodo_inicial = data_inicial.year * 100 + data_inicial.month
+		self._periodo_final   = data_final.year * 100 + data_final.month
 
+	def telefonemas(self, data_inicial = None, data_final = None):
+		self._determinar_periodo(data_inicial, data_final)
+		return Telefonema.select(
+				and_(
+					Telefonema.c.periodo_ref >= self._periodo_inicial,
+					Telefonema.c.periodo_ref <= self._periodo_final,
+					Telefonema.c.id_conta_telefone == self.telefone
+					)
+				)
+				
+	def encontrar_responsaveis_telefonemas(self, data_inicial = None, data_final = None):
+		self._determinar_periodo(data_inicial, data_final)
+		
+		
 
 
 
 
 class Telefonema(Entity):
 	has_field('periodo_ref', Integer, primary_key = True)
-	has_field('telefone', Numeric(12, 0), primary_key = True)
+	has_field('numero', Numeric(12, 0), primary_key = True)
 	has_field('tipo_fone', Integer, nullable = False)			# fixo, celular, net fone
 	has_field('tipo_distancia', Integer, nullable = False)	# Local, DDD, DDI
 	has_field('duracao', Time, nullable = False)
@@ -159,6 +171,8 @@ class Telefonema(Entity):
 	many_to_one('responsavel', of_kind = 'Pessoa', inverse = 'telefonemas')
 	many_to_one('conta_telefone', of_kind = 'ContaTelefone', inverse = 'telefonemas',
 		colname = 'id_conta_telefone', column_kwargs = dict(primary_key = True))
+
+
 
 
 

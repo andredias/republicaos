@@ -3,7 +3,7 @@
 
 from model import *
 from elixir import *
-from datetime import date
+from datetime import date, time
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import create_engine
 
@@ -31,13 +31,9 @@ class TestaModelo(object):
 		p1 = Pessoa(nome = 'André')
 		p2 = Pessoa(nome = 'Marcos')
 		
-		t1 = Telefone(numero = 1234, descricao = 'tel. do trabalho')
-		t2 = Telefone(numero = 4444, descricao = 'Celular do Fulano')
-		t3 = Telefone(numero = 5555, descricao = 'Casa dos pais')
-		
-		t1.responsavel = p1
-		t2.responsavel = p1
-		t3.responsavel = p2
+		t1 = Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1)
+		t2 = Telefone(numero = 4444, descricao = 'Celular do Fulano', responsavel = p1)
+		t3 = Telefone(numero = 5555, descricao = 'Casa dos pais', responsavel = p2)
 		
 		r = Republica(nome = 'Jerônimo',
 					data_criacao = date(year = 1998, month = 02, day = 01),
@@ -60,7 +56,6 @@ class TestaModelo(object):
 		)
 		
 		ContaTelefone(telefone = 2409, companhia = 1, republica = r)
-		ContaTelefone(telefone = 2121, companhia = 2, republica = r)
 		objectstore.flush()
 
 	
@@ -87,6 +82,128 @@ class TestaModelo(object):
 		
 		data_fechamento = date.today() - relativedelta(months = 1)
 		assert data_fechamento == r.ultimo_fechamento()
+
+
+	def test_telefonemas_de_conta(self):
+		'''
+		Testa o método da classe ContaTelefone para encontrar os telefonemas do período
+		'''
+		r = Republica(nome = 'Teste',
+			data_criacao = date.today(),
+			logradouro = 'R. dos Bobos, nº 0')
+		
+		c1 = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
+		c2 = ContaTelefone(telefone = 2121, companhia = 2, republica = r)
+		
+		t1 = Telefonema(
+				numero = 1234,
+				periodo_ref = 200703,
+				conta_telefone = c1,
+				tipo_fone = 1,
+				tipo_distancia = 1,
+				duracao = time(0, 2, 30),
+				valor = 1.4
+			)
+		
+		t2 = Telefonema(
+				numero = 3333,
+				periodo_ref = 200704,
+				conta_telefone = c1,
+				tipo_fone = 1,
+				tipo_distancia = 1,
+				duracao = time(0, 4, 59),
+				valor = 2.15
+			)
+		
+		t3 = Telefonema(
+				numero = 777,
+				periodo_ref = 200704,
+				conta_telefone = c1,
+				tipo_fone = 2,
+				tipo_distancia = 1,
+				duracao = time(0, 1, 30),
+				valor = 0.15
+			)
+		
+		t4 = Telefonema(
+				numero = 777,
+				periodo_ref = 200704,
+				conta_telefone = c2,
+				tipo_fone = 2,
+				tipo_distancia = 1,
+				duracao = time(0, 0, 30),
+				valor = 0.15
+			)
+		
+		objectstore.flush()
+		
+		tels1 = c1.telefonemas(date(2007, 03, 01))
+		tels2 = c1.telefonemas(date(2007, 04, 01))
+		
+		assert t1 in tels1
+		assert t1 not in tels2
+		assert t2 in tels2
+		assert t3 in tels2
+		assert t2 not in tels1
+		assert t3 not in tels1
+		assert t4 not in tels2
+		assert t4 not in tels1
+
+
+	def test_determinar_responsavel_telefonema(self):
+		p1 = Pessoa(nome = 'André')
+		p2 = Pessoa(nome = 'Felipe')
+		
+		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1)
+		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = p1)
+		Telefone(numero = 3333, responsavel = p2)
+		
+		r = Republica(nome = 'Teste',
+			data_criacao = date.today(),
+			logradouro = 'R. dos Bobos, nº 0')
+		
+		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
+		Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
+		
+		c = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
+		
+		objectstore.flush()
+		
+		t1 = Telefonema(
+				numero = 1234,
+				periodo_ref = 200703,
+				conta_telefone = c,
+				tipo_fone = 1,
+				tipo_distancia = 1,
+				duracao = time(0, 2, 30),
+				valor = 1.4
+			)
+		
+		t2 = Telefonema(
+				numero = 3333,
+				periodo_ref = 200704,
+				conta_telefone = c,
+				tipo_fone = 1,
+				tipo_distancia = 1,
+				duracao = time(0, 4, 59),
+				valor = 2.15
+			)
+		
+		t3 = Telefonema(
+				numero = 777,
+				periodo_ref = 200704,
+				conta_telefone = c,
+				tipo_fone = 2,
+				tipo_distancia = 1,
+				duracao = time(0, 1, 30),
+				valor = 0.15
+			)
+		
+		c.encontrar_responsaveis_telefonemas()
+		
+		objectstore.flush()
+		
+		assert True
 
 
 	def test_conta_telefone(self):
