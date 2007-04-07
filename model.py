@@ -196,16 +196,16 @@ class ContaTelefone(Entity):
 			valor   = Decimal(linha[col_valor].strip())
 			
 			milesimos_minutos = int(linha[col_duracao].strip())
-			duracao_segundos  = relativedelta(seconds = milesimos_minutos * 60 / 1000)
+			segundos          = milesimos_minutos * 60 / 1000
 			
 			tipo_fone      = tipos_fone.index(descr[col_tipo_fone])
 			tipo_distancia = tipos_distancia.index(descr[col_tipo_distancia])
 			
 			if not telefonemas.has_key(numero):
 				# não consegui fazer contas apenas com time. Foi necessário usar relativedelta
-				telefonemas[numero] = [duracao_segundos, valor, tipo_fone, tipo_distancia]
+				telefonemas[numero] = [segundos, valor, tipo_fone, tipo_distancia]
 			else:
-				telefonemas[numero][0] += duracao_segundos
+				telefonemas[numero][0] += segundos
 				telefonemas[numero][1] += valor
 		
 		return telefonemas
@@ -233,12 +233,11 @@ class ContaTelefone(Entity):
 		
 		# registra os novos telefonemas
 		for numero, atributos in telefonemas.iteritems():
-			duracao = time(hour = atributos[0].hours, minute = atributos[0].minutes, second = atributos[0].seconds)
 			Telefonema(
 				periodo_ref    = periodo_ref,
 				numero         = numero,
 				conta_telefone = self,
-				duracao        = duracao,
+				segundos       = atributos[0],
 				valor          = atributos[1],
 				tipo_fone      = atributos[2],
 				tipo_distancia = atributos[3]
@@ -253,7 +252,7 @@ class Telefonema(Entity):
 	has_field('numero', Numeric(12, 0), primary_key = True)
 	has_field('tipo_fone', Integer, nullable = False)			# fixo, celular, net fone
 	has_field('tipo_distancia', Integer, nullable = False)	# Local, DDD, DDI
-	has_field('duracao', Time, nullable = False)
+	has_field('segundos', Integer, nullable = False)
 	has_field('valor', Numeric(8, 2), nullable = False)
 	using_options(tablename = 'telefonema')
 	many_to_one('responsavel', of_kind = 'Pessoa', colname = 'id_pessoa_resp')

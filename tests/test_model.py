@@ -74,43 +74,43 @@ class TestaModelo(object):
 		c2 = ContaTelefone(telefone = 2121, companhia = 2, republica = r)
 		
 		t1 = Telefonema(
-				numero = 1234,
-				periodo_ref = 200703,
+				numero         = 1234,
+				periodo_ref    = 200703,
 				conta_telefone = c1,
-				tipo_fone = 1,
+				tipo_fone      = 1,
 				tipo_distancia = 1,
-				duracao = time(0, 2, 30),
-				valor = Decimal('1.4')
+				segundos       = 150,
+				valor          = Decimal('1.4')
 			)
 		
 		t2 = Telefonema(
-				numero = 3333,
-				periodo_ref = 200704,
+				numero         = 3333,
+				periodo_ref    = 200704,
 				conta_telefone = c1,
-				tipo_fone = 1,
+				tipo_fone      = 1,
 				tipo_distancia = 1,
-				duracao = time(0, 4, 59),
-				valor = Decimal('2.15')
+				segundos       = 299,
+				valor          = Decimal('2.15')
 			)
 		
 		t3 = Telefonema(
-				numero = 777,
-				periodo_ref = 200704,
+				numero         = 777,
+				periodo_ref    = 200704,
 				conta_telefone = c1,
-				tipo_fone = 2,
+				tipo_fone      = 2,
 				tipo_distancia = 1,
-				duracao = time(0, 1, 30),
-				valor = Decimal('0.22')
+				segundos       = 90,
+				valor          = Decimal('0.22')
 			)
 		
 		t4 = Telefonema(
-				numero = 777,
-				periodo_ref = 200704,
+				numero         = 777,
+				periodo_ref    = 200704,
 				conta_telefone = c2,
-				tipo_fone = 2,
+				tipo_fone      = 2,
 				tipo_distancia = 1,
-				duracao = time(0, 0, 30),
-				valor = Decimal('0.15')
+				segundos       = 30,
+				valor          = Decimal('0.15')
 			)
 		
 		objectstore.flush()
@@ -155,7 +155,7 @@ class TestaModelo(object):
 				conta_telefone = c,
 				tipo_fone = 1,
 				tipo_distancia = 1,
-				duracao = time(0, 2, 30),
+				segundos = 150,
 				valor = Decimal('1.4')
 			)
 		
@@ -165,7 +165,7 @@ class TestaModelo(object):
 				conta_telefone = c,
 				tipo_fone = 1,
 				tipo_distancia = 1,
-				duracao = time(0, 4, 59),
+				segundos = 299,
 				valor = Decimal('2.15')
 			)
 		
@@ -175,7 +175,7 @@ class TestaModelo(object):
 				conta_telefone = c,
 				tipo_fone = 2,
 				tipo_distancia = 1,
-				duracao = time(0, 1, 30),
+				segundos = 90,
 				valor = Decimal('0.15')
 			)
 			
@@ -185,7 +185,7 @@ class TestaModelo(object):
 				conta_telefone = c,
 				tipo_fone = 1,
 				tipo_distancia = 1,
-				duracao = time(0, 5, 30),
+				segundos = 330,
 				valor = Decimal('2.5')
 			)
 		
@@ -225,10 +225,10 @@ class TestaModelo(object):
 		t3 = Telefonema.get_by(periodo_ref = 200704, numero = 5555, conta_telefone = c)
 		t4 = Telefonema.get_by(periodo_ref = 200704, numero = 9999, conta_telefone = c)
 		
-		assert t1.valor == Decimal('2.99') and t1.duracao == time(minute = 2, second = 30) and t1.tipo_fone == 0 and t1.tipo_distancia == 1
-		assert t2.valor == Decimal('0.72') and t2.duracao == time(minute = 5, second = 30) and t2.tipo_fone == 1 and t2.tipo_distancia == 1
-		assert t3.valor == Decimal('1.18') and t3.duracao == time(minute = 12)             and t3.tipo_fone == 0 and t3.tipo_distancia == 0
-		assert t4.valor == Decimal('3.11') and t4.duracao == time(minute = 2, second = 36) and t4.tipo_fone == 1 and t4.tipo_distancia == 2
+		assert t1.valor == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1
+		assert t2.valor == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1
+		assert t3.valor == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0
+		assert t4.valor == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2
 
 
 if __name__ == '__main__':
