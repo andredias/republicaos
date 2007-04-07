@@ -7,8 +7,7 @@ from elixir      import belongs_to as many_to_one
 from elixir      import has_and_belongs_to_many as many_to_many
 from elixir      import metadata, objectstore
 from sqlalchemy  import *
-from datetime    import date, datetime
-import time
+from datetime    import date, datetime, time
 import csv
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
@@ -212,15 +211,40 @@ class ContaTelefone(Entity):
 		return telefonemas
 	
 	
-	def importar_csv(self, arquivo, tipo, mes, ano):
-		linhas = [linha for linha in csv.reader(arquivo)]
+	def importar_csv(self, arquivo, tipo, ano, mes):
+		'''
+		Importa um arquivo .csv referente a uma conta telefônica de uma operadora.
+		
+		Qualquer telefonema pré-existente no período de referência fornecido é apagado, e o resultado final fica sendo apenas
+		o do arquivo importado
+		'''
+		
 		if tipo == 1:
 			func_interpreta_csv = self.interpreta_csv_net_fone
 		else:
 			func_interpreta_csv = None
 		
+		linhas      = [linha for linha in csv.reader(arquivo)]
 		telefonemas = func_interpreta_csv(linhas)
-		return telefonemas
+		
+		# antes de registrar os novos telefonemas, é necessário apagar os anteriores do mesmo mês
+		periodo_ref = ano * 100 + mes
+		Telefonema.table.delete(and_(Telefonema.c.periodo_ref == periodo_ref, Telefonema.c.id_conta_telefone == self.telefone)).execute()
+		
+		# registra os novos telefonemas
+		for numero, atributos in telefonemas.iteritems():
+			duracao = time(hour = atributos[0].hours, minute = atributos[0].minutes, second = atributos[0].seconds)
+			Telefonema(
+				periodo_ref    = periodo_ref,
+				numero         = numero,
+				conta_telefone = self,
+				duracao        = duracao,
+				valor          = atributos[1],
+				tipo_fone      = atributos[2],
+				tipo_distancia = atributos[3]
+			)
+		objectstore.flush()
+		self.determinar_responsaveis_telefonemas(ano = ano, mes = mes)
 
 
 

@@ -6,6 +6,7 @@ from elixir import *
 from datetime import date, time
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import create_engine
+from decimal import Decimal
 
 #def setup():
 	#metadata.connect('sqlite:///')
@@ -19,8 +20,8 @@ from sqlalchemy import create_engine
 
 class TestaModelo(object):
 	def setup(self):
-		#metadata.connect('postgres://turbo_gears:tgears@localhost/tg_teste')
-		metadata.connect('sqlite:///')
+		metadata.connect('postgres://turbo_gears:tgears@localhost/tg_teste')
+		#metadata.connect('sqlite:///')
 		metadata.engine.echo = True
 		create_all()
 		
@@ -79,7 +80,7 @@ class TestaModelo(object):
 				tipo_fone = 1,
 				tipo_distancia = 1,
 				duracao = time(0, 2, 30),
-				valor = 1.4
+				valor = Decimal('1.4')
 			)
 		
 		t2 = Telefonema(
@@ -89,7 +90,7 @@ class TestaModelo(object):
 				tipo_fone = 1,
 				tipo_distancia = 1,
 				duracao = time(0, 4, 59),
-				valor = 2.15
+				valor = Decimal('2.15')
 			)
 		
 		t3 = Telefonema(
@@ -99,7 +100,7 @@ class TestaModelo(object):
 				tipo_fone = 2,
 				tipo_distancia = 1,
 				duracao = time(0, 1, 30),
-				valor = 0.15
+				valor = Decimal('0.22')
 			)
 		
 		t4 = Telefonema(
@@ -109,7 +110,7 @@ class TestaModelo(object):
 				tipo_fone = 2,
 				tipo_distancia = 1,
 				duracao = time(0, 0, 30),
-				valor = 0.15
+				valor = Decimal('0.15')
 			)
 		
 		objectstore.flush()
@@ -146,7 +147,7 @@ class TestaModelo(object):
 		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
 		Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
 		
-		c = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
+		c = ContaTelefone(telefone = 1111, companhia = 1, republica = r)
 		
 		t1 = Telefonema(
 				numero = 1234,
@@ -155,7 +156,7 @@ class TestaModelo(object):
 				tipo_fone = 1,
 				tipo_distancia = 1,
 				duracao = time(0, 2, 30),
-				valor = 1.4
+				valor = Decimal('1.4')
 			)
 		
 		t2 = Telefonema(
@@ -165,7 +166,7 @@ class TestaModelo(object):
 				tipo_fone = 1,
 				tipo_distancia = 1,
 				duracao = time(0, 4, 59),
-				valor = 2.15
+				valor = Decimal('2.15')
 			)
 		
 		t3 = Telefonema(
@@ -175,7 +176,7 @@ class TestaModelo(object):
 				tipo_fone = 2,
 				tipo_distancia = 1,
 				duracao = time(0, 1, 30),
-				valor = 0.15
+				valor = Decimal('0.15')
 			)
 			
 		t4 = Telefonema(
@@ -185,9 +186,8 @@ class TestaModelo(object):
 				tipo_fone = 1,
 				tipo_distancia = 1,
 				duracao = time(0, 5, 30),
-				valor = 2.5
+				valor = Decimal('2.5')
 			)
-		
 		
 		objectstore.flush()
 		
@@ -200,27 +200,35 @@ class TestaModelo(object):
 	
 	
 	def test_importacao_conta_telefone_csv(self):
-		csv = '''Detalhes da fatura
+		arq = '''Detalhes da fatura
 
 "Seq       ","Origem                                            ","Descrição                                         ","Periodo/Data             ","Terminal_Destino    ","Local Origem","Local Destino       ","Hora Inicio    ","Hora Fim            ","Imp ","Pais      ","Qtde    ","Unid    ","Valor (R$)          "
-"0000001   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","21/10/06 A  99/99/99     ","1234                ","CAS -SP   ","SPO -SP             ","10:28:52       ","                    ","E   ","          ","500     ","MIN     "," 0.59"
+"0000001   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","21/10/06 A  99/99/99     ","1234                ","CAS -SP   ","SPO -SP             ","10:28:52       ","                    ","E   ","          ","500     ","MIN     "," 0.59"
 "0000002   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","21/10/06 A  99/99/99     ","2222                ","CAS -SP   ","SPO -SP             ","12:57:27       ","                    ","E   ","          ","500     ","MIN     "," 0.27"
-"0000003   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","25/10/06 A  99/99/99     ","9999                ","CAS -SP   ","SOC -SP             ","14:32:24       ","                    ","E   ","          ","2600    ","MIN     "," 3.11"
-"0000004   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","25/10/06 A  99/99/99     ","1234                ","CAS -SP   ","BRU -SP             ","14:36:15       ","                    ","E   ","          ","2000    ","MIN     "," 2.40"
+"0000003   ","1921212409                                        ","04 - LIGACOES DDI PARA CELULARES                  ","25/10/06 A  99/99/99     ","9999                ","CAS -SP   ","SOC -SP             ","14:32:24       ","                    ","E   ","          ","2600    ","MIN     "," 3.11"
+"0000004   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","25/10/06 A  99/99/99     ","1234                ","CAS -SP   ","BRU -SP             ","14:36:15       ","                    ","E   ","          ","2000    ","MIN     "," 2.40"
 "0000005   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","5555                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
 "0000006   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","99/99/99 A  99/99/99     ","2222                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","5000    ","MIN     "," 0.45"
 "0000007   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","5555                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","10000   ","MIN     "," 0.98"'''
 
-		csv = csv.splitlines()
+		arq = arq.splitlines()
 		
 		r = Republica(nome = 'Teste',
 			data_criacao = date(2007, 03, 06),
 			logradouro = 'R. dos Bobos, nº 0')
 		
 		c = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
-		c.importar_csv(csv, tipo = 1, mes = 4, ano = 2007)
+		c.importar_csv(arq, tipo = 1, mes = 4, ano = 2007)
 		
-		assert True
+		t1 = Telefonema.get_by(periodo_ref = 200704, numero = 1234, conta_telefone = c)
+		t2 = Telefonema.get_by(periodo_ref = 200704, numero = 2222, conta_telefone = c)
+		t3 = Telefonema.get_by(periodo_ref = 200704, numero = 5555, conta_telefone = c)
+		t4 = Telefonema.get_by(periodo_ref = 200704, numero = 9999, conta_telefone = c)
+		
+		assert t1.valor == Decimal('2.99') and t1.duracao == time(minute = 2, second = 30) and t1.tipo_fone == 0 and t1.tipo_distancia == 1
+		assert t2.valor == Decimal('0.72') and t2.duracao == time(minute = 5, second = 30) and t2.tipo_fone == 1 and t2.tipo_distancia == 1
+		assert t3.valor == Decimal('1.18') and t3.duracao == time(minute = 12)             and t3.tipo_fone == 0 and t3.tipo_distancia == 0
+		assert t4.valor == Decimal('3.11') and t4.duracao == time(minute = 2, second = 36) and t4.tipo_fone == 1 and t4.tipo_distancia == 2
 
 
 if __name__ == '__main__':
