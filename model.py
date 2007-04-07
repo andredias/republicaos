@@ -197,7 +197,7 @@ class ContaTelefone(Entity):
 			valor   = Decimal(linha[col_valor].strip())
 			
 			milesimos_minutos = int(linha[col_duracao].strip())
-			duracao_segundos  = relativedelta(milesimos_minutos * 60 / 1000)
+			duracao_segundos  = relativedelta(seconds = milesimos_minutos * 60 / 1000)
 			
 			tipo_fone      = tipos_fone.index(descr[col_tipo_fone])
 			tipo_distancia = tipos_distancia.index(descr[col_tipo_distancia])
@@ -210,7 +210,7 @@ class ContaTelefone(Entity):
 				telefonemas[numero][1] += valor
 		
 		return telefonemas
-			
+	
 	
 	def importar_csv(self, arquivo, tipo, mes, ano):
 		linhas = [linha for linha in csv.reader(arquivo)]
