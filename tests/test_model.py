@@ -213,11 +213,27 @@ class TestaModelo(object):
 
 		arq = arq.splitlines()
 		
+		p1 = Pessoa(nome = 'André')
+		p2 = Pessoa(nome = 'Felipe')
+		p3 = Pessoa(nome = 'Dias')
+		
+		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1)
+		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = p1)
+		Telefone(numero = 3333, responsavel = p2)
+		Telefone(numero = 9999, responsavel = p3)
+		
 		r = Republica(nome = 'Teste',
 			data_criacao = date(2007, 03, 06),
 			logradouro = 'R. dos Bobos, nº 0')
 		
+		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01), data_saida = date(2006, 12, 01))
+		Morador(pessoa = p2, republica = r, data_entrada = date(2006, 02, 01))
+		Morador(pessoa = p3, republica = r, data_entrada = date(2007, 01, 11))
+		
 		c = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
+		
+		objectstore.flush()
+		
 		c.importar_csv(arq, tipo = 1, mes = 4, ano = 2007)
 		
 		t1 = Telefonema.get_by(periodo_ref = 200704, numero = 1234, conta_telefone = c)
@@ -225,10 +241,10 @@ class TestaModelo(object):
 		t3 = Telefonema.get_by(periodo_ref = 200704, numero = 5555, conta_telefone = c)
 		t4 = Telefonema.get_by(periodo_ref = 200704, numero = 9999, conta_telefone = c)
 		
-		assert t1.valor == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1
-		assert t2.valor == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1
-		assert t3.valor == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0
-		assert t4.valor == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2
+		assert t1.valor == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1 and t1.responsavel == p1
+		assert t2.valor == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == p1
+		assert t3.valor == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0 and t3.responsavel == None
+		assert t4.valor == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == p3
 
 
 if __name__ == '__main__':
