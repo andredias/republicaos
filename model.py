@@ -9,6 +9,9 @@ from elixir      import metadata, objectstore
 from sqlalchemy  import *
 from datetime    import date, datetime
 import time
+import csv
+from decimal     import Decimal
+from dateutil.relativedelta import relativedelta
 
 class Pessoa(Entity):
 	has_field('nome', Unicode(80), nullable = False, unique = True)
@@ -169,7 +172,55 @@ class ContaTelefone(Entity):
 				telefonema.responsavel = Pessoa.get_by(id = responsavel_telefone[telefonema.numero])
 		
 		objectstore.flush()
-
+	
+	
+	def interpreta_csv_net_fone(self, linhas):
+		# ignora as 3 primeiras linhas de cabeçalho
+		linhas = linhas[3:]
+		col_numero  = 4
+		col_tipo    = 2
+		col_duracao = 11
+		col_valor   = 13
+		telefonemas = dict()
+		
+		# palavras usadas na descrição que ajudam a classificar o telefonema
+		tipos_fone      = ['FIXOS', 'CELULARES', 'NETFONE']
+		tipos_distancia = ['LOCAIS', 'DDD', 'DDI'] # confirmar se aparece DDI
+		
+		# posição das palavras que determinam os tipos dentro da descrição
+		col_tipo_fone      = -1
+		col_tipo_distancia = 3
+		
+		for linha in linhas:
+			numero  = int(linha[col_numero].strip())
+			descr   = linha[col_tipo].split()
+			valor   = Decimal(linha[col_valor].strip())
+			
+			milesimos_minutos = int(linha[col_duracao].strip())
+			duracao_segundos  = relativedelta(milesimos_minutos * 60 / 1000)
+			
+			tipo_fone      = tipos_fone.index(descr[col_tipo_fone])
+			tipo_distancia = tipos_distancia.index(descr[col_tipo_distancia])
+			
+			if not telefonemas.has_key(numero):
+				# não consegui fazer contas apenas com time. Foi necessário usar relativedelta
+				telefonemas[numero] = [duracao_segundos, valor, tipo_fone, tipo_distancia]
+			else:
+				telefonemas[numero][0] += duracao_segundos
+				telefonemas[numero][1] += valor
+		
+		return telefonemas
+			
+	
+	def importar_csv(self, arquivo, tipo, mes, ano):
+		linhas = [linha for linha in csv.reader(arquivo)]
+		if tipo == 1:
+			func_interpreta_csv = self.interpreta_csv_net_fone
+		else:
+			func_interpreta_csv = None
+		
+		telefonemas = func_interpreta_csv(linhas)
+		return telefonemas
 
 
 

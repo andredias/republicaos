@@ -43,7 +43,8 @@ class TestaModelo(object):
 		
 		assert (data_criacao, date.today()) == r.ultimo_fechamento()
 		assert r.ultimo_fechamento() == r.proximo_fechamento()
-		
+	
+	
 	def test_fechamento_contas(self):		
 		data_criacao = date.today() - relativedelta(months = 4)
 		r = Republica(nome = 'Teste',
@@ -198,40 +199,32 @@ class TestaModelo(object):
 		assert t4.responsavel == p1
 	
 	
-	def test_conta_telefone(self):
-		r = Republica(nome = 'Jerônimo',
-					data_criacao = date(year = 1998, month = 02, day = 01),
-					logradouro = 'R. Jerônimo Pattaro, 186',
-					bairro = 'Barão Geraldo',
-					cidade = 'Campinas',
-					uf = 'SP',
-					cep = '13084110')
-		c = ContaTelefone(telefone = 2121, companhia = 2, republica = r)
-		
-		objectstore.flush()
-
-		assert True
-		
-		
-	
 	def test_importacao_conta_telefone_csv(self):
 		csv = '''Detalhes da fatura
 
 "Seq       ","Origem                                            ","Descrição                                         ","Periodo/Data             ","Terminal_Destino    ","Local Origem","Local Destino       ","Hora Inicio    ","Hora Fim            ","Imp ","Pais      ","Qtde    ","Unid    ","Valor (R$)          "
-"0000001   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","21/10/06 A  99/99/99     ","1199999999          ","CAS -SP   ","SPO -SP             ","10:28:52       ","                    ","E   ","          ","500     ","MIN     "," 0.59"
-"0000002   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","21/10/06 A  99/99/99     ","1199999991          ","CAS -SP   ","SPO -SP             ","12:57:27       ","                    ","E   ","          ","500     ","MIN     "," 0.59"
-"0000003   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","25/10/06 A  99/99/99     ","1599999999          ","CAS -SP   ","SOC -SP             ","14:32:24       ","                    ","E   ","          ","2600    ","MIN     "," 3.11"
-"0000004   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","25/10/06 A  99/99/99     ","1499999992          ","CAS -SP   ","BRU -SP             ","14:36:15       ","                    ","E   ","          ","2000    ","MIN     "," 2.40"
-"0000005   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","1932222222          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
-"0000006   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","1933333333          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","5000    ","MIN     "," 0.49"
-"0000007   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","1944444444          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","10000   ","MIN     "," 0.98"'''
+"0000001   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","21/10/06 A  99/99/99     ","1234                ","CAS -SP   ","SPO -SP             ","10:28:52       ","                    ","E   ","          ","500     ","MIN     "," 0.59"
+"0000002   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","21/10/06 A  99/99/99     ","2222                ","CAS -SP   ","SPO -SP             ","12:57:27       ","                    ","E   ","          ","500     ","MIN     "," 0.27"
+"0000003   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","25/10/06 A  99/99/99     ","9999                ","CAS -SP   ","SOC -SP             ","14:32:24       ","                    ","E   ","          ","2600    ","MIN     "," 3.11"
+"0000004   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","25/10/06 A  99/99/99     ","1234                ","CAS -SP   ","BRU -SP             ","14:36:15       ","                    ","E   ","          ","2000    ","MIN     "," 2.40"
+"0000005   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","5555                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
+"0000006   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","99/99/99 A  99/99/99     ","2222                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","5000    ","MIN     "," 0.45"
+"0000007   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","5555                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","10000   ","MIN     "," 0.98"'''
 
 		csv = csv.splitlines()
+		
+		r = Republica(nome = 'Teste',
+			data_criacao = date(2007, 03, 06),
+			logradouro = 'R. dos Bobos, nº 0')
+		
+		c = ContaTelefone(telefone = 2409, companhia = 1, republica = r)
+		c.importar_csv(csv, tipo = 1, mes = 4, ano = 2007)
+		
 		assert True
 
 
 if __name__ == '__main__':
     teste = TestaModelo()
     teste.setup()
-    teste.test_determinar_responsavel_telefonema()
+    teste.test_importacao_conta_telefone_csv()
     teste.teardown()
