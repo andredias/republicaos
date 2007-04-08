@@ -67,6 +67,7 @@ class Telefone(Entity):
 class Republica(Entity):
 	has_field('nome', Unicode(80), nullable = False)
 	has_field('data_criacao', Date, default = date.today, nullable = False)
+	has_field('proximo_rateio', Date)
 	has_field('logradouro', Unicode(150))
 	has_field('complemento', Unicode(100))
 	has_field('bairro', Unicode(100))
@@ -79,7 +80,7 @@ class Republica(Entity):
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica')
 	
 	
-	def ultimo_fechamento(self):
+	def ultimo_periodo_fechamento(self):
 		'''
 		Último período de fechamento da república. Caso não haja nenhum, retorna a data em que a república foi criada
 		'''
@@ -94,26 +95,29 @@ class Republica(Entity):
 		else:
 			data_inicial = self.data_criacao
 			
-		return (data_inicial, data_final)
+		return (data_inicial, data_final - relativedelta(days = 1))
 	
 	
-	def proximo_fechamento(self):
+	def proximo_periodo_fechamento(self):
 		'''
-		Último de fechamento até o data atual
+		Último de fechamento até o dia_fechamento do próximo mês
 		'''
 		if len(self.fechamentos) > 0:
 			data_inicial = self.fechamentos[-1].data
 		else:
 			data_inicial = self.data_criacao
 		
-		return (data_inicial, date.today())
+		if self.proximo_rateio == None:
+			self.proximo_rateio = data_inicial + relativedelta(months = 1)
+			# como fazer para atualizar apenas este registro da república?
+		return (data_inicial, self.proximo_rateio - relativedelta(days = 1))
 	
 	
 	def moradores(self, data_inicial = None, data_final = None):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
-		di, df = self.proximo_fechamento()
+		di, df = self.proximo_periodo_fechamento()
 		if not data_inicial:
 			data_inicial = di
 		if not data_final:
