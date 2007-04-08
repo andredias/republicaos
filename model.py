@@ -16,7 +16,9 @@ class Pessoa(Entity):
 	has_field('nome', Unicode(80), nullable = False, unique = True)
 	using_options(tablename = 'pessoa')
 	one_to_many('contatos', of_kind = 'Contato', inverse = 'pessoa')
-	one_to_many('telefones', of_kind = 'Telefone', inverse = 'responsavel')
+	
+	def get_telefones():
+		return Telefone.select(Telefone.c.id_pessoa_resp == self.id)
 
 
 
@@ -42,12 +44,18 @@ class Contato(Entity):
 
 
 class Telefone(Entity):
+	'''
+	Telefone com alguém responsável.
+	
+	Relacionado a pessoa e república, independente de ser morador ou não, pois se associado com morador, a data de entrada
+	na república também faria parte da chave primária.
+	Além disso, economiza nas buscas, já que não é necessário pesquisar na tabela morador pra achar a república.
+	'''
 	has_field('numero', Numeric(12, 0), primary_key = True)
 	has_field('descricao', Unicode)
 	using_options(tablename = 'telefone')
-	many_to_one('responsavel', of_kind = 'Pessoa',
-		inverse = 'telefones', colname = 'id_pessoa_resp',
-		column_kwargs = dict(primary_key = True))
+	many_to_one('responsavel', of_kind = 'Pessoa', colname = 'id_pessoa_resp', column_kwargs = dict(primary_key = True))
+	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(primary_key = True))
 
 
 
@@ -159,11 +167,9 @@ class ContaTelefone(Entity):
 	def determinar_responsaveis_telefonemas(self, ano, mes):
 		telefonemas = self.telefonemas(ano, mes)
 		responsavel_telefone = dict( 
-						select([Telefone.c.numero, Telefone.c.id_pessoa_resp],
-								and_(
-									Telefone.c.id_pessoa_resp == Morador.c.id_pessoa,
-									Morador.c.id_republica == self.id_republica
-									)
+						select(
+								[Telefone.c.numero, Telefone.c.id_pessoa_resp],
+								Telefone.c.id_republica == self.id_republica
 							).execute().fetchall()
 						)
 		for telefonema in telefonemas:

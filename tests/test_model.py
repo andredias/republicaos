@@ -135,17 +135,22 @@ class TestaModelo(object):
 		p2 = Pessoa(nome = 'Felipe')
 		p3 = Pessoa(nome = 'Dias')
 		
-		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1)
-		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = p1)
-		Telefone(numero = 3333, responsavel = p2)
-		Telefone(numero = 777, responsavel = p3)
-		
 		r = Republica(nome = 'Teste',
 			data_criacao = date.today(),
 			logradouro = 'R. dos Bobos, nº 0')
 		
+		r2 = Republica(nome = 'Outra República',
+			data_criacao = date(2000, 05, 10),
+			logradouro = 'R. dos Bobos, nº 1')
+		
+		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1, republica = r)
+		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = p1, republica = r)
+		Telefone(numero = 3333, responsavel = p2, republica = r)
+		Telefone(numero = 777, responsavel = p3, republica = r2)
+		
 		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
 		Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
+		Morador(pessoa = p3, republica = r2, data_entrada = date(2002, 11, 22))
 		
 		c = ContaTelefone(telefone = 1111, companhia = 1, republica = r)
 		
@@ -217,14 +222,14 @@ class TestaModelo(object):
 		p2 = Pessoa(nome = 'Felipe')
 		p3 = Pessoa(nome = 'Dias')
 		
-		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1)
-		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = p1)
-		Telefone(numero = 3333, responsavel = p2)
-		Telefone(numero = 9999, responsavel = p3)
-		
 		r = Republica(nome = 'Teste',
 			data_criacao = date(2007, 03, 06),
 			logradouro = 'R. dos Bobos, nº 0')
+		
+		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1, republica = r)
+		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = p1, republica = r)
+		Telefone(numero = 3333, responsavel = p2, republica = r)
+		Telefone(numero = 9999, responsavel = p3, republica = r)
 		
 		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01), data_saida = date(2006, 12, 01))
 		Morador(pessoa = p2, republica = r, data_entrada = date(2006, 02, 01))
