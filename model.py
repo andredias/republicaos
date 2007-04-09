@@ -89,7 +89,7 @@ class Republica(Entity):
 	
 	def _proximo_rateio(self):
 		if len(self.fechamentos) and ((self.proximo_rateio == None) or (self.proximo_rateio <= self.fechamentos[0].data)):
-			self.proximo_rateio = self.fechamentos[0] + relativedelta(months = 1)
+			self.proximo_rateio = self.fechamentos[0].data + relativedelta(months = 1)
 		elif (self.proximo_rateio == None) or (self.proximo_rateio <= self.data_criacao):
 			self.proximo_rateio = self.data_criacao + relativedelta(months = 1)
 		return self.proximo_rateio

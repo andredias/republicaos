@@ -3,92 +3,15 @@
 
 from model import *
 from elixir import *
-from datetime import date, time
+from datetime import date
 from dateutil.relativedelta import relativedelta
-from sqlalchemy import create_engine
 from decimal import Decimal
 
-#def setup():
-	#metadata.connect('sqlite:///')
-	#metadata.engine.echo = True
-	#metadata.create_all()
+from tests.base import BaseTest
 
 
-#def teardown():
-	#cleanup_all()
-
-
-class TestaModelo(object):
-	def setup(self):
-		metadata.connect('postgres://turbo_gears:tgears@localhost/tg_teste')
-		#metadata.connect('sqlite:///')
-		metadata.engine.echo = True
-		create_all()
-		
-	
-	def teardown(self):
-		# we don't use cleanup_all because setup and teardown are called for 
-		# each test, and since the class is not redefined, it will not be
-		# reinitialized so we can't kill it
-		drop_all()
-		objectstore.clear()
-	
-	
-	def test_proximo_periodo_fechamento_contas_republica(self):
-		'''
-		Testa se o próximo fechamento está no intervalo correto.
-		
-		O intervalo esperado é [data_ultimo_periodo_fechamento, data_ultimo_periodo_fechamento + 1 mês - 1 dia] ou escrito de outra forma
-		[data_ultimo_periodo_fechamento, data_ultimo_periodo_fechamento + 1 mês[
-		'''
-		r = Republica(nome = 'Teste',
-			data_criacao = date(2007, 4, 8),
-			logradouro = 'R. dos Bobos, nº 0')
-		
-		objectstore.flush()
-		assert (date(2007, 4, 8), date(2007, 5, 7)) == r.proximo_periodo_fechamento()
-		
-		Fechamento(data = date(2007, 5, 10), republica = r)
-		r.proximo_rateio = None
-		objectstore.flush()
-		
-		# devido a um defeito no sqlalchemy/elixir, o backref não está sendo atualizado automaticamente
-		# vai ser necessário obter o objeto de novo
-		objectstore.clear()
-		r = Republica.get_by(id = 1)
-		
-		assert (date(2007, 5, 10), date(2007, 6, 9)) == r.proximo_periodo_fechamento()
-		
-		r.proximo_rateio = date(2007, 6, 1)
-		assert (date(2007, 5, 10), date(2007, 5, 31)) == r.proximo_periodo_fechamento()
-	
-	
-	def test_fechamento_contas(self):		
-		r = Republica(nome = 'Teste',
-			data_criacao = date(2007, 4, 8),
-			logradouro = 'R. dos Bobos, nº 0')
-		
-		Fechamento(data = date(2007, 5, 10), republica = r)
-		objectstore.flush()
-		
-		# devido a um defeito no sqlalchemy/elixir, o backref não está sendo atualizado automaticamente
-		# vai ser necessário obter o objeto de novo
-		objectstore.clear()
-		r = Republica.get_by(id = 1)
-		
-		assert (date(2007, 4, 8), date(2007, 5, 9)) == r.ultimo_periodo_fechamento()
-		
-		Fechamento(data = date(2007, 6, 7), republica = r)
-		objectstore.flush()
-		
-		# devido a um defeito no sqlalchemy/elixir, o backref não está sendo atualizado automaticamente
-		# vai ser necessário obter o objeto de novo
-		objectstore.clear()
-		r = Republica.get_by(id = 1)
-		
-		assert (date(2007, 5, 10), date(2007, 6, 6)) == r.ultimo_periodo_fechamento()
-	
-	
+class TestContaTelefone(BaseTest):
+	url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
 	def test_telefonemas_de_conta(self):
 		'''
 		Teste do método para encontrar os telefonemas do período
@@ -277,10 +200,3 @@ class TestaModelo(object):
 		assert t2.valor == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == p1
 		assert t3.valor == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0 and t3.responsavel == None
 		assert t4.valor == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == p3
-
-
-if __name__ == '__main__':
-    teste = TestaModelo()
-    teste.setup()
-    teste.test_importacao_conta_telefone_csv()
-    teste.teardown()
