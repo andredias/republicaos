@@ -15,10 +15,16 @@ from dateutil.relativedelta import relativedelta
 class Pessoa(Entity):
 	has_field('nome', Unicode(80), nullable = False, unique = True)
 	using_options(tablename = 'pessoa')
-	one_to_many('contatos', of_kind = 'Contato', inverse = 'pessoa')
+	one_to_many('contatos', of_kind = 'Contato', inverse = 'pessoa', order_by = ['tipo', 'contato'])
 	
 	def get_telefones():
 		return Telefone.select(Telefone.c.id_pessoa_resp == self.id)
+	
+	def get_emails():
+		pass
+	
+	def get_telefones_contato():
+		pass
 
 
 
@@ -34,6 +40,7 @@ class Contato(Entity):
 	many_to_one('pessoa', of_kind = 'Pessoa', inverse = 'contatos', colname = 'id_pessoa',
 		column_kwargs = dict(nullable = False))
 	using_options(tablename = 'contato')
+
 
 
 
@@ -75,53 +82,90 @@ class Republica(Entity):
 	has_field('uf', String(2))
 	has_field('cep', String(8))
 	using_options(tablename = 'republica')
-	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = 'data')
+	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = '-data')
 	one_to_many('contas_telefone', of_kind = 'ContaTelefone', inverse = 'republica')
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica')
+	
+	
+	def _proximo_rateio(self):
+		if len(self.fechamentos) and ((self.proximo_rateio == None) or (self.proximo_rateio <= self.fechamentos[0].data)):
+			self.proximo_rateio = self.fechamentos[0] + relativedelta(months = 1)
+		elif (self.proximo_rateio == None) or (self.proximo_rateio <= self.data_criacao):
+			self.proximo_rateio = self.data_criacao + relativedelta(months = 1)
+		return self.proximo_rateio
+	
+	
+	def _datas_fechamentos(self):
+		'''
+		Todas as datas de fechamento em ordem decrescente
+		'''
+		result = [self._proximo_rateio()]
+		result.extend([fechamento.data for fechamento in self.fechamentos])
+		result.append(self.data_criacao)
+		return result
+	
+	
+	def get_periodo_da_data(self, data_ref):
+		'''
+		Obtém o período em que a data_ref se encontra
+		'''
+		data_inicial = None
+		data_final   = None
+		
+		proximo_rateio = self._proximo_rateio()
+		if proximo_rateio < data_ref:
+			data_inicial = proximo_rateio
+			data_final   = data_ref + relativedelta(days = 1)
+		elif data_ref < self.data_criacao:
+			data_inicial = data_ref
+			data_final   = self.data_criacao - relativedelta(days = 1)
+		else:
+			datas = self._datas_fechamentos()
+			for i in range(len(datas) - 1):
+				if datas[i] > data_ref >= datas[i + 1]:
+					data_final   = datas[i] - relativedelta(days = 1)
+					data_inicial = datas[i + 1]
+					break
+		
+		return (data_inicial, data_final)
 	
 	
 	def ultimo_periodo_fechamento(self):
 		'''
 		Último período de fechamento da república. Caso não haja nenhum, retorna a data em que a república foi criada
 		'''
-		tamanho = len(self.fechamentos)
-		if tamanho > 0:
-			data_final = self.fechamentos[-1].data
+		datas = self._datas_fechamentos()
+		if len(datas) > 2:
+			return (datas[2], datas[1] - relativedelta(days = 1))
 		else:
-			data_final = date.today()
-		
-		if tamanho > 1:
-			data_inicial = self.fechamentos[-2].data
-		else:
-			data_inicial = self.data_criacao
-			
-		return (data_inicial, data_final - relativedelta(days = 1))
+			return self.proximo_periodo_fechamento()
 	
 	
 	def proximo_periodo_fechamento(self):
 		'''
 		Último de fechamento até o dia_fechamento do próximo mês
 		'''
-		if len(self.fechamentos) > 0:
-			data_inicial = self.fechamentos[-1].data
-		else:
-			data_inicial = self.data_criacao
-		
-		if self.proximo_rateio == None:
-			self.proximo_rateio = data_inicial + relativedelta(months = 1)
-			# como fazer para atualizar apenas este registro da república?
-		return (data_inicial, self.proximo_rateio - relativedelta(days = 1))
+		datas = self._datas_fechamentos()
+		return (datas[1], datas[0] - relativedelta(days = 1))
+	
+	
+	def retifica_periodo(data_inicial, data_final):
+		if not data_inicial or not data_final:
+			di, df = self.proximo_periodo_fechamento()
+			if not data_inicial:
+				data_inicial = di
+			if not data_final:
+				data_final = df
+		if data_inicial > data_final:
+			data_inicial, data_final = data_final, data_inicial
+		return (data_inicial, data_final)
 	
 	
 	def moradores(self, data_inicial = None, data_final = None):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
-		di, df = self.proximo_periodo_fechamento()
-		if not data_inicial:
-			data_inicial = di
-		if not data_final:
-			data_final = df
+		data_inicial, data_final = self.retifica_periodo(data_inicial, data_final)
 		return Pessoa.select(
 					and_(
 						Morador.c.id_republica == self.id,
@@ -130,6 +174,7 @@ class Republica(Entity):
 						or_(Morador.c.data_saida >= data_inicial, Morador.c.data_saida == None)
 					)
 				)
+	
 
 
 
@@ -144,6 +189,14 @@ class Fechamento(Entity):
 	using_options(tablename = 'fechamento')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'fechamentos', colname = 'id_republica',
 		column_kwargs = dict(primary_key = True))
+	
+	
+	def ratear_despesas(self, data_inicial = None, data_final = None):
+		'''
+		Calcula a divisão das despesas em determinado período
+		'''
+		data_inicial, data_final = self.retifica_periodo(data_inicial, data_final)
+		
 
 
 
@@ -151,25 +204,32 @@ class Fechamento(Entity):
 
 
 class ContaTelefone(Entity):
-	has_field('telefone', Numeric(12, 0), primary_key = True)
+	'''
+	Representa cada conta de telefone que chega por mês para a república.
+	'''
+	# campo id implícito
+	has_field('vencimento', Date, nullable = False)
+	has_field('telefone', Numeric(12, 0))
 	has_field('companhia', Integer, nullable = False)
 	using_options(tablename = 'conta_telefone')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
 		column_kwargs = dict(nullable = False))
 	
 	
-	def telefonemas(self, ano, mes):
-		periodo_ref = ano * 100 + mes
+	def telefonemas(self, data_inicial = None, data_final = None):
+		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
 		return Telefonema.select(
 				and_(
-					Telefonema.c.periodo_ref == periodo_ref,
+					data_inicial <= ContaTelefone.c.vencimento,
+					ContaTelefone.c.vencimento <= data_final,
 					Telefonema.c.id_conta_telefone == self.telefone
-					)
+					),
+				order_by = Telefonema.c.telefone
 				)
 	
 	
-	def determinar_responsaveis_telefonemas(self, ano, mes):
-		telefonemas = self.telefonemas(ano, mes)
+	def determinar_responsaveis_telefonemas(self, data_inicial = None, data_final = None):
+		telefonemas = self.telefonemas(data_inicial, data_final)
 		responsavel_telefone = dict( 
 						select(
 								[Telefone.c.numero, Telefone.c.id_pessoa_resp],
@@ -258,16 +318,14 @@ class ContaTelefone(Entity):
 
 
 class Telefonema(Entity):
-	has_field('periodo_ref', Integer, primary_key = True)
-	has_field('numero', Numeric(12, 0), primary_key = True)
-	has_field('tipo_fone', Integer, nullable = False)			# fixo, celular, net fone
-	has_field('tipo_distancia', Integer, nullable = False)	# Local, DDD, DDI
-	has_field('segundos', Integer, nullable = False)
-	has_field('valor', Numeric(8, 2), nullable = False)
+	has_field('numero',         Numeric(12, 0), primary_key = True)
+	has_field('tipo_fone',      Integer,        nullable = False)	# fixo, celular, net fone
+	has_field('tipo_distancia', Integer,        nullable = False)	# Local, DDD, DDI
+	has_field('segundos',       Integer,        nullable = False)
+	has_field('valor',          Numeric(10, 2), nullable = False)
 	using_options(tablename = 'telefonema')
-	many_to_one('responsavel', of_kind = 'Pessoa', colname = 'id_pessoa_resp')
-	many_to_one('conta_telefone', of_kind = 'ContaTelefone',
-		colname = 'id_conta_telefone', column_kwargs = dict(primary_key = True))
+	many_to_one('responsavel',    of_kind = 'Pessoa',        colname = 'id_pessoa')
+	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', column_kwargs = dict(primary_key = True))
 
 
 
@@ -280,22 +338,55 @@ class Morador(Entity):
 		column_kwargs = dict(primary_key = True))
 	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa',
 		column_kwargs = dict(primary_key = True))
-
-
+	
+	
+	def despesas(self, data_inicial = None, data_final = None):
+		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
+		return Despesa.select(
+					and_(
+						Despesa.c.id_pessoa    == self.id_pessoa,
+						Despesa.c.id_republica == self.id_republica,
+						data_inicial           <= Despesa.c.data,
+						Despesa.c.data         <= data_final
+						),
+					order_by = Despesa.c.data
+					)
+	
+	def telefonemas(self, data_inicial = None, data_final = None):
+		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
+		return Telefonema.select(
+					and_(
+						Telefonema.c.id_pessoa   == self.id_pessoa,
+						Telefonema.c.id_conta_telefone == ContaTelefone.c.id,
+						ContaTelefone.c.id_republica == self.id_republica,
+						data_inicial <= ContaTelefone.c.vencimento,
+						ContaTelefone.c.vencimento <= data_final
+						),
+					order_by = Telefonema.c.telefone
+					)
+	
+	def qtd_dias_morados(self, data_inicial, data_final):
+		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
+		entrada = max(self.data_entrada, data_inicial)
+		if not self.data_saida:
+			saida = data_final
+		else:
+			saida = min(self.data_saida, data_final)
+		
+		return (entrada - saida).days
 
 
 class TipoDespesa(Entity):
 	has_field('tipo', Unicode(40), nullable = False)
 	has_field('descricao', String)
 	using_options(tablename = 'tipo_despesa')
-	many_to_one('republica', of_kind = 'Republica', inverse = 'tipo_despesas',
-		column_kwargs = dict(nullable = False))
+	many_to_one('republica', of_kind = 'Republica', inverse = 'tipo_despesas', column_kwargs = dict(nullable = False))
 
 
 class Despesa(Entity):
 	has_field('data', Date, default = date.today, nullable = False)
-	has_field('valor', Numeric(8, 2), nullable = False)
+	has_field('valor', Numeric(10, 2), nullable = False)
 	using_options(tablename = 'despesa')
-	many_to_one('pessoa', of_kind = 'Pessoa', column_kwargs = dict(nullable = False))
-	many_to_one('republica', of_kind = 'Republica', column_kwargs = dict(nullable = False))
-	many_to_one('tipo_despesa', of_kind = 'TipoDespesa', column_kwargs = dict(nullable = False))
+	many_to_one('pessoa',       of_kind = 'Pessoa',      colname = 'id_pessoa',       column_kwargs = dict(nullable = False))
+	many_to_one('republica',    of_kind = 'Republica',   colname = 'id_republica',    column_kwargs = dict(nullable = False))
+	many_to_one('tipo_despesa', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
