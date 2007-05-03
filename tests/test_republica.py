@@ -11,6 +11,18 @@ from tests.base import BaseTest
 
 
 class TestRepublica(BaseTest):
+	def test_retifica_periodo(self):
+		r = Republica(nome = 'Teste',
+			data_criacao = date(2007, 4, 8),
+			logradouro = 'R. dos Bobos, nº 0')
+		
+		inicio = date(2007, 4, 8)
+		fim    = date(2007, 5, 7)
+		
+		assert inicio, fim == r.retifica_periodo()
+		assert inicio, fim == r.retifica_periodo(date(2007, 4, 20))
+		assert inicio, fim == r.retifica_perioso(fim, inicio)
+	
 	def test_proximo_periodo_fechamento_contas_republica(self):
 		'''
 		Testa se o próximo fechamento está no intervalo correto.

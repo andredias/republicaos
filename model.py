@@ -222,6 +222,7 @@ class ContaTelefone(Entity):
 	has_field('emissao', Date, nullable = False)
 	has_field('telefone', Numeric(12, 0))
 	has_field('companhia', Integer, nullable = False)
+	has_field('franquia', Numeric(10,2), default = 0)
 	using_options(tablename = 'conta_telefone')
 	using_table_options(UniqueConstraint('telefone', 'emissao'))
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
@@ -314,6 +315,9 @@ class ContaTelefone(Entity):
 			)
 		objectstore.flush()
 		self.determinar_responsaveis_telefonemas()
+	
+	def dividir_conta(self):
+		pass
 
 
 
