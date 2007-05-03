@@ -88,9 +88,9 @@ class Republica(Entity):
 	
 	
 	def _proximo_rateio(self):
-		if len(self.fechamentos) and ((self.proximo_rateio == None) or (self.proximo_rateio <= self.fechamentos[0].data)):
+		if len(self.fechamentos) and ((self.proximo_rateio is None) or (self.proximo_rateio <= self.fechamentos[0].data)):
 			self.proximo_rateio = self.fechamentos[0].data + relativedelta(months = 1)
-		elif (self.proximo_rateio == None) or (self.proximo_rateio <= self.data_criacao):
+		elif (self.proximo_rateio is None) or (self.proximo_rateio <= self.data_criacao):
 			self.proximo_rateio = self.data_criacao + relativedelta(months = 1)
 		return self.proximo_rateio
 	
@@ -150,12 +150,23 @@ class Republica(Entity):
 	
 	
 	def retifica_periodo(data_inicial, data_final):
-		if not data_inicial or not data_final:
+		'''
+		Se a data inicial é fornecida, determina o período em que ela se encontra, senão, retorna o próximo período de fechamento
+		'''
+		if data_inicial and not data_final:
+			# uma data fornecida. Então deseja o período em que essa data se encontra
+			di, df = self.get_periodo_da_data(data_inicial)
+			data_inicial = None
+		elif not data_inicial:
+			# nenhuma data fornecida, obtém o próximo fechamento
 			di, df = self.proximo_periodo_fechamento()
-			if not data_inicial:
-				data_inicial = di
-			if not data_final:
-				data_final = df
+		
+		if not data_inicial:
+			data_inicial = di
+		if not data_final:
+			data_final = df
+		
+		# garante que as datas estão em ordem crescente
 		if data_inicial > data_final:
 			data_inicial, data_final = data_final, data_inicial
 		return (data_inicial, data_final)
@@ -196,7 +207,6 @@ class Fechamento(Entity):
 		Calcula a divisão das despesas em determinado período
 		'''
 		data_inicial, data_final = self.retifica_periodo(data_inicial, data_final)
-		
 
 
 
@@ -209,36 +219,28 @@ class ContaTelefone(Entity):
 	'''
 	# campo id implícito
 	has_field('vencimento', Date, nullable = False)
+	has_field('emissao', Date, nullable = False)
 	has_field('telefone', Numeric(12, 0))
 	has_field('companhia', Integer, nullable = False)
 	using_options(tablename = 'conta_telefone')
+	using_table_options(UniqueConstraint('telefone', 'emissao'))
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
 		column_kwargs = dict(nullable = False))
+	one_to_many('telefonemas', of_kind = 'Telefonema', inverse = 'conta_telefone')
 	
-	
-	def telefonemas(self, data_inicial = None, data_final = None):
-		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
-		return Telefonema.select(
-				and_(
-					data_inicial <= ContaTelefone.c.vencimento,
-					ContaTelefone.c.vencimento <= data_final,
-					Telefonema.c.id_conta_telefone == self.telefone
-					),
-				order_by = Telefonema.c.telefone
-				)
-	
-	
-	def determinar_responsaveis_telefonemas(self, data_inicial = None, data_final = None):
-		telefonemas = self.telefonemas(data_inicial, data_final)
-		responsavel_telefone = dict( 
+	def determinar_responsaveis_telefonemas(self):
+		'''
+		Determina os responsáveis pelos telefonemas da conta
+		'''
+		responsaveis_telefones = dict(
 						select(
 								[Telefone.c.numero, Telefone.c.id_pessoa_resp],
 								Telefone.c.id_republica == self.id_republica
 							).execute().fetchall()
 						)
-		for telefonema in telefonemas:
-			if telefonema.responsavel == None and responsavel_telefone.has_key(telefonema.numero):
-				telefonema.responsavel = Pessoa.get_by(id = responsavel_telefone[telefonema.numero])
+		for telefonema in self.telefonemas:
+			if telefonema.responsavel is None and responsaveis_telefones.has_key(telefonema.numero):
+				telefonema.responsavel = Pessoa.get_by(id = responsaveis_telefones[telefonema.numero])
 		
 		objectstore.flush()
 	
@@ -281,7 +283,7 @@ class ContaTelefone(Entity):
 		return telefonemas
 	
 	
-	def importar_csv(self, arquivo, tipo, ano, mes):
+	def importar_csv(self, arquivo, tipo):
 		'''
 		Importa um arquivo .csv referente a uma conta telefônica de uma operadora.
 		
@@ -298,13 +300,11 @@ class ContaTelefone(Entity):
 		telefonemas = func_interpreta_csv(linhas)
 		
 		# antes de registrar os novos telefonemas, é necessário apagar os anteriores do mesmo mês
-		periodo_ref = ano * 100 + mes
-		Telefonema.table.delete(and_(Telefonema.c.periodo_ref == periodo_ref, Telefonema.c.id_conta_telefone == self.telefone)).execute()
+		Telefonema.table.delete(Telefonema.c.id_conta_telefone == self.id).execute()
 		
 		# registra os novos telefonemas
 		for numero, atributos in telefonemas.iteritems():
 			Telefonema(
-				periodo_ref    = periodo_ref,
 				numero         = numero,
 				conta_telefone = self,
 				segundos       = atributos[0],
@@ -313,7 +313,7 @@ class ContaTelefone(Entity):
 				tipo_distancia = atributos[3]
 			)
 		objectstore.flush()
-		self.determinar_responsaveis_telefonemas(ano = ano, mes = mes)
+		self.determinar_responsaveis_telefonemas()
 
 
 
@@ -325,9 +325,7 @@ class Telefonema(Entity):
 	has_field('valor',          Numeric(10, 2), nullable = False)
 	using_options(tablename = 'telefonema')
 	many_to_one('responsavel',    of_kind = 'Pessoa',        colname = 'id_pessoa')
-	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', column_kwargs = dict(primary_key = True))
-
-
+	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas', column_kwargs = dict(primary_key = True))
 
 
 class Morador(Entity):
