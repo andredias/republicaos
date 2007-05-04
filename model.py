@@ -11,6 +11,7 @@ from datetime    import date, datetime, time
 import csv
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
+from sets import Set
 
 class Pessoa(Entity):
 	has_field('nome', Unicode(80), nullable = False, unique = True)
@@ -149,7 +150,7 @@ class Republica(Entity):
 		return (datas[1], datas[0] - relativedelta(days = 1))
 	
 	
-	def retifica_periodo(data_inicial, data_final):
+	def retifica_periodo(self, data_inicial = None, data_final = None):
 		'''
 		Se a data inicial é fornecida, determina o período em que ela se encontra, senão, retorna o próximo período de fechamento
 		'''
@@ -177,10 +178,9 @@ class Republica(Entity):
 		Retorna os moradores da república no período de tempo
 		'''
 		data_inicial, data_final = self.retifica_periodo(data_inicial, data_final)
-		return Pessoa.select(
+		return Morador.select(
 					and_(
 						Morador.c.id_republica == self.id,
-						Pessoa.c.id == Morador.c.id_pessoa,
 						Morador.c.data_entrada < data_final,
 						or_(Morador.c.data_saida >= data_inicial, Morador.c.data_saida == None)
 					)
@@ -317,8 +317,29 @@ class ContaTelefone(Entity):
 		self.determinar_responsaveis_telefonemas()
 	
 	def dividir_conta(self):
-		pass
-
+		moradores = Set(self.republica.moradores())
+		total_dias = 0
+		for morador in moradores:
+			total_dias += morador.qtd_dias_morados()
+		
+		gastos = dict()
+		tel_sem_dono = 0
+		for telefonema in self.telefonemas:
+			responsavel = telefonema.responsavel
+			if responsavel:
+				moradores.add(Morador.select(
+						and_(
+							Morador.c.id_pessoa == responsavel.id,
+							Morador.c.id_republica == self.republica.id
+							)))
+				gastos[responsavel] = gastos.get(responsavel, 0) + telefonema.valor
+			else:
+				tel_sem_dono += telefonema.valor
+		
+		franquia = self.franquia - tel_sem_dono
+		
+		
+		
 
 
 class Telefonema(Entity):
@@ -354,20 +375,18 @@ class Morador(Entity):
 					order_by = Despesa.c.data
 					)
 	
-	def telefonemas(self, data_inicial = None, data_final = None):
-		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
+	def telefonemas(self, conta_telefone):
+		if conta_telefone.republica is not self.republica:
+			return None
 		return Telefonema.select(
 					and_(
-						Telefonema.c.id_pessoa   == self.id_pessoa,
 						Telefonema.c.id_conta_telefone == ContaTelefone.c.id,
-						ContaTelefone.c.id_republica == self.id_republica,
-						data_inicial <= ContaTelefone.c.vencimento,
-						ContaTelefone.c.vencimento <= data_final
+						Telefonema.c.id_pessoa   == self.id_pessoa
 						),
 					order_by = Telefonema.c.telefone
 					)
 	
-	def qtd_dias_morados(self, data_inicial, data_final):
+	def qtd_dias_morados(self, data_inicial = None, data_final = None):
 		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
 		entrada = max(self.data_entrada, data_inicial)
 		if not self.data_saida:
@@ -375,7 +394,8 @@ class Morador(Entity):
 		else:
 			saida = min(self.data_saida, data_final)
 		
-		return (entrada - saida).days
+		qtd_dias = (saida - entrada).days + 1
+		return (qtd_dias if qtd_dias >= 0 else 0)
 
 
 class TipoDespesa(Entity):
