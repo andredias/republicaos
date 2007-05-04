@@ -241,7 +241,7 @@ class ContaTelefone(Entity):
 						)
 		for telefonema in self.telefonemas:
 			if telefonema.responsavel is None and responsaveis_telefones.has_key(telefonema.numero):
-				telefonema.responsavel = Pessoa.get_by(id = responsaveis_telefones[telefonema.numero])
+				telefonema.responsavel = Morador.get_by(Morador.c.id == responsaveis_telefones[telefonema.numero])
 		
 		objectstore.flush()
 	
@@ -327,7 +327,7 @@ class ContaTelefone(Entity):
 		for telefonema in self.telefonemas:
 			responsavel = telefonema.responsavel
 			if responsavel:
-				moradores.add(Morador.select(
+				moradores.add(Morador.get_by(
 						and_(
 							Morador.c.id_pessoa == responsavel.id,
 							Morador.c.id_republica == self.republica.id
@@ -348,19 +348,19 @@ class Telefonema(Entity):
 	has_field('tipo_distancia', Integer,        nullable = False)	# Local, DDD, DDI
 	has_field('segundos',       Integer,        nullable = False)
 	has_field('valor',          Numeric(10, 2), nullable = False)
-	using_options(tablename = 'telefonema')
-	many_to_one('responsavel',    of_kind = 'Pessoa',        colname = 'id_pessoa')
+	many_to_one('responsavel',    of_kind = 'Morador',       colname = 'id_morador')
 	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas', column_kwargs = dict(primary_key = True))
+	using_options(tablename = 'telefonema')
 
 
 class Morador(Entity):
-	has_field('data_entrada', Date, default = date.today, primary_key = True)
+	has_field('data_entrada', Date, default = date.today, nullable = False)
 	has_field('data_saida', Date)
+	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
+	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa', column_kwargs = dict(nullable = False))
 	using_options(tablename = 'morador')
-	many_to_one('republica', of_kind = 'Republica', inverse = 'moradores', colname = 'id_republica',
-		column_kwargs = dict(primary_key = True))
-	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa',
-		column_kwargs = dict(primary_key = True))
+	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
+	#using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))
 	
 	
 	def despesas(self, data_inicial = None, data_final = None):
@@ -375,16 +375,18 @@ class Morador(Entity):
 					order_by = Despesa.c.data
 					)
 	
+	
 	def telefonemas(self, conta_telefone):
 		if conta_telefone.republica is not self.republica:
 			return None
 		return Telefonema.select(
 					and_(
 						Telefonema.c.id_conta_telefone == conta_telefone.id,
-						Telefonema.c.id_pessoa == self.id_pessoa
+						Telefonema.c.id_morador == self.id
 						),
 					order_by = Telefonema.c.numero
 					)
+	
 	
 	def qtd_dias_morados(self, data_inicial = None, data_final = None):
 		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)

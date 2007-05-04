@@ -31,9 +31,9 @@ class TestContaTelefone(BaseTest):
 		Telefone(numero = 3333, responsavel = p2, republica = r)
 		Telefone(numero = 777, responsavel = p3, republica = r2)
 		
-		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
-		Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
-		Morador(pessoa = p3, republica = r2, data_entrada = date(2002, 11, 22))
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
+		m3 = Morador(pessoa = p3, republica = r2, data_entrada = date(2002, 11, 22))
 		
 		c = ContaTelefone(telefone = 1111, companhia = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r)
 		
@@ -69,8 +69,8 @@ class TestContaTelefone(BaseTest):
 		
 		c.determinar_responsaveis_telefonemas()
 		
-		assert t1.responsavel == p1
-		assert t2.responsavel == p2
+		assert t1.responsavel == m1
+		assert t2.responsavel == m2
 		assert t3.responsavel == None
 
 	
@@ -102,9 +102,9 @@ class TestContaTelefone(BaseTest):
 		Telefone(numero = 3333, responsavel = p2, republica = r)
 		Telefone(numero = 9999, responsavel = p3, republica = r)
 		
-		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1), data_saida = date(2006, 12, 1))
-		Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
-		Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1), data_saida = date(2006, 12, 1))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
+		m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
 		
 		c = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
 		
@@ -117,7 +117,7 @@ class TestContaTelefone(BaseTest):
 		t3 = Telefonema.get_by(numero = 5555, conta_telefone = c)
 		t4 = Telefonema.get_by(numero = 9999, conta_telefone = c)
 		
-		assert t1.valor == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1 and t1.responsavel == p1
-		assert t2.valor == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == p1
+		assert t1.valor == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1 and t1.responsavel == m1
+		assert t2.valor == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == m1
 		assert t3.valor == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0 and t3.responsavel == None
-		assert t4.valor == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == p3
+		assert t4.valor == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == m3
