@@ -380,10 +380,10 @@ class Morador(Entity):
 			return None
 		return Telefonema.select(
 					and_(
-						Telefonema.c.id_conta_telefone == ContaTelefone.c.id,
-						Telefonema.c.id_pessoa   == self.id_pessoa
+						Telefonema.c.id_conta_telefone == conta_telefone.id,
+						Telefonema.c.id_pessoa == self.id_pessoa
 						),
-					order_by = Telefonema.c.telefone
+					order_by = Telefonema.c.numero
 					)
 	
 	def qtd_dias_morados(self, data_inicial = None, data_final = None):

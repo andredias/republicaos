@@ -94,7 +94,7 @@ class TestContaTelefone(BaseTest):
 		p3 = Pessoa(nome = 'Dias')
 		
 		r = Republica(nome = 'Teste',
-			data_criacao = date(2007, 03, 06),
+			data_criacao = date(2007, 3, 6),
 			logradouro = 'R. dos Bobos, nº 0')
 		
 		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = p1, republica = r)
@@ -102,9 +102,9 @@ class TestContaTelefone(BaseTest):
 		Telefone(numero = 3333, responsavel = p2, republica = r)
 		Telefone(numero = 9999, responsavel = p3, republica = r)
 		
-		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01), data_saida = date(2006, 12, 01))
-		Morador(pessoa = p2, republica = r, data_entrada = date(2006, 02, 01))
-		Morador(pessoa = p3, republica = r, data_entrada = date(2007, 01, 11))
+		Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1), data_saida = date(2006, 12, 1))
+		Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
+		Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
 		
 		c = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
 		
