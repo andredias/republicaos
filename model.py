@@ -53,17 +53,15 @@ class Contato(Entity):
 
 class Telefone(Entity):
 	'''
-	Telefone com alguém responsável.
+	Telefone com algum morador sendo responsável.
 	
-	Relacionado a pessoa e república, independente de ser morador ou não, pois se associado com morador, a data de entrada
-	na república também faria parte da chave primária.
-	Além disso, economiza nas buscas, já que não é necessário pesquisar na tabela morador pra achar a república.
+	Não deve haver mais de um morador sendo responsável pelo telefone em uma república, mas esta restrição ainda não está
+	firmada no código ou no banco de dados.
 	'''
 	has_field('numero', Numeric(12, 0), primary_key = True)
 	has_field('descricao', Unicode)
 	using_options(tablename = 'telefone')
-	many_to_one('responsavel', of_kind = 'Pessoa', colname = 'id_pessoa_resp', column_kwargs = dict(primary_key = True))
-	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(primary_key = True))
+	many_to_one('responsavel', of_kind = 'Morador', colname = 'id_morador', inverse = 'telefones', column_kwargs = dict(primary_key = True))
 
 
 
@@ -228,7 +226,7 @@ class ContaTelefone(Entity):
 	using_table_options(UniqueConstraint('telefone', 'emissao'))
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
 		column_kwargs = dict(nullable = False))
-	one_to_many('telefonemas', of_kind = 'Telefonema', inverse = 'conta_telefone')
+	one_to_many('telefonemas', of_kind = 'Telefonema', inverse = 'conta_telefone', order_by = 'numero')
 	
 	def determinar_responsaveis_telefonemas(self):
 		'''
@@ -236,8 +234,11 @@ class ContaTelefone(Entity):
 		'''
 		responsaveis_telefones = dict(
 						select(
-								[Telefone.c.numero, Telefone.c.id_pessoa_resp],
-								Telefone.c.id_republica == self.id_republica
+								[Telefone.c.numero, Telefone.c.id_morador],
+								and_(
+									Telefone.c.id_morador == Morador.c.id,
+									Morador.c.id_republica == self.id_republica
+									)
 							).execute().fetchall()
 						)
 		for telefonema in self.telefonemas:
@@ -411,6 +412,7 @@ class Morador(Entity):
 	has_field('data_saida', Date)
 	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
 	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa', column_kwargs = dict(nullable = False))
+	one_to_many('telefones', of_kind = 'Telefone', inverse = 'responsavel')
 	using_options(tablename = 'morador')
 	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
 	#using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))
