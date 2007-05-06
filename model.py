@@ -223,6 +223,7 @@ class ContaTelefone(Entity):
 	has_field('telefone', Numeric(12, 0))
 	has_field('companhia', Integer, nullable = False)
 	has_field('franquia', Numeric(10,2), default = 0)
+	has_field('servicos', Numeric(10,2), default = 0)
 	using_options(tablename = 'conta_telefone')
 	using_table_options(UniqueConstraint('telefone', 'emissao'))
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
@@ -317,29 +318,80 @@ class ContaTelefone(Entity):
 		self.determinar_responsaveis_telefonemas()
 	
 	def dividir_conta(self):
-		moradores = Set(self.republica.moradores())
-		total_dias = 0
-		for morador in moradores:
-			total_dias += morador.qtd_dias_morados()
+		'''
+		Divide a conta de telefone.
 		
-		gastos = dict()
-		tel_sem_dono = 0
+		Critérios:
+		1. Os telefonemas sem dono são debitados da franquia
+		2. A franquia restante é dividida entre os moradores de acordo com o número de dias morados por cada um
+		3. Os serviços (se houverem) também são divididos de acordo com o número de dias morados
+		4. O valor excedente é quanto cada morador gastou além da franquia a que tinha direito
+		5. O valor excedente que cada morador deve pagar pode ser compensado pelo faltante de outro morador em atingir sua franquia
+		'''
+		periodo = self.republica.get_periodo_da_data(self.emissao)
+		
+		rateio_conta = dict()
+		total_dias = 0
+		# determina os moradores atuais da república
+		for morador in self.republica.moradores(periodo[0], periodo[1]):
+			qtd_dias    = morador.qtd_dias_morados(periodo[0], periodo[1])
+			total_dias += qtd_dias
+			rateio_conta[morador] = dict()
+			rateio_conta[morador]['qtd_dias'] = Decimal(qtd_dias) # Decimal pois vai ser usado em outras contas depois
+			rateio_conta[morador]['gastos']   = Decimal(0)
+		
+		# Cálculo dos telefonemas de acordo com o responsável: morador, ex-morador ou sem dono
+		total_sem_dono     = Decimal(0)
+		total_ex_moradores = Decimal(0)
+		total_telefonemas  = Decimal(0)
 		for telefonema in self.telefonemas:
+			valor = telefonema.valor if type(telefonema.valor) is Decimal else str(telefonema.valor)
+			
+			total_telefonemas += valor
 			responsavel = telefonema.responsavel
 			if responsavel:
-				moradores.add(Morador.get_by(
-						and_(
-							Morador.c.id_pessoa == responsavel.id,
-							Morador.c.id_republica == self.republica.id
-							)))
-				gastos[responsavel] = gastos.get(responsavel, 0) + telefonema.valor
+				if not rateio_conta.has_key(responsavel):
+					# ex-morador que tem telefonema pendente
+					rateio_conta[responsavel] = dict()
+					rateio_conta[responsavel]['qtd_dias'] = Decimal(0)
+					rateio_conta[responsavel]['gastos']   = Decimal(0)
+					total_ex_moradores += telefonema.valor
+				
+				rateio_conta[responsavel]['gastos'] += valor
 			else:
-				tel_sem_dono += telefonema.valor
+				total_sem_dono += telefonema.valor
 		
-		franquia = self.franquia - tel_sem_dono
+		total_excedente_moradores = 0
+		for rateio in rateio_conta.itervalues():
+			franquia_morador = (self.franquia * rateio['qtd_dias']) / total_dias
+			div_tel_sem_dono = (total_sem_dono * rateio['qtd_dias']) / total_dias
+			excedente        = rateio['gastos'] + div_tel_sem_dono - franquia_morador
+			excedente        = excedente if excedente > 0 else Decimal(0)
+			total_excedente_moradores += excedente
+			
+			rateio['franquia']  = franquia_morador
+			rateio['sem_dono']  = div_tel_sem_dono
+			rateio['excedente'] = excedente
+			rateio['servicos']  = (self.servicos * rateio['qtd_dias']) / total_dias
 		
+		total_conta = self.servicos + (total_telefonemas if total_telefonemas > self.franquia else self.franquia)
+		if total_excedente_moradores > 0:
+			excedente_conta = total_conta - self.franquia
+		else:
+			excedente_conta = 0
+			total_excedente_moradores = 1
 		
+		for rateio in rateio_conta.itervalues():
+			rateio['a_pagar'] = rateio['franquia'] + \
+								rateio['servicos'] + \
+								(rateio['excedente'] * excedente_conta) / total_excedente_moradores
 		
+		rateio_conta['total_telefonemas']  = total_telefonemas
+		rateio_conta['total_conta']        = total_conta
+		rateio_conta['total_dias']         = total_dias
+		rateio_conta['total_sem_dono']     = total_sem_dono
+		rateio_conta['total_ex_moradores'] = total_ex_moradores
+		return rateio_conta
 
 
 class Telefonema(Entity):
