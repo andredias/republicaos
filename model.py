@@ -386,12 +386,13 @@ class ContaTelefone(Entity):
 								rateio['servicos'] + \
 								(rateio['excedente'] * excedente_conta) / total_excedente_moradores
 		
-		rateio_conta['total_telefonemas']  = total_telefonemas
-		rateio_conta['total_conta']        = total_conta
-		rateio_conta['total_dias']         = total_dias
-		rateio_conta['total_sem_dono']     = total_sem_dono
-		rateio_conta['total_ex_moradores'] = total_ex_moradores
-		return rateio_conta
+		resumo = dict()
+		resumo['total_telefonemas']  = total_telefonemas
+		resumo['total_conta']        = total_conta
+		resumo['total_dias']         = total_dias
+		resumo['total_sem_dono']     = total_sem_dono
+		resumo['total_ex_moradores'] = total_ex_moradores
+		return (resumo, rateio_conta)
 
 
 class Telefonema(Entity):
