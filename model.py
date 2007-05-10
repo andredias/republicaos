@@ -330,16 +330,16 @@ class ContaTelefone(Entity):
 		5. O valor excedente que cada morador deve pagar pode ser compensado pelo faltante de outro morador em atingir sua franquia
 		'''
 		periodo = self.republica.get_periodo_da_data(self.emissao)
+		rateio = dict()
 		
-		rateio_conta = dict()
 		total_dias = 0
 		# determina os moradores atuais da república
 		for morador in self.republica.moradores(periodo[0], periodo[1]):
 			qtd_dias    = morador.qtd_dias_morados(periodo[0], periodo[1])
 			total_dias += qtd_dias
-			rateio_conta[morador] = dict()
-			rateio_conta[morador]['qtd_dias'] = Decimal(qtd_dias) # Decimal pois vai ser usado em outras contas depois
-			rateio_conta[morador]['gastos']   = Decimal(0)
+			rateio[morador] = dict()
+			rateio[morador]['qtd_dias'] = Decimal(qtd_dias) # Decimal pois vai ser usado em outras contas depois
+			rateio[morador]['gastos']   = Decimal(0)
 		
 		# Cálculo dos telefonemas de acordo com o responsável: morador, ex-morador ou sem dono
 		total_sem_dono     = Decimal(0)
@@ -349,43 +349,45 @@ class ContaTelefone(Entity):
 			valor = telefonema.valor if type(telefonema.valor) is Decimal else str(telefonema.valor)
 			
 			total_telefonemas += valor
-			responsavel = telefonema.responsavel
-			if responsavel:
-				if not rateio_conta.has_key(responsavel):
+			morador = telefonema.responsavel
+			if morador:
+				if not rateio.has_key(morador):
 					# ex-morador que tem telefonema pendente
-					rateio_conta[responsavel] = dict()
-					rateio_conta[responsavel]['qtd_dias'] = Decimal(0)
-					rateio_conta[responsavel]['gastos']   = Decimal(0)
+					rateio[morador] = dict()
+					rateio[morador]['qtd_dias'] = Decimal(0)
+					rateio[morador]['gastos']   = Decimal(0)
 					total_ex_moradores += telefonema.valor
 				
-				rateio_conta[responsavel]['gastos'] += valor
+				rateio[morador]['gastos'] += valor
 			else:
 				total_sem_dono += telefonema.valor
 		
-		total_excedente_moradores = 0
-		for rateio in rateio_conta.itervalues():
-			franquia_morador = (self.franquia * rateio['qtd_dias']) / total_dias
-			div_tel_sem_dono = (total_sem_dono * rateio['qtd_dias']) / total_dias
-			excedente        = rateio['gastos'] + div_tel_sem_dono - franquia_morador
+		# determina a franquia e o excedente de cada morador
+		total_excedente = 0
+		for morador in rateio.itervalues():
+			franquia_morador = (self.franquia * morador['qtd_dias']) / total_dias
+			div_tel_sem_dono = (total_sem_dono * morador['qtd_dias']) / total_dias
+			excedente        = morador['gastos'] + div_tel_sem_dono - franquia_morador
 			excedente        = excedente if excedente > 0 else Decimal(0)
-			total_excedente_moradores += excedente
+			total_excedente += excedente
 			
-			rateio['franquia']  = franquia_morador
-			rateio['sem_dono']  = div_tel_sem_dono
-			rateio['excedente'] = excedente
-			rateio['servicos']  = (self.servicos * rateio['qtd_dias']) / total_dias
+			morador['franquia']  = franquia_morador
+			morador['sem_dono']  = div_tel_sem_dono
+			morador['excedente'] = excedente
+			morador['servicos']  = (self.servicos * morador['qtd_dias']) / total_dias
 		
 		total_conta = self.servicos + (total_telefonemas if total_telefonemas > self.franquia else self.franquia)
-		if total_excedente_moradores > 0:
+		if total_excedente > 0:
 			excedente_conta = total_conta - self.franquia
 		else:
 			excedente_conta = 0
-			total_excedente_moradores = 1
+			total_excedente = 1
 		
-		for rateio in rateio_conta.itervalues():
-			rateio['a_pagar'] = rateio['franquia'] + \
-								rateio['servicos'] + \
-								(rateio['excedente'] * excedente_conta) / total_excedente_moradores
+		# só agora é possível determinar quanto cada um paga
+		for morador in rateio.itervalues():
+			morador['a_pagar'] = morador['franquia'] + \
+								 morador['servicos'] + \
+								 (morador['excedente'] * excedente_conta) / total_excedente
 		
 		resumo = dict()
 		resumo['total_telefonemas']  = total_telefonemas
@@ -393,7 +395,7 @@ class ContaTelefone(Entity):
 		resumo['total_dias']         = total_dias
 		resumo['total_sem_dono']     = total_sem_dono
 		resumo['total_ex_moradores'] = total_ex_moradores
-		return (resumo, rateio_conta)
+		return (resumo, rateio)
 
 
 class Telefonema(Entity):

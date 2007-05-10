@@ -2,12 +2,18 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import decimal
+
 from model import *
 from elixir import *
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from tests.base import BaseTest
+
+
+decimal.setcontext(decimal.BasicContext)
+
 
 class TestDividirContaTelefone(BaseTest):
 	'''
@@ -47,7 +53,7 @@ class TestDividirContaTelefone(BaseTest):
 		Fechamento(republica = self.r, data = date(2007, 4, 6))
 		Fechamento(republica = self.r, data = date(2007, 5, 6))
 		
-		self.p1 = Pessoa(nome = 'André')
+		self.p1 = Pessoa(nome = 'Andre')
 		self.p2 = Pessoa(nome = 'Marcos')
 		self.p3 = Pessoa(nome = 'Roger')
 		self.p4 = Pessoa(nome = 'Leonardo')
@@ -81,15 +87,23 @@ class TestDividirContaTelefone(BaseTest):
 		for key, value in resumo.items():
 			write('\n%s = %s' % (key, value))
 		
-		keys = [(key.pessoa.nome, key) for key in rateio.keys()]
-		keys.sort()
-		for nome, morador in keys:
-			write('\n\n%s\n-----------' % nome)
-			for k, v in rateio[morador].iteritems():
-				write('\n\t%s = %s' % (k, v))
+		moradores = [(key.pessoa.nome, key) for key in rateio.keys()]
+		moradores.sort()
+		campos = ('qtd_dias', 'franquia', 'gastos', 'sem_dono', 'excedente', 'servicos', 'a_pagar')
+		totais = dict([campo, 0] for campo in campos)
+		write('\n\n----------|%9s|%9s|%9s|%9s|%9s|%9s|%9s' % campos)
+		for nome, morador in moradores:
+			write('\n%10s' % nome)
+			for campo in campos:
+				write('|%9s' % rateio[morador][campo])
+				totais[campo] += rateio[morador][campo]
+		
+		# mostra totais
+		write('\n----------')
+		for campo in campos:
+			write('|%9s' % totais[campo])
 		write('\n\n')
 	
-		
 	
 	def moradores_numero_dias_iguais(self):
 		m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
