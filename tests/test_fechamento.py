@@ -190,6 +190,7 @@ class TestFechamentoContas(BaseTest):
 		f.rateio[self.m4].saldo_final = Decimal(0)
 		
 		f._executar_acerto_final()
+		assert len(f.acerto_a_pagar) == 0
 
 
 
