@@ -95,14 +95,15 @@ class TestDividirContaTelefone(BaseTest):
 		for nome, morador in moradores:
 			write('\n%10s' % nome)
 			for campo in campos:
-				write('|%9s' % rateio[morador][campo])
-				totais[campo] += rateio[morador][campo]
+				write('|%9s' % rateio[morador].__dict__[campo])
+				totais[campo] += rateio[morador].__dict__[campo]
 		
 		# mostra totais
 		write('\n----------')
 		for campo in campos:
 			write('|%9s' % totais[campo])
 		write('\n\n')
+		sys.stdout.flush()
 	
 	
 	def moradores_numero_dias_iguais(self):
@@ -167,14 +168,14 @@ class TestDividirContaTelefone(BaseTest):
 		objectstore.flush()
 		
 		self.c.determinar_responsaveis_telefonemas()
-		resumo, rateio = self.c.dividir_conta()
+		resumo, rateio = self.c.executar_rateio()
 		self.mostrar_rateio(resumo, rateio)
 		
 		if tel_ex_morador:
-			assert (rateio[m1]['a_pagar'] + rateio[m2]['a_pagar'] + rateio[m3]['a_pagar'] + rateio[m4]['a_pagar']) == resumo['total_conta']
-			assert resumo['total_ex_moradores'] == rateio[m4]['gastos']
+			assert (rateio[m1].a_pagar + rateio[m2].a_pagar + rateio[m3].a_pagar + rateio[m4].a_pagar) == resumo['total_conta']
+			assert resumo['total_ex_moradores'] == rateio[m4].gastos
 		else:
-			assert (rateio[m1]['a_pagar'] + rateio[m2]['a_pagar'] + rateio[m3]['a_pagar']) == resumo['total_conta']
+			assert (rateio[m1].a_pagar + rateio[m2].a_pagar + rateio[m3].a_pagar) == resumo['total_conta']
 			assert resumo['total_ex_moradores'] == 0
 		
 		if ultrapassa_franquia:
@@ -183,9 +184,9 @@ class TestDividirContaTelefone(BaseTest):
 			assert resumo['total_conta'] == (self.c.franquia + self.c.servicos)
 		
 		if qtd_dias_diferentes:
-			assert rateio[m1]['franquia'] == rateio[m2]['franquia'] == (2 * rateio[m3]['franquia'])
+			assert rateio[m1].franquia == rateio[m2].franquia == (2 * rateio[m3].franquia)
 		else:
-			assert rateio[m1]['franquia'] == rateio[m2]['franquia'] == rateio[m3]['franquia'] == (self.c.franquia / 3)
+			assert rateio[m1].franquia == rateio[m2].franquia == rateio[m3].franquia == (self.c.franquia / 3)
 		
 		if tel_sem_dono:
 			assert resumo['total_sem_dono'] == (t1.valor + t2.valor)
