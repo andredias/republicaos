@@ -7,7 +7,6 @@ import decimal
 from model import *
 from elixir import *
 from datetime import date
-from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from tests.base import BaseTest
 
@@ -49,12 +48,12 @@ class TestFechamentoContas(BaseTest):
 	
 	
 	def set_despesas(self):
-		Despesa(data = Date(2007, 4, 21), valor = 20, tipo_despesa = self.td1, responsavel = self.m1)
-		Despesa(data = Date(2007, 4, 19), valor = 100, tipo_despesa = self.td4, responsavel = self.m1)
-		Despesa(data = Date(2007, 4, 12), valor = 50, tipo_despesa = self.td3, responsavel = self.m2)
-		Despesa(data = Date(2007, 4, 21), valor = 100, tipo_despesa = self.td2, responsavel = self.m1)
-		Despesa(data = Date(2007, 5, 1), valor = 100, tipo_despesa = self.td2, responsavel = self.m3)
-		Despesa(data = Date(2007, 5, 1), valor = 100, tipo_despesa = self.td2, responsavel = self.m4)
+		Despesa(data = date(2007, 4, 21), valor = 20, tipo_despesa = self.td1, responsavel = self.m1)
+		Despesa(data = date(2007, 4, 19), valor = 100, tipo_despesa = self.td4, responsavel = self.m1)
+		Despesa(data = date(2007, 4, 12), valor = 50, tipo_despesa = self.td3, responsavel = self.m2)
+		Despesa(data = date(2007, 4, 21), valor = 100, tipo_despesa = self.td2, responsavel = self.m1)
+		Despesa(data = date(2007, 5, 1), valor = 100, tipo_despesa = self.td2, responsavel = self.m3)
+		Despesa(data = date(2007, 5, 1), valor = 100, tipo_despesa = self.td2, responsavel = self.m4)
 	
 	
 	def print_acerto_final(self, fechamento):

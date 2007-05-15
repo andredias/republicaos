@@ -68,4 +68,33 @@ class TestMorador(BaseTest):
 	
 	
 	def test_despesas(self):
-		pass
+		r = Republica(nome = 'Teste',
+			data_criacao = date(2007, 3, 6),
+			logradouro = 'R. dos Bobos, nº 0')
+			
+		p1 = Pessoa(nome = 'André')
+		p2 = Pessoa(nome = 'Marcos')
+		
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 3, 6), data_saida = date(2006, 12, 1))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 6))
+		
+		td1 = TipoDespesa(nome = u'Água',    republica = r)
+		td2 = TipoDespesa(nome = 'Aluguel',  republica = r)
+		td3 = TipoDespesa(nome = 'Internet', republica = r)
+		
+		d1 = Despesa(data = date(2007, 4, 10), valor = 20, tipo_despesa = td1, responsavel = m1)
+		d2 = Despesa(data = date(2007, 4, 21), valor = 50, tipo_despesa = td2, responsavel = m1)
+		d3 = Despesa(data = date(2007, 4, 21), valor = 50, tipo_despesa = td2, responsavel = m2)
+		
+		da1 = DespesaAgendada(dia_vencimento = 19, valor = 50, tipo_despesa = td3, responsavel = m1, data_cadastro = date(2006, 12, 1))
+		da2 = DespesaAgendada(dia_vencimento = 15, valor = 45, tipo_despesa = td1, responsavel = m1, data_cadastro = date(2007, 6, 1))
+		
+		objectstore.flush()
+		
+		despesas = m1.despesas(date(2007, 4, 10), date(2007, 5, 10))
+		
+		assert m1._found(date(2007, 4, 19), da1, despesas)
+		assert not m1._found(date(2007, 4, 15), da2, despesas)
+		assert d1 in despesas
+		assert d2 in despesas
+		assert d3 not in despesas
