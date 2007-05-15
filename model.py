@@ -296,27 +296,28 @@ class Fechamento(Entity):
 		devedores.sort(compara_saldos)
 		
 		self.acerto_a_pagar = dict()
+		if len(devedores) == 0: return
 		for devedor in devedores:
 			self.acerto_a_pagar[devedor] = dict()
 		
 		devedores = iter(devedores)
-		devedor   = devedores.next()
-		saldo_pagar = self.rateio[devedor].saldo_final
-		for credor in credores:
-			saldo_receber = abs(self.rateio[credor].saldo_final)
-			while (saldo_receber > 0):
-				try:
-					if saldo_receber >= saldo_pagar:
-						self.acerto_a_pagar[devedor][credor] = saldo_pagar
-						saldo_receber -= saldo_pagar
-						devedor        = devedores.next()
-						saldo_pagar    = self.rateio[devedor].saldo_final
-					else:
-						self.acerto_a_pagar[devedor][credor] = saldo_receber
-						saldo_pagar  -= saldo_receber
-						saldo_receber = 0
-				except StopIteration:
-					break
+		try:
+			devedor     = devedores.next()
+			saldo_pagar = self.rateio[devedor].saldo_final
+			for credor in credores:
+				saldo_receber = abs(self.rateio[credor].saldo_final)
+				while (saldo_receber > 0):
+						if saldo_receber >= saldo_pagar:
+							self.acerto_a_pagar[devedor][credor] = saldo_pagar
+							saldo_receber -= saldo_pagar
+							devedor        = devedores.next()
+							saldo_pagar    = self.rateio[devedor].saldo_final
+						else:
+							self.acerto_a_pagar[devedor][credor] = saldo_receber
+							saldo_pagar  -= saldo_receber
+							saldo_receber = 0
+		except StopIteration:
+			return
 
 
 

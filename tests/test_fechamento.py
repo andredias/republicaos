@@ -175,6 +175,22 @@ class TestFechamentoContas(BaseTest):
 		assert (self.m3 in f.acerto_a_pagar[self.m4]) and f.acerto_a_pagar[self.m4][self.m3] == Decimal(35)
 		
 		self.print_acerto_final(f)
+	
+	
+	def test_acerto_final_4(self):
+		'''
+		Acerto Final - Caso 4: 0 credores e 0 devedores
+		'''
+		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		self.ajustar_fechamento_para_acerto_final(f)
+		
+		f.rateio[self.m1].saldo_final = Decimal(0)
+		f.rateio[self.m2].saldo_final = Decimal(0)
+		f.rateio[self.m3].saldo_final = Decimal(0)
+		f.rateio[self.m4].saldo_final = Decimal(0)
+		
+		f._executar_acerto_final()
+
 
 
 
