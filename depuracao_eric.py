@@ -3,13 +3,13 @@
 
 from model import *
 from elixir import *
-from tests.test_fechamento import *
+from tests.test_fechamento import TestFechamentoContas
 from tests.test_morador import TestMorador
 from tests.test_dividir_conta_telefone import TestDividirContaTelefone
 
-t = TestDividirContaTelefone()
+t = TestFechamentoContas()
 t.setup()
 try:
-	t.test_dividir_conta_caso_0()
+	t.test_fechamento()
 finally:
 	t.teardown()
