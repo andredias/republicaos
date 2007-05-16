@@ -82,7 +82,6 @@ class Republica(Entity):
 	has_field('cep', String(8))
 	using_options(tablename = 'republica')
 	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = '-data')
-	one_to_many('contas_telefone', of_kind = 'ContaTelefone', inverse = 'republica')
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica')
 	
 	
@@ -185,6 +184,20 @@ class Republica(Entity):
 				)
 	
 	
+	def contas_telefone(self, data_inicial = None, data_final = None):
+		'''
+		Retorna as contas de telefone da república no período
+		'''
+		data_inicial, data_final = self.retifica_periodo(data_inicial, data_final)
+		return ContaTelefone.select(
+					and_(
+						ContaTelefone.c.id_republica == self.id,
+						ContaTelefone.c.emissao >= data_inicial,
+						ContaTelefone.c.emissao <= data_final
+					)
+				)
+	
+	
 
 
 
@@ -214,84 +227,79 @@ class Fechamento(Entity):
 		'''
 		Calcula a divisão das despesas em determinado período
 		'''
-		self.data_inicial, self.data_final  = self.republica.retifica_periodo(self.data - relativedelta(days = 1))
-		self.totais_despesas                = dict()
-		self.totais_despesas['gerais']      = dict()
-		self.totais_despesas['especificas'] = dict()
+		self.data_inicial, self.data_final = self.republica.retifica_periodo(self.data - relativedelta(days = 1))
 		
-		self.rateio     = dict()
-		self.total_dias = 0
+		self.total_despesas_gerais      = Decimal(0)
+		self.total_despesas_especificas = Decimal(0)
+		self.total_dias                 = 0
 		
-		self.moradores = Set(self.republica.moradores(self.data_inicial, self.data_final))
-		self.despesas  = []
+		self.moradores     = Set(self.republica.moradores(self.data_inicial, self.data_final))
+		self.ex_moradores  = Set()
+		self.despesas      = []
+		self.despesas_tipo = dict()
+		self.rateio        = dict()
 		
 		# Divisão das contas de telefone
 		self.contas_telefone = self.republica.contas_telefone(self.data_inicial, self.data_final)
 		for conta_telefone in self.contas_telefone:
 			conta_telefone.executar_rateio()
-			self.moradores.add(conta_telefone.rateio.keys())
+			self.ex_moradores.union_update(Set(conta_telefone.rateio.keys()) - self.moradores)
 		
 		# Contabilização das despesas pagas por cada morador
-		for morador in self.moradores:
-			rateio[morador].qtd_dias = morador.qtd_dias_morados(self.data_inicial, self.data_final)
-			total_dias              += morador.qtd_dias
-			rateio[morador].despesas = dict(gerais = Decimal(0), especificas = Decimal(0))
-			for despesa in morador.despesas(data_inicial, data_final):
+		for morador in (self.moradores | self.ex_moradores):
+			self.rateio[morador] = MoradorRateio()
+			rateio_morador = self.rateio[morador]
+			rateio_morador.qtd_dias = morador.qtd_dias_morados(self.data_inicial, self.data_final)
+			self.total_dias        += rateio_morador.qtd_dias
+			rateio_morador.total_despesas_gerais      = Decimal(0)
+			rateio_morador.total_despesas_especificas = Decimal(0)
+			
+			for despesa in morador.despesas(self.data_inicial, self.data_final):
 				self.despesas.append(despesa)
-				tipo_despesa = despesa.tipo_despesa
-				classe       = 'gerais' if not tipo_despesa.especifica else 'especifica'
-				morador.total_despesas[classe]       += despesa.valor
-				totais_despesas[classe][tipo_despesa] = totais_despesas[classe].get(tipo_despesa, Decimal('0.00')) + despesa.valor
-			
-		self.total_geral      = sum(totais_despesas['gerais'].values())
-		self.total_especifico = sum(totais_despesas['especificas'].values())
-		
-		
-		# Divisão das contas
-		for morador in self.moradores:
-			morador.quota_geral = total_geral * morador.qtd_dias / total_dias - morador.total_despesas['gerais']
-			morador.quota_especifica = Decimal(0)
+				if not despesa.tipo.especifica:
+					rateio_morador.total_despesas_gerais += despesa.valor
+					self.total_despesas_gerais           += despesa.valor
+				else:
+					rateio_morador.total_despesas_especificas += despesa.valor
+					self.total_despesas_especificas           += despesa.valor
+				self.despesas_tipo[despesa.tipo] = self.despesas_tipo.get(despesa.tipo, Decimal('0.00')) + despesa.valor
+				
+			# contas específicas por enquanto, só de telefone
+			rateio_morador.quota_especifica = Decimal(0)
 			for conta_telefone in self.contas_telefone:
-				morador.quota_especifica += conta_telefone.rateio[morador]['a_pagar']
-			morador.saldo_final = morador.quota_geral + morador.quota_especifica
+				if morador in conta_telefone.rateio:
+					rateio_morador.quota_especifica += conta_telefone.rateio[morador].a_pagar
+			rateio_morador.saldo_final_especifico = rateio_morador.quota_especifica - rateio_morador.total_despesas_especificas
 			
-		self._executar_acerto_final()
+		# Divisão das contas
+		for rateio_morador in self.rateio.values():
+			rateio_morador.quota_geral       = self.total_despesas_gerais * rateio_morador.qtd_dias / self.total_dias
+			rateio_morador.saldo_final_geral = rateio_morador.quota_geral - rateio_morador.total_despesas_gerais
+			rateio_morador.saldo_final       = rateio_morador.saldo_final_geral + rateio_morador.saldo_final_especifico
+			
+		# transforma Set em List e ordena por nome
+		self.moradores    = [morador for morador in self.moradores]
+		self.ex_moradores = [morador for morador in self.ex_moradores]
+		self.moradores.sort(key = lambda obj:obj.pessoa.nome)
+		self.ex_moradores.sort(key = lambda obj:obj.pessoa.nome)
 		
+		self._executar_acerto_final()
+	
 	
 	def _executar_acerto_final(self):
 		'''
 		Executa o acerto final das contas, determinando quem deve pagar o que pra quem. A ordem dos credores
 		e devedores é ordenada para que sempre dê a mesma divisão.
 		'''
-		def compara_saldos(m1, m2):
-			dif = self.rateio[m1].saldo_final - self.rateio[m2].saldo_final
-			if dif > 0:
-				return 1
-			elif dif < 0:
-				return -1
-			else:
-				return 0
-		
-		def compara_nomes(m1, m2):
-			nome1 = m1.pessoa.nome
-			nome2 = m2.pessoa.nome
-			if nome1 > nome2:
-				return 1
-			elif nome1 < nome2:
-				return -1
-			else:
-				return 0
-		
-		credores  = Set([morador for morador in self.moradores if self.rateio[morador].saldo_final <= 0])
-		devedores = self.moradores - credores
+		todos_moradores = Set(self.moradores + self.ex_moradores)
+		credores  = Set([morador for morador in todos_moradores if self.rateio[morador].saldo_final <= 0])
+		devedores = todos_moradores - credores
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
-		self.moradores = [morador for morador in self.moradores]
-		self.moradores.sort(compara_nomes)
 		credores  = [credor for credor in credores]
 		devedores = [devedor for devedor in devedores]
-		credores.sort(compara_saldos)
-		devedores.sort(compara_saldos)
+		credores.sort(key =  lambda obj:self.rateio[obj].saldo_final)
+		devedores.sort(key = lambda obj:self.rateio[obj].saldo_final)
 		
 		self.acerto_a_pagar = dict()
 		if len(devedores) == 0: return
@@ -336,7 +344,7 @@ class ContaTelefone(Entity):
 	using_table_options(UniqueConstraint('telefone', 'emissao'))
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
 		column_kwargs = dict(nullable = False))
-	one_to_many('telefonemas', of_kind = 'Telefonema', inverse = 'conta_telefone', order_by = 'numero')
+	one_to_many('telefonemas', of_kind = 'Telefonema', order_by = 'numero')
 	
 	def determinar_responsaveis_telefonemas(self):
 		'''
@@ -551,7 +559,7 @@ class Morador(Entity):
 			if data < despesa.data:
 				break
 			elif data == despesa.data and \
-				despesa_agendada.tipo_despesa == despesa.tipo_despesa and \
+				despesa_agendada.tipo  == despesa.tipo and \
 				despesa_agendada.valor == despesa.valor:
 				return True
 		return False
@@ -567,10 +575,10 @@ class Morador(Entity):
 					despesa_agendada.data_cadastro <= data_agendada and \
 					not self._found(data_agendada, despesa_agendada, despesas):
 					Despesa(
-						data         = data_agendada,
-						valor        = despesa_agendada.valor,
-						responsavel  = despesa_agendada.responsavel,
-						tipo_despesa = despesa_agendada.tipo_despesa
+						data        = data_agendada,
+						valor       = despesa_agendada.valor,
+						responsavel = despesa_agendada.responsavel,
+						tipo        = despesa_agendada.tipo
 					)
 				data_agendada += relativedelta(months = 1)
 		
@@ -593,7 +601,7 @@ class Morador(Entity):
 					Despesa.c.id_morador == self.id,
 					Despesa.c.data >= data_inicial,
 					Despesa.c.data <= data_final,
-					Despesa.c.id_tipo_despesa == TipoDespesa.c.id,
+					Despesa.c.id_tipo == TipoDespesa.c.id,
 					TipoDespesa.c.especifica == especifica,
 					)
 				).execute().fetchone()[0]
@@ -603,7 +611,7 @@ class Morador(Entity):
 	
 	
 	def despesas_por_tipo(self, tipo_despesa, data_inicial = None, data_final = None):
-		return [despesa for despesa in self.despesas(data_inicial, data_final) if despesa.tipo_despesa == tipo_despesa]
+		return [despesa for despesa in self.despesas(data_inicial, data_final) if despesa.tipo == tipo_despesa]
 	
 	
 	def telefonemas(self, conta_telefone):
@@ -647,7 +655,7 @@ class Despesa(Entity):
 	has_field('valor', Numeric(10, 2), nullable = False)
 	using_options(tablename = 'despesa')
 	many_to_one('responsavel',  of_kind = 'Morador',     colname = 'id_morador',      column_kwargs = dict(nullable = False))
-	many_to_one('tipo_despesa', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
+	many_to_one('tipo',         of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
 
 
 
@@ -656,5 +664,5 @@ class DespesaAgendada(Entity):
 	has_field('dia_vencimento', Integer, nullable = False)
 	has_field('valor', Numeric(10,2), nullable = False)
 	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_agendadas', column_kwargs = dict(nullable = False))
-	many_to_one('tipo_despesa', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
+	many_to_one('tipo', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
 

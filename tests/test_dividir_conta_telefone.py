@@ -81,51 +81,26 @@ class TestDividirContaTelefone(BaseTest):
 			Telefone(numero = 88, responsavel = m4)
 	
 	
-	def mostrar_rateio(self, resumo, rateio):
-		write = sys.stdout.write
-		write('\n\n-------------------------')
-		for key, value in resumo.items():
-			write('\n%s = %s' % (key, value))
-		
-		moradores = [(key.pessoa.nome, key) for key in rateio.keys()]
-		moradores.sort()
-		campos = ('qtd_dias', 'franquia', 'gastos', 'sem_dono', 'excedente', 'servicos', 'a_pagar')
-		totais = dict([campo, 0] for campo in campos)
-		write('\n\n----------|%9s|%9s|%9s|%9s|%9s|%9s|%9s' % campos)
-		for nome, morador in moradores:
-			write('\n%10s' % nome)
-			for campo in campos:
-				write('|%9s' % rateio[morador].__dict__[campo])
-				totais[campo] += rateio[morador].__dict__[campo]
-		
-		# mostra totais
-		write('\n----------')
-		for campo in campos:
-			write('|%9s' % totais[campo])
-		write('\n\n')
-		sys.stdout.flush()
-	
-	
 	def moradores_numero_dias_iguais(self):
-		m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
-		m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
-		m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
 		
-		return (m1, m2, m3)
+		return (self.m1,self.m2, self.m3)
 	
 	
 	def moradores_numero_dias_diferentes(self):
-		m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
-		m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
-		m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 21)) # entrou no meio do período
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 21)) # entrou no meio do período
 		
-		return (m1, m2, m3)
+		return (self.m1, self.m2, self.m3)
 	
 	
 	def set_ex_morador(self):
-		m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 4, 4))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 4, 4))
 		Telefonema(numero = 77, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, valor = Decimal('1.25'))
-		return m4
+		return self.m4
 	
 	
 	def ligacoes_dentro_franquia(self):
@@ -149,6 +124,8 @@ class TestDividirContaTelefone(BaseTest):
 	
 	
 	def executa_caso_xyz(self, qtd_dias_diferentes, ultrapassa_franquia, tel_sem_dono, tel_ex_morador):
+		from tests.exibicao_resultados import print_rateio_conta_telefone
+		
 		set_morador             = [self.moradores_numero_dias_iguais, self.moradores_numero_dias_diferentes]
 		set_ultrapassa_franquia = [self.ligacoes_dentro_franquia , self.ligacoes_ultrapassando_franquia]
 		set_telefonema_sem_dono = [None, self.telefonemas_sem_dono]
@@ -169,7 +146,7 @@ class TestDividirContaTelefone(BaseTest):
 		
 		self.c.determinar_responsaveis_telefonemas()
 		resumo, rateio = self.c.executar_rateio()
-		self.mostrar_rateio(resumo, rateio)
+		print_rateio_conta_telefone(resumo, rateio)
 		
 		if tel_ex_morador:
 			assert (rateio[m1].a_pagar + rateio[m2].a_pagar + rateio[m3].a_pagar + rateio[m4].a_pagar) == resumo['total_conta']
