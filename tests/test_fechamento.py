@@ -60,6 +60,7 @@ class TestFechamentoContas(BaseTest):
 		f.rateio[self.m4] = MoradorRateio()
 		f.moradores    = f.rateio.keys()
 		f.ex_moradores = []
+		f.participantes = f.moradores + f.ex_moradores
 	
 	
 	
@@ -190,27 +191,73 @@ class TestFechamentoContas(BaseTest):
 		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_despesas_gerais == Decimal(420)
-		assert f.total_despesas_especificas == Decimal('37.75')
+		assert f.total_despesas_gerais > 0 and f.total_despesas_especificas > 0
+		assert f.total_despesas_gerais == sum(morador.quota_geral for morador in f.rateio.values())
+		assert f.total_despesas_especificas == self.c.resumo['total_conta'] == sum(morador.quota_especifica for morador in f.rateio.values())
 		assert len(f.moradores) == 3 and len(f.ex_moradores) == 1
-		assert f.rateio[self.m1].saldo_final == Decimal('77.45')
-		assert f.rateio[self.m2].saldo_final == Decimal('-18.80')
-		assert f.rateio[self.m3].saldo_final == Decimal('-59.90')
-		assert f.rateio[self.m4].saldo_final == Decimal('1.25')
+		assert any(morador.saldo_final for morador in f.rateio.values())
+		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
 	
 	
 	def test_fechamento_2(self):
 		'''
 		Fechamento sem nenhum ex-morador
 		'''
-		pass
+		from tests.test_dividir_conta_telefone import TestDividirContaTelefone
+		from tests.exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
+		# utiliza o test_dividir_conta_telefone
+		testa_conta = TestDividirContaTelefone()
+		testa_conta.r = self.r
+		testa_conta.c = self.c
+		testa_conta.p1 = self.p1
+		testa_conta.p2 = self.p2
+		testa_conta.p3 = self.p3
+		
+		testa_conta.test_dividir_conta_caso_07()
+		
+		self.m1 = testa_conta.m1
+		self.m2 = testa_conta.m2
+		self.m3 = testa_conta.m3
+		
+		Despesa(data = date(2007, 4, 21), valor = 20, tipo = self.td1, responsavel = self.m1)
+		Despesa(data = date(2007, 4, 12), valor = 50, tipo = self.td3, responsavel = self.m2)
+		Despesa(data = date(2007, 4, 21), valor = 150, tipo = self.td2, responsavel = self.m2)
+		Despesa(data = date(2007, 5, 1), valor = 150, tipo = self.td2, responsavel = self.m3)
+		Despesa(data = date(2007, 5, 5), valor = (self.c.resumo['total_conta'] / 2), tipo = self.td5, responsavel = self.m1)
+		Despesa(data = date(2007, 5, 5), valor = (self.c.resumo['total_conta'] / 2), tipo = self.td5, responsavel = self.m2)
+		
+		DespesaAgendada(dia_vencimento = 17, valor = 150, tipo = self.td4, responsavel = self.m1, data_cadastro = date(2006, 12, 1))
+		DespesaAgendada(dia_vencimento = 15, valor = 45, tipo = self.td1, responsavel = self.m1, data_cadastro = date(2007, 6, 1))
+		
+		objectstore.flush()
+		
+		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f.executar_rateio()
+		print_fechamento(f)
+		
+		assert f.total_despesas_gerais > 0 and f.total_despesas_especificas > 0
+		assert f.total_despesas_gerais == sum(morador.quota_geral for morador in f.rateio.values())
+		assert f.total_despesas_especificas == self.c.resumo['total_conta'] == sum(morador.quota_especifica for morador in f.rateio.values())
+		assert len(f.moradores) == 3 and len(f.ex_moradores) == 0
+		assert any(morador.saldo_final for morador in f.rateio.values())
+		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
 	
 	
 	def test_fechamento_3(self):
 		'''
 		Fechamento sem nenhum morador
 		'''
-		pass
+		from tests.test_dividir_conta_telefone import TestDividirContaTelefone
+		from tests.exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
+		
+		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f.executar_rateio()
+		print_fechamento(f)
+		
+		assert f.total_despesas_gerais == 0 and f.total_despesas_especificas == 0
+		assert len(f.moradores) == 0 and len(f.ex_moradores) == 0
+
+
 
 
 

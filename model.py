@@ -276,12 +276,15 @@ class Fechamento(Entity):
 			rateio_morador.quota_geral       = self.total_despesas_gerais * rateio_morador.qtd_dias / self.total_dias
 			rateio_morador.saldo_final_geral = rateio_morador.quota_geral - rateio_morador.total_despesas_gerais
 			rateio_morador.saldo_final       = rateio_morador.saldo_final_geral + rateio_morador.saldo_final_especifico
+		
 			
 		# transforma Set em List e ordena por nome
 		self.moradores    = [morador for morador in self.moradores]
 		self.ex_moradores = [morador for morador in self.ex_moradores]
+		self.participantes = self.moradores + self.ex_moradores
 		self.moradores.sort(key = lambda obj:obj.pessoa.nome)
 		self.ex_moradores.sort(key = lambda obj:obj.pessoa.nome)
+		self.participantes.sort(key = lambda obj:obj.pessoa.nome)
 		
 		self._executar_acerto_final()
 	
@@ -291,13 +294,10 @@ class Fechamento(Entity):
 		Executa o acerto final das contas, determinando quem deve pagar o que pra quem. A ordem dos credores
 		e devedores é ordenada para que sempre dê a mesma divisão.
 		'''
-		todos_moradores = Set(self.moradores + self.ex_moradores)
-		credores  = Set([morador for morador in todos_moradores if self.rateio[morador].saldo_final <= 0])
-		devedores = todos_moradores - credores
+		credores  = [morador for morador in self.participantes if self.rateio[morador].saldo_final <= 0]
+		devedores = [devedor for devedor in (Set(self.participantes) - Set(credores))]
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
-		credores  = [credor for credor in credores]
-		devedores = [devedor for devedor in devedores]
 		credores.sort(key =  lambda obj:self.rateio[obj].saldo_final)
 		devedores.sort(key = lambda obj:self.rateio[obj].saldo_final)
 		
