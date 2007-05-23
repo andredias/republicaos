@@ -146,7 +146,7 @@ def print_acerto_final(fechamento):
 	write('\n%s' % ('-' * 10 * (len(fechamento.participantes) + 3)))
 	write('\n   Receber')
 	for credor in fechamento.participantes:
-		if credor in a_receber.keys():
+		if credor in a_receber:
 			write('|%10s' % a_receber[credor])
 		else:
 			write('|%10s' % ' ')

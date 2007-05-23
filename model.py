@@ -279,8 +279,8 @@ class Fechamento(Entity):
 		
 			
 		# transforma Set em List e ordena por nome
-		self.moradores    = [morador for morador in self.moradores]
-		self.ex_moradores = [morador for morador in self.ex_moradores]
+		self.moradores    = list(self.moradores)
+		self.ex_moradores = list(self.ex_moradores)
 		self.participantes = self.moradores + self.ex_moradores
 		self.moradores.sort(key = lambda obj:obj.pessoa.nome)
 		self.ex_moradores.sort(key = lambda obj:obj.pessoa.nome)
@@ -295,7 +295,7 @@ class Fechamento(Entity):
 		e devedores é ordenada para que sempre dê a mesma divisão.
 		'''
 		credores  = [morador for morador in self.participantes if self.rateio[morador].saldo_final <= 0]
-		devedores = [devedor for devedor in (Set(self.participantes) - Set(credores))]
+		devedores = list(Set(self.participantes) - Set(credores))
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
 		credores.sort(key =  lambda obj:self.rateio[obj].saldo_final)
@@ -556,7 +556,7 @@ class Morador(Entity):
 	
 	def _found(self, data, despesa_agendada, despesas):
 		for despesa in despesas:
-			if data < despesa.data:
+			if data < despesa.data: # despesas estão por ordem decrescente de data
 				break
 			elif data == despesa.data and \
 				despesa_agendada.tipo  == despesa.tipo and \
@@ -592,6 +592,10 @@ class Morador(Entity):
 	
 	
 	def total_despesas(self, data_inicial = None, data_final = None):
+		'''
+		Atualmente esta função está servindo apenas como referência da utilização de algumas funções do SQLAlchemy.
+		O mesmo resultado pode ser obtido através de uma "List comprehension"
+		'''
 		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
 		
 		def total(especifica):
