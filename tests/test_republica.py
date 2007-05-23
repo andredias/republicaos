@@ -113,7 +113,7 @@ class TestRepublica(BaseTest):
 		   * `[dia/mês, dia/(mês+1)[`
 		   * `----[xxxxxx[`--->`
 		
-		Caos de apuração:
+		Casos de apuração:
 		
 		                        Período de Apuração
 		-------------------[xxxxxxxxxxxxxxxxxxxxxxxxxxxxx[------------------>    Morador     |  Incluído
