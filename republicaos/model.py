@@ -11,7 +11,6 @@ from datetime    import date, datetime, time
 import csv
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
-from sets import Set
 
 class Pessoa(Entity):
 	has_field('nome', Unicode(80), nullable = False, unique = True)
@@ -233,8 +232,8 @@ class Fechamento(Entity):
 		self.total_despesas_especificas = Decimal(0)
 		self.total_dias                 = 0
 		
-		self.moradores     = Set(self.republica.moradores(self.data_inicial, self.data_final))
-		self.ex_moradores  = Set()
+		self.moradores     = set(self.republica.moradores(self.data_inicial, self.data_final))
+		self.ex_moradores  = set()
 		self.despesas      = []
 		self.despesas_tipo = dict()
 		self.rateio        = dict()
@@ -243,7 +242,7 @@ class Fechamento(Entity):
 		self.contas_telefone = self.republica.contas_telefone(self.data_inicial, self.data_final)
 		for conta_telefone in self.contas_telefone:
 			conta_telefone.executar_rateio()
-			self.ex_moradores.union_update(Set(conta_telefone.rateio.keys()) - self.moradores)
+			self.ex_moradores.update(set(conta_telefone.rateio.keys()) - self.moradores)
 		
 		# Contabilização das despesas pagas por cada morador
 		for morador in (self.moradores | self.ex_moradores):
@@ -278,7 +277,7 @@ class Fechamento(Entity):
 			rateio_morador.saldo_final       = rateio_morador.saldo_final_geral + rateio_morador.saldo_final_especifico
 		
 			
-		# transforma Set em List e ordena por nome
+		# transforma set em list e ordena por nome
 		self.moradores    = list(self.moradores)
 		self.ex_moradores = list(self.ex_moradores)
 		self.participantes = self.moradores + self.ex_moradores
@@ -295,7 +294,7 @@ class Fechamento(Entity):
 		e devedores é ordenada para que sempre dê a mesma divisão.
 		'''
 		credores  = [morador for morador in self.participantes if self.rateio[morador].saldo_final <= 0]
-		devedores = list(Set(self.participantes) - Set(credores))
+		devedores = list(set(self.participantes) - set(credores))
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
 		credores.sort(key =  lambda obj:self.rateio[obj].saldo_final)
