@@ -3,12 +3,12 @@
 
 import decimal
 
-from model import *
+from republicaos.model import *
 from elixir import *
 from datetime import date
 from decimal import Decimal
-from tests.base import BaseTest
-from tests.exibicao_resultados import print_acerto_final
+from base import BaseTest
+from exibicao_resultados import print_acerto_final
 
 class TestFechamentoContas(BaseTest):
 	'''
@@ -158,8 +158,8 @@ class TestFechamentoContas(BaseTest):
 	
 	
 	def test_fechamento_1(self):
-		from tests.test_dividir_conta_telefone import TestDividirContaTelefone
-		from tests.exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
+		from test_dividir_conta_telefone import TestDividirContaTelefone
+		from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
 		# utiliza o test_dividir_conta_telefone
 		testa_conta = TestDividirContaTelefone()
 		testa_conta.r = self.r
@@ -203,8 +203,8 @@ class TestFechamentoContas(BaseTest):
 		'''
 		Fechamento sem nenhum ex-morador
 		'''
-		from tests.test_dividir_conta_telefone import TestDividirContaTelefone
-		from tests.exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
+		from test_dividir_conta_telefone import TestDividirContaTelefone
+		from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
 		# utiliza o test_dividir_conta_telefone
 		testa_conta = TestDividirContaTelefone()
 		testa_conta.r = self.r
@@ -247,8 +247,8 @@ class TestFechamentoContas(BaseTest):
 		'''
 		Fechamento sem nenhum morador
 		'''
-		from tests.test_dividir_conta_telefone import TestDividirContaTelefone
-		from tests.exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
+		from test_dividir_conta_telefone import TestDividirContaTelefone
+		from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
 		
 		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
 		f.executar_rateio()

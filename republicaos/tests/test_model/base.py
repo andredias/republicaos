@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from model import *
+from republicaos.model import *
 from elixir import *
 
 #def setup():

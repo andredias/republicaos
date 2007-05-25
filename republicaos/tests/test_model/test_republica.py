@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from model import *
+from republicaos.model import *
 from elixir import *
 from datetime import date, time
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import create_engine
-from tests.base import BaseTest
+from base import BaseTest
 
 
 

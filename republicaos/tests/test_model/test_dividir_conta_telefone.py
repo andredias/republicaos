@@ -4,12 +4,12 @@
 import sys
 import decimal
 
-from model import *
+from republicaos.model import *
 from elixir import *
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from decimal import Decimal
-from tests.base import BaseTest
+from base import BaseTest
 
 
 decimal.setcontext(decimal.BasicContext)
@@ -124,7 +124,7 @@ class TestDividirContaTelefone(BaseTest):
 	
 	
 	def executa_caso_xyz(self, qtd_dias_diferentes, ultrapassa_franquia, tel_sem_dono, tel_ex_morador):
-		from tests.exibicao_resultados import print_rateio_conta_telefone
+		from exibicao_resultados import print_rateio_conta_telefone
 		
 		set_morador             = [self.moradores_numero_dias_iguais, self.moradores_numero_dias_diferentes]
 		set_ultrapassa_franquia = [self.ligacoes_dentro_franquia , self.ligacoes_ultrapassando_franquia]

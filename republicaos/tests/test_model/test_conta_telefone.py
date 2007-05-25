@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from model import *
+from republicaos.model import *
 from elixir import *
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 
-from tests.base import BaseTest
+from base import BaseTest
 
 
 class TestContaTelefone(BaseTest):
