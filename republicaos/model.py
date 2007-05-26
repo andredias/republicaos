@@ -5,12 +5,15 @@ from elixir      import Entity, has_field, using_options, using_table_options, u
 from elixir      import has_many as one_to_many
 from elixir      import belongs_to as many_to_one
 from elixir      import has_and_belongs_to_many as many_to_many
-from elixir      import metadata, objectstore
+from elixir      import objectstore
 from sqlalchemy  import *
 from datetime    import date, datetime, time
 import csv
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
+
+from turbogears.database import metadata
+
 
 class Pessoa(Entity):
 	has_field('nome', Unicode(80), nullable = False, unique = True)
