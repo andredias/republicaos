@@ -15,6 +15,10 @@ from dateutil.relativedelta import relativedelta
 from turbogears.database import metadata
 
 
+class ModelIntegrityException(Exception):
+	pass
+
+
 class Pessoa(Entity):
 	has_field('nome', Unicode(80), nullable = False, unique = True)
 	using_options(tablename = 'pessoa')
@@ -87,96 +91,46 @@ class Republica(Entity):
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica')
 	
 	
-	def _proximo_rateio(self):
-		if len(self.fechamentos) and ((self.proximo_rateio is None) or (self.proximo_rateio <= self.fechamentos[0].data)):
-			self.proximo_rateio = self.fechamentos[0].data + relativedelta(months = 1)
-		elif (self.proximo_rateio is None) or (self.proximo_rateio <= self.data_criacao):
-			self.proximo_rateio = self.data_criacao + relativedelta(months = 1)
-		return self.proximo_rateio
-	
-	
-	def _datas_fechamentos(self):
+	def datas_fechamento(self):
 		'''
 		Todas as datas de fechamento em ordem decrescente
 		'''
-		result = [self._proximo_rateio()]
-		result.extend([fechamento.data for fechamento in self.fechamentos])
+		result = [fechamento.data for fechamento in self.fechamentos]
 		result.append(self.data_criacao)
 		return result
 	
 	
-	def get_periodo_da_data(self, data_ref):
+	@property
+	def proxima_data_fechamento(self):
+		datas_fechamento = self.datas_fechamento()
+		if (not self.proximo_rateio) or (self.proximo_rateio <= datas_fechamento[0]):
+			self.proximo_rateio = datas_fechamento[0] + relativedelta(months = 1)
+		return self.proximo_rateio
+	
+	
+	def periodo_fechamento(self, data_ref = None):
 		'''
 		Obtém o período em que a data_ref se encontra
 		'''
-		data_inicial = None
-		data_final   = None
-		
-		proximo_rateio = self._proximo_rateio()
-		if proximo_rateio < data_ref:
-			data_inicial = proximo_rateio
-			data_final   = data_ref + relativedelta(days = 1)
-		elif data_ref < self.data_criacao:
-			data_inicial = data_ref
-			data_final   = self.data_criacao - relativedelta(days = 1)
-		else:
-			datas = self._datas_fechamentos()
-			for i in range(len(datas) - 1):
-				if datas[i] > data_ref >= datas[i + 1]:
-					data_final   = datas[i] - relativedelta(days = 1)
-					data_inicial = datas[i + 1]
-					break
+		datas_fechamento = [self.proxima_data_fechamento] + self.datas_fechamento()
+		if (not data_ref) or (data_ref > datas_fechamento[0]):
+			data_ref = datas_fechamento[0]
+		elif data_ref < datas_fechamento[-1]:
+			data_ref = datas_fechamento[-1]
+			
+		for i in range(len(datas_fechamento) - 1):
+			if datas_fechamento[i] >= data_ref >= datas_fechamento[i + 1]:
+				data_final   = datas_fechamento[i] - relativedelta(days = 1)
+				data_inicial = datas_fechamento[i + 1]
+				break
 		
 		return (data_inicial, data_final)
 	
 	
-	def ultimo_periodo_fechamento(self):
-		'''
-		Último período de fechamento da república. Caso não haja nenhum, retorna a data em que a república foi criada
-		'''
-		datas = self._datas_fechamentos()
-		if len(datas) > 2:
-			return (datas[2], datas[1] - relativedelta(days = 1))
-		else:
-			return self.proximo_periodo_fechamento()
-	
-	
-	def proximo_periodo_fechamento(self):
-		'''
-		Último de fechamento até o dia_fechamento do próximo mês
-		'''
-		datas = self._datas_fechamentos()
-		return (datas[1], datas[0] - relativedelta(days = 1))
-	
-	
-	def retifica_periodo(self, data_inicial = None, data_final = None):
-		'''
-		Se a data inicial é fornecida, determina o período em que ela se encontra, senão, retorna o próximo período de fechamento
-		'''
-		if data_inicial and not data_final:
-			# uma data fornecida. Então deseja o período em que essa data se encontra
-			di, df = self.get_periodo_da_data(data_inicial)
-			data_inicial = None
-		elif not data_inicial:
-			# nenhuma data fornecida, obtém o próximo fechamento
-			di, df = self.proximo_periodo_fechamento()
-		
-		if not data_inicial:
-			data_inicial = di
-		if not data_final:
-			data_final = df
-		
-		# garante que as datas estão em ordem crescente
-		if data_inicial > data_final:
-			data_inicial, data_final = data_final, data_inicial
-		return (data_inicial, data_final)
-	
-	
-	def moradores(self, data_inicial = None, data_final = None):
+	def moradores(self, data_inicial, data_final):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
-		data_inicial, data_final = self.retifica_periodo(data_inicial, data_final)
 		return Morador.select(
 					and_(
 						Morador.c.id_republica == self.id,
@@ -186,11 +140,10 @@ class Republica(Entity):
 				)
 	
 	
-	def contas_telefone(self, data_inicial = None, data_final = None):
+	def contas_telefone(self, data_inicial, data_final):
 		'''
 		Retorna as contas de telefone da república no período
 		'''
-		data_inicial, data_final = self.retifica_periodo(data_inicial, data_final)
 		return ContaTelefone.select(
 					and_(
 						ContaTelefone.c.id_republica == self.id,
@@ -229,7 +182,7 @@ class Fechamento(Entity):
 		'''
 		Calcula a divisão das despesas em determinado período
 		'''
-		self.data_inicial, self.data_final = self.republica.retifica_periodo(self.data - relativedelta(days = 1))
+		self.data_inicial, self.data_final = self.republica.periodo_fechamento(self.data)
 		
 		self.total_despesas_gerais      = Decimal(0)
 		self.total_despesas_especificas = Decimal(0)
@@ -326,6 +279,19 @@ class Fechamento(Entity):
 							saldo_receber = 0
 		except StopIteration:
 			return
+	
+	
+	#
+	# Funções a seguir deveriam já estar habilitadas no Elixir para funcionar como os triggers do Banco de Dados
+	#
+	def before_insert(self):
+		if self.data > self.republica.fechamentos[0].data:
+			raise ModelIntegrityException(message = 'Não é permitido lançar fechamento atrasado')
+	
+	
+	def after_insert(self):
+		self.republica.proximo_rateio = self.data + relativedelta(months = 1)
+		self.republica.flush()
 
 
 
@@ -450,7 +416,7 @@ class ContaTelefone(Entity):
 		4. O valor excedente é quanto cada morador gastou além da franquia a que tinha direito
 		5. O valor excedente que cada morador deve pagar pode ser compensado pelo faltante de outro morador em atingir sua franquia
 		'''
-		periodo = self.republica.get_periodo_da_data(self.emissao)
+		periodo = self.republica.periodo_fechamento(self.emissao)
 		rateio = dict()
 		
 		total_dias = 0
@@ -587,19 +553,16 @@ class Morador(Entity):
 		objectstore.flush()
 	
 	
-	def despesas(self, data_inicial = None, data_final = None):
-		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
+	def despesas(self, data_inicial, data_final):
 		self._cadastrar_despesas_agendadas(data_inicial, data_final)
 		return self._get_despesas(data_inicial, data_final)
 	
 	
-	def total_despesas(self, data_inicial = None, data_final = None):
+	def total_despesas(self, data_inicial, data_final):
 		'''
 		Atualmente esta função está servindo apenas como referência da utilização de algumas funções do SQLAlchemy.
 		O mesmo resultado pode ser obtido através de uma "List comprehension"
 		'''
-		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
-		
 		def total(especifica):
 			return select(
 				[func.coalesce(func.sum(Despesa.c.valor), 0)],
@@ -633,13 +596,8 @@ class Morador(Entity):
 	
 	
 	def qtd_dias_morados(self, data_inicial = None, data_final = None):
-		data_inicial, data_final = self.republica.retifica_periodo(data_inicial, data_final)
-		entrada = max(self.data_entrada, data_inicial)
-		if not self.data_saida:
- 			saida = data_final
-		else:
-			saida = min(self.data_saida, data_final)
-		
+		entrada  = max(self.data_entrada, data_inicial)
+		saida    = min(self.data_saida, data_final) if self.data_saida else data_final
 		qtd_dias = (saida - entrada).days + 1
 		return (qtd_dias if qtd_dias >= 0 else 0)
 
@@ -674,3 +632,54 @@ class DespesaAgendada(Entity):
 	many_to_one('tipo', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
 
 
+#
+# identity model
+# 
+
+class Visit(Entity):
+    has_field('visit_key', String(40), primary_key=True)
+    has_field('created', DateTime, nullable=False, default=datetime.now)
+    has_field('expiry', DateTime)
+    using_options(tablename='visit')
+    
+    @classmethod
+    def lookup_visit(cls, visit_key):
+        return Visit.get(visit_key)
+
+class VisitIdentity(Entity):
+    has_field('visit_key', String(40), primary_key=True)
+    many_to_one('user', of_kind='User', colname='user_id', use_alter=True)
+    using_options(tablename='visit_identity')
+
+class Group(Entity):
+    has_field('group_id', Integer, primary_key=True)
+    has_field('group_name', Unicode(16), unique=True)
+    has_field('display_name', Unicode(255))
+    has_field('created', DateTime, default=datetime.now)
+    many_to_many('users', of_kind='User', inverse='groups')
+    many_to_many('permissions', of_kind='Permission', inverse='groups')
+    using_options(tablename='tg_group')
+
+class User(Entity):
+    has_field('user_id', Integer, primary_key=True)
+    has_field('user_name', Unicode(16), unique=True)
+    has_field('email_address', Unicode(255), unique=True)
+    has_field('display_name', Unicode(255))
+    has_field('password', Unicode(40))
+    has_field('created', DateTime, default=datetime.now)
+    many_to_many('groups', of_kind='Group', inverse='users')
+    using_options(tablename='tg_user')
+    
+    @property
+    def permissions(self):
+        perms = set()
+        for g in self.groups:
+            perms = perms | set(g.permissions)
+        return perms
+
+class Permission(Entity):
+    has_field('permission_id', Integer, primary_key=True)
+    has_field('permission_name', Unicode(16), unique=True)
+    has_field('description', Unicode(255))
+    many_to_many('groups', of_kind='Group', inverse='permissions')
+    using_options(tablename='permission')
