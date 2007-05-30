@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="master.html" />
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+    <title>Cadastrar Despesa</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/static/css/style.css')}" />
+</head>
+
+<body>
+<h1>Cadastrar Despesa</h1>
+
+
+<form action="adicionar_despesa" method="post">
+	<p><label for="tipo_despesa">Tipo da Despesa</label><br/>
+	<select class="campo_importante" name="tipo_despesa">
+		<option py:for="tipo_despesa in republica.tipos_despesa" value="${tipo_despesa.id}">
+			<span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
+		</option>
+	</select>
+	<span class="hint">Ex.: Água, Luz, Telefone</span>
+	</p>
+	
+	<p><label for="quantia">Quantia</label><br/>
+	<input id="campo_importante" name="quantia" size="30" type="text" />
+	<span class="hint">Ex.: 295,00 ou 1.024,50</span>
+	</p>
+	
+	<p><label for="schedule_mode">Vencimento</label><br />
+	<input name="periodicidade" type="radio" value="uma_vez" />Apenas uma vez em
+		<span id="data_vencimento">
+			<input maxlength="10" name="data_vencimento" size="10" type="text" value="${hoje.strftime('%d-%m-%Y')}" /> (dd/mm/aaaa)
+		</span><br />
+	<input name="periodicidade" type="radio" value="mensal" /><label for="dia_vencimento">Mensalmente</label>, no dia
+		<span id="dia_vencimento">
+			<input maxlength="2" name="dia_vencimento" size="2" type="text" value="${hoje.day}" /> (1 a 31)
+			<label for="data_final">, repetindo até (dd/mm/aaaa)</label> <input maxlength="10" name="data_final" size="10" type="text" /> (opcional)
+		</span>
+	</p>
+	
+	<p>
+		<input name="save_add" type="submit" value="Salvar e adicionar outro" />
+		<input name="save" type="submit" value="Salvar" /> ou 
+		<a href="/" class="cancel">Cancelar</a>
+	</p>
+</form>
+
+
+</body>
+</html>

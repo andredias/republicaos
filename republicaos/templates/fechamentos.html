@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="master.html" />
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+    <title>Welcome to TurboGears</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/static/css/style.css')}" />
+</head>
+
+<body>
+<h1>Fechamentos Disponíveis</h1>
+<ul>
+	<li><a href="${tg.url('/fechamento/%d/%s' % (republica.id, republica.proxima_data_fechamento.strftime('%d-%m-%Y')))}">
+			<span py:replace="republica.proxima_data_fechamento.strftime('%d/%m/%Y')">Próxima data de fechamento</span>
+		</a>
+	</li>
+	<li py:for="fechamento in republica.fechamentos">
+		<a href="${tg.url('/fechamento/%d/%s' % (republica.id, fechamento.data.strftime('%d-%m-%Y')))}">
+			<span py:replace="fechamento.data.strftime('%d/%m/%Y')">data do fechamento</span>
+		</a>
+	</li>
+</ul>
+</body>
+</html>
