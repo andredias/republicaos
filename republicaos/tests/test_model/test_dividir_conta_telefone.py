@@ -99,27 +99,27 @@ class TestDividirContaTelefone(BaseTest):
 	
 	def set_ex_morador(self):
 		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 4, 4))
-		Telefonema(numero = 77, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, valor = Decimal('1.25'))
+		Telefonema(numero = 77, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, quantia = Decimal('1.25'))
 		return self.m4
 	
 	
 	def ligacoes_dentro_franquia(self):
-		Telefonema(numero = 11, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, valor = Decimal('5.5'))
-		Telefonema(numero = 33, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 800, valor = Decimal('4.5'))
-		Telefonema(numero = 55, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, valor = Decimal('5.5'))
+		Telefonema(numero = 11, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, quantia = Decimal('5.5'))
+		Telefonema(numero = 33, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 800, quantia = Decimal('4.5'))
+		Telefonema(numero = 55, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, quantia = Decimal('5.5'))
 	
 	
 	def ligacoes_ultrapassando_franquia(self):
-		Telefonema(numero = 11, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, valor = Decimal('5.5'))
-		Telefonema(numero = 22, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 2, segundos = 700, valor = Decimal('10.5'))
-		Telefonema(numero = 33, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 800, valor = Decimal('4.5'))
-		Telefonema(numero = 44, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 2, segundos = 800, valor = Decimal('7.5'))
-		Telefonema(numero = 55, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, valor = Decimal('5.5'))
+		Telefonema(numero = 11, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, quantia = Decimal('5.5'))
+		Telefonema(numero = 22, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 2, segundos = 700, quantia = Decimal('10.5'))
+		Telefonema(numero = 33, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 800, quantia = Decimal('4.5'))
+		Telefonema(numero = 44, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 2, segundos = 800, quantia = Decimal('7.5'))
+		Telefonema(numero = 55, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, quantia = Decimal('5.5'))
 	
 	
 	def telefonemas_sem_dono(self):
-		t1 = Telefonema(numero = 111, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, valor = Decimal('2.5'))
-		t2 = Telefonema(numero = 222, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 2, segundos = 900, valor = Decimal('0.5'))
+		t1 = Telefonema(numero = 111, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 900, quantia = Decimal('2.5'))
+		t2 = Telefonema(numero = 222, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 2, segundos = 900, quantia = Decimal('0.5'))
 		return (t1, t2)
 	
 	
@@ -166,7 +166,7 @@ class TestDividirContaTelefone(BaseTest):
 			assert rateio[m1].franquia == rateio[m2].franquia == rateio[m3].franquia == (self.c.franquia / 3)
 		
 		if tel_sem_dono:
-			assert resumo['total_sem_dono'] == (t1.valor + t2.valor)
+			assert resumo['total_sem_dono'] == (t1.quantia + t2.quantia)
 		else:
 			assert resumo['total_sem_dono'] == 0
 	

@@ -212,12 +212,12 @@ class Fechamento(Entity):
 			for despesa in morador.despesas(self.data_inicial, self.data_final):
 				self.despesas.append(despesa)
 				if not despesa.tipo.especifica:
-					rateio_morador.total_despesas_gerais += despesa.valor
-					self.total_despesas_gerais           += despesa.valor
+					rateio_morador.total_despesas_gerais += despesa.quantia
+					self.total_despesas_gerais           += despesa.quantia
 				else:
-					rateio_morador.total_despesas_especificas += despesa.valor
-					self.total_despesas_especificas           += despesa.valor
-				self.despesas_tipo[despesa.tipo] = self.despesas_tipo.get(despesa.tipo, Decimal('0.00')) + despesa.valor
+					rateio_morador.total_despesas_especificas += despesa.quantia
+					self.total_despesas_especificas           += despesa.quantia
+				self.despesas_tipo[despesa.tipo] = self.despesas_tipo.get(despesa.tipo, Decimal('0.00')) + despesa.quantia
 				
 			# contas específicas por enquanto, só de telefone
 			rateio_morador.quota_especifica = Decimal(0)
@@ -340,7 +340,7 @@ class ContaTelefone(Entity):
 		col_numero  = 4
 		col_tipo    = 2
 		col_duracao = 11
-		col_valor   = 13
+		col_quantia = 13
 		telefonemas = dict()
 		
 		# palavras usadas na descrição que ajudam a classificar o telefonema
@@ -354,7 +354,7 @@ class ContaTelefone(Entity):
 		for linha in linhas:
 			numero  = int(linha[col_numero].strip())
 			descr   = linha[col_tipo].split()
-			valor   = Decimal(linha[col_valor].strip())
+			quantia = Decimal(linha[col_quantia].strip())
 			
 			milesimos_minutos = int(linha[col_duracao].strip())
 			segundos          = milesimos_minutos * 60 / 1000
@@ -364,10 +364,10 @@ class ContaTelefone(Entity):
 			
 			if numero not in telefonemas:
 				# não consegui fazer contas apenas com time. Foi necessário usar relativedelta
-				telefonemas[numero] = [segundos, valor, tipo_fone, tipo_distancia]
+				telefonemas[numero] = [segundos, quantia, tipo_fone, tipo_distancia]
 			else:
 				telefonemas[numero][0] += segundos
-				telefonemas[numero][1] += valor
+				telefonemas[numero][1] += quantia
 		
 		return telefonemas
 	
@@ -397,7 +397,7 @@ class ContaTelefone(Entity):
 				numero         = numero,
 				conta_telefone = self,
 				segundos       = atributos[0],
-				valor          = atributos[1],
+				quantia        = atributos[1],
 				tipo_fone      = atributos[2],
 				tipo_distancia = atributos[3]
 			)
@@ -413,8 +413,8 @@ class ContaTelefone(Entity):
 		1. Os telefonemas sem dono são debitados da franquia
 		2. A franquia restante é dividida entre os moradores de acordo com o número de dias morados por cada um
 		3. Os serviços (se houverem) também são divididos de acordo com o número de dias morados
-		4. O valor excedente é quanto cada morador gastou além da franquia a que tinha direito
-		5. O valor excedente que cada morador deve pagar pode ser compensado pelo faltante de outro morador em atingir sua franquia
+		4. A quantia excedente é quanto cada morador gastou além da franquia a que tinha direito
+		5. A quantia excedente que cada morador deve pagar pode ser compensado pelo faltante de outro morador em atingir sua franquia
 		'''
 		periodo = self.republica.periodo_fechamento(self.emissao)
 		rateio = dict()
@@ -433,9 +433,9 @@ class ContaTelefone(Entity):
 		total_ex_moradores = Decimal(0)
 		total_telefonemas  = Decimal(0)
 		for telefonema in self.telefonemas:
-			valor = telefonema.valor if type(telefonema.valor) is Decimal else str(telefonema.valor)
+			quantia = telefonema.quantia if type(telefonema.quantia) is Decimal else str(telefonema.quantia)
 			
-			total_telefonemas += valor
+			total_telefonemas += quantia
 			morador = telefonema.responsavel
 			if morador:
 				if morador not in rateio:
@@ -443,11 +443,11 @@ class ContaTelefone(Entity):
 					rateio[morador]          = MoradorRateio()
 					rateio[morador].qtd_dias = Decimal(0)
 					rateio[morador].gastos   = Decimal(0)
-					total_ex_moradores += telefonema.valor
+					total_ex_moradores += telefonema.quantia
 				
-				rateio[morador].gastos += valor
+				rateio[morador].gastos += quantia
 			else:
-				total_sem_dono += telefonema.valor
+				total_sem_dono += telefonema.quantia
 		
 		# determina a franquia e o excedente de cada morador
 		total_excedente = 0
@@ -494,7 +494,7 @@ class Telefonema(Entity):
 	has_field('tipo_fone',      Integer,        nullable = False)	# fixo, celular, net fone
 	has_field('tipo_distancia', Integer,        nullable = False)	# Local, DDD, DDI
 	has_field('segundos',       Integer,        nullable = False)
-	has_field('valor',          Numeric(10, 2), nullable = False)
+	has_field('quantia',        Numeric(10, 2), nullable = False)
 	many_to_one('responsavel',    of_kind = 'Morador',       colname = 'id_morador')
 	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas', column_kwargs = dict(primary_key = True))
 	using_options(tablename = 'telefonema')
@@ -528,7 +528,7 @@ class Morador(Entity):
 				break
 			elif data == despesa.data and \
 				despesa_periodica.tipo  == despesa.tipo and \
-				despesa_periodica.valor == despesa.valor:
+				despesa_periodica.quantia == despesa.quantia:
 				return True
 		return False
 		
@@ -544,7 +544,7 @@ class Morador(Entity):
 					not self._found(data_periodica, despesa_periodica, despesas):
 					Despesa(
 						data        = data_periodica,
-						valor       = despesa_periodica.valor,
+						quantia     = despesa_periodica.quantia,
 						responsavel = despesa_periodica.responsavel,
 						tipo        = despesa_periodica.tipo
 					)
@@ -565,7 +565,7 @@ class Morador(Entity):
 		'''
 		def total(especifica):
 			return select(
-				[func.coalesce(func.sum(Despesa.c.valor), 0)],
+				[func.coalesce(func.sum(Despesa.c.quantia), 0)],
 				and_(
 					Despesa.c.id_morador == self.id,
 					Despesa.c.data >= data_inicial,
@@ -616,7 +616,7 @@ class TipoDespesa(Entity):
 
 class Despesa(Entity):
 	has_field('data', Date, default = date.today, nullable = False)
-	has_field('valor', Numeric(10, 2), nullable = False)
+	has_field('quantia', Numeric(10, 2), nullable = False)
 	using_options(tablename = 'despesa')
 	many_to_one('responsavel',  of_kind = 'Morador',     colname = 'id_morador',      column_kwargs = dict(nullable = False))
 	many_to_one('tipo',         of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
@@ -626,7 +626,7 @@ class Despesa(Entity):
 class DespesaPeriodica(Entity):
 	has_field('data_cadastro', Date, default = date.today, nullable = False)
 	has_field('dia_vencimento', Integer, nullable = False)
-	has_field('valor', Numeric(10,2), nullable = False)
+	has_field('quantia', Numeric(10,2), nullable = False)
 	using_options(tablename = 'despesa_periodica')
 	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_periodicas', column_kwargs = dict(nullable = False))
 	many_to_one('tipo', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))

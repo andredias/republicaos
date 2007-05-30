@@ -40,11 +40,11 @@ class TestMorador(BaseTest):
 		c1 = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 4, 19), vencimento = date(2007, 5, 2), republica = r)
 		c2 = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 6), republica = r)
 		
-		t1 = Telefonema(numero = 1234, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 150, valor = 1.4)
-		t2 = Telefonema(numero = 3333, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 299, valor = 2.15)
-		t3 = Telefonema(numero = 2222, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 200, valor = 4.0)
-		t4 = Telefonema(numero = 2222, conta_telefone = c2, tipo_fone = 1, tipo_distancia = 1, segundos = 300, valor = 2.5)
-		t5 = Telefonema(numero = 7777, conta_telefone = c2, tipo_fone = 1, tipo_distancia = 1, segundos = 60,  valor = 0.10)
+		t1 = Telefonema(numero = 1234, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 150, quantia = 1.4)
+		t2 = Telefonema(numero = 3333, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 299, quantia = 2.15)
+		t3 = Telefonema(numero = 2222, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 200, quantia = 4.0)
+		t4 = Telefonema(numero = 2222, conta_telefone = c2, tipo_fone = 1, tipo_distancia = 1, segundos = 300, quantia = 2.5)
+		t5 = Telefonema(numero = 7777, conta_telefone = c2, tipo_fone = 1, tipo_distancia = 1, segundos = 60,  quantia = 0.10)
 		
 		objectstore.flush()
 		
@@ -82,12 +82,12 @@ class TestMorador(BaseTest):
 		td2 = TipoDespesa(nome = 'Aluguel',  republica = r)
 		td3 = TipoDespesa(nome = 'Internet', republica = r)
 		
-		d1 = Despesa(data = date(2007, 4, 10), valor = 20, tipo = td1, responsavel = m1)
-		d2 = Despesa(data = date(2007, 4, 21), valor = 50, tipo = td2, responsavel = m1)
-		d3 = Despesa(data = date(2007, 4, 21), valor = 50, tipo = td2, responsavel = m2)
+		d1 = Despesa(data = date(2007, 4, 10), quantia = 20, tipo = td1, responsavel = m1)
+		d2 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = m1)
+		d3 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = m2)
 		
-		da1 = DespesaPeriodica(dia_vencimento = 19, valor = 50, tipo = td3, responsavel = m1, data_cadastro = date(2006, 12, 1))
-		da2 = DespesaPeriodica(dia_vencimento = 15, valor = 45, tipo = td1, responsavel = m1, data_cadastro = date(2007, 6, 1))
+		da1 = DespesaPeriodica(dia_vencimento = 19, quantia = 50, tipo = td3, responsavel = m1, data_cadastro = date(2006, 12, 1))
+		da2 = DespesaPeriodica(dia_vencimento = 15, quantia = 45, tipo = td1, responsavel = m1, data_cadastro = date(2007, 6, 1))
 		
 		objectstore.flush()
 		

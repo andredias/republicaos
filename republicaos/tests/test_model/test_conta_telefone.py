@@ -44,7 +44,7 @@ class TestContaTelefone(BaseTest):
 				tipo_fone = 1,
 				tipo_distancia = 1,
 				segundos = 150,
-				valor = Decimal('1.4')
+				quantia = Decimal('1.4')
 			)
 		
 		t2 = Telefonema(
@@ -53,7 +53,7 @@ class TestContaTelefone(BaseTest):
 				tipo_fone = 1,
 				tipo_distancia = 1,
 				segundos = 299,
-				valor = Decimal('2.15')
+				quantia = Decimal('2.15')
 			)
 		
 		t3 = Telefonema(
@@ -62,7 +62,7 @@ class TestContaTelefone(BaseTest):
 				tipo_fone = 2,
 				tipo_distancia = 1,
 				segundos = 90,
-				valor = Decimal('0.15')
+				quantia = Decimal('0.15')
 			)
 		
 		
@@ -118,7 +118,7 @@ class TestContaTelefone(BaseTest):
 		t3 = Telefonema.get_by(numero = 5555, conta_telefone = c)
 		t4 = Telefonema.get_by(numero = 9999, conta_telefone = c)
 		
-		assert t1.valor == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1 and t1.responsavel == m1
-		assert t2.valor == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == m1
-		assert t3.valor == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0 and t3.responsavel == None
-		assert t4.valor == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == m3
+		assert t1.quantia == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1 and t1.responsavel == m1
+		assert t2.quantia == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == m1
+		assert t3.quantia == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0 and t3.responsavel == None
+		assert t4.quantia == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == m3
