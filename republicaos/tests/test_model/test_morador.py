@@ -86,8 +86,8 @@ class TestMorador(BaseTest):
 		d2 = Despesa(data = date(2007, 4, 21), valor = 50, tipo = td2, responsavel = m1)
 		d3 = Despesa(data = date(2007, 4, 21), valor = 50, tipo = td2, responsavel = m2)
 		
-		da1 = DespesaAgendada(dia_vencimento = 19, valor = 50, tipo = td3, responsavel = m1, data_cadastro = date(2006, 12, 1))
-		da2 = DespesaAgendada(dia_vencimento = 15, valor = 45, tipo = td1, responsavel = m1, data_cadastro = date(2007, 6, 1))
+		da1 = DespesaPeriodica(dia_vencimento = 19, valor = 50, tipo = td3, responsavel = m1, data_cadastro = date(2006, 12, 1))
+		da2 = DespesaPeriodica(dia_vencimento = 15, valor = 45, tipo = td1, responsavel = m1, data_cadastro = date(2007, 6, 1))
 		
 		objectstore.flush()
 		

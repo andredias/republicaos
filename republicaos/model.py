@@ -505,7 +505,7 @@ class Morador(Entity):
 	has_field('data_saida', Date)
 	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
 	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa', column_kwargs = dict(nullable = False))
-	one_to_many('despesas_agendadas', of_kind = 'DespesaAgendada', inverse = 'responsavel', order_by = 'dia_vencimento')
+	one_to_many('despesas_periodicas', of_kind = 'DespesaPeriodica', inverse = 'responsavel', order_by = 'dia_vencimento')
 	one_to_many('telefones', of_kind = 'Telefone', inverse = 'responsavel')
 	using_options(tablename = 'morador')
 	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
@@ -522,39 +522,39 @@ class Morador(Entity):
 					order_by = Despesa.c.data
 					)
 	
-	def _found(self, data, despesa_agendada, despesas):
+	def _found(self, data, despesa_periodica, despesas):
 		for despesa in despesas:
 			if data < despesa.data: # despesas estão por ordem decrescente de data
 				break
 			elif data == despesa.data and \
-				despesa_agendada.tipo  == despesa.tipo and \
-				despesa_agendada.valor == despesa.valor:
+				despesa_periodica.tipo  == despesa.tipo and \
+				despesa_periodica.valor == despesa.valor:
 				return True
 		return False
 		
 	
 	
-	def _cadastrar_despesas_agendadas(self, data_inicial, data_final):
+	def _cadastrar_despesas_periodicas(self, data_inicial, data_final):
 		despesas = self._get_despesas(data_inicial, data_final)
-		for despesa_agendada in self.despesas_agendadas:
-			data_agendada = date(day = despesa_agendada.dia_vencimento, month = data_inicial.month, year = data_inicial.year)
-			while data_agendada <= data_final:
-				if data_inicial <= data_agendada and \
-					despesa_agendada.data_cadastro <= data_agendada and \
-					not self._found(data_agendada, despesa_agendada, despesas):
+		for despesa_periodica in self.despesas_periodicas:
+			data_periodica = date(day = despesa_periodica.dia_vencimento, month = data_inicial.month, year = data_inicial.year)
+			while data_periodica <= data_final:
+				if data_inicial <= data_periodica and \
+					despesa_periodica.data_cadastro <= data_periodica and \
+					not self._found(data_periodica, despesa_periodica, despesas):
 					Despesa(
-						data        = data_agendada,
-						valor       = despesa_agendada.valor,
-						responsavel = despesa_agendada.responsavel,
-						tipo        = despesa_agendada.tipo
+						data        = data_periodica,
+						valor       = despesa_periodica.valor,
+						responsavel = despesa_periodica.responsavel,
+						tipo        = despesa_periodica.tipo
 					)
-				data_agendada += relativedelta(months = 1)
+				data_periodica += relativedelta(months = 1)
 		
 		objectstore.flush()
 	
 	
 	def despesas(self, data_inicial, data_final):
-		self._cadastrar_despesas_agendadas(data_inicial, data_final)
+		self._cadastrar_despesas_periodicas(data_inicial, data_final)
 		return self._get_despesas(data_inicial, data_final)
 	
 	
@@ -623,12 +623,12 @@ class Despesa(Entity):
 
 
 
-class DespesaAgendada(Entity):
+class DespesaPeriodica(Entity):
 	has_field('data_cadastro', Date, default = date.today, nullable = False)
 	has_field('dia_vencimento', Integer, nullable = False)
 	has_field('valor', Numeric(10,2), nullable = False)
-	using_options(tablename = 'despesa_agendada')
-	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_agendadas', column_kwargs = dict(nullable = False))
+	using_options(tablename = 'despesa_periodica')
+	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_periodicas', column_kwargs = dict(nullable = False))
 	many_to_one('tipo', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
 
 

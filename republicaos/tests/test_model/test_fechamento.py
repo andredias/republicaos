@@ -182,8 +182,8 @@ class TestFechamentoContas(BaseTest):
 		Despesa(data = date(2007, 5, 1), valor = 150, tipo = self.td2, responsavel = self.m3)
 		Despesa(data = date(2007, 5, 5), valor = self.c.resumo['total_conta'], tipo = self.td5, responsavel = self.m1)
 		
-		DespesaAgendada(dia_vencimento = 19, valor = 50, tipo = self.td4, responsavel = self.m1, data_cadastro = date(2006, 12, 1))
-		DespesaAgendada(dia_vencimento = 15, valor = 45, tipo = self.td1, responsavel = self.m1, data_cadastro = date(2007, 6, 1))
+		DespesaPeriodica(dia_vencimento = 19, valor = 50, tipo = self.td4, responsavel = self.m1, data_cadastro = date(2006, 12, 1))
+		DespesaPeriodica(dia_vencimento = 15, valor = 45, tipo = self.td1, responsavel = self.m1, data_cadastro = date(2007, 6, 1))
 		
 		objectstore.flush()
 		
@@ -226,8 +226,8 @@ class TestFechamentoContas(BaseTest):
 		Despesa(data = date(2007, 5, 5), valor = (self.c.resumo['total_conta'] / 2), tipo = self.td5, responsavel = self.m1)
 		Despesa(data = date(2007, 5, 5), valor = (self.c.resumo['total_conta'] / 2), tipo = self.td5, responsavel = self.m2)
 		
-		DespesaAgendada(dia_vencimento = 17, valor = 150, tipo = self.td4, responsavel = self.m1, data_cadastro = date(2006, 12, 1))
-		DespesaAgendada(dia_vencimento = 15, valor = 45, tipo = self.td1, responsavel = self.m1, data_cadastro = date(2007, 6, 1))
+		DespesaPeriodica(dia_vencimento = 17, valor = 150, tipo = self.td4, responsavel = self.m1, data_cadastro = date(2006, 12, 1))
+		DespesaPeriodica(dia_vencimento = 15, valor = 45, tipo = self.td1, responsavel = self.m1, data_cadastro = date(2007, 6, 1))
 		
 		objectstore.flush()
 		
