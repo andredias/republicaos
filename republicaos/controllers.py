@@ -1,26 +1,73 @@
 # -*- coding: utf-8 -*-
 
-from turbogears import controllers, expose, flash
-from model.business import Republica, Morador, ContaTelefone, Fechamento
+from turbogears     import controllers, expose, flash, error_handler
+from model.business import *
 #from turbogears import identity
-from turbogears import redirect, validate, validators
-from cherrypy import request, response
-from datetime import date
+from turbogears     import redirect, validate, validators
+from cherrypy       import request, response
+from datetime       import date
 # from republicaos import json
 import logging
 log = logging.getLogger("republicaos.controllers")
 
+
+class DespesaSchema(validators.Schema):
+	data    = validators.DateConverter(month_style = 'dd/mm/yyyy')
+	quantia = validators.Number()
+	dia_vencimento  = validators.Int()
+	data_termino    = validators.DateConverter(month_style = 'dd/mm/yyyy')
+	id_tipo_despesa = validators.Int()
+
 class Root(controllers.RootController):
+	@expose(template='.templates.debug')
+	def debug(self, **parametros):
+		return parametros
+	
+	
 	@expose(template="republicaos.templates.index")
 	# @identity.require(identity.in_group("admin"))
 	def index(self):
 		return dict()
 	
 	
-	@expose(template = "republicaos.templates.cadastrar_despesa")
-	def cadastrar_despesa(self):
+	@expose(template = "republicaos.templates.despesa")
+	@validate(validators = DespesaSchema())
+	def despesa(self, **dados):
+		republica = Republica.get_by(id = 1)
 		moradores = Morador.select(Morador.c.id_republica == 1)
-		return dict(hoje = date.today(), moradores = moradores)
+		if not dados:
+			dados = dict()
+		
+		dados['hoje'] = date.today()
+		dados['moradores'] = moradores
+		dados['republica'] = republica
+		return dados
+	
+	
+	@expose()
+	@error_handler(despesa)
+	@validate(validators = DespesaSchema())
+	def cadastrar_despesa(self, **dados):
+		republica    = Republica.get_by(id = 1)
+		tipo_despesa = TipoDespesa.get_by(id = dados['id_tipo_despesa'], republica = republica)
+		morador      = Morador.get_by(id = dados['id_morador'])
+		if dados['periodicidade'] == 'uma_vez':
+			despesa = Despesa(
+						data        = dados['data'],
+						quantia     = dados['quantia'],
+						tipo        = tipo_despesa,
+						responsavel = morador
+						)
+		else:
+			despesa = DespesaPeriodica(
+						data_cadastro  = date.today(),
+						quantia        = dados['quantia'],
+						dia_vencimento = dados['dia_vencimento'],
+						tipo           = tipo_despesa,
+						responsavel    = morador
+						)
+		despesa.flush()
+		raise redirect('/')
 	
 	
 	@expose(template = "republicaos.templates.fechamentos")

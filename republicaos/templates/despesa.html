@@ -14,9 +14,17 @@
 <h1>Cadastrar Despesa</h1>
 
 
-<form action="adicionar_despesa" method="post">
-	<p><label for="tipo_despesa">Tipo da Despesa</label><br/>
-	<select class="campo_importante" name="tipo_despesa">
+<form action="cadastrar_despesa" method="post">
+	<p><label for="id_morador">Morador</label><br />
+	<select name="id_morador">
+		<option py:for="morador in moradores" value="${morador.id}">
+			<span py:replace="morador.pessoa.nome">Nome do Morador</span>
+		</option>
+	</select>
+	</p>
+	
+	<p><label for="id_tipo_despesa">Tipo da Despesa</label><br />
+	<select class="campo_importante" name="id_tipo_despesa">
 		<option py:for="tipo_despesa in republica.tipos_despesa" value="${tipo_despesa.id}">
 			<span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
 		</option>
@@ -32,12 +40,12 @@
 	<p><label for="schedule_mode">Vencimento</label><br />
 	<input name="periodicidade" type="radio" value="uma_vez" />Apenas uma vez em
 		<span id="data_vencimento">
-			<input maxlength="10" name="data_vencimento" size="10" type="text" value="${hoje.strftime('%d-%m-%Y')}" /> (dd/mm/aaaa)
+			<input maxlength="10" name="data_vencimento" size="10" type="text" value="${hoje.strftime('%d/%m/%Y')}" /> (dd/mm/aaaa)
 		</span><br />
 	<input name="periodicidade" type="radio" value="mensal" /><label for="dia_vencimento">Mensalmente</label>, no dia
 		<span id="dia_vencimento">
 			<input maxlength="2" name="dia_vencimento" size="2" type="text" value="${hoje.day}" /> (1 a 31)
-			<label for="data_final">, repetindo até (dd/mm/aaaa)</label> <input maxlength="10" name="data_final" size="10" type="text" /> (opcional)
+			<label for="data_termino">, repetindo até (dd/mm/aaaa)</label> <input maxlength="10" name="data_termino" size="10" type="text" /> (opcional)
 		</span>
 	</p>
 	

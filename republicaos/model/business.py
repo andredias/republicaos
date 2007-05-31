@@ -88,7 +88,7 @@ class Republica(Entity):
 	has_field('cep', String(8))
 	using_options(tablename = 'republica')
 	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = '-data')
-	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica')
+	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica', order_by = 'nome')
 	
 	
 	def datas_fechamento(self):
@@ -627,6 +627,7 @@ class DespesaPeriodica(Entity):
 	has_field('data_cadastro', Date, default = date.today, nullable = False)
 	has_field('dia_vencimento', Integer, nullable = False)
 	has_field('quantia', Numeric(10,2), nullable = False)
+	has_field('data_termino', Date)
 	using_options(tablename = 'despesa_periodica')
 	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_periodicas', column_kwargs = dict(nullable = False))
 	many_to_one('tipo', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
