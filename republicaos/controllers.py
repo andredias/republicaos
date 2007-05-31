@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from turbogears import controllers, expose, flash
-from model import Republica, Morador, ContaTelefone, Fechamento
+from model.business import Republica, Morador, ContaTelefone, Fechamento
 #from turbogears import identity
 from turbogears import redirect, validate, validators
 from cherrypy import request, response

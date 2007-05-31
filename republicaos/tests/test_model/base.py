@@ -3,7 +3,7 @@
 
 from turbogears import testutil, database, config
 from elixir import objectstore
-from republicaos.model import *
+from republicaos.model.business import *
 
 # testutil tenta carregar a configuração de test.cfg automaticamente. Contudo, se o teste
 # não está sendo executado a partir da raiz do projeto, então test.cfg não será encontrado.

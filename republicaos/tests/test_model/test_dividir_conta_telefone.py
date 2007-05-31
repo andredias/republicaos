@@ -4,7 +4,7 @@
 import sys
 import decimal
 
-from republicaos.model import *
+from republicaos.model.business import *
 from elixir import *
 from datetime import date
 from dateutil.relativedelta import relativedelta
