@@ -383,7 +383,7 @@ class ContaTelefone(Entity):
 					telefonemas[numero]['quantia']  += quantia
 			except ValueError:
 				# quando é alguma multa ou ajuste, não aparece um número válido de telefone, o que gera uma exceção
-				if descricao != '05 - COMPLEMENTO DE FRANQUIA':
+				if 'FRANQUIA' not in descricao:
 					encargos += quantia
 		
 		return (telefonemas, encargos)
@@ -411,8 +411,9 @@ class ContaTelefone(Entity):
 		
 		if encargos > 0:
 			if not self.servicos:
-				self.servicos = Decimal(0)
-			self.servicos += encargos
+				self.servicos = encargos
+			else:
+				self.servicos += encargos
 		
 		# antes de registrar os novos telefonemas, é necessário apagar os anteriores do mesmo mês
 		Telefonema.table.delete(Telefonema.c.id_conta_telefone == self.id).execute()

@@ -29,7 +29,8 @@ def print_rateio_conta_telefone(resumo, rateio):
 	# mostra totais
 	write('\n----------')
 	for campo in campos:
-		write('|%9s' % totais[campo])
+		format_string = '|%9.2f' if campo != 'qtd_dias' else '|%9s'
+		write(format_string % totais[campo])
 	write('\n\n')
 	sys.stdout.flush()
 
