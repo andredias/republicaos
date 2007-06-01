@@ -88,8 +88,6 @@ class TestContaTelefone(BaseTest):
 "0000006   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","99/99/99 A  99/99/99     ","2222                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","5000    ","MIN     "," 0.45"
 "0000007   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","5555                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","10000   ","MIN     "," 0.98"'''
 		
-		arq = arq.splitlines()
-		
 		p1 = Pessoa(nome = 'André')
 		p2 = Pessoa(nome = 'Felipe')
 		p3 = Pessoa(nome = 'Dias')
@@ -122,3 +120,71 @@ class TestContaTelefone(BaseTest):
 		assert t2.quantia == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == m1
 		assert t3.quantia == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0 and t3.responsavel == None
 		assert t4.quantia == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == m3
+	
+	
+	def test_importacao_csv_2(self):
+		arq = '''Detalhes da fatura
+
+"Seq       ","Origem                                            ","Descri��o                                         ","Periodo/Data             ","Terminal_Destino    ","Local Origem","Local Destino       ","Hora Inicio    ","Hora Fim            ","Imp ","Pais      ","Qtde    ","Unid    ","Valor (R$)          "
+"0000001   ","07/03/29725677                                    ","ENCARGOS POR ATRASO REFERENTE A C.P.S.            ","13/04/07 A  19/04/07     ","                    ","CAS -SP   ","    -               ","               ","                    ","N   ","          ","1000    ","UNID    "," 1.05"
+"0000002   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","13/04/07 A  99/99/99     ","1938935899          ","CAS -SP   ","PDA -SP             ","10:02:20       ","                    ","E   ","          ","2500    ","MIN     "," 0.49"
+"0000003   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","14/04/07 A  99/99/99     ","1938935899          ","CAS -SP   ","PDA -SP             ","09:58:02       ","                    ","E   ","          ","1100    ","MIN     "," 0.21"
+"0000004   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","15/04/07 A  99/99/99     ","1239134306          ","CAS -SP   ","SJC -SP             ","21:01:49       ","                    ","E   ","          ","5600    ","MIN     "," 1.11"
+"0000005   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","20/04/07 A  99/99/99     ","1938935899          ","CAS -SP   ","PDA -SP             ","22:56:14       ","                    ","E   ","          ","3600    ","MIN     "," 0.71"
+"0000006   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","20/04/07 A  99/99/99     ","1132073274          ","CAS -SP   ","SPO -SP             ","23:00:04       ","                    ","E   ","          ","8300    ","MIN     "," 1.65"
+"0000007   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","22/04/07 A  99/99/99     ","1938935899          ","CAS -SP   ","PDA -SP             ","18:18:55       ","                    ","E   ","          ","1400    ","MIN     "," 0.27"
+"0000008   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","22/04/07 A  99/99/99     ","1132073274          ","CAS -SP   ","SPO -SP             ","19:09:51       ","                    ","E   ","          ","6100    ","MIN     "," 1.22"
+"0000009   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","24/04/07 A  99/99/99     ","7335333394          ","CAS -SP   ","MAS -BA             ","19:43:31       ","                    ","E   ","          ","1000    ","MIN     "," 0.20"
+"0000010   ","1921212409                                        ","04 - LIGACOES DDD PARA TELEFONES FIXOS            ","27/04/07 A  99/99/99     ","1239134306          ","CAS -SP   ","SJC -SP             ","10:40:25       ","                    ","E   ","          ","1000    ","MIN     "," 0.20"
+"0000011   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA CELULARES               ","20/04/07 A  99/99/99     ","1996338801          ","CAS -SP   ","CAS -SP             ","15:54:58       ","                    ","E   ","          ","1000    ","MIN     "," 0.64"
+"0000012   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA NETFONE                 ","99/99/99 A  99/99/99     ","1921212391          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","27000   ","MIN     "," 0.00"
+"0000013   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932890813          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","3000    ","MIN     "," 0.29"
+"0000014   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932891101          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","1000    ","MIN     "," 0.10"
+"0000015   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932891164          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","12000   ","MIN     "," 1.18"
+"0000016   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1933880233          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
+"0000017   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1935219285          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
+"0000018   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1940047777          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","10000   ","MIN     "," 1.00"
+"0000019   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1934687377          ","CAS -SP   ","AMR -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
+"0000020   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1930320374          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","4000    ","MIN     "," 0.39"
+"0000021   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1937498996          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","13000   ","MIN     "," 1.29"
+"0000022   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932418046          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","4000    ","MIN     "," 0.39"
+"0000023   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932463762          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","3000    ","MIN     "," 0.29"
+"0000024   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1921042600          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","5000    ","MIN     "," 0.49"
+"0000025   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932730483          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","18000   ","MIN     "," 1.77"
+"0000026   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932825430          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","1000    ","MIN     "," 0.10"
+"0000027   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932877719          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","1000    ","MIN     "," 0.10"
+"0000028   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932898912          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","1000    ","MIN     "," 0.10"
+"0000029   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932890432          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","1000    ","MIN     "," 0.10"
+"0000030   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932875607          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","1000    ","MIN     "," 0.10"
+"0000031   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1932720779          ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","5000    ","MIN     "," 0.49"
+"0000032   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1938285430          ","CAS -SP   ","SUM -SP             ","               ","                    ","E   ","          ","7000    ","MIN     "," 0.69"
+"0000033   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1938835366          ","CAS -SP   ","SUM -SP             ","               ","                    ","E   ","          ","1000    ","MIN     "," 0.10"
+"0000034   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1938697483          ","CAS -SP   ","VOS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
+"0000035   ","1921212409                                        ","05 - COMPLEMENTO DE FRANQUIA                      ","12/04/07 A  11/05/07     ","                    ","CAS -SP   ","    -               ","               ","                    ","E   ","          ","1000    ","UNID    "," 18.46"'''
+
+		
+		r = Republica(nome = 'Teste',
+			data_criacao = date(2007, 3, 6),
+			logradouro = 'R. dos Bobos, nº 0')
+			
+		p1 = Pessoa(nome = u'André')
+		p2 = Pessoa(nome = 'Felipe')
+		p3 = Pessoa(nome = 'Dias')
+		
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
+		m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
+		
+		c = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 10), republica = r)
+		c.franquia = Decimal('34.93')
+		objectstore.flush()
+		
+		c.importar_csv(arq, tipo = 1)
+		resumo, rateio = c.executar_rateio()
+		
+		from exibicao_resultados import print_rateio_conta_telefone
+		print_rateio_conta_telefone(resumo, rateio)
+		
+		assert c.servicos == Decimal('1.05')
+		assert resumo['total_sem_dono'] == Decimal('16.47')
+

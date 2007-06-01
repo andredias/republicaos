@@ -336,40 +336,57 @@ class ContaTelefone(Entity):
 	
 	def interpreta_csv_net_fone(self, linhas):
 		# ignora as 3 primeiras linhas de cabeçalho
-		linhas = linhas[3:]
-		col_numero  = 4
-		col_tipo    = 2
-		col_duracao = 11
-		col_quantia = 13
-		telefonemas = dict()
+		linhas        = linhas[3:]
+		col_numero    = 4
+		col_descricao = 2
+		col_duracao   = 11
+		col_quantia   = 13
+		telefonemas   = dict()
 		
 		# palavras usadas na descrição que ajudam a classificar o telefonema
-		tipos_fone      = ['FIXOS', 'CELULARES', 'NETFONE']
-		tipos_distancia = ['LOCAIS', 'DDD', 'DDI'] # confirmar se aparece DDI
+		tipos_fone      = ['FIXO', 'CELULAR', 'NETFONE']
+		tipos_distancia = ['LOCA', 'DDD', 'DDI'] # confirmar se aparece DDI
 		
-		# posição das palavras que determinam os tipos dentro da descrição
-		col_tipo_fone      = -1
-		col_tipo_distancia = 3
+		encargos = Decimal(0)
 		
 		for linha in linhas:
-			numero  = int(linha[col_numero].strip())
-			descr   = linha[col_tipo].split()
-			quantia = Decimal(linha[col_quantia].strip())
-			
-			milesimos_minutos = int(linha[col_duracao].strip())
-			segundos          = milesimos_minutos * 60 / 1000
-			
-			tipo_fone      = tipos_fone.index(descr[col_tipo_fone])
-			tipo_distancia = tipos_distancia.index(descr[col_tipo_distancia])
-			
-			if numero not in telefonemas:
-				# não consegui fazer contas apenas com time. Foi necessário usar relativedelta
-				telefonemas[numero] = [segundos, quantia, tipo_fone, tipo_distancia]
-			else:
-				telefonemas[numero][0] += segundos
-				telefonemas[numero][1] += quantia
+			quantia   = Decimal(linha[col_quantia].strip())
+			descricao = linha[col_descricao].strip()
+			try:
+				numero = int(linha[col_numero].strip())
+				
+				milesimos_minutos = int(linha[col_duracao].strip())
+				segundos          = milesimos_minutos * 60 / 1000
+				
+				# determina o tipo de telefone
+				for tipo in tipos_fone:
+					if tipo in descricao:
+						tipo_fone = tipos_fone.index(tipo)
+						break
+				
+				# determina o tipo de ligação
+				for tipo in tipos_distancia:
+					if tipo in descricao:
+						tipo_distancia = tipos_distancia.index(tipo)
+						break
+				
+				if numero not in telefonemas:
+					# não consegui fazer contas apenas com time. Foi necessário usar relativedelta
+					telefonemas[numero] = dict(
+											segundos       = segundos,
+											quantia        = quantia,
+											tipo_fone      = tipo_fone,
+											tipo_distancia = tipo_distancia
+											)
+				else:
+					telefonemas[numero]['segundos'] += segundos
+					telefonemas[numero]['quantia']  += quantia
+			except ValueError:
+				# quando é alguma multa ou ajuste, não aparece um número válido de telefone, o que gera uma exceção
+				if descricao != '05 - COMPLEMENTO DE FRANQUIA':
+					encargos += quantia
 		
-		return telefonemas
+		return (telefonemas, encargos)
 	
 	
 	def importar_csv(self, arquivo, tipo):
@@ -385,8 +402,17 @@ class ContaTelefone(Entity):
 		else:
 			func_interpreta_csv = None
 		
-		linhas      = [linha for linha in csv.reader(arquivo)]
-		telefonemas = func_interpreta_csv(linhas)
+		#arquivo precisa ser uma lista de linhas
+		if type(arquivo) is str:
+			arquivo = arquivo.splitlines()
+			
+		linhas = [linha for linha in csv.reader(arquivo)]
+		telefonemas, encargos = func_interpreta_csv(linhas)
+		
+		if encargos > 0:
+			if not self.servicos:
+				self.servicos = Decimal(0)
+			self.servicos += encargos
 		
 		# antes de registrar os novos telefonemas, é necessário apagar os anteriores do mesmo mês
 		Telefonema.table.delete(Telefonema.c.id_conta_telefone == self.id).execute()
@@ -396,10 +422,10 @@ class ContaTelefone(Entity):
 			Telefonema(
 				numero         = numero,
 				conta_telefone = self,
-				segundos       = atributos[0],
-				quantia        = atributos[1],
-				tipo_fone      = atributos[2],
-				tipo_distancia = atributos[3]
+				segundos       = atributos['segundos'],
+				quantia        = atributos['quantia'],
+				tipo_fone      = atributos['tipo_fone'],
+				tipo_distancia = atributos['tipo_distancia']
 			)
 		objectstore.flush()
 		self.determinar_responsaveis_telefonemas()
@@ -415,6 +441,28 @@ class ContaTelefone(Entity):
 		3. Os serviços (se houverem) também são divididos de acordo com o número de dias morados
 		4. A quantia excedente é quanto cada morador gastou além da franquia a que tinha direito
 		5. A quantia excedente que cada morador deve pagar pode ser compensado pelo faltante de outro morador em atingir sua franquia
+		
+		Saída: (resumo, rateio)
+		-----------------------
+		
+		resumo:
+			Dicionário com as chaves:
+			* total_telefonemas
+			* total_conta
+			* total_dias
+			* total_sem_dono
+			* total_ex_moradores
+		
+		rateio[morador]:
+			Classe MoradorRateio com os campos:
+			* qtd_dias
+			* gastos
+			* franquia
+			* sem_dono
+			* excedente
+			* servicos
+			* a_pagar
+		
 		'''
 		periodo = self.republica.periodo_fechamento(self.emissao)
 		rateio = dict()
