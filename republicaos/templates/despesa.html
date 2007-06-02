@@ -47,7 +47,7 @@ termino_str = (hoje + relativedelta(months = 6)).strftime('%d/%m/%Y')
 	<p>
 		<label for="schedule_mode">Vencimento</label><br />
 		<span id="data_vencimento">
-			<input maxlength="10" name="data_vencimento" size="10" type="text" value="${hoje_str}" />
+			<input maxlength="10" name="data_vencimento" size="10" type="text" py:attrs="dict(value = hoje_str)" value="30/01/2007" />
 		</span><br />
 		<input name="periodicidade" type="checkbox" value="mensal" />Repetir mensalmente até (opcional)
 		<input maxlength="10" name="data_termino" size="10" type="text" /> Ex. <span py:replace="termino_str">30/05/2007</span>
