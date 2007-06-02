@@ -30,6 +30,8 @@ class Money(types.TypeEngine):
 		return str(value)
 
 	def convert_result_value(self, value, dialect):
+		if type(value) is float:
+			value = str(value)
 		return Decimal(value)
 
 
