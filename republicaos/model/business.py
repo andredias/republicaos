@@ -554,7 +554,7 @@ class Morador(Entity):
 	has_field('data_saida', Date)
 	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
 	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa', column_kwargs = dict(nullable = False))
-	one_to_many('despesas_periodicas', of_kind = 'DespesaPeriodica', inverse = 'responsavel', order_by = 'dia_vencimento')
+	one_to_many('despesas_periodicas', of_kind = 'DespesaPeriodica', inverse = 'responsavel', order_by = 'proximo_vencimento')
 	one_to_many('telefones', of_kind = 'Telefone', inverse = 'responsavel')
 	using_options(tablename = 'morador')
 	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
@@ -571,35 +571,26 @@ class Morador(Entity):
 					order_by = Despesa.c.data
 					)
 	
-	def _found(self, data, despesa_periodica, despesas):
-		for despesa in despesas:
-			if data < despesa.data: # despesas estão por ordem decrescente de data
-				break
-			elif data == despesa.data and \
-				despesa_periodica.tipo  == despesa.tipo and \
-				despesa_periodica.quantia == despesa.quantia:
-				return True
-		return False
-		
-	
 	
 	def _cadastrar_despesas_periodicas(self, data_inicial, data_final):
-		despesas = self._get_despesas(data_inicial, data_final)
-		for despesa_periodica in self.despesas_periodicas:
-			data_periodica = date(day = despesa_periodica.dia_vencimento, month = data_inicial.month, year = data_inicial.year)
-			while data_periodica <= data_final:
-				if data_inicial <= data_periodica and \
-					despesa_periodica.data_cadastro <= data_periodica and \
-					not self._found(data_periodica, despesa_periodica, despesas):
-					Despesa(
-						data        = data_periodica,
-						quantia     = despesa_periodica.quantia,
-						responsavel = despesa_periodica.responsavel,
-						tipo        = despesa_periodica.tipo
+		for despesa in self.despesas_periodicas:
+			data_ref = data_final if not despesa.data_termino else min(despesa.data_termino, data_final)
+			while despesa.proximo_vencimento <= data_ref:
+				nova_despesa = Despesa(
+						data        = despesa.proximo_vencimento,
+						quantia     = despesa.quantia,
+						responsavel = despesa.responsavel,
+						tipo        = despesa.tipo
 					)
-				data_periodica += relativedelta(months = 1)
-		
-		objectstore.flush()
+				nova_despesa.flush()
+				despesa.proximo_vencimento += relativedelta(months = 1)
+				
+			if despesa.data_termino and \
+				((despesa.data_termino < data_final) or
+				 (despesa.data_termino < despesa.proximo_vencimento)):
+				despesa.delete()
+			
+			despesa.flush()
 	
 	
 	def despesas(self, data_inicial, data_final):
@@ -673,8 +664,7 @@ class Despesa(Entity):
 
 
 class DespesaPeriodica(Entity):
-	has_field('data_cadastro', Date, default = date.today, nullable = False)
-	has_field('dia_vencimento', Integer, nullable = False)
+	has_field('proximo_vencimento', Date, default = date.today, nullable = False)
 	has_field('quantia', Numeric(10,2), nullable = False)
 	has_field('data_termino', Date)
 	using_options(tablename = 'despesa_periodica')

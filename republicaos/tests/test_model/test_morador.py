@@ -66,8 +66,7 @@ class TestMorador(BaseTest):
 		assert t5 not in telefonemas_c2
 	
 	
-	
-	def test_despesas(self):
+	def set_moradores(self):
 		r = Republica(nome = 'Teste',
 			data_criacao = date(2007, 3, 6),
 			logradouro = 'R. dos Bobos, nº 0')
@@ -75,26 +74,104 @@ class TestMorador(BaseTest):
 		p1 = Pessoa(nome = 'André')
 		p2 = Pessoa(nome = 'Marcos')
 		
-		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 3, 6), data_saida = date(2006, 12, 1))
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 3, 6))
 		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 6))
+		self.moradores = [m1, m2]
 		
-		td1 = TipoDespesa(nome = u'Água',    republica = r)
+		td1 = TipoDespesa(nome = 'Água',     republica = r)
 		td2 = TipoDespesa(nome = 'Aluguel',  republica = r)
 		td3 = TipoDespesa(nome = 'Internet', republica = r)
-		
-		d1 = Despesa(data = date(2007, 4, 10), quantia = 20, tipo = td1, responsavel = m1)
-		d2 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = m1)
-		d3 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = m2)
-		
-		da1 = DespesaPeriodica(dia_vencimento = 19, quantia = 50, tipo = td3, responsavel = m1, data_cadastro = date(2006, 12, 1))
-		da2 = DespesaPeriodica(dia_vencimento = 15, quantia = 45, tipo = td1, responsavel = m1, data_cadastro = date(2007, 6, 1))
+		self.tipos_despesa = [td1, td2, td3]
 		
 		objectstore.flush()
 		
+	
+	def set_despesas(self):
+		self.set_moradores()
+		td1, td2, td3 = self.tipos_despesa
+		m1, m2        = self.moradores
+	
+		d1 = Despesa(data = date(2007, 4, 10), quantia = 20, tipo = td1, responsavel = m1)
+		d2 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = m1)
+		d3 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = m2)
+		self.despesas = [d1, d2, d3]
+		
+		objectstore.flush()
+	
+	
+	def test_despesas(self):
+		self.set_despesas()
+		
+		m1         = self.moradores[0]
+		d1, d2, d3 = self.despesas		
+		
 		despesas = m1.despesas(date(2007, 4, 10), date(2007, 5, 10))
 		
-		assert m1._found(date(2007, 4, 19), da1, despesas)
-		assert not m1._found(date(2007, 4, 15), da2, despesas)
 		assert d1 in despesas
 		assert d2 in despesas
 		assert d3 not in despesas
+	
+	
+	def set_despesas_periodicas(self):
+		self.set_moradores()
+		td1, td2, td3 = self.tipos_despesa
+		m1, m2        = self.moradores
+	
+		dp1 = DespesaPeriodica(
+				quantia            = 50,
+				tipo               = td3,
+				responsavel        = m1,
+				proximo_vencimento = date(2007, 4, 19),
+				data_termino       = date(2007, 7, 10)
+				)
+		dp2 = DespesaPeriodica(quantia = 45, tipo = td1, responsavel = m1, proximo_vencimento = date(2007, 5, 2))
+		dp3 = DespesaPeriodica(quantia = 10, tipo = td2, responsavel = m1, proximo_vencimento = date(2007, 6, 1))
+		
+		self.despesas = [dp1, dp2, dp3]
+		
+		objectstore.flush()
+		
+	def test_despesa_periodica_1(self):
+		self.set_despesas_periodicas()
+		m1 = self.moradores[0]
+		dp1, dp2, dp3 = self.despesas
+		
+		despesas = m1.despesas(date(2007, 4, 10), date(2007, 5, 10))
+		
+		d1 = Despesa.get_by(data = date(2007, 4, 19))
+		d2 = Despesa.get_by(data = date(2007, 5, 2))
+		d3 = Despesa.get_by(data = date(2007, 6, 1))
+		
+		assert d1 in despesas
+		assert d2 in despesas
+		assert d3 is None
+		assert dp1.proximo_vencimento == date(2007, 5, 19)
+		assert dp2.proximo_vencimento == date(2007, 6, 2)
+		assert dp3.proximo_vencimento == date(2007, 6, 1)
+		
+	
+	def test_despesa_periodica_2(self):
+		self.set_despesas_periodicas()
+		m1 = self.moradores[0]
+		dp1, dp2, dp3 = self.despesas
+		
+		despesas = set(m1.despesas(date(2007, 4, 10), date(2007, 8, 10)))
+		
+		d1 = set(Despesa.select(Despesa.c.data.between(date(2007, 4, 10), date(2007, 5, 9))))
+		d2 = set(Despesa.select(Despesa.c.data.between(date(2007, 5, 10), date(2007, 6, 9))))
+		d3 = set(Despesa.select(Despesa.c.data.between(date(2007, 6, 10), date(2007, 7, 9))))
+		d4 = set(Despesa.select(Despesa.c.data.between(date(2007, 7, 10), date(2007, 8, 10))))
+		
+		assert len(d1) == 2
+		assert len(d2) == 3
+		assert len(d3) == 3
+		assert len(d4) == 2
+		assert d1.issubset(despesas)
+		assert d2.issubset(despesas)
+		assert d3.issubset(despesas)
+		assert d4.issubset(despesas)
+
+		
+		
+		
+		

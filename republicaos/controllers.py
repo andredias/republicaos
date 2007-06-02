@@ -12,11 +12,11 @@ log = logging.getLogger("republicaos.controllers")
 
 
 class DespesaSchema(validators.Schema):
-	data    = validators.DateConverter(month_style = 'dd/mm/yyyy')
-	quantia = validators.Number()
-	dia_vencimento  = validators.Int()
+	data_vencimento = validators.DateConverter(month_style = 'dd/mm/yyyy', not_empty = True)
 	data_termino    = validators.DateConverter(month_style = 'dd/mm/yyyy')
-	id_tipo_despesa = validators.Int()
+	quantia         = validators.Number(not_empty = True)
+	id_tipo_despesa = validators.Int(not_empty = True)
+	id_morador      = validators.Int(not_empty = True)
 
 class Root(controllers.RootController):
 	@expose(template='.templates.debug')
@@ -31,6 +31,7 @@ class Root(controllers.RootController):
 	
 	
 	@expose(template = "republicaos.templates.despesa")
+	@error_handler()
 	@validate(validators = DespesaSchema())
 	def despesa(self, **dados):
 		republica = Republica.get_by(id = 1)
@@ -53,18 +54,18 @@ class Root(controllers.RootController):
 		morador      = Morador.get_by(id = dados['id_morador'])
 		if dados['periodicidade'] == 'uma_vez':
 			despesa = Despesa(
-						data        = dados['data'],
+						data        = dados['data_vencimento'],
 						quantia     = dados['quantia'],
 						tipo        = tipo_despesa,
 						responsavel = morador
 						)
 		else:
 			despesa = DespesaPeriodica(
-						data_cadastro  = date.today(),
-						quantia        = dados['quantia'],
-						dia_vencimento = dados['dia_vencimento'],
-						tipo           = tipo_despesa,
-						responsavel    = morador
+						proximo_vencimento = dados['data_vencimento'],
+						quantia            = dados['quantia'],
+						tipo               = tipo_despesa,
+						responsavel        = morador,
+						data_termino       = dados['data_termino']
 						)
 		despesa.flush()
 		raise redirect('/')
