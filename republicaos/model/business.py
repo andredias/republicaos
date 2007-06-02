@@ -1,18 +1,38 @@
 # -*- coding: utf-8 -*-
 
-from elixir      import Unicode, Date, DateTime, Time, String, Integer, Numeric
+from elixir      import Unicode, Boolean, Date, DateTime, Time, String, Integer, Numeric
 from elixir      import Entity, has_field, using_options, using_table_options, using_mapper_options
 from elixir      import has_many as one_to_many
 from elixir      import belongs_to as many_to_one
 from elixir      import has_and_belongs_to_many as many_to_many
-from elixir      import objectstore
-from sqlalchemy  import *
+from sqlalchemy  import types, and_, or_, select, UniqueConstraint
 from datetime    import date, datetime, time
 import csv
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 
 from turbogears.database import metadata
+
+
+
+class Money(types.TypeEngine):
+	'''
+	Classe para poder usar o Decimal com o SQLite e outros BD além do Postgres
+	'''
+	def __init__(self, precision=10, length=2):
+		self.precision = precision
+		self.length = length
+
+	def get_col_spec(self):
+		return 'NUMERIC (%(precision)s, %(length)s)' % {'precision': self.precision, 'length' : self.length}
+
+	def convert_bind_param(self, value, dialect):
+		return str(value)
+
+	def convert_result_value(self, value, dialect):
+		return Decimal(value)
+
+
 
 
 class ModelIntegrityException(Exception):
@@ -305,9 +325,9 @@ class ContaTelefone(Entity):
 	has_field('vencimento', Date, nullable = False)
 	has_field('emissao', Date, nullable = False)
 	has_field('telefone', Numeric(12, 0))
-	has_field('companhia', Integer, nullable = False)
-	has_field('franquia', Numeric(10,2), default = 0)
-	has_field('servicos', Numeric(10,2), default = 0)
+	has_field('id_operadora', Integer, nullable = False)
+	has_field('franquia', Money(10,2), default = 0)
+	has_field('servicos', Money(10,2), default = 0)
 	using_options(tablename = 'conta_telefone')
 	using_table_options(UniqueConstraint('telefone', 'emissao'))
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
@@ -330,11 +350,11 @@ class ContaTelefone(Entity):
 		for telefonema in self.telefonemas:
 			if telefonema.responsavel is None and telefonema.numero in responsaveis_telefones:
 				telefonema.responsavel = Morador.get_by(Morador.c.id == responsaveis_telefones[telefonema.numero])
-		
-		objectstore.flush()
+				telefonema.flush()
+		return
 	
 	
-	def interpreta_csv_net_fone(self, linhas):
+	def _interpreta_csv_net_fone(self, linhas):
 		# ignora as 3 primeiras linhas de cabeçalho
 		linhas        = linhas[3:]
 		col_numero    = 4
@@ -389,7 +409,7 @@ class ContaTelefone(Entity):
 		return (telefonemas, encargos)
 	
 	
-	def importar_csv(self, arquivo, tipo):
+	def importar_csv(self, arquivo):
 		'''
 		Importa um arquivo .csv referente a uma conta telefônica de uma operadora.
 		
@@ -397,14 +417,14 @@ class ContaTelefone(Entity):
 		o do arquivo importado
 		'''
 		
-		if tipo == 1:
-			func_interpreta_csv = self.interpreta_csv_net_fone
+		if self.id_operadora == 1:
+			func_interpreta_csv = self._interpreta_csv_net_fone
 		else:
 			func_interpreta_csv = None
 		
 		#arquivo precisa ser uma lista de linhas
 		if type(arquivo) is str:
-			arquivo = arquivo.splitlines()
+			arquivo = arquivo.strip().splitlines()
 			
 		linhas = [linha for linha in csv.reader(arquivo)]
 		telefonemas, encargos = func_interpreta_csv(linhas)
@@ -414,6 +434,7 @@ class ContaTelefone(Entity):
 				self.servicos = encargos
 			else:
 				self.servicos += encargos
+			self.flush()
 		
 		# antes de registrar os novos telefonemas, é necessário apagar os anteriores do mesmo mês
 		Telefonema.table.delete(Telefonema.c.id_conta_telefone == self.id).execute()
@@ -427,8 +448,7 @@ class ContaTelefone(Entity):
 				quantia        = atributos['quantia'],
 				tipo_fone      = atributos['tipo_fone'],
 				tipo_distancia = atributos['tipo_distancia']
-			)
-		objectstore.flush()
+			).flush()
 		self.determinar_responsaveis_telefonemas()
 	
 	
@@ -543,7 +563,7 @@ class Telefonema(Entity):
 	has_field('tipo_fone',      Integer,        nullable = False)	# fixo, celular, net fone
 	has_field('tipo_distancia', Integer,        nullable = False)	# Local, DDD, DDI
 	has_field('segundos',       Integer,        nullable = False)
-	has_field('quantia',        Numeric(10, 2), nullable = False)
+	has_field('quantia',        Money(10, 2),   nullable = False)
 	many_to_one('responsavel',    of_kind = 'Morador',       colname = 'id_morador')
 	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas', column_kwargs = dict(primary_key = True))
 	using_options(tablename = 'telefonema')
@@ -656,7 +676,7 @@ class TipoDespesa(Entity):
 
 class Despesa(Entity):
 	has_field('data', Date, default = date.today, nullable = False)
-	has_field('quantia', Numeric(10, 2), nullable = False)
+	has_field('quantia', Money(10, 2), nullable = False)
 	using_options(tablename = 'despesa')
 	many_to_one('responsavel',  of_kind = 'Morador',     colname = 'id_morador',      column_kwargs = dict(nullable = False))
 	many_to_one('tipo',         of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
@@ -665,7 +685,7 @@ class Despesa(Entity):
 
 class DespesaPeriodica(Entity):
 	has_field('proximo_vencimento', Date, default = date.today, nullable = False)
-	has_field('quantia', Numeric(10,2), nullable = False)
+	has_field('quantia', Money(10,2), nullable = False)
 	has_field('data_termino', Date)
 	using_options(tablename = 'despesa_periodica')
 	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_periodicas', column_kwargs = dict(nullable = False))

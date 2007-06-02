@@ -47,11 +47,11 @@ class TestRepublica(BaseTest):
 		r1 = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
 		r2 = Republica(nome = 'Teste2', data_criacao = date(2007, 5, 8), logradouro = 'R. dos Bobos, nº 1')
 		
-		c1 = ContaTelefone(telefone = 11, companhia = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r1)
-		c2 = ContaTelefone(telefone = 11, companhia = 2, emissao = date(2007, 5, 29), vencimento = date(2007, 5, 10), republica = r1)
-		c3 = ContaTelefone(telefone = 11, companhia = 2, emissao = date(2007, 6, 21), vencimento = date(2007, 5, 10), republica = r1)
-		c4 = ContaTelefone(telefone = 22, companhia = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r2)
-		c5 = ContaTelefone(telefone = 22, companhia = 1, emissao = date(2007, 5, 10), vencimento = date(2007, 5, 10), republica = r2)
+		c1 = ContaTelefone(telefone = 11, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r1)
+		c2 = ContaTelefone(telefone = 11, id_operadora = 2, emissao = date(2007, 5, 29), vencimento = date(2007, 5, 10), republica = r1)
+		c3 = ContaTelefone(telefone = 11, id_operadora = 2, emissao = date(2007, 6, 21), vencimento = date(2007, 5, 10), republica = r1)
+		c4 = ContaTelefone(telefone = 22, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r2)
+		c5 = ContaTelefone(telefone = 22, id_operadora = 1, emissao = date(2007, 5, 10), vencimento = date(2007, 5, 10), republica = r2)
 		
 		objectstore.flush()
 		

@@ -43,7 +43,7 @@ class TestDividirContaTelefone(BaseTest):
 	 1  |  1  |  1  | 1  | 15
 	'''
 	
-	url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
+	#url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
 
 	def setup(self):
 		BaseTest.setup(self)
@@ -60,7 +60,7 @@ class TestDividirContaTelefone(BaseTest):
 		
 		self.c = ContaTelefone(
 				telefone = 2409,
-				companhia = 1,
+				id_operadora = 1,
 				emissao = date(2007, 4, 29),
 				vencimento = date(2007, 5, 2),
 				franquia = Decimal(30),

@@ -15,7 +15,7 @@ if 'sqlalchemy.dburi' not in config.config.configMap["global"]:
 database.bind_meta_data()
 
 class BaseTest(object):
-	url = 'sqlite:///'
+	url = 'sqlite:///:memory:'
 	def setup(self):
 		database.metadata.connect(self.url)
 		database.metadata.create_all()

@@ -11,7 +11,7 @@ from base import BaseTest
 
 
 class TestContaTelefone(BaseTest):
-	url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
+	#url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
 	
 	def test_determinar_responsavel_telefonema(self):
 		p1 = Pessoa(nome = 'André')
@@ -36,7 +36,7 @@ class TestContaTelefone(BaseTest):
 		Telefone(numero = 777, responsavel = m3)
 		
 		
-		c = ContaTelefone(telefone = 1111, companhia = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r)
+		c = ContaTelefone(telefone = 1111, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r)
 		
 		t1 = Telefonema(
 				numero = 1234,
@@ -105,11 +105,11 @@ class TestContaTelefone(BaseTest):
 		Telefone(numero = 3333, responsavel = m2)
 		Telefone(numero = 9999, responsavel = m3)
 		
-		c = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
+		c = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
 		
 		objectstore.flush()
 		
-		c.importar_csv(arq, tipo = 1)
+		c.importar_csv(arq)
 		
 		t1 = Telefonema.get_by(numero = 1234, conta_telefone = c)
 		t2 = Telefonema.get_by(numero = 2222, conta_telefone = c)
@@ -175,11 +175,11 @@ class TestContaTelefone(BaseTest):
 		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
 		m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
 		
-		c = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 10), republica = r)
+		c = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 10), republica = r)
 		c.franquia = Decimal('34.93')
 		objectstore.flush()
 		
-		c.importar_csv(arq, tipo = 1)
+		c.importar_csv(arq)
 		resumo, rateio = c.executar_rateio()
 		
 		from exibicao_resultados import print_rateio_conta_telefone

@@ -14,7 +14,7 @@ class TestFechamentoContas(BaseTest):
 	'''
 	Testa o fechamento das contas do mês
 	'''
-	url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
+	#url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
 		
 	def setup(self):
 		BaseTest.setup(self)
@@ -28,7 +28,7 @@ class TestFechamentoContas(BaseTest):
 		
 		self.c = ContaTelefone(
 				telefone = 2409,
-				companhia = 1,
+				id_operadora = 1,
 				emissao = date(2007, 4, 29),
 				vencimento = date(2007, 5, 2),
 				franquia = Decimal(30),
@@ -52,6 +52,8 @@ class TestFechamentoContas(BaseTest):
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 4, 4))
+		
+		objectstore.flush()
 		
 		f.rateio = dict()
 		f.rateio[self.m1] = MoradorRateio()

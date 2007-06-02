@@ -37,8 +37,8 @@ class TestMorador(BaseTest):
 		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
 		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
 		
-		c1 = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 4, 19), vencimento = date(2007, 5, 2), republica = r)
-		c2 = ContaTelefone(telefone = 2409, companhia = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 6), republica = r)
+		c1 = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 4, 19), vencimento = date(2007, 5, 2), republica = r)
+		c2 = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 6), republica = r)
 		
 		t1 = Telefonema(numero = 1234, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 150, quantia = 1.4)
 		t2 = Telefonema(numero = 3333, conta_telefone = c1, tipo_fone = 1, tipo_distancia = 1, segundos = 299, quantia = 2.15)
