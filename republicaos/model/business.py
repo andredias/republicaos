@@ -46,9 +46,6 @@ class Pessoa(Entity):
 	using_options(tablename = 'pessoa')
 	one_to_many('contatos', of_kind = 'Contato', inverse = 'pessoa', order_by = ['tipo', 'contato'])
 	
-	def get_telefones():
-		return Telefone.select(Telefone.c.id_pessoa_resp == self.id)
-	
 	def get_emails():
 		pass
 	
@@ -79,18 +76,27 @@ class Contato(Entity):
 
 
 
-class Telefone(Entity):
+class TelefoneRegistrado(Entity):
 	'''
-	Telefone com algum morador sendo responsável.
+	TelefoneRegistrado registrado na república tendo algum morador como responsável.
 	
-	Não deve haver mais de um morador sendo responsável pelo telefone em uma república, mas esta restrição ainda não está
-	firmada no código ou no banco de dados.
+	Não poderá haver mais de um morador sendo responsável pelo telefone em uma república. Essa restrição
+	é reforçada pela chave primária.
 	'''
 	has_field('numero', Numeric(12, 0), primary_key = True)
 	has_field('descricao', Unicode)
 	using_options(tablename = 'telefone')
-	many_to_one('responsavel', of_kind = 'Morador', colname = 'id_morador', inverse = 'telefones', column_kwargs = dict(primary_key = True))
-
+	many_to_one(
+			'republica',
+			of_kind = 'Republica',
+			colname = 'id_republica',
+			inverse = 'telefones_registrados',
+			column_kwargs = dict(primary_key = True)
+			)
+	many_to_one('responsavel', of_kind = 'Morador', colname = 'id_morador', inverse = 'telefones', column_kwargs = dict(nullable = False))
+	
+	def __repr__(self):
+		return "<número: %d, republica: '%s', responsável: '%s'>" % (self.numero, self.republica.nome, self.responsavel.pessoa.nome)
 
 
 
@@ -111,6 +117,7 @@ class Republica(Entity):
 	using_options(tablename = 'republica')
 	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = '-data')
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica', order_by = 'nome')
+	one_to_many('telefones_registrados', of_kind = 'TelefoneRegistrado', inverse = 'republica', order_by = 'numero')
 	
 	
 	def datas_fechamento(self):
@@ -173,6 +180,35 @@ class Republica(Entity):
 						ContaTelefone.c.emissao <= data_final
 					)
 				)
+	
+	
+	def registrar_responsavel_telefone(self, numero, responsavel = None, descricao = None):
+		telefone = None
+		for tr in self.telefones_registrados:
+			if numero == tr.numero:
+				telefone = tr
+				break
+		
+		if responsavel:
+			assert responsavel.republica == self
+		
+		if telefone and responsavel:
+			telefone.responsavel = responsavel
+			telefone.descricao   = descricao
+			telefone.flush()
+		elif not telefone and responsavel:
+			registro = TelefoneRegistrado(numero = numero, republica = self, responsavel = responsavel, descricao = descricao)
+			registro.flush()
+			# não tenho certeza se a adição à lista da república deveria acontecer automaticamente.
+			# veja o post publicado no grupo do sqlelixir:
+			# http://groups.google.com/group/sqlelixir/browse_thread/thread/710e82c3ad586aab/03fc48b416a09fcf#03fc48b416a09fcf
+			self.telefones_registrados.append(registro)
+		elif telefone and not responsavel: # não há mais responsável
+			telefone.delete()
+			telefone.flush()
+		# else: o telefone não está registrado e não tem reponsável -> nada a fazer
+		
+		return
 	
 	
 
@@ -340,18 +376,10 @@ class ContaTelefone(Entity):
 		'''
 		Determina os responsáveis pelos telefonemas da conta
 		'''
-		responsaveis_telefones = dict(
-						select(
-								[Telefone.c.numero, Telefone.c.id_morador],
-								and_(
-									Telefone.c.id_morador == Morador.c.id,
-									Morador.c.id_republica == self.id_republica
-									)
-							).execute().fetchall()
-						)
+		numeros_registrados = dict([(tr.numero, tr) for tr in self.republica.telefones_registrados])
 		for telefonema in self.telefonemas:
-			if telefonema.responsavel is None and telefonema.numero in responsaveis_telefones:
-				telefonema.responsavel = Morador.get_by(Morador.c.id == responsaveis_telefones[telefonema.numero])
+			if telefonema.responsavel is None and telefonema.numero in numeros_registrados:
+				telefonema.responsavel = numeros_registrados[telefonema.numero].responsavel
 				telefonema.flush()
 		return
 	
@@ -577,7 +605,7 @@ class Morador(Entity):
 	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
 	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa', column_kwargs = dict(nullable = False))
 	one_to_many('despesas_periodicas', of_kind = 'DespesaPeriodica', inverse = 'responsavel', order_by = 'proximo_vencimento')
-	one_to_many('telefones', of_kind = 'Telefone', inverse = 'responsavel')
+	one_to_many('telefones_sob_responsabilidade', of_kind = 'TelefoneRegistrado', inverse = 'responsavel')
 	using_options(tablename = 'morador')
 	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
 	#using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))

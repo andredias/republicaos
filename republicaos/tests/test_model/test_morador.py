@@ -34,8 +34,8 @@ class TestMorador(BaseTest):
 		
 		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 3, 6), data_saida = date(2006, 12, 1))
 		
-		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
-		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
+		TelefoneRegistrado(numero = 1234, descricao = 'tel. do trabalho', republica = r, responsavel = m1)
+		TelefoneRegistrado(numero = 2222, descricao = 'pizzaria', republica = r, responsavel = m1)
 		
 		c1 = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 4, 19), vencimento = date(2007, 5, 2), republica = r)
 		c2 = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 6), republica = r)

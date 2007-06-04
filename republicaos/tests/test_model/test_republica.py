@@ -127,4 +127,102 @@ class TestRepublica(BaseTest):
 		assert m6 not in moradores
 		assert m7 not in moradores
 		assert m8 in moradores
+	
+	
+	def test_registrar_responsavel_telefone(self):
+		r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+		
+		p1 = Pessoa(nome = 'André')
+		p2 = Pessoa(nome = 'Marcos')
+	
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 2, 1))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 20))
+		objectstore.flush()
+		
+		r.registrar_responsavel_telefone(numero = 111, responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 222, responsavel = m2)
+		r.registrar_responsavel_telefone(numero = 333, responsavel = m2)
+		objectstore.clear()
+		
+		r  = Republica.get_by(id = 1)
+		m1 = Morador.get_by(id_pessoa = 1)
+		m2 = Morador.get_by(id_pessoa = 2)
+		t1 = TelefoneRegistrado.get_by(numero = 111, republica = r)
+		t2 = TelefoneRegistrado.get_by(numero = 222, republica = r)
+		t3 = TelefoneRegistrado.get_by(numero = 333, republica = r)
+		
+		assert t1 is not None
+		assert t2 is not None
+		assert t3 is not None
+		assert t1.responsavel is m1
+		assert t2.responsavel is m2
+		assert t3.responsavel is m2
+		
+		r.registrar_responsavel_telefone(numero = 333, responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 111, responsavel = None)
+		r.registrar_responsavel_telefone(numero = 777, responsavel = None)
+		objectstore.clear()
+	
+		r  = Republica.get_by(id = 1)
+		m1 = Morador.get_by(id_pessoa = 1)
+		m2 = Morador.get_by(id_pessoa = 2)
+		t1 = TelefoneRegistrado.get_by(numero = 111, republica = r)
+		t2 = TelefoneRegistrado.get_by(numero = 222, republica = r)
+		t3 = TelefoneRegistrado.get_by(numero = 333, republica = r)
+		t4 = TelefoneRegistrado.get_by(numero = 777, republica = r)
+		
+		assert t1 is None
+		assert t2.responsavel is m2
+		assert t3.responsavel is m1
+		assert t4 is None
+	
+	
+	def test_registrar_responsavel_telefone_2(self):
+		'''
+		Testa um problema que parece ser do Elixir para atulizar automaticamente uma lista de dependências entre uma 
+		entidade e outra de uma relação has_many/one_to_many.
+		
+		Não tenho certeza se a adição à lista deveria acontecer automaticamente.
+		veja o post publicado no grupo do sqlelixir:
+		http://groups.google.com/group/sqlelixir/browse_thread/thread/710e82c3ad586aab/03fc48b416a09fcf#03fc48b416a09fcf
+		'''
+		r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+		
+		p1 = Pessoa(nome = 'André')
+		p2 = Pessoa(nome = 'Marcos')
+	
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 2, 1))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 20))
+		objectstore.flush()
+		
+		r.registrar_responsavel_telefone(numero = 111, responsavel = m1)
+		try:
+			r.registrar_responsavel_telefone(numero = 111, responsavel = m1)
+			r.registrar_responsavel_telefone(numero = 111, responsavel = m1)
+		except:
+			assert False, 'Erro no registro do mesmo responsável repetidamente'
+		
+		r.registrar_responsavel_telefone(numero = 777, responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 777, responsavel = None)
+		
+		assert TelefoneRegistrado.get_by(numero = 777, republica = r) is None
+	
+	
+	def test_registrar_responsavel_telefone_3(self):
+		'''
+		Segue a mesma linha do teste 2
+		'''
+		r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+		
+		p1 = Pessoa(nome = 'André')
+		p2 = Pessoa(nome = 'Marcos')
+	
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 2, 1))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 20))
+		objectstore.flush()
+		
+		r.registrar_responsavel_telefone(numero = 777, responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 777, responsavel = None)
+		
+		assert TelefoneRegistrado.get_by(numero = 777, republica = r) is None
 

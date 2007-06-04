@@ -67,24 +67,27 @@ class TestDividirContaTelefone(BaseTest):
 				servicos = Decimal(0),
 				republica = self.r
 			)
+		
+		objectstore.flush()
 	
 	
 	def set_telefones(self, m1, m2, m3, m4 = None):
-		Telefone(numero = 11, responsavel = m1)
-		Telefone(numero = 22, responsavel = m1)
-		Telefone(numero = 33, responsavel = m2)
-		Telefone(numero = 44, responsavel = m2)
-		Telefone(numero = 55, responsavel = m3)
-		Telefone(numero = 66, responsavel = m3)
+		self.r.registrar_responsavel_telefone(numero = 11, responsavel = m1)
+		self.r.registrar_responsavel_telefone(numero = 22, responsavel = m1)
+		self.r.registrar_responsavel_telefone(numero = 33, responsavel = m2)
+		self.r.registrar_responsavel_telefone(numero = 44, responsavel = m2)
+		self.r.registrar_responsavel_telefone(numero = 55, responsavel = m3)
+		self.r.registrar_responsavel_telefone(numero = 66, responsavel = m3)
 		if m4:
-			Telefone(numero = 77, responsavel = m4)
-			Telefone(numero = 88, responsavel = m4)
+			self.r.registrar_responsavel_telefone(numero = 77, responsavel = m4)
+			self.r.registrar_responsavel_telefone(numero = 88, responsavel = m4)
 	
 	
 	def moradores_numero_dias_iguais(self):
 		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
+		objectstore.flush()
 		
 		return (self.m1,self.m2, self.m3)
 	
@@ -93,6 +96,7 @@ class TestDividirContaTelefone(BaseTest):
 		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 21)) # entrou no meio do período
+		objectstore.flush()
 		
 		return (self.m1, self.m2, self.m3)
 	
@@ -100,6 +104,7 @@ class TestDividirContaTelefone(BaseTest):
 	def set_ex_morador(self):
 		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 4, 4))
 		Telefonema(numero = 77, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, quantia = Decimal('1.25'))
+		objectstore.flush()
 		return self.m4
 	
 	

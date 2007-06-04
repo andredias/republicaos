@@ -42,7 +42,7 @@ class TestFechamentoContas(BaseTest):
 		self.td2 = TipoDespesa(nome = 'Aluguel',  republica = self.r)
 		self.td3 = TipoDespesa(nome = 'Luz',      republica = self.r)
 		self.td4 = TipoDespesa(nome = 'Internet', republica = self.r)
-		self.td5 = TipoDespesa(nome = 'Telefone', republica = self.r, especifica = True)
+		self.td5 = TipoDespesa(nome = 'TelefoneRegistrado', republica = self.r, especifica = True)
 		
 		objectstore.flush()
 	

@@ -29,11 +29,12 @@ class TestContaTelefone(BaseTest):
 		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
 		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
 		m3 = Morador(pessoa = p3, republica = r2, data_entrada = date(2002, 11, 22))
+		objectstore.flush()
 		
-		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
-		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
-		Telefone(numero = 3333, responsavel = m2)
-		Telefone(numero = 777, responsavel = m3)
+		r.registrar_responsavel_telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 3333, responsavel = m2)
+		r2.registrar_responsavel_telefone(numero = 777, responsavel = m3)
 		
 		
 		c = ContaTelefone(telefone = 1111, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r)
@@ -70,9 +71,9 @@ class TestContaTelefone(BaseTest):
 		
 		c.determinar_responsaveis_telefonemas()
 		
-		assert t1.responsavel == m1
-		assert t2.responsavel == m2
-		assert t3.responsavel == None
+		assert t1.responsavel is m1
+		assert t2.responsavel is m2
+		assert t3.responsavel is None
 
 	
 	
@@ -99,11 +100,12 @@ class TestContaTelefone(BaseTest):
 		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1), data_saida = date(2006, 12, 1))
 		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
 		m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
+		objectstore.flush()
 		
-		Telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
-		Telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
-		Telefone(numero = 3333, responsavel = m2)
-		Telefone(numero = 9999, responsavel = m3)
+		r.registrar_responsavel_telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
+		r.registrar_responsavel_telefone(numero = 3333, responsavel = m2)
+		r.registrar_responsavel_telefone(numero = 9999, responsavel = m3)
 		
 		c = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
 		
