@@ -51,6 +51,9 @@ class Pessoa(Entity):
 	
 	def get_telefones_contato():
 		pass
+	
+	def __repr__(self):
+		return "<nome:'%s'>" % self.nome
 
 
 
@@ -66,6 +69,9 @@ class Contato(Entity):
 	many_to_one('pessoa', of_kind = 'Pessoa', inverse = 'contatos', colname = 'id_pessoa',
 		column_kwargs = dict(nullable = False))
 	using_options(tablename = 'contato')
+	
+	def __repr__(self):
+		return '<contato:%s, pessoa:%s>' % (self.contato, self.pessoa.nome)
 
 
 
@@ -96,7 +102,7 @@ class TelefoneRegistrado(Entity):
 	many_to_one('responsavel', of_kind = 'Morador', colname = 'id_morador', inverse = 'telefones', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
-		return "<número: %d, republica: '%s', responsável: '%s'>" % (self.numero, self.republica.nome, self.responsavel.pessoa.nome)
+		return "<número: %d, república: '%s', responsável: '%s'>" % (self.numero, self.republica.nome, self.responsavel.pessoa.nome)
 
 
 
@@ -118,6 +124,11 @@ class Republica(Entity):
 	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = '-data')
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica', order_by = 'nome')
 	one_to_many('telefones_registrados', of_kind = 'TelefoneRegistrado', inverse = 'republica', order_by = 'numero')
+	
+	
+	def __repr__(self):
+		return '<nome:%s, data_criação:%s, próximo_rateio:%s>' % \
+				(self.nome, self.data_criacao.strftime('%d/%m/%Y'), self.proximo_rateio.strftime('%d/%m/%Y'))
 	
 	
 	def datas_fechamento(self):
@@ -234,6 +245,9 @@ class Fechamento(Entity):
 	using_options(tablename = 'fechamento')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'fechamentos', colname = 'id_republica',
 		column_kwargs = dict(primary_key = True))
+	
+	def __repr__(self):
+		return "<data:%s, república:'%s'>" % (self.data.strftime('%d/%m/%Y'), self.republica.nome)
 	
 	
 	def executar_rateio(self):
@@ -371,6 +385,12 @@ class ContaTelefone(Entity):
 	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
 		column_kwargs = dict(nullable = False))
 	one_to_many('telefonemas', of_kind = 'Telefonema', order_by = 'numero')
+	
+	
+	def __repr__(self):
+		return '<telefone: %d, emissão: %s, república: %s>' % \
+				(self.telefone, self.emissao.strftime('%d/%m/%Y'), self.republica)
+	
 	
 	def determinar_responsaveis_telefonemas(self):
 		'''
@@ -597,6 +617,10 @@ class Telefonema(Entity):
 	many_to_one('responsavel',    of_kind = 'Morador',       colname = 'id_morador')
 	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas', column_kwargs = dict(primary_key = True))
 	using_options(tablename = 'telefonema')
+	
+	def __repr__(self):
+		return "<número:%d, quantia:%s, segundos:%s, responsável:'%s'>" % \
+			(self.numero, self.quantia, self.segundos, self.responsavel.nome)
 
 
 class Morador(Entity):
@@ -702,6 +726,9 @@ class TipoDespesa(Entity):
 	has_field('descricao', String)
 	using_options(tablename = 'tipo_despesa')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'tipo_despesas', column_kwargs = dict(nullable = False))
+	
+	def __repr__(self):
+		return '<nome:%s, específica:%s, descrição:%s>' % (self.nome, self.especifica, self.descricao)
 
 
 class Despesa(Entity):
@@ -710,7 +737,10 @@ class Despesa(Entity):
 	using_options(tablename = 'despesa')
 	many_to_one('responsavel',  of_kind = 'Morador',     colname = 'id_morador',      column_kwargs = dict(nullable = False))
 	many_to_one('tipo',         of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
-
+	
+	def __repr__(self):
+		return '<data:%s, quantia:%s, tipo:%s, responsável:%s>' % \
+			(self.data.strftime('%d/%m/%Y'), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)
 
 
 class DespesaPeriodica(Entity):
@@ -720,6 +750,10 @@ class DespesaPeriodica(Entity):
 	using_options(tablename = 'despesa_periodica')
 	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_periodicas', column_kwargs = dict(nullable = False))
 	many_to_one('tipo', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
+	
+	def __repr__(self):
+		return "<próximo_vencimento:%s, data_termino:%s, quantia:%s, tipo:'%s', responsável:'%s'>" % \
+			(self.proximo_vencimento.strftime('%d/%m/%Y'), (self.data_termino.strftime('%d/%m/%Y') if self.data_termino else ''), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)
 
 
 #
