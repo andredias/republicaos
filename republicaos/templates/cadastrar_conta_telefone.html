@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="master.html" />
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+    <title>Importar Conta de Telefone</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/static/css/style.css')}" />
+</head>
+
+<body>
+<h1>Importar Conta de Telefone</h1>
+
+<?python
+hoje_str = hoje.strftime('%d/%m/%Y')
+?>
+
+<form action="importar_conta_telefone" method="post">
+	<table>
+		<tr>
+			<td><label for="telefone">Telefone</label></td>
+			<td><input name="telefone" maxlength="10" size="10" type="text" /></td>
+		</tr>
+		<tr>
+			<td><label for="emissao">Data Emissão</label></td>
+			<td><input name="emissao" maxlength="10" size="10" type="text" py:attrs="dict(value = hoje_str)" value="30/01/2007" /></td>
+		</tr>
+		<tr>
+			<td><label for="vencimento">Data Vencimento</label></td>
+			<td><input name="vencimento" maxlength="10" size="10" type="text" /></td>
+		</tr>
+		<tr>
+			<td><label for="id_operadora">Operadora</label></td>
+			<td>
+				<select name="id_operadora">
+					<option value="1">Net Fone</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><label for="franquia">Franquia</label></td>
+			<td><input name="franquia" size="15" type="text" /> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
+		</tr>
+		<tr>
+			<td><label for="servicos">Encargos e Serviços</label></td>
+			<td><input name="servicos" size="15" type="text" /> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
+		</tr>
+		<tr>
+			<td><label for="csv">Contéudo do arquivo <strong>.csv</strong></label></td>
+			<td><textarea name="csv" rows="10" cols="78" ></textarea></td>
+		</tr>
+	</table>
+	
+	<p>
+		<input type="submit" value="Salvar" /> ou 
+		<a href="/" class="cancel">Cancelar</a>
+	</p>
+</form>
+
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="master.html" />
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+    <title>Importar Conta de Telefone</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/static/css/style.css')}" />
+</head>
+
+<body>
+<h1>Importar Conta de Telefone</h1>
+
+<?python
+from dateutil.relativedelta import relativedelta
+
+def seconds_to_time(seconds):
+	duracao = relativedelta(seconds = seconds)
+	if duracao.hours:
+		return '%dh %dmin %dseg' % (duracao.hours, duracao.minutes, duracao.seconds)
+	else:
+		return '%dmin %dseg' % (duracao.minutes, duracao.seconds)
+
+republica = conta_telefone.republica
+periodo   = republica.periodo_fechamento(conta_telefone.emissao)
+moradores = republica.moradores(periodo[0], periodo[1])
+?>
+
+<table>
+	<tr>
+		<td><label for="telefone">Telefone</label></td>
+		<td><input name="telefone" maxlength="10" size="10" type="text" py:attrs="dict(value = conta_telefone.telefone)" value="1921212409"/></td>
+	</tr>
+	<tr>
+		<td><label for="emissao">Data Emissão</label></td>
+		<td><input name="emissao" maxlength="10" size="10" type="text" py:attrs="dict(value = conta_telefone.emissao)" value="30/01/2007" /></td>
+	</tr>
+	<tr>
+		<td><label for="vencimento">Data Vencimento</label></td>
+		<td><input name="vencimento" maxlength="10" size="10" type="text" py:attrs="dict(value = conta_telefone.vencimento)" value="10/02/2007" /></td>
+	</tr>
+	<tr>
+		<td><label for="id_operadora">Operadora</label></td>
+		<td>
+			<select name="id_operadora">
+				<option value="1">Net Fone</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td><label for="franquia">Franquia</label></td>
+		<td><input name="franquia" size="15" type="text" py:attrs="dict(value = conta_telefone.franquia)" value="34,93" /> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
+	</tr>
+	<tr>
+		<td><label for="servicos">Encargos e Serviços</label></td>
+		<td><input name="servicos" size="15" type="text" py:attrs="dict(value = conta_telefone.servicos)" /> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
+	</tr>
+</table>
+
+<form action="registrar_responsavel_telefone" method="post">
+	<input type="hidden" name="id_conta_telefone" value="${conta_telefone.id}" />
+	<table>
+		<thead>
+			<tr>
+				<th>Número</th>
+				<th>Responsável</th>
+				<th>Duração</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr py:for="telefonema in conta_telefone.telefonemas">
+				<td>
+					<input type="hidden" name="numero" value="${telefonema.numero}" />
+					<span py:replace="telefonema.numero">193828530</span>
+				</td>
+				<td>
+					<select name="id_responsavel">
+						<option value="" py:attrs="dict(selected='selected') if telefonema.responsavel is None else dict()">Ninguém</option>
+						<option py:for="morador in moradores" value="${morador.id}" py:attrs="dict(selected='selected') if telefonema.responsavel.id == morador.id else dict()">
+						<span py:replace="morador.pessoa.nome">Nome</span>
+						</option>
+					</select>
+				</td>
+				<td><span py:replace="seconds_to_time(telefonema.segundos)">99h 99min 99seg</span></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<p>
+		<input type="submit" value="Salvar" /> ou 
+		<a href="/" class="cancel">Cancelar</a>
+	</p>
+</form>
+
+
+</body>
+</html>
