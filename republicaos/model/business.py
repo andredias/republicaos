@@ -53,7 +53,7 @@ class Pessoa(Entity):
 		pass
 	
 	def __repr__(self):
-		return "<nome:'%s'>" % self.nome
+		return "<nome:'%s'>" % self.nome.encode('utf-8')
 
 
 
@@ -71,7 +71,7 @@ class Contato(Entity):
 	using_options(tablename = 'contato')
 	
 	def __repr__(self):
-		return '<contato:%s, pessoa:%s>' % (self.contato, self.pessoa.nome)
+		return '<contato:%s, pessoa:%s>' % (self.contato.encode('utf-8'), self.pessoa.nome.encode('utf-8'))
 
 
 
@@ -102,7 +102,7 @@ class TelefoneRegistrado(Entity):
 	many_to_one('responsavel', of_kind = 'Morador', colname = 'id_morador', inverse = 'telefones', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
-		return "<número: %d, república: '%s', responsável: '%s'>" % (self.numero, self.republica.nome, self.responsavel.pessoa.nome)
+		return "<número: %d, república: '%s', responsável: '%s'>" % (self.numero, self.republica.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
 
 
 
@@ -128,7 +128,7 @@ class Republica(Entity):
 	
 	def __repr__(self):
 		return '<nome:%s, data_criação:%s, próximo_rateio:%s>' % \
-				(self.nome, self.data_criacao.strftime('%d/%m/%Y'), self.proximo_rateio.strftime('%d/%m/%Y'))
+				(self.nome.encode('utf-8'), self.data_criacao.strftime('%d/%m/%Y'), self.proximo_rateio.strftime('%d/%m/%Y'))
 	
 	
 	def datas_fechamento(self):
@@ -247,7 +247,7 @@ class Fechamento(Entity):
 		column_kwargs = dict(primary_key = True))
 	
 	def __repr__(self):
-		return "<data:%s, república:'%s'>" % (self.data.strftime('%d/%m/%Y'), self.republica.nome)
+		return "<data:%s, república:'%s'>" % (self.data.strftime('%d/%m/%Y'), self.republica.nome.encode('utf-8'))
 	
 	
 	def executar_rateio(self):
@@ -389,7 +389,7 @@ class ContaTelefone(Entity):
 	
 	def __repr__(self):
 		return '<telefone: %d, emissão: %s, república: %s>' % \
-				(self.telefone, self.emissao.strftime('%d/%m/%Y'), self.republica)
+				(self.telefone, self.emissao.strftime('%d/%m/%Y'), self.republica.nome.encode('utf-8'))
 	
 	
 	def determinar_responsaveis_telefonemas(self):
@@ -620,7 +620,7 @@ class Telefonema(Entity):
 	
 	def __repr__(self):
 		return "<número:%d, quantia:%s, segundos:%s, responsável:'%s'>" % \
-			(self.numero, self.quantia, self.segundos, self.responsavel.nome)
+			(self.numero, self.quantia, self.segundos, self.responsavel.nome.encode('utf-8'))
 
 
 class Morador(Entity):
@@ -633,6 +633,10 @@ class Morador(Entity):
 	using_options(tablename = 'morador')
 	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
 	#using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))
+	
+	def __repr__(self):
+		return "<pessoa:'%s', república:'%s', data_entrada:%s>" % \
+			(self.pessoa.nome.encode('utf-8'), self.republica.nome.encode('utf-8'), self.data_entrada.strftime('%d/%m/%Y'))
 	
 	
 	def _get_despesas(self, data_inicial, data_final):
@@ -728,7 +732,7 @@ class TipoDespesa(Entity):
 	many_to_one('republica', of_kind = 'Republica', inverse = 'tipo_despesas', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
-		return '<nome:%s, específica:%s, descrição:%s>' % (self.nome, self.especifica, self.descricao)
+		return '<nome:%s, específica:%s, descrição:%s>' % (self.nome.encode('utf-8'), self.especifica, self.descricao.encode('utf-8'))
 
 
 class Despesa(Entity):
@@ -740,7 +744,7 @@ class Despesa(Entity):
 	
 	def __repr__(self):
 		return '<data:%s, quantia:%s, tipo:%s, responsável:%s>' % \
-			(self.data.strftime('%d/%m/%Y'), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)
+			(self.data.strftime('%d/%m/%Y'), self.quantia, self.tipo.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
 
 
 class DespesaPeriodica(Entity):
