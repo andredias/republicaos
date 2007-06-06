@@ -20,9 +20,9 @@ class Root(controllers.RootController):
 	
 	despesa        = DespesaController()
 	conta_telefone = ContaTelefoneController()
-	fechamento     = FechamentoController()
+	fechamentos    = FechamentoController()
 	
-	@expose(template="republicaos.templates.index")
+	@expose()
 	# @identity.require(identity.in_group("admin"))
 	def index(self):
-		return dict()
+		raise redirect('/fechamentos/show')

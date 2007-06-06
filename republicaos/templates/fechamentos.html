@@ -13,12 +13,12 @@
 <body>
 <h1>Fechamentos Disponíveis</h1>
 <ul>
-	<li><a href="${tg.url('/fechamento/%d/%s' % (republica.id, republica.proxima_data_fechamento.strftime('%d-%m-%Y')))}">
+	<li><a href="${tg.url('/fechamentos/show/%s' % republica.proxima_data_fechamento.strftime('%d-%m-%Y'))}">
 			<span py:replace="republica.proxima_data_fechamento.strftime('%d/%m/%Y')">Próxima data de fechamento</span>
 		</a>
 	</li>
 	<li py:for="fechamento in republica.fechamentos">
-		<a href="${tg.url('/fechamento/%d/%s' % (republica.id, fechamento.data.strftime('%d-%m-%Y')))}">
+		<a href="${tg.url('/fechamentos/show/%s' % fechamento.data.strftime('%d-%m-%Y'))}">
 			<span py:replace="fechamento.data.strftime('%d/%m/%Y')">data do fechamento</span>
 		</a>
 	</li>

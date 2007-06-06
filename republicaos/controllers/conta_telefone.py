@@ -3,6 +3,7 @@
 from turbogears        import controllers, expose, flash, error_handler, redirect, validate, validators
 from republicaos.model import Republica, Morador, ContaTelefone
 from datetime          import date
+from decimal           import Decimal
 
 
 class ContaTelefoneSchema(validators.Schema):
@@ -12,20 +13,33 @@ class ContaTelefoneSchema(validators.Schema):
 	servicos      = validators.Number()
 	id_operadora  = validators.Int(not_empty = True)
 	telefone      = validators.Int(not_empty = True)
-	csv           = validators.NotEmpty()
 
 
 
 class ContaTelefoneController(controllers.Controller):
-	@expose(template = "republicaos.templates.cadastrar_conta_telefone")
+	@expose()
 	def index(self):
-		return dict(hoje = date.today())
-	
+		raise redirect('/conta_telefone/insert/')
 	
 	@expose()
-	@error_handler(index)
+	@validate(validators = dict(id_conta_telefone = validators.Int(not_empty = True)))
+	def delete(self, id_conta_telefone):
+		republica = Republica.get_by(id = 1)
+		conta     = ContaTelefone.get_by(id = id_conta_telefone)
+		conta.delete()
+		conta.flush()
+		raise redirect('/')
+	
+	
+	@expose(template = "republicaos.templates.conta_telefone_insert")
+	def insert(self):
+		return dict()
+		
+		
+	@expose()
+	@error_handler(insert)
 	@validate(validators = ContaTelefoneSchema())
-	def importar_conta_telefone(self, **dados):
+	def do_insert(self, **dados):
 		republica = Republica.get_by(id = 1)
 		
 		# verificar como fazer o controle de transação
@@ -41,19 +55,32 @@ class ContaTelefoneController(controllers.Controller):
 		conta_telefone.flush()
 		conta_telefone.importar_csv(dados['csv'].encode('utf-8'))
 		
-		raise redirect('/conta_telefone/determinar_responsaveis', id_conta_telefone = conta_telefone.id)
+		raise redirect('/conta_telefone/update/%d' % conta_telefone.id)
 	
 	
-	@expose(template = 'republicaos.templates.conta_telefone_determinar_responsaveis')
-	def determinar_responsaveis(self, **params):
-		conta_telefone = ContaTelefone.get_by(id = params['id_conta_telefone'])
+	@expose(template = 'republicaos.templates.conta_telefone_update')
+	@error_handler()
+	@validate(validators = dict(id_conta_telefone = validators.Int(not_empty = True)))
+	def update(self, id_conta_telefone):
+		conta_telefone = ContaTelefone.get_by(id = id_conta_telefone)
+		conta_telefone.executar_rateio()
 		return dict(conta_telefone = conta_telefone)
 	
 	
 	@expose()
-	def registrar_responsavel_telefone(self, **dados):
+	@error_handler(update)
+	@validate(validators = ContaTelefoneSchema())
+	def do_update(self, **dados):
+		conta_telefone = ContaTelefone.get_by(id = dados['id_conta_telefone'])
+		conta_telefone.telefone     = dados['telefone']
+		conta_telefone.franquia     = Decimal(str(dados['franquia']))
+		conta_telefone.servicos     = Decimal(str(dados['servicos']))
+		conta_telefone.id_operadora = dados['id_operadora']
+		conta_telefone.emissao      = dados['emissao']
+		conta_telefone.vencimento   = dados['vencimento']
+		conta_telefone.flush()
+		
 		to_int       = validators.Int().to_python
-		conta_telefone = ContaTelefone.get_by(id = to_int(dados['id_conta_telefone']))
 		telefonemas  = dict([(telefonema.numero, telefonema) for telefonema in conta_telefone.telefonemas])
 		republica    = Republica.get_by(id = 1)
 		numeros      = [to_int(numero) for numero in dados['numero']]
@@ -66,4 +93,4 @@ class ContaTelefoneController(controllers.Controller):
 			telefonemas[numero].flush()
 			republica.registrar_responsavel_telefone(numero = numero, responsavel = responsavel)
 		
-		raise redirect('/conta_telefone')
+		raise redirect('/conta_telefone/update/%d' % conta_telefone.id)

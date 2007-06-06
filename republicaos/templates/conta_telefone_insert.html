@@ -14,10 +14,12 @@
 <h1>Importar Conta de Telefone</h1>
 
 <?python
-hoje_str = hoje.strftime('%d/%m/%Y')
+from datetime import date
+
+hoje_str = date.today().strftime('%d/%m/%Y')
 ?>
 
-<form action="importar_conta_telefone" method="post">
+<form action="do_insert" method="post">
 	<table>
 		<tr>
 			<td><label for="telefone">Telefone</label></td>

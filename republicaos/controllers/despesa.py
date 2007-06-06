@@ -3,6 +3,7 @@
 from turbogears        import controllers, expose, flash, error_handler, redirect, validate, validators
 from republicaos.model import Republica, Morador, TipoDespesa, Despesa, DespesaPeriodica
 from datetime          import date
+from decimal           import Decimal
 
 
 class DespesaSchema(validators.Schema):
@@ -11,20 +12,48 @@ class DespesaSchema(validators.Schema):
 	quantia         = validators.Number(not_empty = True)
 	id_tipo_despesa = validators.Int(not_empty = True)
 	id_morador      = validators.Int(not_empty = True)
+	id_despesa      = validators.Int()
 
 
 
 class DespesaController(controllers.Controller):
+	@expose()
+	def index(self):
+		raise redirect('/')
+	
 	@expose(template = "republicaos.templates.despesa")
-	def index(self, **dados):
+	@validate(validators = dict(
+		acao = validators.OneOf(['insert', 'update', 'delete']),
+		id_despesa = validators.Int() # pode ser vazio
+		))
+	def default(self, acao, id_despesa = None):
 		republica = Republica.get_by(id = 1)
 		moradores = Morador.select(Morador.c.id_republica == 1)
-		if not dados:
-			dados = dict()
 		
-		dados['hoje'] = date.today()
+		if acao != 'insert' and not id_despesa:
+			flash('Página não encontrada')
+			raise redirect('/')
+		elif acao == 'delete':
+			despesa = Despesa.get_by(id = id_despesa)
+			despesa.delete()
+			despesa.flush()
+			raise redirect('/')
+		elif acao == 'insert':
+			despesa = Despesa(
+				data        = date.today(),
+				republica   = republica,
+				responsavel = moradores[0],
+				tipo        = republica.tipos_despesa[0]
+				)
+		elif acao == 'update':
+			despesa = Despesa.get_by(id = id_despesa)
+			
+		dados = dict()
+		
 		dados['moradores'] = moradores
 		dados['republica'] = republica
+		dados['despesa']   = despesa
+		dados['acao']      = acao
 		return dados
 	
 	@expose()
@@ -35,20 +64,18 @@ class DespesaController(controllers.Controller):
 		tipo_despesa = TipoDespesa.get_by(id = dados['id_tipo_despesa'], republica = republica)
 		morador      = Morador.get_by(id = dados['id_morador'])
 		if 'periodicidade' not in dados:
-			despesa = Despesa(
-						data        = dados['data_vencimento'],
-						quantia     = dados['quantia'],
-						tipo        = tipo_despesa,
-						responsavel = morador
-						)
+			despesa = Despesa.get_by(id = dados['id_despesa']) if dados['id_despesa'] else Despesa()
+			despesa.data = dados['data_vencimento']
 		else:
-			despesa = DespesaPeriodica(
-						proximo_vencimento = dados['data_vencimento'],
-						quantia            = dados['quantia'],
-						tipo               = tipo_despesa,
-						responsavel        = morador,
-						data_termino       = dados['data_termino']
-						)
+			despesa = DespesaPeriodica.get_by(id = dados['id_despesa']) if dados['id_despesa'] else DespesaPeriodica()
+			despesa.proximo_vencimento = dados['data_vencimento']
+			despesa.data_termino       = dados['data_termino']
+			
+		despesa.quantia     = Decimal(str(dados['quantia']))
+		despesa.tipo        = tipo_despesa
+		despesa.responsavel = morador
+		
 		despesa.flush()
-		raise redirect('/despesa')
+		flash('Despesa cadastrada com sucesso!')
+		raise redirect('/despesa/insert/')
 	

@@ -128,7 +128,6 @@ def print_acerto_final(fechamento):
 		write('|%10s' % morador.pessoa.nome)
 	write('| Total a Pagar')
 	
-	a_receber = dict()
 	for devedor in fechamento.participantes:
 		write('\n%10s' % devedor.pessoa.nome)
 		total_a_pagar = Decimal(0)
@@ -139,7 +138,6 @@ def print_acerto_final(fechamento):
 				if credor in fechamento.acerto_a_pagar[devedor]:
 					a_pagar           = fechamento.acerto_a_pagar[devedor][credor]
 					total_a_pagar    += a_pagar
-					a_receber[credor] = a_receber.get(credor, Decimal(0)) + a_pagar
 					write('|%10s' % a_pagar)
 				else:
 					write('|%10s' % ' ')
@@ -147,8 +145,8 @@ def print_acerto_final(fechamento):
 	write('\n%s' % ('-' * 10 * (len(fechamento.participantes) + 3)))
 	write('\n   Receber')
 	for credor in fechamento.participantes:
-		if credor in a_receber:
-			write('|%10s' % a_receber[credor])
+		if credor in fechamento.acerto_a_receber:
+			write('|%10s' % sum(fechamento.acerto_a_receber[credor].values()))
 		else:
 			write('|%10s' % ' ')
 	write('\n\n\n')

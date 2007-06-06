@@ -167,10 +167,12 @@ class Republica(Entity):
 		return (data_inicial, data_final)
 	
 	
-	def moradores(self, data_inicial, data_final):
+	def moradores(self, data_inicial = None, data_final = None):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
+		if not data_inicial and not data_final:
+			data_inicial, data_final = self.periodo_fechamento()
 		return Morador.select(
 					and_(
 						Morador.c.id_republica == self.id,
@@ -232,7 +234,9 @@ class MoradorRateio(object):
 	
 	Esta classe tem como objetivo encapsular os dados do morador no fechamento sem bagunçar o objeto morador original.
 	'''
-	pass
+	def __repr__(self):
+		return '<qtd_dias:%d, franquia:%s, gastos:%s, sem dono:%s, excedentes:%s, serviços:%s, a pagar:%s>' % \
+			(self.qtd_dias, self.franquia, self.gastos, self.sem_dono, self.excedente, self.servicos, self.a_pagar)
 
 
 
@@ -328,10 +332,9 @@ class Fechamento(Entity):
 		credores.sort(key =  lambda obj:self.rateio[obj].saldo_final)
 		devedores.sort(key = lambda obj:self.rateio[obj].saldo_final)
 		
-		self.acerto_a_pagar = dict()
+		self.acerto_a_pagar   = dict([(devedor, dict()) for devedor in devedores])
+		self.acerto_a_receber = dict([(credor, dict()) for credor in credores])
 		if len(devedores) == 0: return
-		for devedor in devedores:
-			self.acerto_a_pagar[devedor] = dict()
 		
 		devedores = iter(devedores)
 		try:
@@ -350,6 +353,9 @@ class Fechamento(Entity):
 							saldo_pagar  -= saldo_receber
 							saldo_receber = 0
 		except StopIteration:
+			for devedor in self.acerto_a_pagar.keys():
+				for credor in self.acerto_a_pagar[devedor].keys():
+					self.acerto_a_receber[credor][devedor] = self.acerto_a_pagar[devedor][credor]
 			return
 	
 	
@@ -757,7 +763,7 @@ class DespesaPeriodica(Entity):
 	
 	def __repr__(self):
 		return "<próximo_vencimento:%s, data_termino:%s, quantia:%s, tipo:'%s', responsável:'%s'>" % \
-			(self.proximo_vencimento.strftime('%d/%m/%Y'), (self.data_termino.strftime('%d/%m/%Y') if self.data_termino else ''), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)
+			(self.proximo_vencimento.strftime('%d/%m/%Y'), (self.data_termino.strftime('%d/%m/%Y') if self.data_termino else ''), self.quantia, self.tipo.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
 
 
 #
