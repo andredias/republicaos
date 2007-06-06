@@ -34,7 +34,7 @@ class DespesaController(controllers.Controller):
 		republica    = Republica.get_by(id = 1)
 		tipo_despesa = TipoDespesa.get_by(id = dados['id_tipo_despesa'], republica = republica)
 		morador      = Morador.get_by(id = dados['id_morador'])
-		if dados['periodicidade'] == 'uma_vez':
+		if 'periodicidade' not in dados:
 			despesa = Despesa(
 						data        = dados['data_vencimento'],
 						quantia     = dados['quantia'],
