@@ -42,7 +42,7 @@ class TestFechamentoContas(BaseTest):
 		self.td2 = TipoDespesa(nome = 'Aluguel',  republica = self.r)
 		self.td3 = TipoDespesa(nome = 'Luz',      republica = self.r)
 		self.td4 = TipoDespesa(nome = 'Internet', republica = self.r)
-		self.td5 = TipoDespesa(nome = 'TelefoneRegistrado', republica = self.r, especifica = True)
+		self.td5 = TipoDespesa(nome = 'Telefone', republica = self.r, especifica = True)
 		
 		objectstore.flush()
 	
@@ -193,10 +193,8 @@ class TestFechamentoContas(BaseTest):
 		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_despesas_gerais > 0 and f.total_despesas_especificas > 0
-		assert f.total_despesas_gerais == sum(morador.quota_geral for morador in f.rateio.values())
-		assert f.total_despesas_especificas == self.c.resumo['total_conta'] == sum(morador.quota_especifica for morador in f.rateio.values())
-		assert len(f.moradores) == 3 and len(f.ex_moradores) == 1
+		assert f.total_despesas > 0
+		assert len(f.participantes) == 4
 		assert any(morador.saldo_final for morador in f.rateio.values())
 		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
 	
@@ -237,10 +235,10 @@ class TestFechamentoContas(BaseTest):
 		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_despesas_gerais > 0 and f.total_despesas_especificas > 0
-		assert f.total_despesas_gerais == sum(morador.quota_geral for morador in f.rateio.values())
-		assert f.total_despesas_especificas == self.c.resumo['total_conta'] == sum(morador.quota_especifica for morador in f.rateio.values())
-		assert len(f.moradores) == 3 and len(f.ex_moradores) == 0
+		assert f.total_despesas > 0
+		assert f.total_despesas == sum(f.rateio[morador].quota for morador in f.participantes) + f.total_telefone
+		assert f.total_telefone == self.c.resumo['total_conta']
+		assert len(f.participantes) == 3
 		assert any(morador.saldo_final for morador in f.rateio.values())
 		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
 	
@@ -256,10 +254,6 @@ class TestFechamentoContas(BaseTest):
 		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_despesas_gerais == 0 and f.total_despesas_especificas == 0
-		assert len(f.moradores) == 0 and len(f.ex_moradores) == 0
-
-
-
-
-
+		assert f.total_despesas == 0
+		assert len(f.participantes) == 0
+		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0

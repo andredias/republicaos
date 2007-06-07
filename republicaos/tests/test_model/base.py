@@ -19,13 +19,13 @@ class BaseTest(object):
 	def setup(self):
 		database.metadata.connect(self.url)
 		database.metadata.create_all()
-		database.metadata.engine.echo = True
+		#database.metadata.engine.echo = True
 	
 	
 	def teardown(self):
 		# we don't use cleanup_all because setup and teardown are called for
 		# each test, and since the class is not redefined, it will not be
 		# reinitialized so we can't kill it
-		database.metadata.engine.echo = False
+		#database.metadata.engine.echo = False
 		database.metadata.drop_all()
 		objectstore.clear()

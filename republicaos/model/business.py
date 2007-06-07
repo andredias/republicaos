@@ -235,8 +235,12 @@ class MoradorRateio(object):
 	Esta classe tem como objetivo encapsular os dados do morador no fechamento sem bagunçar o objeto morador original.
 	'''
 	def __repr__(self):
-		return '<qtd_dias:%d, franquia:%s, gastos:%s, sem dono:%s, excedentes:%s, serviços:%s, a pagar:%s>' % \
-			(self.qtd_dias, self.franquia, self.gastos, self.sem_dono, self.excedente, self.servicos, self.a_pagar)
+		if hasattr(self, 'franquia'): # usado no rateio da conta de telefone
+			return '<qtd_dias:%d, franquia:%s, gastos:%s, sem dono:%s, excedentes:%s, serviços:%s, a pagar:%s>' % \
+				(self.qtd_dias, self.franquia, self.gastos, self.sem_dono, self.excedente, self.servicos, self.a_pagar)
+		else:
+			return '<qtd_dias:%d, quota:%s, quota_telefone:%s, total_despesas:%s, saldo_final:%s>' % \
+				(self.qtd_dias, self.quota, self.quota_telefone, self.total_despesas, self.saldo_final)
 
 
 
@@ -258,63 +262,54 @@ class Fechamento(Entity):
 		'''
 		Calcula a divisão das despesas em determinado período
 		'''
-		self.data_inicial, self.data_final = self.republica.periodo_fechamento(self.data)
+		data_inicial, data_final = self.republica.periodo_fechamento(self.data)
 		
-		self.total_despesas_gerais      = Decimal(0)
-		self.total_despesas_especificas = Decimal(0)
-		self.total_dias                 = 0
-		
-		self.moradores     = set(self.republica.moradores(self.data_inicial, self.data_final))
-		self.ex_moradores  = set()
-		self.despesas      = []
-		self.despesas_tipo = dict()
-		self.rateio        = dict()
+		moradores = set(self.republica.moradores(data_inicial, data_final))
+		despesas  = list()
+		rateio    = dict()
 		
 		# Divisão das contas de telefone
-		self.contas_telefone = self.republica.contas_telefone(self.data_inicial, self.data_final)
-		for conta_telefone in self.contas_telefone:
+		contas_telefone = self.republica.contas_telefone(data_inicial, data_final)
+		for conta_telefone in contas_telefone:
 			conta_telefone.executar_rateio()
-			self.ex_moradores.update(set(conta_telefone.rateio.keys()) - self.moradores)
+			moradores.update(set(conta_telefone.rateio.keys()))
 		
 		# Contabilização das despesas pagas por cada morador
-		for morador in (self.moradores | self.ex_moradores):
-			self.rateio[morador] = MoradorRateio()
-			rateio_morador = self.rateio[morador]
-			rateio_morador.qtd_dias = morador.qtd_dias_morados(self.data_inicial, self.data_final)
-			self.total_dias        += rateio_morador.qtd_dias
-			rateio_morador.total_despesas_gerais      = Decimal(0)
-			rateio_morador.total_despesas_especificas = Decimal(0)
+		for morador in moradores:
+			rateio[morador]                = MoradorRateio()
+			rateio[morador].qtd_dias       = morador.qtd_dias_morados(data_inicial, data_final)
+			rateio[morador].total_despesas = Decimal(0)
 			
-			for despesa in morador.despesas(self.data_inicial, self.data_final):
-				self.despesas.append(despesa)
-				if not despesa.tipo.especifica:
-					rateio_morador.total_despesas_gerais += despesa.quantia
-					self.total_despesas_gerais           += despesa.quantia
-				else:
-					rateio_morador.total_despesas_especificas += despesa.quantia
-					self.total_despesas_especificas           += despesa.quantia
-				self.despesas_tipo[despesa.tipo] = self.despesas_tipo.get(despesa.tipo, Decimal('0.00')) + despesa.quantia
-				
-			# contas específicas por enquanto, só de telefone
-			rateio_morador.quota_especifica = Decimal(0)
-			for conta_telefone in self.contas_telefone:
-				if morador in conta_telefone.rateio:
-					rateio_morador.quota_especifica += conta_telefone.rateio[morador].a_pagar
-			rateio_morador.saldo_final_especifico = rateio_morador.quota_especifica - rateio_morador.total_despesas_especificas
+			despesas_morador = morador.despesas(data_inicial, data_final)
+			despesas.extend(despesas_morador)
+			rateio[morador].total_despesas = sum(despesa.quantia for despesa in despesas_morador)
+			rateio[morador].quota_telefone = sum(conta_telefone.rateio[morador].a_pagar for conta_telefone in contas_telefone if morador in conta_telefone.rateio)
 			
 		# Divisão das contas
-		for rateio_morador in self.rateio.values():
-			rateio_morador.quota_geral       = self.total_despesas_gerais * rateio_morador.qtd_dias / self.total_dias
-			rateio_morador.saldo_final_geral = rateio_morador.quota_geral - rateio_morador.total_despesas_gerais
-			rateio_morador.saldo_final       = rateio_morador.saldo_final_geral + rateio_morador.saldo_final_especifico
+		total_despesas = sum(despesa.quantia for despesa in despesas)
+		total_dias     = sum(rateio[morador].qtd_dias for morador in moradores)
+		total_telefone = sum(rateio[morador].quota_telefone for morador in moradores)
+		for morador in moradores:
+			# o total do telefone é uma despesa específica e não deve ser usada no cálculo das quotas
+			# a parte de cada um nos telefones é contabilizada no saldo final
+			rateio[morador].quota       = (total_despesas - total_telefone) * rateio[morador].qtd_dias / total_dias
+			rateio[morador].saldo_final = rateio[morador].quota + rateio[morador].quota_telefone - rateio[morador].total_despesas
 		
-			
-		# transforma set em list e ordena por nome
-		self.moradores    = list(self.moradores)
-		self.ex_moradores = list(self.ex_moradores)
-		self.participantes = self.moradores + self.ex_moradores
-		self.moradores.sort(key = lambda obj:obj.pessoa.nome)
-		self.ex_moradores.sort(key = lambda obj:obj.pessoa.nome)
+		self.total_despesas  = total_despesas
+		self.total_dias      = total_dias
+		self.total_telefone  = total_telefone
+		self.data_inicial    = data_inicial
+		self.data_final      = data_final
+		self.despesas        = despesas
+		self.contas_telefone = contas_telefone
+		self.rateio          = rateio
+		self.participantes   = list(moradores)
+		self.total_tipo_despesa = dict(
+			[(tipo_despesa, sum(despesa.quantia for despesa in despesas if despesa.tipo == tipo_despesa))
+			for tipo_despesa in self.republica.tipos_despesa]
+			)
+		
+		self.despesas.sort(key = lambda obj:obj.data)
 		self.participantes.sort(key = lambda obj:obj.pessoa.nome)
 		
 		self._executar_acerto_final()
@@ -738,7 +733,7 @@ class TipoDespesa(Entity):
 	many_to_one('republica', of_kind = 'Republica', inverse = 'tipo_despesas', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
-		return '<nome:%s, específica:%s, descrição:%s>' % (self.nome.encode('utf-8'), self.especifica, self.descricao.encode('utf-8'))
+		return '<nome:%s, específica:%s>' % (self.nome.encode('utf-8'), self.especifica)
 
 
 class Despesa(Entity):

@@ -10,11 +10,8 @@ from pronus_utils import pretty_decimal
 data_fechamento    = fechamento.data.strftime('%d/%m/%Y')
 periodo_fechamento = fechamento.republica.periodo_fechamento(fechamento.data)
 contas_telefone    = fechamento.republica.contas_telefone(periodo_fechamento[0], periodo_fechamento[1])
-tipos_despesas_gerais      = [t for t in fechamento.despesas_tipo.keys() if not t.especifica]
-tipos_despesas_especificas = [t for t in fechamento.despesas_tipo.keys() if t.especifica]
-tipos_despesas_gerais.sort(key = lambda obj: obj.nome)
-tipos_despesas_especificas.sort(key = lambda obj: obj.nome)
-fechamento.despesas.sort(key = lambda obj:obj.data)
+tipos_despesa      = sorted(fechamento.total_tipo_despesa.keys(), key = lambda obj: obj.nome)
+num_participantes  = len(fechamento.participantes) if len(fechamento.participantes) else 1
 ?>
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -25,48 +22,35 @@ fechamento.despesas.sort(key = lambda obj:obj.data)
 <body>
 <h1>Fechamento de <span py:replace="data_fechamento">Data</span></h1>
 
-<h2>Totais</h2>
-<table>
-	<tbody>
-		<tr>
-			<td>Total das Despesas Gerais</td>
-			<td>${pretty_decimal(fechamento.total_despesas_gerais)}</td>
-		</tr>
-		<tr>
-			<td>Total das Despesas Específicas</td>
-			<td>${pretty_decimal(fechamento.total_despesas_especificas)}</td>
-		</tr>
-		<tr>
-			<td>Total das Despesas</td>
-			<td>${pretty_decimal(fechamento.total_despesas_gerais + fechamento.total_despesas_especificas)}</td>
-		</tr>
-	</tbody>
-</table>
-
-
-<h2>Rateio Final</h2>
+<h2>Rateio das Despesas</h2>
 <table>
 	<thead>
 		<tr>
 			<th>Morador</th>
-			<th>Geral</th>
-			<th>Específico</th>
+			<th>Dias</th>
+			<th>Quota</th>
+			<th>Telefone</th>
+			<th>Despesas</th>
 			<th>Saldo Final</th>
 		</tr>
 	</thead>
 	<tfoot>
 		<tr>
 			<th>Totais</th>
-			<th py:content="pretty_decimal(sum(morador.saldo_final_geral for morador in fechamento.rateio.values()))"></th>
-			<th py:content="pretty_decimal(sum(morador.saldo_final_especifico for morador in fechamento.rateio.values()))"></th>
+			<th py:content="fechamento.total_dias"></th>
+			<th py:content="pretty_decimal(sum(morador.quota for morador in fechamento.rateio.values()))"></th>
+			<th py:content="pretty_decimal(fechamento.total_telefone)"></th>
+			<th py:content="pretty_decimal(fechamento.total_despesas)"></th>
 			<th py:content="pretty_decimal(sum(morador.saldo_final for morador in fechamento.rateio.values()))"></th>
 		</tr>
 	</tfoot>
 	<tbody>
-		<tr py:for="morador in fechamento.moradores">
+		<tr py:for="morador in fechamento.participantes">
 			<td><span py:replace="morador.pessoa.nome">Fulano de tal</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].saldo_final_geral)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].saldo_final_especifico)">99,99</span></td>
+			<td><span py:replace="fechamento.rateio[morador].qtd_dias">30</span></td>
+			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].quota)">99,99</span></td>
+			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].quota_telefone)">99,99</span></td>
+			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].total_despesas)">99,99</span></td>
 			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].saldo_final)">999,99</span></td>
 		</tr>
 	</tbody>
@@ -129,84 +113,37 @@ fechamento.despesas.sort(key = lambda obj:obj.data)
 </table>
 <p><a href="${tg.url('/despesa/insert')}">Cadastrar nova despesa</a></p>
 
-<hr />
-
-<h2>Resumo das Despesas Gerais</h2>
+<h2>Resumo das Despesas</h2>
 <table>
 	<thead>
 		<tr>
-			<th>Despesa</th>
+			<th>Tipo da Despesa</th>
 			<th>Total</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr py:for="tipo_despesa in tipos_despesas_gerais">
-			<td><span py:replace="tipo_despesa.nome">Tipo da despesa</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.despesas_tipo[tipo_despesa])">99,99</span></td>
-		</tr>
-		<tr>
-			<td>Total das Despesas Gerais</td>
-			<td><span py:replace="pretty_decimal(fechamento.total_despesas_gerais)">999,99</span></td>
-		</tr>
-	</tbody>
-</table>
-
-<h2>Resumo das Despesas Específicas</h2>
-<table>
-	<thead>
-		<tr>
-			<th>Despesa</th>
-			<th>Total</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr py:for="tipo_despesa in tipos_despesas_especificas">
-			<td><span py:replace="tipo_despesa.nome">Tipo da despesa</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.despesas_tipo[tipo_despesa])">99,99</span></td>
-		</tr>
-		<tr>
-			<td>Total das Despesas Específicas</td>
-			<td><span py:replace="pretty_decimal(fechamento.total_despesas_especificas)">999,99</span></td>
-		</tr>
-	</tbody>
-</table>
-
-
-<h3>Rateio das Despesas Gerais</h3>
-<table>
-	<thead>
-		<tr>
-			<th>Morador</th>
-			<th>Dias</th>
-			<th>Despesas</th>
-			<th>Quota</th>
-			<th>Saldo Final</th>
 		</tr>
 	</thead>
 	<tfoot>
 		<tr>
-			<th>Totais</th>
-			<th py:content="sum(morador.qtd_dias for morador in fechamento.rateio.values())"></th>
-			<th py:content="pretty_decimal(sum(morador.total_despesas_gerais for morador in fechamento.rateio.values()))"></th>
-			<th py:content="pretty_decimal(sum(morador.quota_geral for morador in fechamento.rateio.values()))"></th>
-			<th py:content="pretty_decimal(sum(morador.saldo_final_geral for morador in fechamento.rateio.values()))"></th>
+			<th>Total</th>
+			<th py:content="fechamento.total_despesas">999,99</th>
+		</tr>
+		<tr>
+			<th>Nº Moradores</th>
+			<th py:content="len(fechamento.participantes)">9</th>
+		</tr>
+		<tr>
+			<th>Média</th>
+			<th py:content="pretty_decimal(fechamento.total_despesas/num_participantes)">999,99</th>
 		</tr>
 	</tfoot>
 	<tbody>
-		<tr py:for="morador in fechamento.moradores">
-			<td><span py:replace="morador.pessoa.nome">Fulano de tal</span></td>
-			<td><span py:replace="fechamento.rateio[morador].qtd_dias">30</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].total_despesas_gerais)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].quota_geral)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].saldo_final_geral)">999,99</span></td>
+		<tr py:for="tipo in tipos_despesa">
+			<td py:content="tipo.nome">Tipo da despesa</td>
+			<td py:content="pretty_decimal(fechamento.total_tipo_despesa[tipo])">99,99</td>
 		</tr>
 	</tbody>
 </table>
 
-<hr />
-
 <h2>Contas de Telefone</h2>
-
 <table>
 	<thead>
 		<tr>
@@ -234,36 +171,6 @@ fechamento.despesas.sort(key = lambda obj:obj.data)
 	</tbody>
 </table>
 <p><a href="${tg.url('/conta_telefone/insert')}">Cadastrar nova conta de telefone</a></p>
-
-
-
-<h3>Rateio das Contas de Telefone</h3>
-<table>
-	<thead>
-		<tr>
-			<th>Morador</th>
-			<th>Despesas</th>
-			<th>Quota</th>
-			<th>Saldo Final</th>
-		</tr>
-	</thead>
-	<tfoot>
-		<tr>
-			<th>Totais</th>
-			<th py:content="pretty_decimal(sum(morador.total_despesas_especificas for morador in fechamento.rateio.values()))"></th>
-			<th py:content="pretty_decimal(sum(morador.quota_especifica for morador in fechamento.rateio.values()))"></th>
-			<th py:content="pretty_decimal(sum(morador.saldo_final_especifico for morador in fechamento.rateio.values()))"></th>
-		</tr>
-	</tfoot>
-	<tbody>
-		<tr py:for="morador in fechamento.moradores">
-			<td><span py:replace="morador.pessoa.nome">Fulano de tal</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].total_despesas_especificas)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].quota_especifica)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].saldo_final_especifico)">999,99</span></td>
-		</tr>
-	</tbody>
-</table>
 
 
 </body>
