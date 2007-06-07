@@ -89,8 +89,9 @@ class ContaTelefoneController(controllers.Controller):
 		for idx in range(len(numeros)):
 			numero      = numeros[idx]
 			responsavel = responsaveis[idx]
-			telefonemas[numero].responsavel = responsavel
-			telefonemas[numero].flush()
-			republica.registrar_responsavel_telefone(numero = numero, responsavel = responsavel)
+			if telefonemas[numero].responsavel is not responsavel:
+				telefonemas[numero].responsavel = responsavel
+				telefonemas[numero].flush()
+				republica.registrar_responsavel_telefone(numero = numero, responsavel = responsavel)
 		
 		raise redirect('/conta_telefone/update/%d' % conta_telefone.id)
