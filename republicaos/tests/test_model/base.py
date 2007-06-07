@@ -16,6 +16,7 @@ database.bind_meta_data()
 
 class BaseTest(object):
 	url = 'sqlite:///:memory:'
+	#url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
 	def setup(self):
 		database.metadata.connect(self.url)
 		database.metadata.create_all()

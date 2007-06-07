@@ -678,27 +678,6 @@ class Morador(Entity):
 		return self._get_despesas(data_inicial, data_final)
 	
 	
-	def total_despesas(self, data_inicial, data_final):
-		'''
-		Atualmente esta função está servindo apenas como referência da utilização de algumas funções do SQLAlchemy.
-		O mesmo resultado pode ser obtido através de uma "List comprehension"
-		'''
-		def total(especifica):
-			return select(
-				[func.coalesce(func.sum(Despesa.c.quantia), 0)],
-				and_(
-					Despesa.c.id_morador == self.id,
-					Despesa.c.data >= data_inicial,
-					Despesa.c.data <= data_final,
-					Despesa.c.id_tipo == TipoDespesa.c.id,
-					TipoDespesa.c.especifica == especifica,
-					)
-				).execute().fetchone()[0]
-				
-		return (total(especifica = False), total(especifica = True))
-	
-	
-	
 	def despesas_por_tipo(self, tipo_despesa, data_inicial = None, data_final = None):
 		return [despesa for despesa in self.despesas(data_inicial, data_final) if despesa.tipo == tipo_despesa]
 	
@@ -728,13 +707,12 @@ class Morador(Entity):
 
 class TipoDespesa(Entity):
 	has_field('nome', Unicode(40), nullable = False)
-	has_field('especifica', Boolean, default = False)
 	has_field('descricao', String)
 	using_options(tablename = 'tipo_despesa')
 	many_to_one('republica', of_kind = 'Republica', inverse = 'tipo_despesas', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
-		return '<nome:%s, específica:%s>' % (self.nome.encode('utf-8'), self.especifica)
+		return '<nome:%s>' % self.nome.encode('utf-8')
 
 
 class Despesa(Entity):

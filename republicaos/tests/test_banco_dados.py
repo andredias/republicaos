@@ -42,7 +42,7 @@ class BaseBancoDeDados(BaseTest):
 
 
 class TestSQLite(BaseBancoDeDados):
-	pass
+	url = 'sqlite:///:memory:'
 
 
 
