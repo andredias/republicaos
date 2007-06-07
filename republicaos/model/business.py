@@ -293,6 +293,7 @@ class Fechamento(Entity):
 			# o total do telefone é uma despesa específica e não deve ser usada no cálculo das quotas
 			# a parte de cada um nos telefones é contabilizada no saldo final
 			rateio[morador].quota       = (total_despesas - total_telefone) * rateio[morador].qtd_dias / total_dias
+			rateio[morador].porcentagem = 100 * rateio[morador].qtd_dias / total_dias
 			rateio[morador].saldo_final = rateio[morador].quota + rateio[morador].quota_telefone - rateio[morador].total_despesas
 		
 		self.total_despesas  = total_despesas

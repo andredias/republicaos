@@ -57,23 +57,36 @@ def print_despesas(fechamento):
 
 def print_rateio(fechamento):
 	write(u'\n\nRATEIO\n------\n')
-	write(u' %-*s| %-*s| %-*s| %-*s| %-*s| %s' % (9, 'Morador', 4, 'Dias', 8, 'Quota', 8, 'Telefone', 8, 'Despesas', 'Saldo Final'))
+	write(u' %-*s| %-*s| %-*s| %-*s| %-*s| %-*s| %s' %
+		(
+		9, 'Morador',
+		4, 'Dias',
+		12, u'Participação',
+		8, 'Quota',
+		8, 'Telefone',
+		8, 'Despesas',
+		'Saldo Final'
+		)
+	)
 	for morador in fechamento.participantes:
 		rateio_morador = fechamento.rateio[morador]
-		write('\n %*s| %*d| %*s| %*s| %*s| %*s' % \
+		write('\n %*s| %*d| %*s%%| %*s| %*s| %*s| %*s' % \
 			(9, morador.pessoa.nome,
 			4, rateio_morador.qtd_dias,
+			11, pretty_decimal(rateio_morador.porcentagem, 1),
 			8, pretty_decimal(rateio_morador.quota),
 			8, pretty_decimal(rateio_morador.quota_telefone),
 			8, pretty_decimal(rateio_morador.total_despesas),
 			8, pretty_decimal(rateio_morador.saldo_final)))
 		
+	total_porcentagem = sum(fechamento.rateio[morador].porcentagem for morador in fechamento.participantes)
 	total_quotas      = sum(fechamento.rateio[morador].quota       for morador in fechamento.participantes)
 	total_saldo_final = sum(fechamento.rateio[morador].saldo_final for morador in fechamento.participantes)
-	write('\n %*s| %*d| %*s| %*s| %*s| %*s' % 
+	write('\n %*s| %*d| %*s%%| %*s| %*s| %*s| %*s' % 
 		(
 		9, 'TOTAL  ',
 		4, fechamento.total_dias,
+		11, pretty_decimal(total_porcentagem, 1),
 		8, pretty_decimal(total_quotas),
 		8, pretty_decimal(fechamento.total_telefone),
 		8, pretty_decimal(fechamento.total_despesas),
