@@ -310,6 +310,10 @@ class Fechamento(Entity):
 			for tipo_despesa in self.republica.tipos_despesa]
 			)
 		
+		for tipo, total in self.total_tipo_despesa.items():
+			if not total: # total == 0
+				self.total_tipo_despesa.pop(tipo)
+		
 		self.despesas.sort(key = lambda obj:obj.data)
 		self.participantes.sort(key = lambda obj:obj.pessoa.nome)
 		
