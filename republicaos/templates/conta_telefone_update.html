@@ -20,9 +20,9 @@ from pronus_utils           import pretty_decimal
 def seconds_to_time(seconds):
 	duracao = relativedelta(seconds = seconds)
 	if duracao.hours:
-		return '%dh %dmin %dseg' % (duracao.hours, duracao.minutes, duracao.seconds)
+		return '%02d:%02d:%02d' % (duracao.hours, duracao.minutes, duracao.seconds)
 	else:
-		return '%dmin %dseg' % (duracao.minutes, duracao.seconds)
+		return '%02d:%02d' % (duracao.minutes, duracao.seconds)
 
 republica = conta_telefone.republica
 data_inicial, data_final = republica.periodo_fechamento(conta_telefone.emissao)
@@ -106,7 +106,8 @@ rateio_conta.sort()
 	<thead>
 		<tr>
 			<th>Nome</th>
-			<th>Qtd Dias</th>
+			<th>Qtd Dias<br />Morados</th>
+			<th>Participação<br />na Franquia</th>
 			<th>Franquia</th>
 			<th>Gastos</th>
 			<th>Sem Dono</th>
@@ -119,6 +120,7 @@ rateio_conta.sort()
 		<tr>
 			<th>Total</th>
 			<th py:content="sum(rateio.qtd_dias for nome, rateio in rateio_conta)">999</th>
+			<th py:content="'%s%%' % pretty_decimal(sum(rateio.porcentagem for nome, rateio in rateio_conta))">999,99</th>
 			<th py:content="pretty_decimal(sum(rateio.franquia  for nome, rateio in rateio_conta))">999,99</th>
 			<th py:content="pretty_decimal(sum(rateio.gastos    for nome, rateio in rateio_conta))">999,99</th>
 			<th py:content="pretty_decimal(sum(rateio.sem_dono  for nome, rateio in rateio_conta))">999,99</th>
@@ -131,6 +133,7 @@ rateio_conta.sort()
 		<tr py:for="nome, rateio in rateio_conta">
 			<td py:content="nome">Fulano</td>
 			<td py:content="rateio.qtd_dias"></td>
+			<td py:content="'%s%%' % pretty_decimal(rateio.porcentagem)  if rateio.franquia  else ''">99,99</td>
 			<td py:content="pretty_decimal(rateio.franquia)  if rateio.franquia  else ''">99,99</td>
 			<td py:content="pretty_decimal(rateio.gastos)    if rateio.gastos    else ''">99,99</td>
 			<td py:content="pretty_decimal(rateio.sem_dono)  if rateio.sem_dono  else ''">99,99</td>

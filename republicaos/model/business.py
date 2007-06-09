@@ -533,6 +533,7 @@ class ContaTelefone(Entity):
 		rateio[morador]:
 			Classe MoradorRateio com os campos:
 			* qtd_dias
+			* porcentagem
 			* gastos
 			* franquia
 			* sem_dono
@@ -558,7 +559,7 @@ class ContaTelefone(Entity):
 		total_ex_moradores = Decimal(0)
 		total_telefonemas  = Decimal(0)
 		for telefonema in self.telefonemas:
-			quantia = telefonema.quantia if type(telefonema.quantia) is Decimal else str(telefonema.quantia)
+			quantia = telefonema.quantia if type(telefonema.quantia) is Decimal else Decimal(str(telefonema.quantia))
 			
 			total_telefonemas += quantia
 			morador = telefonema.responsavel
@@ -583,6 +584,7 @@ class ContaTelefone(Entity):
 			excedente        = excedente if excedente > 0 else Decimal(0)
 			total_excedente += excedente
 			
+			morador.porcentagem = morador.qtd_dias * 100 / total_dias
 			morador.franquia  = franquia_morador
 			morador.sem_dono  = div_tel_sem_dono
 			morador.excedente = excedente

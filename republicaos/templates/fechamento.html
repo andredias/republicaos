@@ -127,7 +127,7 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 	<tfoot>
 		<tr>
 			<th>Total</th>
-			<th py:content="fechamento.total_despesas">999,99</th>
+			<th py:content="pretty_decimal(fechamento.total_despesas)">999,99</th>
 		</tr>
 		<tr>
 			<th>Nº Moradores</th>
