@@ -10,7 +10,7 @@ from decimal import Decimal
 from base import BaseTest
 from exibicao_resultados import print_acerto_final
 
-class TestFechamentoContas(BaseTest):
+class TestFechamento(BaseTest):
 	'''
 	Testa o fechamento das contas do mês
 	'''
@@ -63,6 +63,33 @@ class TestFechamentoContas(BaseTest):
 		f.moradores    = f.rateio.keys()
 		f.ex_moradores = []
 		f.participantes = f.moradores + f.ex_moradores
+	
+	
+	def test_periodo_fechamento(self):
+		f1 = self.r.fechamentos[0]
+		f2 = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f3 = Fechamento(republica = self.r, data = date(2007, 6, 6))
+		
+		# Garantindo na mão que esses fechamentos recém-criados estão na república. Falha do Elixir
+		if f2 not in self.r.fechamentos:
+			self.r.fechamentos.append(f2)
+		if f3 not in self.r.fechamentos:
+			self.r.fechamentos.append(f3)
+		self.r.fechamentos.sort(key = lambda obj: obj.data, reverse = True)
+		objectstore.flush()
+		
+		f1.executar_rateio()
+		f2.executar_rateio()
+		f3.executar_rateio()
+		
+		print 'republica: ', self.r
+		print 'fechamentos:'
+		for f in self.r.fechamentos:
+			print f, f.data_inicial.strftime('%d/%m/%Y'), f.data_final.strftime('%d/%m/%Y')
+		
+		assert f1.data_inicial == self.r.data_criacao and f1.data_final == (f1.data - relativedelta(days = 1))
+		assert f2.data_inicial == f1.data and f2.data_final == (f2.data - relativedelta(days = 1))
+		assert f3.data_inicial == f2.data and f3.data_final == (f3.data - relativedelta(days = 1))
 	
 	
 	
