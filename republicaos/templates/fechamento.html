@@ -92,6 +92,7 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 <hr />
 
 <h2>Lista de Despesas do Período</h2>
+<p><a href="${tg.url('/despesa/insert')}">Cadastrar nova despesa</a></p>
 <table>
 	<thead>
 		<tr>
@@ -110,11 +111,10 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 			<td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
 			<td><span py:replace="despesa.responsavel.pessoa.nome">Fulano</span></td>
 			<td><a href="${tg.url('/despesa/update/%d' % despesa.id)}">Editar</a></td>
-			<td><a href="${tg.url('/despesa/delete/%d' % despesa.id)}">Apagar</a></td>
+			<td><a href="${tg.url('/despesa/delete/%d' % despesa.id)}">Excluir</a></td>
 		</tr>
 	</tbody>
 </table>
-<p><a href="${tg.url('/despesa/insert')}">Cadastrar nova despesa</a></p>
 
 <h2>Resumo das Despesas</h2>
 <table>
@@ -147,6 +147,7 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 </table>
 
 <h2>Contas de Telefone</h2>
+<p><a href="${tg.url('/conta_telefone/insert')}">Cadastrar nova conta de telefone</a></p>
 <table>
 	<thead>
 		<tr>
@@ -168,12 +169,11 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 			<td py:content="pretty_decimal(conta.servicos) if conta.servicos else ''">99,99</td>
 			<td py:content="pretty_decimal(conta.resumo['total_telefonemas']) if conta.resumo['total_telefonemas'] else ''">99,99</td>
 			<td py:content="pretty_decimal(conta.resumo['total_conta'])">99,99</td>
-			<td><a href="${'/conta_telefone/update/%d' % conta.id}">Detalhar</a></td>
+			<td><a href="${'/conta_telefone/update/%d' % conta.id}">Editar</a></td>
 			<td><a href="${'/conta_telefone/delete/%d' % conta.id}">Excluir</a></td>
 		</tr>
 	</tbody>
 </table>
-<p><a href="${tg.url('/conta_telefone/insert')}">Cadastrar nova conta de telefone</a></p>
 
 
 </body>
