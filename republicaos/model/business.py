@@ -262,7 +262,7 @@ class Fechamento(Entity):
 		'''
 		Calcula a divisão das despesas em determinado período
 		'''
-		data_inicial, data_final = self.republica.periodo_fechamento(self.data)
+		data_inicial, data_final = self.republica.periodo_fechamento(self.data - relativedelta(days = 1))
 		
 		moradores = set(self.republica.moradores(data_inicial, data_final))
 		despesas  = list()
