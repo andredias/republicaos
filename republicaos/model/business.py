@@ -335,7 +335,7 @@ class Fechamento(Entity):
 			if not total: # total == 0
 				self.total_tipo_despesa.pop(tipo)
 		
-		self.despesas.sort(key = lambda obj:obj.data)
+		self.despesas.sort(key = lambda obj:(obj.data, obj.responsavel.pessoa.nome))
 		self.participantes.sort(key = lambda obj:obj.pessoa.nome)
 		
 		self._executar_acerto_final()
@@ -350,8 +350,8 @@ class Fechamento(Entity):
 		devedores = list(set(self.participantes) - set(credores))
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
-		credores.sort(key =  lambda obj:self.rateio[obj].saldo_final)
-		devedores.sort(key = lambda obj:self.rateio[obj].saldo_final)
+		credores.sort(key =  lambda obj: (self.rateio[obj].saldo_final, obj.pessoa.nome))
+		devedores.sort(key = lambda obj: (self.rateio[obj].saldo_final, obj.pessoa.nome))
 		
 		self.acerto_a_pagar   = dict([(devedor, dict()) for devedor in devedores])
 		self.acerto_a_receber = dict([(credor, dict()) for credor in credores])
