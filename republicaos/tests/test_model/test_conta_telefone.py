@@ -13,6 +13,39 @@ from base import BaseTest
 class TestContaTelefone(BaseTest):
 	#url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
 	
+	def test_fechamento_da_conta(self):
+		r = Republica(nome = 'Teste',
+			data_criacao   = date(2000, 05, 10),
+			logradouro     = 'R. dos Bobos, nº 0')
+		
+		Fechamento(data = date(2007, 06, 10), republica = r)
+		Fechamento(data = date(2007, 07, 10), republica = r)
+		
+		c = ContaTelefone(
+				telefone = 2409,
+				id_operadora = 1,
+				emissao = date(2007, 5, 18),
+				vencimento = date(2007, 6, 10),
+				franquia = Decimal(30),
+				servicos = Decimal(0),
+				republica = r
+			)
+		
+		objectstore.flush()
+		objectstore.clear()
+		
+		r = Republica.get_by()
+		c = ContaTelefone.get_by()
+		
+		print 'República: ', r
+		for f in r.fechamentos:
+			print '\t', f
+		print 'Conta Telefone: ', c
+		
+		assert len(r.fechamentos) == 2
+		assert r.fechamento_na_data(c.emissao) == r.fechamentos[-1]
+	
+	
 	def test_determinar_responsavel_telefonema(self):
 		p1 = Pessoa(nome = 'André')
 		p2 = Pessoa(nome = 'Felipe')
@@ -168,6 +201,11 @@ class TestContaTelefone(BaseTest):
 		r = Republica(nome = 'Teste',
 			data_criacao = date(2007, 3, 6),
 			logradouro = 'R. dos Bobos, nº 0')
+			
+		f = Fechamento(data = date(2007, 6, 6), republica = r)
+		
+		# TODO: adiciona f à república pq o Elixir não tá fazendo isso
+		r.fechamentos.append(f)
 			
 		p1 = Pessoa(nome = u'André')
 		p2 = Pessoa(nome = 'Felipe')

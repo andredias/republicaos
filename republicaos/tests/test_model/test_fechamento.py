@@ -20,6 +20,9 @@ class TestFechamento(BaseTest):
 		BaseTest.setup(self)
 		
 		self.r = Republica(nome = 'Teste', data_criacao = date(2007, 3, 6), logradouro = 'R. dos Bobos, nº 0')
+		self.r.flush()
+		
+		self.r.criar_fechamento(data = date(2007, 4, 6))
 		
 		self.p1 = Pessoa(nome = u'André')
 		self.p2 = Pessoa(nome = 'Marcos')
@@ -36,7 +39,6 @@ class TestFechamento(BaseTest):
 				republica = self.r
 			)
 		
-		Fechamento(republica = self.r, data = date(2007, 4, 6))
 		
 		self.td1 = TipoDespesa(nome = u'Água',    republica = self.r)
 		self.td2 = TipoDespesa(nome = 'Aluguel',  republica = self.r)
@@ -67,16 +69,8 @@ class TestFechamento(BaseTest):
 	
 	def test_periodo_fechamento(self):
 		f1 = self.r.fechamentos[0]
-		f2 = Fechamento(republica = self.r, data = date(2007, 5, 6))
-		f3 = Fechamento(republica = self.r, data = date(2007, 6, 6))
-		
-		# Garantindo na mão que esses fechamentos recém-criados estão na república. Falha do Elixir
-		if f2 not in self.r.fechamentos:
-			self.r.fechamentos.append(f2)
-		if f3 not in self.r.fechamentos:
-			self.r.fechamentos.append(f3)
-		self.r.fechamentos.sort(key = lambda obj: obj.data, reverse = True)
-		objectstore.flush()
+		f2 = self.r.criar_fechamento(data = date(2007, 5, 6))
+		f3 = self.r.criar_fechamento(data = date(2007, 6, 6))
 		
 		f1.executar_rateio()
 		f2.executar_rateio()
@@ -85,7 +79,7 @@ class TestFechamento(BaseTest):
 		print 'republica: ', self.r
 		print 'fechamentos:'
 		for f in self.r.fechamentos:
-			print f, f.data_inicial.strftime('%d/%m/%Y'), f.data_final.strftime('%d/%m/%Y')
+			print f
 		
 		assert f1.data_inicial == self.r.data_criacao and f1.data_final == (f1.data - relativedelta(days = 1))
 		assert f2.data_inicial == f1.data and f2.data_final == (f2.data - relativedelta(days = 1))
@@ -97,7 +91,7 @@ class TestFechamento(BaseTest):
 		'''
 		Acerto Final - Caso 1: 2 credores e 2 devedores
 		'''
-		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f = self.r.criar_fechamento(data = date(2007, 5, 6))
 		self.ajustar_fechamento_para_acerto_final(f)
 		
 		f.rateio[self.m1].saldo_final = Decimal(-84)
@@ -122,7 +116,7 @@ class TestFechamento(BaseTest):
 		'''
 		Acerto Final - Caso 2: 1 credor e 3 devedores
 		'''
-		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f = self.r.criar_fechamento(data = date(2007, 5, 6))
 		self.ajustar_fechamento_para_acerto_final(f)
 		
 		f.rateio[self.m1].saldo_final = Decimal(30)
@@ -148,7 +142,7 @@ class TestFechamento(BaseTest):
 		'''
 		Acerto Final - Caso 3: 3 credores e 1 devedor
 		'''
-		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f = self.r.criar_fechamento(data = date(2007, 5, 6))
 		self.ajustar_fechamento_para_acerto_final(f)
 		
 		f.rateio[self.m1].saldo_final = Decimal(-30)
@@ -172,7 +166,7 @@ class TestFechamento(BaseTest):
 		'''
 		Acerto Final - Caso 4: 0 credores e 0 devedores
 		'''
-		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f = self.r.criar_fechamento(data = date(2007, 5, 6))
 		self.ajustar_fechamento_para_acerto_final(f)
 		
 		f.rateio[self.m1].saldo_final = Decimal(0)
@@ -198,6 +192,8 @@ class TestFechamento(BaseTest):
 		testa_conta.p3 = self.p3
 		testa_conta.p4 = self.p4
 		
+		f = self.r.criar_fechamento(data = date(2007, 5, 6))
+		
 		testa_conta.test_dividir_conta_caso_15()
 		
 		self.m1 = testa_conta.m1
@@ -216,7 +212,6 @@ class TestFechamento(BaseTest):
 		
 		objectstore.flush()
 		
-		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
 		f.executar_rateio()
 		print_fechamento(f)
 		
@@ -240,6 +235,8 @@ class TestFechamento(BaseTest):
 		testa_conta.p2 = self.p2
 		testa_conta.p3 = self.p3
 		
+		f = self.r.criar_fechamento()
+		
 		testa_conta.test_dividir_conta_caso_07()
 		
 		self.m1 = testa_conta.m1
@@ -258,7 +255,6 @@ class TestFechamento(BaseTest):
 		
 		objectstore.flush()
 		
-		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
 		f.executar_rateio()
 		print_fechamento(f)
 		
@@ -277,7 +273,7 @@ class TestFechamento(BaseTest):
 		from test_dividir_conta_telefone import TestDividirContaTelefone
 		from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
 		
-		f = Fechamento(republica = self.r, data = date(2007, 5, 6))
+		f = self.r.criar_fechamento(data = date(2007, 5, 6))
 		f.executar_rateio()
 		print_fechamento(f)
 		

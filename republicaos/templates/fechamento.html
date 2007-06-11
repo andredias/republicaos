@@ -8,8 +8,7 @@
 from pronus_utils import pretty_decimal
 
 data_fechamento    = fechamento.data.strftime('%d/%m/%Y')
-periodo_fechamento = fechamento.republica.periodo_fechamento(fechamento.data)
-contas_telefone    = fechamento.republica.contas_telefone(periodo_fechamento[0], periodo_fechamento[1])
+contas_telefone    = fechamento.republica.contas_telefone(fechamento.data_inicial, fechamento.data_final)
 tipos_despesa      = sorted(fechamento.total_tipo_despesa.keys(), key = lambda obj: obj.nome)
 num_participantes  = len(fechamento.participantes) if len(fechamento.participantes) else 1
 ?>

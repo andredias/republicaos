@@ -113,7 +113,6 @@ class TelefoneRegistrado(Entity):
 class Republica(Entity):
 	has_field('nome', Unicode(80), nullable = False)
 	has_field('data_criacao', Date, default = date.today, nullable = False)
-	has_field('proximo_rateio', Date)
 	has_field('logradouro', Unicode(150))
 	has_field('complemento', Unicode(100))
 	has_field('bairro', Unicode(100))
@@ -127,52 +126,46 @@ class Republica(Entity):
 	
 	
 	def __repr__(self):
-		return '<nome:%s, data_criação:%s, próximo_rateio:%s>' % \
-				(self.nome.encode('utf-8'), self.data_criacao.strftime('%d/%m/%Y'), self.proximo_rateio.strftime('%d/%m/%Y'))
+		return '<nome:%s, data_criação:%s>' % \
+				(self.nome.encode('utf-8'), self.data_criacao.strftime('%d/%m/%Y'))
 	
 	
-	def datas_fechamento(self):
+	def after_insert(self):
+		criar_fechamento(self.data_criacao + relativedelta(months = 1))
+	
+	
+	def fechamento_na_data(self, data = None):
 		'''
-		Todas as datas de fechamento em ordem decrescente
+		Fechamento em que determinada data está contida
 		'''
-		result = [fechamento.data for fechamento in self.fechamentos]
-		result.append(self.data_criacao)
-		return result
-	
-	
-	@property
-	def proxima_data_fechamento(self):
-		datas_fechamento = self.datas_fechamento()
-		if (not self.proximo_rateio) or (self.proximo_rateio <= datas_fechamento[0]):
-			self.proximo_rateio = datas_fechamento[0] + relativedelta(months = 1)
-		return self.proximo_rateio
-	
-	
-	def periodo_fechamento(self, data_ref = None):
-		'''
-		Obtém o período em que a data_ref se encontra
-		'''
-		datas_fechamento = [self.proxima_data_fechamento] + self.datas_fechamento()
-		if (not data_ref) or (data_ref > datas_fechamento[0]):
-			data_ref = datas_fechamento[0]
-		elif data_ref < datas_fechamento[-1]:
-			data_ref = datas_fechamento[-1]
-			
-		for i in range(len(datas_fechamento) - 1):
-			if datas_fechamento[i] >= data_ref >= datas_fechamento[i + 1]:
-				data_final   = datas_fechamento[i] - relativedelta(days = 1)
-				data_inicial = datas_fechamento[i + 1]
-				break
+		if not data:
+			data = date.today()
 		
-		return (data_inicial, data_final)
+		if len(self.fechamentos) and (self.fechamentos[0].data > data >= self.data_criacao):
+			for i in range(len(self.fechamentos) - 1):
+				if self.fechamentos[i].data > data >= self.fechamentos[i + 1].data:
+					return self.fechamentos[i]
+			return self.fechamentos[-1]
+		else:
+			return None
+	
+	
+	def criar_fechamento(self, data = None):
+		if not data:
+			data = (self.fechamentos[0].data if len(self.fechamentos) else self.data_criacao) + relativedelta(months = 1)
+		novo_fechamento = Fechamento(data = data, republica = self)
+		novo_fechamento.flush()
+		# Elixir não está garantindo o Backref automaticamente
+		if novo_fechamento not in self.fechamentos:
+			self.fechamentos.append(novo_fechamento)
+			self.fechamentos.sort(key = lambda obj: obj.data, reverse = True)
+		return novo_fechamento
 	
 	
 	def moradores(self, data_inicial = None, data_final = None):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
-		if not data_inicial and not data_final:
-			data_inicial, data_final = self.periodo_fechamento()
 		return Morador.select(
 					and_(
 						Morador.c.id_republica == self.id,
@@ -215,15 +208,15 @@ class Republica(Entity):
 			# não tenho certeza se a adição à lista da república deveria acontecer automaticamente.
 			# veja o post publicado no grupo do sqlelixir:
 			# http://groups.google.com/group/sqlelixir/browse_thread/thread/710e82c3ad586aab/03fc48b416a09fcf#03fc48b416a09fcf
-			self.telefones_registrados.append(registro)
+			if registro not in self.telefones_registrados:
+				self.telefones_registrados.append(registro)
 		elif telefone and not responsavel: # não há mais responsável
 			telefone.delete()
 			telefone.flush()
 		# else: o telefone não está registrado e não tem reponsável -> nada a fazer
 		
 		return
-	
-	
+
 
 
 
@@ -255,14 +248,44 @@ class Fechamento(Entity):
 		column_kwargs = dict(primary_key = True))
 	
 	def __repr__(self):
-		return "<data:%s, república:'%s'>" % (self.data.strftime('%d/%m/%Y'), self.republica.nome.encode('utf-8'))
+		return "<fechamento:%s [%s, %s], república:'%s'>" % \
+			(
+			self.data.strftime('%d/%m/%Y'),
+			self.data_inicial.strftime('%d/%m/%Y'),
+			self.data_final.strftime('%d/%m/%Y'),
+			self.republica.nome.encode('utf-8')
+			)
+	
+	
+	def setup(self):
+		'''
+		Idealmente, esta rotina deveria ser executada depois que o fechamento é carregado do BD
+		'''
+		self._data_final = self.data - relativedelta(days = 1)
+		if self.data > self.republica.fechamentos[-1].data :
+			self._data_inicial = self.republica.fechamentos[self.republica.fechamentos.index(self) + 1].data
+		else:
+			self._data_inicial = self.republica.data_criacao
+	
+	
+	@property
+	def data_inicial(self):
+		if not hasattr(self, '_data_inicial'):
+			self.setup()
+		return self._data_inicial
+	
+	@property
+	def data_final(self):
+		if not hasattr(self, '_data_final'):
+			self.setup()
+		return self._data_final
 	
 	
 	def executar_rateio(self):
 		'''
 		Calcula a divisão das despesas em determinado período
 		'''
-		data_inicial, data_final = self.republica.periodo_fechamento(self.data - relativedelta(days = 1))
+		data_inicial, data_final = self.data_inicial, self.data_final
 		
 		moradores = set(self.republica.moradores(data_inicial, data_final))
 		despesas  = list()
@@ -299,8 +322,6 @@ class Fechamento(Entity):
 		self.total_despesas  = total_despesas
 		self.total_dias      = total_dias
 		self.total_telefone  = total_telefone
-		self.data_inicial    = data_inicial
-		self.data_final      = data_final
 		self.despesas        = despesas
 		self.contas_telefone = contas_telefone
 		self.rateio          = rateio
@@ -308,7 +329,7 @@ class Fechamento(Entity):
 		self.total_tipo_despesa = dict(
 			[(tipo_despesa, sum(despesa.quantia for despesa in despesas if despesa.tipo == tipo_despesa))
 			for tipo_despesa in self.republica.tipos_despesa]
-			)
+		)
 		
 		for tipo, total in self.total_tipo_despesa.items():
 			if not total: # total == 0
@@ -542,13 +563,13 @@ class ContaTelefone(Entity):
 			* a_pagar
 		
 		'''
-		periodo = self.republica.periodo_fechamento(self.emissao)
+		fechamento = self.republica.fechamento_na_data(self.emissao)
 		rateio = dict()
 		
 		total_dias = 0
 		# determina os moradores atuais da república
-		for morador in self.republica.moradores(periodo[0], periodo[1]):
-			qtd_dias    = morador.qtd_dias_morados(periodo[0], periodo[1])
+		for morador in self.republica.moradores(fechamento.data_inicial, fechamento.data_final):
+			qtd_dias    = morador.qtd_dias_morados(fechamento.data_inicial, fechamento.data_final)
 			total_dias += qtd_dias
 			rateio[morador]          = MoradorRateio()
 			rateio[morador].qtd_dias = Decimal(qtd_dias) # Decimal pois vai ser usado em outras contas depois

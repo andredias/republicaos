@@ -49,9 +49,10 @@ class TestDividirContaTelefone(BaseTest):
 		BaseTest.setup(self)
 		
 		self.r = Republica(nome = 'Teste', data_criacao = date(2007, 3, 6), logradouro = 'R. dos Bobos, nº 0')
+		self.r.flush()
 		
-		Fechamento(republica = self.r, data = date(2007, 4, 6))
-		Fechamento(republica = self.r, data = date(2007, 5, 6))
+		self.r.criar_fechamento(data = date(2007, 4, 6))
+		self.r.criar_fechamento(data = date(2007, 5, 6))
 		
 		self.p1 = Pessoa(nome = 'Andre')
 		self.p2 = Pessoa(nome = 'Marcos')
@@ -128,7 +129,7 @@ class TestDividirContaTelefone(BaseTest):
 		return (t1, t2)
 	
 	
-	def executa_caso_xyz(self, qtd_dias_diferentes, ultrapassa_franquia, tel_sem_dono, tel_ex_morador):
+	def executa_caso_xyz(self, tel_sem_dono, tel_ex_morador, qtd_dias_diferentes, ultrapassa_franquia):
 		from exibicao_resultados import print_rateio_conta_telefone
 		
 		set_morador             = [self.moradores_numero_dias_iguais, self.moradores_numero_dias_diferentes]
@@ -148,6 +149,11 @@ class TestDividirContaTelefone(BaseTest):
 			t1, t2 = self.telefonemas_sem_dono()
 	
 		objectstore.flush()
+		
+		print 'República: ', self.r
+		for f in self.r.fechamentos:
+			print f
+		print 'Conta Telefone: ', self.c
 		
 		self.c.determinar_responsaveis_telefonemas()
 		resumo, rateio = self.c.executar_rateio()

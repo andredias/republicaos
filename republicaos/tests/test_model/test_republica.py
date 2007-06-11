@@ -11,7 +11,31 @@ from base import BaseTest
 
 
 class TestRepublica(BaseTest):
-	def test_proximo_periodo_fechamento_contas_republica(self):
+	def test_criar_fechamento(self):
+		r = Republica(nome = 'Teste',
+			data_criacao = date(2007, 4, 8),
+			logradouro = 'R. dos Bobos, nº 0')
+		
+		objectstore.flush()
+		
+		r.criar_fechamento()
+		assert len(r.fechamentos) == 1
+		assert r.fechamentos[0].data == date(2007, 5, 8)
+		
+		r.criar_fechamento()
+		assert len(r.fechamentos) == 2
+		assert r.fechamentos[0].data == date(2007, 6, 8)
+		
+		r.criar_fechamento(data = date(2007, 5, 15))
+		assert len(r.fechamentos) == 3
+		assert r.fechamentos[1].data == date(2007, 5, 15)
+		
+		r.criar_fechamento(data = date(2007, 7, 10))
+		assert len(r.fechamentos) == 4
+		assert r.fechamentos[0].data == date(2007, 7, 10)
+		
+		
+	def test_fechamento_na_data(self):
 		'''
 		Testa se o próximo fechamento está no intervalo correto.
 		
@@ -23,24 +47,38 @@ class TestRepublica(BaseTest):
 			logradouro = 'R. dos Bobos, nº 0')
 		
 		objectstore.flush()
-		assert date(2007, 5, 8) == r.proxima_data_fechamento
-		assert (date(2007, 4, 8), date(2007, 5, 7)) == r.periodo_fechamento()
+		
+		assert r.fechamento_na_data(date(2007, 4, 8)) is None
+		
 		
 		Fechamento(data = date(2007, 5, 10), republica = r)
-		r.proximo_rateio = None
 		objectstore.flush()
-		
-		# devido a um defeito no sqlalchemy/elixir, o backref não está sendo atualizado automaticamente
-		# vai ser necessário obter o objeto de novo
 		objectstore.clear()
-		r = Republica.get_by(id = 1)
+		r = Republica.get_by()
 		
-		assert date(2007, 6, 10) == r.proxima_data_fechamento
-		assert (date(2007, 5, 10), date(2007, 6, 9)) == r.periodo_fechamento()
+		assert r.fechamento_na_data(date(2007, 4, 8))  == r.fechamentos[-1]
 		
-		r.proximo_rateio = date(2007, 6, 1)
-		assert date(2007, 6, 1) == r.proxima_data_fechamento
-		assert (date(2007, 5, 10), date(2007, 5, 31)) == r.periodo_fechamento(date(2007, 5, 10))
+		Fechamento(data = date(2007, 6, 10), republica = r)
+		Fechamento(data = date(2007, 7, 10), republica = r)
+		objectstore.flush()
+		objectstore.clear()
+		r = Republica.get_by()
+		
+		print '\nrepública = ', r
+		for fechamento in r.fechamentos:
+			print fechamento
+		
+		assert len(r.fechamentos) == 3
+		for i in range(len(r.fechamentos) - 1):
+			assert r.fechamentos[i].data_inicial == r.fechamentos[i + 1].data
+			assert r.fechamentos[i].data_final   == (r.fechamentos[i].data - relativedelta(days = 1))
+			
+		assert r.fechamento_na_data(date(2007, 5, 9))  == r.fechamentos[-1]
+		assert r.fechamento_na_data(date(2007, 5, 10)) == r.fechamentos[-2]
+		assert r.fechamento_na_data(date(2007, 6, 9))  == r.fechamentos[-2]
+		assert r.fechamento_na_data(date(2007, 6, 10)) == r.fechamentos[0]
+		assert r.fechamento_na_data(date(2007, 7, 10)) is None
+		
 	
 	
 	def test_contas_telefone(self):
