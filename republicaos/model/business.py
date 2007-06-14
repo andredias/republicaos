@@ -166,13 +166,15 @@ class Republica(Entity):
 		'''
 		Retorna os moradores da república no período de tempo
 		'''
-		return Morador.select(
-					and_(
-						Morador.c.id_republica == self.id,
-						Morador.c.data_entrada < data_final,
-						or_(Morador.c.data_saida >= data_inicial, Morador.c.data_saida == None)
+		moradores =  Morador.select(
+						and_(
+							Morador.c.id_republica == self.id,
+							Morador.c.data_entrada < data_final,
+							or_(Morador.c.data_saida >= data_inicial, Morador.c.data_saida == None)
+						)
 					)
-				)
+		moradores.sort(key = lambda obj: obj.pessoa.nome)
+		return moradores
 	
 	
 	def contas_telefone(self, data_inicial, data_final):
