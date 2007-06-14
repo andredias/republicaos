@@ -106,9 +106,10 @@ class TestFechamento(BaseTest):
 		assert self.m3 not in f.acerto_a_pagar.keys()
 		assert self.m2 in f.acerto_a_pagar.keys()
 		assert self.m4 in f.acerto_a_pagar.keys()
-		assert (self.m1 in f.acerto_a_pagar[self.m2]) and f.acerto_a_pagar[self.m2][self.m1] == Decimal('84.00')
-		assert (self.m3 in f.acerto_a_pagar[self.m2]) and f.acerto_a_pagar[self.m2][self.m3] == Decimal('82.00')
-		assert (self.m3 in f.acerto_a_pagar[self.m4]) and f.acerto_a_pagar[self.m4][self.m3] == Decimal('72.50')
+		assert sum(quantia for quantia in f.acerto_a_pagar[self.m2].values()) == Decimal(166)
+		assert sum(quantia for quantia in f.acerto_a_pagar[self.m4].values()) == Decimal('72.50')
+		assert sum(quantia for quantia in f.acerto_a_receber[self.m1].values()) == Decimal(84)
+		assert sum(quantia for quantia in f.acerto_a_receber[self.m3].values()) == Decimal('154.50')
 	
 	
 	
