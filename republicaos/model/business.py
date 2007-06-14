@@ -353,7 +353,7 @@ class Fechamento(Entity):
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
 		credores.sort(key =  lambda obj: (self.rateio[obj].saldo_final, obj.pessoa.nome))
-		devedores.sort(key = lambda obj: (self.rateio[obj].saldo_final, obj.pessoa.nome))
+		devedores.sort(key = lambda obj: (self.rateio[obj].saldo_final, obj.pessoa.nome), reverse = True)
 		
 		self.acerto_a_pagar   = dict([(devedor, dict()) for devedor in devedores])
 		self.acerto_a_receber = dict([(credor, dict()) for credor in credores])
