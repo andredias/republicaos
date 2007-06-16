@@ -13,13 +13,42 @@ tipos_despesa      = sorted(fechamento.total_tipo_despesa.keys(), key = lambda o
 num_participantes  = len(fechamento.participantes) if len(fechamento.participantes) else 1
 ?>
 <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
     <title>Fechamento de <span py:replace="data_fechamento">Data</span></title>
     <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/static/css/style.css')}" />
 </head>
 
 <body>
 <h1>Fechamento de <span py:replace="data_fechamento">Data</span></h1>
+
+<h2>Resumo das Despesas</h2>
+<table>
+	<thead>
+		<tr>
+			<th>Tipo da Despesa</th>
+			<th>Total</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<tr>
+			<th>Total</th>
+			<th py:content="pretty_decimal(fechamento.total_despesas)">999,99</th>
+		</tr>
+		<tr>
+			<th>Nº Moradores</th>
+			<th py:content="len(fechamento.participantes)">9</th>
+		</tr>
+		<tr>
+			<th>Média</th>
+			<th py:content="pretty_decimal(fechamento.total_despesas/num_participantes)">999,99</th>
+		</tr>
+	</tfoot>
+	<tbody>
+		<tr py:for="tipo in tipos_despesa">
+			<td py:content="tipo.nome">Tipo da despesa</td>
+			<td py:content="pretty_decimal(fechamento.total_tipo_despesa[tipo])">99,99</td>
+		</tr>
+	</tbody>
+</table>
 
 <h2>Rateio das Despesas</h2>
 <table>
@@ -111,36 +140,6 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 			<td><span py:replace="despesa.responsavel.pessoa.nome">Fulano</span></td>
 			<td><a href="${tg.url('/despesa/update/%d' % despesa.id)}">Editar</a></td>
 			<td><a href="${tg.url('/despesa/delete/%d' % despesa.id)}">Excluir</a></td>
-		</tr>
-	</tbody>
-</table>
-
-<h2>Resumo das Despesas</h2>
-<table>
-	<thead>
-		<tr>
-			<th>Tipo da Despesa</th>
-			<th>Total</th>
-		</tr>
-	</thead>
-	<tfoot>
-		<tr>
-			<th>Total</th>
-			<th py:content="pretty_decimal(fechamento.total_despesas)">999,99</th>
-		</tr>
-		<tr>
-			<th>Nº Moradores</th>
-			<th py:content="len(fechamento.participantes)">9</th>
-		</tr>
-		<tr>
-			<th>Média</th>
-			<th py:content="pretty_decimal(fechamento.total_despesas/num_participantes)">999,99</th>
-		</tr>
-	</tfoot>
-	<tbody>
-		<tr py:for="tipo in tipos_despesa">
-			<td py:content="tipo.nome">Tipo da despesa</td>
-			<td py:content="pretty_decimal(fechamento.total_tipo_despesa[tipo])">99,99</td>
 		</tr>
 	</tbody>
 </table>

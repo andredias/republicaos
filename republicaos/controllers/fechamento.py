@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from turbogears        import controllers, expose, flash, error_handler, redirect, validate, validators
+from turbogears        import controllers, expose, error_handler, redirect, validate, validators
 from republicaos.model import Republica, Morador, ContaTelefone, Fechamento
 from datetime          import date
 from dateutil.relativedelta import relativedelta
+from republicaos.utils.flash import flash_errors, flash
 
 
 class FechamentoController(controllers.Controller):
@@ -17,8 +18,11 @@ class FechamentoController(controllers.Controller):
 	
 	
 	@expose(template = 'republicaos.templates.fechamento')
+	@error_handler()
 	@validate(validators = dict(data_fechamento = validators.DateConverter(month_style='dd-mm-yyyy')))
-	def show(self, data_fechamento = None):
+	def show(self, data_fechamento = None, tg_errors = None):
+		if tg_errors:
+			raise redirect('/')
 		republica = Republica.get_by(id = 1)
 		if not data_fechamento:
 			data_fechamento = date.today()

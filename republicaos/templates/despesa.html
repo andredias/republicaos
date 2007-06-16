@@ -14,18 +14,28 @@
 <h1>Cadastrar Despesa</h1>
 
 <?python
+from datetime               import date
 from dateutil.relativedelta import relativedelta
-from pronus_utils import pretty_decimal
+from pronus_utils           import pretty_decimal
+from decimal                import Decimal
 
-termino_str = (despesa.data + relativedelta(months = 6)).strftime('%d/%m/%Y')
+id_morador      = int(id_morador)
+id_responsavel  = int(id_tipo_despesa)
+quantia         = pretty_decimal(quantia) if type(quantia) is Decimal else quantia
+data_vencimento = data_vencimento.strftime('%d/%m/%Y') if type(data_vencimento) is date else data_vencimento
+data_termino    = data_termino.strftime('%d/%m/%Y') if type(data_termino) is date else data_termino
+
+republica  = cherrypy.session['republica']
+fechamento = republica.fechamentos[0]
+moradores  = republica.moradores(fechamento.data_inicial, fechamento.data_final)
+
 ?>
 
-<form action="${tg.url('/despesa/cadastrar_despesa')}" method="post">
-	<input type="hidden" name="id_despesa" value="${despesa.id}" />
+<form action="${acao}" method="post">
 	<p>
 		<label for="id_morador">Morador</label><br />
 		<select name="id_morador">
-			<option py:for="morador in moradores" value="${morador.id}" py:attrs="dict(selected='selected') if despesa.responsavel.id == morador.id else dict()">
+			<option py:for="morador in moradores" value="${morador.id}" py:attrs="dict(selected='selected') if id_morador == morador.id else dict()">
 				<span py:replace="morador.pessoa.nome">Nome do Morador</span>
 			</option>
 		</select>
@@ -34,7 +44,7 @@ termino_str = (despesa.data + relativedelta(months = 6)).strftime('%d/%m/%Y')
 	<p>
 		<label for="id_tipo_despesa">Tipo da Despesa</label><br />
 		<select class="campo_importante" name="id_tipo_despesa">
-			<option py:for="tipo_despesa in republica.tipos_despesa" value="${tipo_despesa.id}" py:attrs="dict(selected='selected') if despesa.tipo.id == tipo_despesa.id else dict()">
+			<option py:for="tipo_despesa in republica.tipos_despesa" value="${tipo_despesa.id}" py:attrs="dict(selected='selected') if id_tipo_despesa == tipo_despesa.id else dict()">
 				<span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
 			</option>
 		</select>
@@ -42,18 +52,18 @@ termino_str = (despesa.data + relativedelta(months = 6)).strftime('%d/%m/%Y')
 	
 	<p>
 		<label for="quantia">Quantia</label><br/>
-		<input class="campo_importante" name="quantia" size="15" type="text" value="${pretty_decimal(despesa.quantia) if despesa.quantia else ''}" />
+		<input class="campo_importante" name="quantia" size="15" type="text" value="${quantia}" />
 		<span class="hint">Ex.: 295,00 ou 1.024,50</span>
 	</p>
 	
 	<p>
-		<label for="schedule_mode">Vencimento</label><br />
+		<label for="schedule_mode">Data Pagamento</label><br />
 		<span id="data_vencimento">
-			<input maxlength="10" name="data_vencimento" size="10" type="text" py:attrs="dict(value = despesa.data.strftime('%d/%m/%Y'))" value="30/01/2007" />
+			<input maxlength="10" name="data_vencimento" size="10" type="text" py:attrs="dict(value = data_vencimento)" value="30/01/2007" />
 		</span><br />
-		<div py:if="acao == 'insert'">
+		<div py:if="'insert' in acao">
 			<input name="periodicidade" type="checkbox" value="mensal" />Repetir mensalmente até (opcional)
-			<input maxlength="10" name="data_termino" size="10" type="text" /> Ex. <span py:replace="termino_str">30/05/2007</span>
+			<input maxlength="10" name="data_termino" size="10" type="text" value="${data_termino}"/>
 		</div>
 	</p>
 	

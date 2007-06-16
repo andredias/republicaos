@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from turbogears        import controllers, expose, flash, error_handler, redirect, validate, validators
+from turbogears        import controllers, expose, error_handler, redirect, validate, validators, url
 from republicaos.model import Republica, Morador, TipoDespesa, Despesa, DespesaPeriodica
 from datetime          import date
 from decimal           import Decimal
+from republicaos.utils.flash import flash_errors, flash
+
+import cherrypy
+
 
 
 class DespesaSchema(validators.Schema):
@@ -12,7 +16,7 @@ class DespesaSchema(validators.Schema):
 	quantia         = validators.Number(not_empty = True)
 	id_tipo_despesa = validators.Int(not_empty = True)
 	id_morador      = validators.Int(not_empty = True)
-	id_despesa      = validators.Int()
+	#id_despesa      = validators.Int()
 
 
 
@@ -21,61 +25,78 @@ class DespesaController(controllers.Controller):
 	def index(self):
 		raise redirect('/')
 	
-	@expose(template = "republicaos.templates.despesa")
-	@validate(validators = dict(
-		acao = validators.OneOf(['insert', 'update', 'delete']),
-		id_despesa = validators.Int() # pode ser vazio
-		))
-	def default(self, acao, id_despesa = None):
-		republica = Republica.get_by(id = 1)
-		moradores = Morador.select(Morador.c.id_republica == 1)
-		
-		if acao != 'insert' and not id_despesa:
-			flash('Página não encontrada')
-			raise redirect('/')
-		elif acao == 'delete':
-			despesa = Despesa.get_by(id = id_despesa)
-			despesa.delete()
-			despesa.flush()
-			raise redirect('/')
-		elif acao == 'insert':
-			despesa = Despesa(
-				data        = date.today(),
-				republica   = republica,
-				responsavel = moradores[0],
-				tipo        = republica.tipos_despesa[0]
-				)
-		elif acao == 'update':
-			despesa = Despesa.get_by(id = id_despesa)
-			
-		dados = dict()
-		
-		dados['moradores'] = moradores
-		dados['republica'] = republica
-		dados['despesa']   = despesa
-		dados['acao']      = acao
-		return dados
 	
 	@expose()
-	@error_handler(index)
-	@validate(validators = DespesaSchema())
-	def cadastrar_despesa(self, **dados):
-		republica    = Republica.get_by(id = 1)
-		tipo_despesa = TipoDespesa.get_by(id = dados['id_tipo_despesa'], republica = republica)
-		morador      = Morador.get_by(id = dados['id_morador'])
-		if 'periodicidade' not in dados:
-			despesa = Despesa.get_by(id = dados['id_despesa']) if dados['id_despesa'] else Despesa()
-			despesa.data = dados['data_vencimento']
-		else:
-			despesa = DespesaPeriodica.get_by(id = dados['id_despesa']) if dados['id_despesa'] else DespesaPeriodica()
-			despesa.proximo_vencimento = dados['data_vencimento']
-			despesa.data_termino       = dados['data_termino']
-			
-		despesa.quantia     = Decimal(str(dados['quantia']))
-		despesa.tipo        = tipo_despesa
-		despesa.responsavel = morador
-		
+	@validate(validators = dict(id_despesa = validators.Int(not_empty = True)))
+	def delete(self, id_despesa):
+		despesa = Despesa.get_by(id = id_despesa)
+		if not despesa:
+			raise cherrypy.NotFound
+		despesa.delete()
 		despesa.flush()
-		flash('Despesa cadastrada com sucesso!')
-		raise redirect('/despesa/insert/')
+		flash('Despesa <strong>removida</strong>')
+		raise redirect(url('/'))
 	
+	
+	@validate(validators = DespesaSchema())
+	def separa_info(self, tg_errors = None, **kwargs):
+		# não pode ser chamada por uma rotina que não tenha @expose. Não sei porque
+		return (tg_errors, kwargs)
+	
+	
+	def doCadastro(self, id_despesa = None, tg_errors = None, **dados):
+		if dados:
+			if tg_errors:
+				flash_errors(tg_errors)
+			else:
+				# cadastra a despesa
+				if 'periodicidade' not in dados:
+					despesa      = Despesa() if not id_despesa else Despesa.get_by(id = id_despesa)
+					despesa.data = dados['data_vencimento']
+				else:
+					despesa = DespesaPeriodica() if not id_despesa else DespesaPeriodica.get_by(id = id_despesa)
+					despesa.proximo_vencimento = dados['data_vencimento']
+					despesa.data_termino       = dados['data_termino']
+					
+				despesa.tipo        = TipoDespesa.get_by(id = dados['id_tipo_despesa'])
+				despesa.responsavel = Morador.get_by(id = dados['id_morador'])
+				despesa.quantia     = Decimal(str(dados['quantia']))
+				despesa.flush()
+				
+				# gambiarra para por a despesa periódica na lista do morador
+				if type(despesa) is DespesaPeriodica:
+					despesa.responsavel.despesas_periodicas.append(despesa)
+				
+				flash('Despesa <strong>cadastrada</strong>')
+				raise redirect(url('/'))
+		else:
+			if id_despesa:
+				# TODO: e se for uma DespesaPeriodica?
+				despesa = Despesa.get_by(id = id_despesa)
+				if not despesa:
+					raise cherrypy.NotFound
+			dados['data_vencimento'] = despesa.data           if id_despesa else date.today()
+			dados['quantia']         = despesa.quantia        if id_despesa else ''
+			dados['id_morador']      = despesa.responsavel.id if id_despesa else None
+			dados['id_tipo_despesa'] = despesa.tipo.id        if id_despesa else None
+			dados['data_termino']    = despesa.data_termino   if id_despesa and hasattr(despesa, 'data_termino') else None
+		
+		dados['acao'] = url('/despesa/update/%d/' % id_despesa) if id_despesa else url('/despesa/insert')
+		return dados
+	
+	
+	@expose(template = "republicaos.templates.despesa")
+	def insert(self, **dados):
+		tg_errors = None
+		if dados:
+			tg_errors, dados = self.separa_info(**dados)
+		return self.doCadastro(tg_errors = tg_errors, **dados)
+	
+	
+	@expose(template = "republicaos.templates.despesa")
+	@validate(validators = dict(id_despesa = validators.Int(not_empty = True)))
+	def update(self, id_despesa = None, **dados):
+		tg_errors = None
+		if dados:
+			tg_errors, dados = self.separa_info(**dados)
+		return self.doCadastro(id_despesa = id_despesa, tg_errors = tg_errors, **dados)
