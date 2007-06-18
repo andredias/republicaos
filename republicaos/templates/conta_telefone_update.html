@@ -24,9 +24,9 @@ def seconds_to_time(seconds):
 	else:
 		return '%02d:%02d' % (duracao.minutes, duracao.seconds)
 
-republica = conta_telefone.republica
-data_inicial, data_final = republica.periodo_fechamento(conta_telefone.emissao)
-moradores = republica.moradores(data_inicial, data_final)
+republica  = conta_telefone.republica
+fechamento = republica.fechamento_na_data(conta_telefone.emissao)
+moradores  = republica.moradores(fechamento.data_inicial, fechamento.data_final)
 rateio_conta = [(key.pessoa.nome, conta_telefone.rateio[key]) for key in conta_telefone.rateio.keys()]
 rateio_conta.sort()
 ?>
@@ -82,7 +82,7 @@ rateio_conta.sort()
 				</td>
 				<td>
 					<select name="id_responsavel">
-						<option value="" py:attrs="dict(selected='selected') if telefonema.responsavel is None else dict()">Ninguém</option>
+						<option value="" py:attrs="dict(selected='selected') if telefonema.responsavel is None else dict()"></option>
 						<option py:for="morador in moradores" value="${morador.id}" py:attrs="dict(selected='selected') if telefonema.responsavel.id == morador.id else dict()">
 						<span py:replace="morador.pessoa.nome">Nome</span>
 						</option>
