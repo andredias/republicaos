@@ -443,7 +443,7 @@ class ContaTelefone(Entity):
 		telefonemas   = dict()
 		
 		# palavras usadas na descrição que ajudam a classificar o telefonema
-		tipos_fone      = ['FIXO', 'CELULAR', 'NETFONE']
+		tipos_fone      = {'FIXO':0, 'CELULAR':1, 'MOVEL':1, 'NETFONE':2}
 		tipos_distancia = ['LOCA', 'DDD', 'DDI'] # confirmar se aparece DDI
 		
 		encargos = Decimal(0)
@@ -458,9 +458,9 @@ class ContaTelefone(Entity):
 				segundos          = milesimos_minutos * 60 / 1000
 				
 				# determina o tipo de telefone
-				for tipo in tipos_fone:
+				for tipo in tipos_fone.keys():
 					if tipo in descricao:
-						tipo_fone = tipos_fone.index(tipo)
+						tipo_fone = tipos_fone[tipo]
 						break
 				
 				# determina o tipo de ligação
@@ -651,7 +651,7 @@ class Telefonema(Entity):
 	
 	def __repr__(self):
 		return "<número:%d, quantia:%s, segundos:%s, responsável:'%s'>" % \
-			(self.numero, self.quantia, self.segundos, self.responsavel.nome.encode('utf-8'))
+			(self.numero, self.quantia, self.segundos, (self.responsavel.pessoa.nome.encode('utf-8') if self.responsavel else ''))
 
 
 class Morador(Entity):
