@@ -15,7 +15,7 @@ class FlashMessage(object):
 	
 	@property
 	def attrs(self):
-		return {'class': '.%s' % self.message_type}
+		return {'class': '%s' % self.message_type}
 	
 	def to_genshi(self):
 		return genshi.Markup(self.message)
