@@ -215,9 +215,8 @@ class Republica(Entity):
 		elif telefone and not responsavel: # não há mais responsável
 			telefone.delete()
 			telefone.flush()
-			# remove o telefone manualmente da lista de telefones registrados
-			if telefone in self.telefones_registrados:
-				self.telefones_registrados.remove(telefone)
+			# remove o telefone manualmente da lista de telefones registrados. Veja #60
+			self.telefones_registrados.remove(telefone)
 		# else: o telefone não está registrado e não tem reponsável -> nada a fazer
 		
 		return
