@@ -192,9 +192,9 @@ class Republica(Entity):
 	
 	def registrar_responsavel_telefone(self, numero, responsavel = None, descricao = None):
 		telefone = None
-		for tr in self.telefones_registrados:
-			if numero == tr.numero:
-				telefone = tr
+		for telefone_ja_registrado in self.telefones_registrados:
+			if numero == telefone_ja_registrado.numero:
+				telefone = telefone_ja_registrado
 				break
 		
 		if responsavel:
@@ -205,16 +205,19 @@ class Republica(Entity):
 			telefone.descricao   = descricao
 			telefone.flush()
 		elif not telefone and responsavel:
-			registro = TelefoneRegistrado(numero = numero, republica = self, responsavel = responsavel, descricao = descricao)
-			registro.flush()
+			novo_tel = TelefoneRegistrado(numero = numero, republica = self, responsavel = responsavel, descricao = descricao)
+			novo_tel.flush()
 			# não tenho certeza se a adição à lista da república deveria acontecer automaticamente.
 			# veja o post publicado no grupo do sqlelixir:
 			# http://groups.google.com/group/sqlelixir/browse_thread/thread/710e82c3ad586aab/03fc48b416a09fcf#03fc48b416a09fcf
-			if registro not in self.telefones_registrados:
-				self.telefones_registrados.append(registro)
+			if novo_tel not in self.telefones_registrados:
+				self.telefones_registrados.append(novo_tel)
 		elif telefone and not responsavel: # não há mais responsável
 			telefone.delete()
 			telefone.flush()
+			# remove o telefone manualmente da lista de telefones registrados
+			if telefone in self.telefones_registrados:
+				self.telefones_registrados.remove(telefone)
 		# else: o telefone não está registrado e não tem reponsável -> nada a fazer
 		
 		return
