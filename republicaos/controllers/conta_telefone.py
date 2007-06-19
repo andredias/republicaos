@@ -73,8 +73,8 @@ class ContaTelefoneController(controllers.Controller):
 	def do_update(self, **dados):
 		conta_telefone = ContaTelefone.get_by(id = dados['id_conta_telefone'])
 		conta_telefone.telefone     = dados['telefone']
-		conta_telefone.franquia     = Decimal(str(dados['franquia']))
-		conta_telefone.servicos     = Decimal(str(dados['servicos']))
+		conta_telefone.franquia     = Decimal(str(dados['franquia'])) if dados['franquia'] else Decimal(0)
+		conta_telefone.servicos     = Decimal(str(dados['servicos'])) if dados['servicos'] else Decimal(0)
 		conta_telefone.id_operadora = dados['id_operadora']
 		conta_telefone.emissao      = dados['emissao']
 		conta_telefone.vencimento   = dados['vencimento']
