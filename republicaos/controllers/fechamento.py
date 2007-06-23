@@ -5,6 +5,8 @@ from republicaos.model import Republica, Morador, ContaTelefone, Fechamento
 from datetime          import date
 from dateutil.relativedelta import relativedelta
 from republicaos.utils.flash import flash_errors, flash
+import cherrypy
+
 
 
 class FechamentoController(controllers.Controller):
@@ -28,6 +30,8 @@ class FechamentoController(controllers.Controller):
 			data_fechamento = date.today()
 		fechamento = republica.fechamento_na_data(data_fechamento - relativedelta(days = 1))
 		fechamento.executar_rateio()
+		cherrypy.session['fechamento'] = fechamento
+		
 		return dict(fechamento = fechamento)
 	
 

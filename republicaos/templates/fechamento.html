@@ -6,11 +6,13 @@
 
 <?python
 from pronus_utils import pretty_decimal
+from datetime     import date
 
-data_fechamento    = fechamento.data.strftime('%d/%m/%Y')
-contas_telefone    = fechamento.republica.contas_telefone(fechamento.data_inicial, fechamento.data_final)
-tipos_despesa      = sorted(fechamento.total_tipo_despesa.keys(), key = lambda obj: obj.nome)
-num_participantes  = len(fechamento.participantes) if len(fechamento.participantes) else 1
+read_only         = date.today() >= fechamento.data
+data_fechamento   = fechamento.data.strftime('%d/%m/%Y')
+contas_telefone   = fechamento.republica.contas_telefone(fechamento.data_inicial, fechamento.data_final)
+tipos_despesa     = sorted(fechamento.total_tipo_despesa.keys(), key = lambda obj: obj.nome)
+num_participantes = len(fechamento.participantes) if len(fechamento.participantes) else 1
 ?>
 <head>
     <title>Fechamento de <span py:replace="data_fechamento">Data</span></title>
@@ -19,6 +21,7 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 
 <body>
 <h1>Fechamento de <span py:replace="data_fechamento">Data</span></h1>
+<p>Período Contábil: <span py:replace="fechamento.data_inicial.strftime('%d/%m/%Y')">01/01/2000</span> a <span py:replace="fechamento.data_final.strftime('%d/%m/%Y')">01/02/2000</span></p>
 
 <h2>Resumo das Despesas</h2>
 <table>
@@ -120,7 +123,7 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 <hr />
 
 <h2>Lista de Despesas do Período</h2>
-<p><a href="${tg.url('/despesa/insert')}">Cadastrar nova despesa</a></p>
+<p py:if="not read_only"><a href="${tg.url('/despesa/insert')}">Cadastrar nova despesa</a></p>
 <table>
 	<thead>
 		<tr>
@@ -138,14 +141,14 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 			<td><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
 			<td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
 			<td><span py:replace="despesa.responsavel.pessoa.nome">Fulano</span></td>
-			<td><a href="${tg.url('/despesa/update/%d' % despesa.id)}">Editar</a></td>
-			<td><a href="${tg.url('/despesa/delete/%d' % despesa.id)}">Excluir</a></td>
+			<td><span py:if="not read_only"><a href="${tg.url('/despesa/update/%d' % despesa.id)}">Editar</a></span></td>
+			<td><span py:if="not read_only"><a href="${tg.url('/despesa/delete/%d' % despesa.id)}">Excluir</a></span></td>
 		</tr>
 	</tbody>
 </table>
 
 <h2>Contas de Telefone</h2>
-<p><a href="${tg.url('/conta_telefone/insert')}">Cadastrar nova conta de telefone</a></p>
+<p py:if="not read_only"><a href="${tg.url('/conta_telefone/insert')}">Cadastrar nova conta de telefone</a></p>
 <table>
 	<thead>
 		<tr>
@@ -167,8 +170,8 @@ num_participantes  = len(fechamento.participantes) if len(fechamento.participant
 			<td py:content="pretty_decimal(conta.servicos) if conta.servicos else ''">99,99</td>
 			<td py:content="pretty_decimal(conta.resumo['total_telefonemas']) if conta.resumo['total_telefonemas'] else ''">99,99</td>
 			<td py:content="pretty_decimal(conta.resumo['total_conta'])">99,99</td>
-			<td><a href="${'/conta_telefone/update/%d' % conta.id}">Editar</a></td>
-			<td><a href="${'/conta_telefone/delete/%d' % conta.id}">Excluir</a></td>
+			<td><span py:if="not read_only"><a href="${'/conta_telefone/update/%d' % conta.id}">Editar</a></span></td>
+			<td><span py:if="not read_only"><a href="${'/conta_telefone/delete/%d' % conta.id}">Excluir</a></span></td>
 		</tr>
 	</tbody>
 </table>

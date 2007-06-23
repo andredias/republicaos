@@ -62,7 +62,7 @@ moradores  = republica.moradores(fechamento.data_inicial, fechamento.data_final)
 			<input maxlength="10" name="data_vencimento" size="10" type="text" py:attrs="dict(value = data_vencimento)" value="30/01/2007" />
 		</span><br />
 		<div py:if="'insert' in acao">
-			<input name="periodicidade" type="checkbox" value="mensal" />Repetir mensalmente até (opcional)
+			<input name="periodicidade" type="checkbox" value="mensal" checked="${'checked' if periodicidade else ''}"/>Repetir mensalmente até (opcional)
 			<input maxlength="10" name="data_termino" size="10" type="text" value="${data_termino}"/>
 		</div>
 	</p>
