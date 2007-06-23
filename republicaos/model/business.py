@@ -435,6 +435,13 @@ class ContaTelefone(Entity):
 		return
 	
 	
+	def telefonema(self, numero):
+		for telefonema in self.telefonemas:
+			if numero == telefonema.numero:
+				return telefonema
+		return None
+	
+	
 	def _interpreta_csv_net_fone(self, linhas):
 		# ignora as 3 primeiras linhas de cabeçalho
 		linhas        = linhas[3:]

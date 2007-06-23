@@ -4,6 +4,7 @@ from turbogears        import controllers, expose, flash, error_handler, redirec
 from republicaos.model import Republica, Morador, ContaTelefone
 from datetime          import date
 from decimal           import Decimal
+from elixir            import objectstore
 
 
 class ContaTelefoneSchema(validators.Schema):
@@ -62,6 +63,7 @@ class ContaTelefoneController(controllers.Controller):
 	@error_handler()
 	@validate(validators = dict(id_conta_telefone = validators.Int(not_empty = True)))
 	def update(self, id_conta_telefone):
+		objectstore.clear()
 		conta_telefone = ContaTelefone.get_by(id = id_conta_telefone)
 		conta_telefone.executar_rateio()
 		return dict(conta_telefone = conta_telefone)
@@ -71,6 +73,9 @@ class ContaTelefoneController(controllers.Controller):
 	@error_handler(update)
 	@validate(validators = ContaTelefoneSchema())
 	def do_update(self, **dados):
+		# sem a linha abaixo, o objeto da conta de telefone volta todo alterado por edições anteriores
+		# é necessário montar um projeto para mandar para a lista de discussão sobre o tema
+		# objectstore.clear()
 		conta_telefone = ContaTelefone.get_by(id = dados['id_conta_telefone'])
 		conta_telefone.telefone     = dados['telefone']
 		conta_telefone.franquia     = Decimal(str(dados['franquia'])) if dados['franquia'] else Decimal(0)
@@ -80,18 +85,22 @@ class ContaTelefoneController(controllers.Controller):
 		conta_telefone.vencimento   = dados['vencimento']
 		conta_telefone.flush()
 		
-		to_int       = validators.Int().to_python
-		telefonemas  = dict([(telefonema.numero, telefonema) for telefonema in conta_telefone.telefonemas])
-		republica    = Republica.get_by(id = 1)
-		numeros      = [to_int(numero) for numero in dados['numero']]
-		responsaveis = [Morador.get_by(id = to_int(id_responsavel)) for id_responsavel in dados['id_responsavel']]
+		#print '\n\n'
+		#for telefonema in conta_telefone.telefonemas:
+			#print telefonema.numero, telefonema.responsavel.pessoa.nome if telefonema.responsavel else None
+		#print '\n\n'
 		
-		for idx in range(len(numeros)):
-			numero      = numeros[idx]
-			responsavel = responsaveis[idx]
-			if telefonemas[numero].responsavel is not responsavel:
-				telefonemas[numero].responsavel = responsavel
-				telefonemas[numero].flush()
+		to_int    = validators.Int().to_python
+		republica = Republica.get_by(id = 1)
+		for idx in range(len(dados['numero'])):
+			old_id_responsavel = to_int(dados['old_id_responsavel'][idx])
+			id_responsavel     = to_int(dados['id_responsavel'][idx])
+			if old_id_responsavel != id_responsavel:
+				numero      = to_int(dados['numero'][idx])
+				responsavel = Morador.get_by(id = id_responsavel) if id_responsavel else None
+				telefonema  = conta_telefone.telefonema(numero)
+				telefonema.responsavel = responsavel
+				telefonema.flush()
 				republica.registrar_responsavel_telefone(numero = numero, responsavel = responsavel)
 		
 		raise redirect('/conta_telefone/update/%d' % conta_telefone.id)

@@ -78,11 +78,12 @@ rateio_conta.sort()
 			<tr py:for="telefonema in conta_telefone.telefonemas">
 				<td>
 					<input type="hidden" name="numero" value="${telefonema.numero}" />
+					<input type="hidden" name="old_id_responsavel" value="${telefonema.responsavel.id if telefonema.responsavel else None}" />
 					<span py:replace="telefonema.numero">193828530</span>
 				</td>
 				<td>
 					<select name="id_responsavel">
-						<option value="" py:attrs="dict(selected='selected') if telefonema.responsavel is None else dict()"></option>
+						<option value="${None}" py:attrs="dict(selected='selected') if telefonema.responsavel is None else dict()"></option>
 						<option py:for="morador in moradores" value="${morador.id}" py:attrs="dict(selected='selected') if telefonema.responsavel.id == morador.id else dict()">
 						<span py:replace="morador.pessoa.nome">Nome</span>
 						</option>
