@@ -10,19 +10,10 @@ import cherrypy
 
 
 class FechamentoController(controllers.Controller):
-	@expose(template = "republicaos.templates.fechamentos")
-	def index(self):
-		republica = Republica.get_by(id = 1)
-		hoje = date.today()
-		while republica.fechamentos[0].data <= hoje:
-			republica.criar_fechamento()
-		return dict(republica = republica)
-	
-	
 	@expose(template = 'republicaos.templates.fechamento')
 	@error_handler()
 	@validate(validators = dict(data_fechamento = validators.DateConverter(month_style='dd-mm-yyyy')))
-	def show(self, data_fechamento = None, tg_errors = None):
+	def default(self, data_fechamento = None, tg_errors = None):
 		if tg_errors:
 			raise redirect('/')
 		republica = Republica.get_by(id = 1)
@@ -33,5 +24,3 @@ class FechamentoController(controllers.Controller):
 		cherrypy.session['fechamento'] = fechamento
 		
 		return dict(fechamento = fechamento)
-	
-

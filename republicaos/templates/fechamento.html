@@ -20,7 +20,11 @@ num_participantes = len(fechamento.participantes) if len(fechamento.participante
 </head>
 
 <body>
-<h1>Fechamento de <span py:replace="data_fechamento">Data</span></h1>
+<h1>Fechamento de 
+<select name="data_fechamento">
+	<option py:for="f in fechamento.republica.fechamentos" py:content="f.data.strftime('%d/%m/%Y')" value="${fechamento.data.strftime('%d-%m-%Y')}" selected="${'selected' if f.data == fechamento.data else ''}" onclick="location.href='${tg.url('/fechamento/%s' % f.data.strftime('%d-%m-%Y'))}';">dd/mm/yyyy</option>
+</select>
+</h1>
 <p>Período Contábil: <span py:replace="fechamento.data_inicial.strftime('%d/%m/%Y')">01/01/2000</span> a <span py:replace="fechamento.data_final.strftime('%d/%m/%Y')">01/02/2000</span></p>
 
 <h2>Resumo das Despesas</h2>

@@ -21,10 +21,10 @@ class Root(controllers.RootController):
 	
 	despesa        = DespesaController()
 	conta_telefone = ContaTelefoneController()
-	fechamentos    = FechamentoController()
+	fechamento     = FechamentoController()
 	
 	@expose()
 	# @identity.require(identity.in_group("admin"))
 	def index(self):
 		cherrypy.session['republica'] = Republica.get_by(id = 1)
-		raise redirect('/fechamentos/show')
+		raise redirect('/fechamento/')
