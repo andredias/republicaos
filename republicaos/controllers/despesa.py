@@ -41,6 +41,23 @@ class DespesaController(controllers.Controller):
 	@validate(validators = DespesaSchema())
 	def separa_info(self, tg_errors = None, **kwargs):
 		# não pode ser chamada por uma rotina que não tenha @expose. Não sei porque
+		
+		# data_vencimento deve estar dentro do período do fechamento
+		if type(kwargs['data_vencimento']) is date:
+			fechamento = cherrypy.session['fechamento']
+			if not(fechamento.data_inicial <= kwargs['data_vencimento'] <= fechamento.data_final):
+				if not tg_errors:
+					tg_errors = dict()
+				tg_errors['Data Vencimento'] = u'Data do Vencimento deve estar entre %s e %s' % \
+								(fechamento.data_inicial.strftime('%d/%m/%Y'), fechamento.data_final.strftime('%d/%m/%Y'))
+		
+		if ('periodicidade' in kwargs) and (type(kwargs['data_termino']) is date):
+			fechamento = cherrypy.session['fechamento']
+			if kwargs['data_termino'] < fechamento.data:
+				if not tg_errors:
+					tg_errors = dict()
+				tg_errors[u'Data Término'] = u'Data de término deve ser posterior a %s' % fechamento.data_final.strftime('%d/%m/%Y')
+		
 		return (tg_errors, kwargs)
 	
 	
