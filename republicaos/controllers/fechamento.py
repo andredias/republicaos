@@ -17,9 +17,16 @@ class FechamentoController(controllers.Controller):
 		if tg_errors:
 			raise redirect('/')
 		republica = Republica.get_by(id = 1)
-		if not data_fechamento:
+		
+		if not data_fechamento or \
+			 data_fechamento > date.today() or \
+			 data_fechamento <= republica.data_criacao:
 			data_fechamento = date.today()
+		
 		fechamento = republica.fechamento_na_data(data_fechamento - relativedelta(days = 1))
+		if not fechamento:
+			republica.criar_fechamento()
+			fechamento = republica.fechamentos[0]
 		fechamento.executar_rateio()
 		cherrypy.session['fechamento'] = fechamento
 		
