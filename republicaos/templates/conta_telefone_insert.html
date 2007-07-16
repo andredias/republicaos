@@ -14,44 +14,49 @@
 <h1>Importar Conta de Telefone</h1>
 
 <?python
-from datetime import date
+from datetime     import date
+from pronus_utils import pretty_decimal
+from decimal      import Decimal
 
-hoje_str = date.today().strftime('%d/%m/%Y')
+emissao    = emissao.strftime('%d/%m/%Y') if type(emissao) is date else emissao
+vencimento = vencimento.strftime('%d/%m/%Y') if type(vencimento) is date else vencimento
+franquia   = pretty_decimal(franquia) if type(franquia) in (int, float, Decimal) else franquia
+servicos   = pretty_decimal(servicos) if type(servicos) in (int, float, Decimal) else servicos
 ?>
 
-<form action="do_insert" method="post">
+<form action="insert" method="post">
 	<table>
 		<tr>
 			<td><label for="telefone">Telefone</label></td>
-			<td><input name="telefone" maxlength="10" size="10" type="text" /></td>
+			<td><input name="telefone" maxlength="10" size="10" type="text" value="${telefone}"/></td>
 		</tr>
 		<tr>
 			<td><label for="emissao">Data Emissão</label></td>
-			<td><input name="emissao" maxlength="10" size="10" type="text" py:attrs="dict(value = hoje_str)" value="30/01/2007" /></td>
+			<td><input name="emissao" maxlength="10" size="10" type="text" value="${emissao}" /></td>
 		</tr>
 		<tr>
 			<td><label for="vencimento">Data Vencimento</label></td>
-			<td><input name="vencimento" maxlength="10" size="10" type="text" /></td>
+			<td><input name="vencimento" maxlength="10" size="10" type="text" value="${vencimento}"/></td>
 		</tr>
 		<tr>
 			<td><label for="id_operadora">Operadora</label></td>
 			<td>
 				<select name="id_operadora">
-					<option value="1">Net Fone</option>
+					<option value="1" selected="selected">Net Fone</option>
 				</select>
 			</td>
 		</tr>
 		<tr>
 			<td><label for="franquia">Franquia</label></td>
-			<td><input name="franquia" size="15" type="text" /> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
+			<td><input name="franquia" size="15" type="text" value="${franquia}"/> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
 		</tr>
 		<tr>
 			<td><label for="servicos">Encargos e Serviços</label></td>
-			<td><input name="servicos" size="15" type="text" /> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
+			<td><input name="servicos" size="15" type="text" value="${servicos}"/> <span class="hint">Ex.: 295,00 ou 1.024,50</span></td>
 		</tr>
 		<tr>
 			<td><label for="csv">Contéudo do arquivo <strong>.csv</strong></label></td>
-			<td><textarea name="csv" rows="10" cols="78" ></textarea></td>
+			<td><textarea name="csv" rows="10" cols="78" >${csv}</textarea></td>
 		</tr>
 	</table>
 	

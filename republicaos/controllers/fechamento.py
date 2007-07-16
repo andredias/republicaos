@@ -16,7 +16,7 @@ class FechamentoController(controllers.Controller):
 	def default(self, data_fechamento = None, tg_errors = None):
 		if tg_errors:
 			raise redirect('/')
-		republica = Republica.get_by(id = 1)
+		republica = cherrypy.session['republica']
 		
 		if not data_fechamento or \
 			 data_fechamento > date.today() or \
