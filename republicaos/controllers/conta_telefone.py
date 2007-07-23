@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from turbogears        import controllers, expose, flash, error_handler, redirect, validate, validators
+from turbogears        import controllers, expose, error_handler, redirect, validate, validators
 from republicaos.model import Republica, Morador, ContaTelefone
 from datetime          import date
 from decimal           import Decimal
+from elixir            import objectstore
+from republicaos.utils.flash import flash_errors, flash
+
+import cherrypy
 
 
 class ContaTelefoneSchema(validators.Schema):
@@ -24,54 +28,37 @@ class ContaTelefoneController(controllers.Controller):
 	@expose()
 	@validate(validators = dict(id_conta_telefone = validators.Int(not_empty = True)))
 	def delete(self, id_conta_telefone):
-		republica = Republica.get_by(id = 1)
-		conta     = ContaTelefone.get_by(id = id_conta_telefone)
+		conta = ContaTelefone.get_by(id = id_conta_telefone)
+		# assert conta.republica is morador.republica
 		conta.delete()
 		conta.flush()
 		raise redirect('/')
 	
-	
-	@expose(template = "republicaos.templates.conta_telefone_insert")
-	def insert(self):
-		return dict()
-		
-		
-	@expose()
-	@error_handler(insert)
 	@validate(validators = ContaTelefoneSchema())
-	def do_insert(self, **dados):
-		republica = Republica.get_by(id = 1)
+	def valida_conta(self, tg_errors = None, **kwargs):
+		fechamento = cherrypy.session['fechamento']
+		if not tg_errors:
+			tg_errors = dict()
+		
+		if not (fechamento.data_inicial <= kwargs['emissao'] <= fechamento.data_final):
+			tg_errors['Data de emissao'] = u'Data da emissão da conta fora da data do fechamento (%s, %s)' % \
+				(fechamento.data_inicial.strftime('%d/%m/%Y'), fechamento.data_final.strftime('%d/%m/%Y'))
+		
+		if (kwargs['vencimento'] < kwargs['emissao']):
+			tg_errors['Data do vencimento'] = u'Data do vencimento anterior à data da emissão'
+			
+		return (tg_errors, kwargs)
+	
+	
+	def do_cadastro_conta(self, dados):
+		republica = cherrypy.session['republica']
 		
 		# verificar como fazer o controle de transação
-		conta_telefone = ContaTelefone(
-			republica    = republica,
-			telefone     = dados['telefone'],
-			franquia     = dados['franquia'],
-			servicos     = dados['servicos'],
-			id_operadora = dados['id_operadora'],
-			emissao      = dados['emissao'],
-			vencimento   = dados['vencimento']
-			)
-		conta_telefone.flush()
-		conta_telefone.importar_csv(dados['csv'].encode('utf-8'))
+		if 'id_conta_telefone' in dados:
+			conta_telefone = ContaTelefone.get_by(id = dados['id_conta_telefone'])
+		else:
+			conta_telefone = ContaTelefone(republica = republica)
 		
-		raise redirect('/conta_telefone/update/%d' % conta_telefone.id)
-	
-	
-	@expose(template = 'republicaos.templates.conta_telefone_update')
-	@error_handler()
-	@validate(validators = dict(id_conta_telefone = validators.Int(not_empty = True)))
-	def update(self, id_conta_telefone):
-		conta_telefone = ContaTelefone.get_by(id = id_conta_telefone)
-		conta_telefone.executar_rateio()
-		return dict(conta_telefone = conta_telefone)
-	
-	
-	@expose()
-	@error_handler(update)
-	@validate(validators = ContaTelefoneSchema())
-	def do_update(self, **dados):
-		conta_telefone = ContaTelefone.get_by(id = dados['id_conta_telefone'])
 		conta_telefone.telefone     = dados['telefone']
 		conta_telefone.franquia     = Decimal(str(dados['franquia'])) if dados['franquia'] else Decimal(0)
 		conta_telefone.servicos     = Decimal(str(dados['servicos'])) if dados['servicos'] else Decimal(0)
@@ -80,18 +67,59 @@ class ContaTelefoneController(controllers.Controller):
 		conta_telefone.vencimento   = dados['vencimento']
 		conta_telefone.flush()
 		
-		to_int       = validators.Int().to_python
-		telefonemas  = dict([(telefonema.numero, telefonema) for telefonema in conta_telefone.telefonemas])
-		republica    = Republica.get_by(id = 1)
-		numeros      = [to_int(numero) for numero in dados['numero']]
-		responsaveis = [Morador.get_by(id = to_int(id_responsavel)) for id_responsavel in dados['id_responsavel']]
-		
-		for idx in range(len(numeros)):
-			numero      = numeros[idx]
-			responsavel = responsaveis[idx]
-			if telefonemas[numero].responsavel is not responsavel:
-				telefonemas[numero].responsavel = responsavel
-				telefonemas[numero].flush()
-				republica.registrar_responsavel_telefone(numero = numero, responsavel = responsavel)
+		if 'numero' in dados:
+			#print '\n\n'
+			#for telefonema in conta_telefone.telefonemas:
+				#print telefonema.numero, telefonema.responsavel.pessoa.nome if telefonema.responsavel else None
+			#print '\n\n'
+			
+			to_int = validators.Int().to_python
+			for idx in xrange(len(dados['numero'])):
+				old_id_responsavel = to_int(dados['old_id_responsavel'][idx])
+				id_responsavel     = to_int(dados['id_responsavel'][idx])
+				if old_id_responsavel != id_responsavel:
+					numero      = to_int(dados['numero'][idx])
+					responsavel = Morador.get_by(id = id_responsavel) if id_responsavel else None
+					telefonema  = conta_telefone.telefonema(numero)
+					telefonema.responsavel = responsavel
+					telefonema.flush()
+					republica.registrar_responsavel_telefone(numero = numero, responsavel = responsavel)
+		else: # 'csv' in dados
+			try:
+				conta_telefone.importar_csv(dados['csv'].encode('utf-8'))
+			except Exception:
+				#TODO: fazer algum tratamento de exceção aqui
+				pass
 		
 		raise redirect('/conta_telefone/update/%d' % conta_telefone.id)
+	
+	
+	@expose(template = "republicaos.templates.conta_telefone_insert")
+	def insert(self, **kwargs):
+		if kwargs:
+			tg_errors, kwargs = self.valida_conta(**kwargs)
+			if tg_errors:
+				flash_errors(tg_errors)
+			else:
+				self.do_cadastro_conta(kwargs)
+				
+		return dict(kwargs)
+		
+		
+	
+	@expose(template = 'republicaos.templates.conta_telefone_update')
+	@error_handler()
+	@validate(validators = dict(id_conta_telefone = validators.Int(not_empty = True)))
+	def update(self, id_conta_telefone, **kwargs):
+		#objectstore.clear()
+		if kwargs:
+			tg_errors, kwargs = self.valida_conta(**kwargs)
+			if tg_errors:
+				flash_errors(tg_errors)
+			else:
+				self.do_cadastro_conta(kwargs)
+			
+		conta_telefone = ContaTelefone.get_by(id = id_conta_telefone)
+		conta_telefone.executar_rateio()
+		kwargs['conta_telefone'] = conta_telefone
+		return dict(kwargs)

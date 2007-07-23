@@ -39,7 +39,7 @@ class DespesaController(controllers.Controller):
 	
 	
 	@validate(validators = DespesaSchema())
-	def separa_info(self, tg_errors = None, **kwargs):
+	def separa_valida_info(self, tg_errors = None, **kwargs):
 		# não pode ser chamada por uma rotina que não tenha @expose. Não sei porque
 		
 		# data_vencimento deve estar dentro do período do fechamento
@@ -106,7 +106,7 @@ class DespesaController(controllers.Controller):
 	def insert(self, **dados):
 		tg_errors = None
 		if dados:
-			tg_errors, dados = self.separa_info(**dados)
+			tg_errors, dados = self.separa_valida_info(**dados)
 		return self.doCadastro(tg_errors = tg_errors, **dados)
 	
 	
@@ -115,5 +115,5 @@ class DespesaController(controllers.Controller):
 	def update(self, id_despesa = None, **dados):
 		tg_errors = None
 		if dados:
-			tg_errors, dados = self.separa_info(**dados)
+			tg_errors, dados = self.separa_valida_info(**dados)
 		return self.doCadastro(id_despesa = id_despesa, tg_errors = tg_errors, **dados)

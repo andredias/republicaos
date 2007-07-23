@@ -21,7 +21,7 @@ from decimal                import Decimal
 
 id_morador      = int(id_morador) if id_morador else None
 id_responsavel  = int(id_tipo_despesa) if id_tipo_despesa else None
-quantia         = pretty_decimal(quantia) if type(quantia) is Decimal else quantia
+quantia         = pretty_decimal(quantia) if type(quantia) in (int, float, Decimal) else quantia
 data_vencimento = data_vencimento.strftime('%d/%m/%Y') if type(data_vencimento) is date else data_vencimento
 data_termino    = data_termino.strftime('%d/%m/%Y') if type(data_termino) is date else data_termino
 
