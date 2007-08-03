@@ -97,6 +97,7 @@ class DespesaController(controllers.Controller):
 			dados['id_morador']      = despesa.responsavel.id if id_despesa else None
 			dados['id_tipo_despesa'] = despesa.tipo.id        if id_despesa else None
 			dados['data_termino']    = despesa.data_termino   if id_despesa and hasattr(despesa, 'data_termino') else None
+			dados['periodicidade']   = None
 		
 		dados['acao'] = url('/despesa/update/%d/' % id_despesa) if id_despesa else url('/despesa/insert')
 		return dados

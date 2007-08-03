@@ -102,6 +102,8 @@ class ContaTelefoneController(controllers.Controller):
 				flash_errors(tg_errors)
 			else:
 				self.do_cadastro_conta(kwargs)
+		else:
+			kwargs['telefone'] = kwargs['emissao'] = kwargs['vencimento'] = kwargs['franquia'] = kwargs['servicos'] = kwargs['csv'] =None
 				
 		return dict(kwargs)
 		
@@ -117,6 +119,7 @@ class ContaTelefoneController(controllers.Controller):
 			if tg_errors:
 				flash_errors(tg_errors)
 			else:
+				kwargs['id_conta_telefone'] = id_conta_telefone
 				self.do_cadastro_conta(kwargs)
 			
 		conta_telefone = ContaTelefone.get_by(id = id_conta_telefone)

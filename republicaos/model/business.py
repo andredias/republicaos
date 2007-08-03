@@ -655,7 +655,8 @@ class Telefonema(Entity):
 	has_field('segundos',       Integer,        nullable = False)
 	has_field('quantia',        Money(10, 2),   nullable = False)
 	many_to_one('responsavel',    of_kind = 'Morador',       colname = 'id_morador')
-	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas', column_kwargs = dict(primary_key = True))
+	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas',
+		ondelete = 'cascade', column_kwargs = dict(primary_key = True))
 	using_options(tablename = 'telefonema')
 	
 	def __repr__(self):

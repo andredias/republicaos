@@ -31,7 +31,7 @@ rateio_conta = [(key.pessoa.nome, conta_telefone.rateio[key]) for key in conta_t
 rateio_conta.sort()
 ?>
 
-<form action="${tg.url('/conta_telefone/do_update')}" method="post">
+<form action="${tg.url('/conta_telefone/update')}" method="post">
 	<input type="hidden" name="id_conta_telefone" value="${conta_telefone.id}" />
 
 	<table>
@@ -83,8 +83,8 @@ rateio_conta.sort()
 				</td>
 				<td>
 					<select name="id_responsavel">
-						<option value="${None}" py:attrs="dict(selected='selected') if telefonema.responsavel is None else dict()"></option>
-						<option py:for="morador in moradores" value="${morador.id}" py:attrs="dict(selected='selected') if telefonema.responsavel.id == morador.id else dict()">
+						<option value="" py:attrs="dict(selected='selected') if not telefonema.responsavel else dict()"></option>
+						<option py:for="morador in moradores" value="${morador.id}" py:attrs="dict(selected='selected') if telefonema.responsavel and telefonema.responsavel.id == morador.id else dict()">
 						<span py:replace="morador.pessoa.nome">Nome</span>
 						</option>
 					</select>
