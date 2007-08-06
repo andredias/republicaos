@@ -378,10 +378,12 @@ class Fechamento(Entity):
 							saldo_pagar  -= saldo_receber
 							saldo_receber = 0
 		except StopIteration:
-			for devedor in self.acerto_a_pagar.keys():
-				for credor in self.acerto_a_pagar[devedor].keys():
-					self.acerto_a_receber[credor][devedor] = self.acerto_a_pagar[devedor][credor]
-			return
+			pass
+		
+		for devedor in self.acerto_a_pagar.keys():
+			for credor in self.acerto_a_pagar[devedor].keys():
+				self.acerto_a_receber[credor][devedor] = self.acerto_a_pagar[devedor][credor]
+		return
 	
 	
 	#
