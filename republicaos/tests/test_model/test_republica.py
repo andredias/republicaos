@@ -263,4 +263,22 @@ class TestRepublica(BaseTest):
 		r.registrar_responsavel_telefone(numero = 777, responsavel = None)
 		
 		assert TelefoneRegistrado.get_by(numero = 777, republica = r) is None
+	
+	
+	def test_aluguel(self):
+		r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+		
+		Aluguel(valor = Decimal(100), data_cadastro = date(2007, 1, 1), republica = r)
+		Aluguel(valor = Decimal(200), data_cadastro = date(2007, 2, 1), republica = r)
+		
+		objectstore.flush()
+		objectstore.clear()
+		
+		r = Republica.get_by()
+		
+		assert r.aluguel(date(2006, 12, 1)) == None
+		assert r.aluguel(date(2007, 1, 1))  == Decimal(100)
+		assert r.aluguel(date(2007, 1, 15)) == Decimal(100)
+		assert r.aluguel(date(2007, 2, 1))  == Decimal(200)
+		assert r.aluguel(date(2007, 3, 1))  == Decimal(200)
 

@@ -21,3 +21,7 @@ def pretty_decimal(numero, arredondamento = Decimal('0.01')):
 
 def pretty_number(numero):
 	return _pretty_number(numero)
+
+
+def float_equal(float1, float2, precision = 0.001):
+	return abs(float(float1) - float(float2)) < precision

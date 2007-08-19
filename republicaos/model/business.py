@@ -5,7 +5,7 @@ from elixir      import Entity, has_field, using_options, using_table_options, u
 from elixir      import has_many as one_to_many
 from elixir      import belongs_to as many_to_one
 from elixir      import has_and_belongs_to_many as many_to_many
-from sqlalchemy  import types, and_, or_, select, UniqueConstraint
+from sqlalchemy  import types, and_, or_, select, UniqueConstraint, func
 from datetime    import date, datetime, time
 import csv
 from decimal     import Decimal
@@ -123,6 +123,7 @@ class Republica(Entity):
 	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = '-data')
 	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica', order_by = 'nome')
 	one_to_many('telefones_registrados', of_kind = 'TelefoneRegistrado', inverse = 'republica', order_by = 'numero')
+	one_to_many('alugueis', of_kind = 'Aluguel', inverse = 'republica', order_by = '-data_cadastro')
 	
 	
 	def __repr__(self):
@@ -190,6 +191,14 @@ class Republica(Entity):
 				)
 	
 	
+	def aluguel(self, data):
+		for aluguel in self.alugueis:
+			if aluguel.data_cadastro <= data:
+				return aluguel.valor
+		
+		return None
+	
+	
 	def registrar_responsavel_telefone(self, numero, responsavel = None, descricao = None):
 		telefone = None
 		for telefone_ja_registrado in self.telefones_registrados:
@@ -241,10 +250,61 @@ class MoradorRateio(object):
 
 
 
+class Aluguel(Entity):
+	has_field('valor', Money(10, 2), nullable = False)
+	has_field('data_cadastro', Date, primary_key = True)
+	many_to_one('republica', of_kind = 'Republica', inverse = 'alugueis', colname = 'id_republica',
+		column_kwargs = dict(primary_key = True))
+	using_options(tablename = 'aluguel')
 
 
 
+class PesoQuota(Entity):
+	has_field('peso_quota', Money(10,2), nullable = False)
+	has_field('data_cadastro', Date, primary_key = True)
+	many_to_one('morador', of_kind = 'Morador', inverse = 'pesos_quota', colname = 'id_morador',
+		column_kwargs = dict(primary_key = True))
+	using_options(tablename = 'peso_quota')
+	
+	def __repr__(self):
+		return "<peso_quota: %s, %s, %s>" % (self.morador.pessoa.nome.encode('utf-8'), self.peso_quota, self.data_cadastro)
 
+
+
+class Intervalo(object):
+	def __init__(self, data_inicial, data_final, fechamento):
+		assert data_inicial < data_final
+		
+		self.data_inicial = data_inicial
+		self.data_final   = data_final
+		self.fechamento   = fechamento
+		
+		self.participantes = [participante for participante in fechamento.participantes if participante.data_entrada < data_final \
+							and (not participante.data_saida or data_inicial <= participante.data_saida)]
+		self.total_peso_quota = Decimal(str(sum(participante.peso_quota(data_inicial) for participante in self.participantes)))
+		self.num_dias         = (data_final - data_inicial).days if len(self.participantes) else 0
+		fechamento.total_dias += self.num_dias
+	
+	
+	def quota_peso(self, participante):
+		if (not self.total_peso_quota) or (participante not in self.participantes):
+			return 0
+		return self._razao_num_dias() * participante.peso_quota(self.data_inicial) / self.total_peso_quota
+	
+	
+	def quota(self, participante):
+		if (not self.participantes) or (participante not in self.participantes):
+			return 0
+		return self._razao_num_dias() / len(self.participantes)
+	
+	
+	def _razao_num_dias(self):
+		if not self.fechamento.total_dias:
+			return 0
+		return Decimal(str(100.0 * self.num_dias / self.fechamento.total_dias))
+	
+	
+	
 class Fechamento(Entity):
 	has_field('data', Date, primary_key = True)
 	using_options(tablename = 'fechamento')
@@ -285,51 +345,82 @@ class Fechamento(Entity):
 		return self._data_final
 	
 	
+	def quota(self, participante):
+		return sum(intervalo.quota(participante) for intervalo in self.intervalos)
+	
+	
+	def quota_peso(self, participante):
+		return sum(intervalo.quota_peso(participante) for intervalo in self.intervalos)
+	
+	
+	def calcular_quotas_participantes(self):
+		self.total_dias    = 0
+		self.participantes = self.republica.moradores(self.data_inicial, self.data_final)
+		
+		# Definição dos intervalos
+		# todas as datas de entrada e saída formam os intervalos do período
+		datas = set()
+		for participante in self.participantes:
+			data_inicial = max(participante.data_entrada, self.data_inicial)
+			# soma-se um dia à data final pois conta-se apenas dia vencido no cálculo.
+			data_final   = min(self.data_final, participante.data_saida if participante.data_saida else self.data_final) + relativedelta(days = 1)
+			datas.add(data_inicial)
+			datas.add(data_final)
+		
+		# se a mudança na peso_quota do aluguel do participante devesse ser considerado no meio do período,
+		# os intervalos também deveriam considerar as datas das mudança, incluindo-as no conjunto datas aqui
+			
+		datas = list(datas)
+		datas.sort()
+		self.total_dias = 0
+		self.intervalos = list()
+		for i in range(len(datas) - 1):
+			novo_intervalo = Intervalo(datas[i], datas[i+1], self)
+			self.intervalos.append(novo_intervalo)
+	
+	
 	def executar_rateio(self):
 		'''
 		Calcula a divisão das despesas em determinado período
 		'''
 		data_inicial, data_final = self.data_inicial, self.data_final
+		self.calcular_quotas_participantes()
 		
-		moradores = set(self.republica.moradores(data_inicial, data_final))
-		despesas  = list()
-		rateio    = dict()
+		despesas      = list()
+		rateio        = dict()
+		participantes = set(self.participantes)
 		
 		# Divisão das contas de telefone
 		contas_telefone = self.republica.contas_telefone(data_inicial, data_final)
 		for conta_telefone in contas_telefone:
 			conta_telefone.executar_rateio()
-			moradores.update(set(conta_telefone.rateio.keys()))
+			participantes.update(set(conta_telefone.rateio.keys()))
 		
-		# Contabilização das despesas pagas por cada morador
-		for morador in moradores:
-			rateio[morador]                = MoradorRateio()
-			rateio[morador].qtd_dias       = morador.qtd_dias_morados(data_inicial, data_final)
-			rateio[morador].total_despesas = Decimal(0)
+		# Contabilização das despesas pagas por cada participante
+		for participante in participantes:
+			rateio[participante]                = MoradorRateio()
+			rateio[participante].total_despesas = Decimal(0)
 			
-			despesas_morador = morador.despesas(data_inicial, data_final)
+			despesas_morador = participante.despesas(data_inicial, data_final)
 			despesas.extend(despesas_morador)
-			rateio[morador].total_despesas = sum(despesa.quantia for despesa in despesas_morador)
-			rateio[morador].quota_telefone = sum(conta_telefone.rateio[morador].a_pagar for conta_telefone in contas_telefone if morador in conta_telefone.rateio)
+			rateio[participante].total_despesas = sum(despesa.quantia for despesa in despesas_morador)
+			rateio[participante].quota_telefone = sum(conta_telefone.rateio[participante].a_pagar for conta_telefone in contas_telefone if participante in conta_telefone.rateio)
 			
 		# Divisão das contas
 		total_despesas = sum(despesa.quantia for despesa in despesas)
-		total_dias     = sum(rateio[morador].qtd_dias for morador in moradores)
-		total_telefone = sum(rateio[morador].quota_telefone for morador in moradores)
-		for morador in moradores:
+		total_telefone = sum(rateio[participante].quota_telefone for participante in participantes)
+		for participante in participantes:
 			# o total do telefone é uma despesa específica e não deve ser usada no cálculo das quotas
 			# a parte de cada um nos telefones é contabilizada no saldo final
-			rateio[morador].quota       = (total_despesas - total_telefone) * rateio[morador].qtd_dias / total_dias
-			rateio[morador].porcentagem = 100.0 * rateio[morador].qtd_dias / total_dias
-			rateio[morador].saldo_final = rateio[morador].quota + rateio[morador].quota_telefone - rateio[morador].total_despesas
+			rateio[participante].quota       = (total_despesas - total_telefone) * self.quota(participante) / Decimal(100)
+			rateio[participante].saldo_final = rateio[participante].quota + rateio[participante].quota_telefone - rateio[participante].total_despesas
 		
 		self.total_despesas  = total_despesas
-		self.total_dias      = total_dias
 		self.total_telefone  = total_telefone
 		self.despesas        = despesas
 		self.contas_telefone = contas_telefone
 		self.rateio          = rateio
-		self.participantes   = list(moradores)
+		self.participantes   = list(participantes)
 		self.total_tipo_despesa = dict(
 			[(tipo_despesa, sum(despesa.quantia for despesa in despesas if despesa.tipo == tipo_despesa))
 			for tipo_despesa in self.republica.tipos_despesa]
@@ -350,7 +441,7 @@ class Fechamento(Entity):
 		Executa o acerto final das contas, determinando quem deve pagar o que pra quem. A ordem dos credores
 		e devedores é ordenada para que sempre dê a mesma divisão.
 		'''
-		credores  = [morador for morador in self.participantes if self.rateio[morador].saldo_final <= 0]
+		credores  = [participante for participante in self.participantes if self.rateio[participante].saldo_final <= 0]
 		devedores = list(set(self.participantes) - set(credores))
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
@@ -548,10 +639,10 @@ class ContaTelefone(Entity):
 		
 		Critérios:
 		1. Os telefonemas sem dono são debitados da franquia
-		2. A franquia restante é dividida entre os moradores de acordo com o número de dias morados por cada um
+		2. A franquia restante é dividida entre os participantes de acordo com o número de dias morados por cada um
 		3. Os serviços (se houverem) também são divididos de acordo com o número de dias morados
-		4. A quantia excedente é quanto cada morador gastou além da franquia a que tinha direito
-		5. A quantia excedente que cada morador deve pagar pode ser compensado pelo faltante de outro morador em atingir sua franquia
+		4. A quantia excedente é quanto cada participante gastou além da franquia a que tinha direito
+		5. A quantia excedente que cada participante deve pagar pode ser compensado pelo faltante de outro participante em atingir sua franquia
 		
 		Saída: (resumo, rateio)
 		-----------------------
@@ -564,7 +655,7 @@ class ContaTelefone(Entity):
 			* total_sem_dono
 			* total_ex_moradores
 		
-		rateio[morador]:
+		rateio[participante]:
 			Classe MoradorRateio com os campos:
 			* qtd_dias
 			* porcentagem
@@ -673,6 +764,7 @@ class Morador(Entity):
 	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa', column_kwargs = dict(nullable = False))
 	one_to_many('despesas_periodicas', of_kind = 'DespesaPeriodica', inverse = 'responsavel', order_by = 'proximo_vencimento')
 	one_to_many('telefones_sob_responsabilidade', of_kind = 'TelefoneRegistrado', inverse = 'responsavel')
+	one_to_many('pesos_quota', of_kind = 'PesoQuota', inverse = 'morador', order_by = '-data_cadastro')
 	using_options(tablename = 'morador')
 	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
 	#using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))
@@ -740,6 +832,29 @@ class Morador(Entity):
 		saida    = min(self.data_saida, data_final) if self.data_saida else data_final
 		qtd_dias = (saida - entrada).days + 1
 		return (qtd_dias if qtd_dias >= 0 else 0)
+	
+	
+	def peso_quota(self, data):
+		'''Qual o peso_quota do morador em uma determinada data'''
+		
+		for peso_quota in self.pesos_quota:
+			if peso_quota.data_cadastro <= data:
+				return peso_quota.peso_quota
+		
+		# se chegou aqui, não há nenhum peso_quota cadastrada
+		# dividir igualmente entre os moradores cadastrados no período
+		
+		num_moradores = select(
+						[func.count('*')],
+						from_obj = [Morador.table],
+						whereclause = and_(
+							Morador.c.id_republica == self.id_republica,
+							Morador.c.data_entrada <= data,
+							or_(Morador.c.data_saida >= data, Morador.c.data_saida == None)
+							)
+						).execute().fetchone()[0]
+		
+		return Decimal(str(100.0 / num_moradores) if num_moradores else 0)
 
 
 

@@ -68,24 +68,22 @@ def print_rateio(fechamento):
 		'Saldo Final'
 		)
 	)
-	for morador in fechamento.participantes:
-		rateio_morador = fechamento.rateio[morador]
-		write('\n %*s| %*d| %*s%%| %*s| %*s| %*s| %*s' % \
-			(9, morador.pessoa.nome,
-			4, rateio_morador.qtd_dias,
-			11, pretty_decimal(rateio_morador.porcentagem, 1),
-			8, pretty_decimal(rateio_morador.quota),
-			8, pretty_decimal(rateio_morador.quota_telefone),
-			8, pretty_decimal(rateio_morador.total_despesas),
-			8, pretty_decimal(rateio_morador.saldo_final)))
+	for participante in fechamento.participantes:
+		rateio_participante = fechamento.rateio[participante]
+		write('\n %*s| %*s%%| %*s| %*s| %*s| %*s' % \
+			(9, participante.pessoa.nome,
+			11, pretty_decimal(fechamento.quota(participante), 1),
+			8, pretty_decimal(rateio_participante.quota),
+			8, pretty_decimal(rateio_participante.quota_telefone),
+			8, pretty_decimal(rateio_participante.total_despesas),
+			8, pretty_decimal(rateio_participante.saldo_final)))
 		
-	total_porcentagem = sum(fechamento.rateio[morador].porcentagem for morador in fechamento.participantes)
-	total_quotas      = sum(fechamento.rateio[morador].quota       for morador in fechamento.participantes)
-	total_saldo_final = sum(fechamento.rateio[morador].saldo_final for morador in fechamento.participantes)
-	write('\n %*s| %*d| %*s%%| %*s| %*s| %*s| %*s' % 
+	total_porcentagem = sum(fechamento.quota(participante) for participante in fechamento.participantes)
+	total_quotas      = sum(fechamento.rateio[participante].quota       for participante in fechamento.participantes)
+	total_saldo_final = sum(fechamento.rateio[participante].saldo_final for participante in fechamento.participantes)
+	write('\n %*s| %*s%%| %*s| %*s| %*s| %*s' % 
 		(
 		9, 'TOTAL  ',
-		4, fechamento.total_dias,
 		11, pretty_decimal(total_porcentagem, 1),
 		8, pretty_decimal(total_quotas),
 		8, pretty_decimal(fechamento.total_telefone),
@@ -135,3 +133,42 @@ def print_fechamento(fechamento):
 	print_rateio(fechamento)
 	print_acerto_final(fechamento)
 	sys.stdout.flush()
+
+
+
+def print_calculo_quotas_participantes(fechamento):
+	write(u'\n\nCÁLCULO DAS QUOTAS DO FECHAMENTO\n-----------------')
+	write('\nData Inicial: %s | Data Final: %s' % (fechamento.data_inicial.strftime('%d/%m/%Y'), fechamento.data_final.strftime('%d/%m/%Y')))
+	write('\nTotal de dias: %d' % fechamento.total_dias)
+	write(u'\nParticipantes | Peso(%) | Quota(%) | Quota_Peso(%)')
+	total_peso       = 0
+	total_quota      = 0
+	total_quota_peso = 0
+	for participante in fechamento.participantes:
+		peso       = participante.peso_quota(fechamento.data_inicial)
+		quota      = fechamento.quota(participante)
+		quota_peso = fechamento.quota_peso(participante)
+		total_peso       += peso
+		total_quota      += quota
+		total_quota_peso += quota_peso
+		write('\n%14s|%9.2f|%9.2f |%9.2f' % (participante.pessoa.nome, participante.peso_quota(fechamento.data_inicial), quota, quota_peso))
+	write('\n%14s|%9.2f|%9.2f |%9.2f\n\n' % (' TOTAL', total_peso, total_quota, total_quota_peso))
+	write('\n\nIntervalos:')
+	for intervalo in fechamento.intervalos:
+		write('\n\t--------------')
+		write('\n\tData Inicial: %s | Data Final: %s' % (intervalo.data_inicial.strftime('%d/%m/%Y'), intervalo.data_final.strftime('%d/%m/%Y')))
+		write(u'\n\tNúm Dias: %d' % intervalo.num_dias)
+		write(u'\n\tParticipantes | Quota(%) | Quota_Peso(%)')
+		total_quota      = 0
+		total_quota_peso = 0
+		for participante in intervalo.participantes:
+			quota      = intervalo.quota(participante)
+			quota_peso = intervalo.quota_peso(participante)
+			total_quota      += quota
+			total_quota_peso += quota_peso
+			write('\n\t%14s|%9.2f |%9.2f' % (participante.pessoa.nome, quota, quota_peso))
+		write('\n\t%14s|%9.2f |%9.2f\n\n' % (' TOTAL', total_quota, total_quota_peso))
+	sys.stdout.flush()
+			
+			
+		

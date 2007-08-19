@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from republicaos.model.business import *
-from elixir import *
-from datetime import date, time
-from dateutil.relativedelta import relativedelta
+from elixir     import *
+from datetime   import date, time
 from sqlalchemy import create_engine
-from base import BaseTest
+from base       import BaseTest
+from decimal    import Decimal
+from dateutil.relativedelta import relativedelta
+from republicaos.model.business import *
 
 class TestMorador(BaseTest):
 	def test_qts_dias_morados(self):
@@ -170,8 +171,32 @@ class TestMorador(BaseTest):
 		assert d2.issubset(despesas)
 		assert d3.issubset(despesas)
 		assert d4.issubset(despesas)
-
 		
 		
+	def test_peso_quota(self):
+		r = Republica(nome = 'Teste',
+			data_criacao = date(2007, 3, 6),
+			logradouro = 'R. dos Bobos, nº 0')
+			
+		p1 = Pessoa(nome = 'André')
+		p2 = Pessoa(nome = 'Marcos')
+		p3 = Pessoa(nome = 'Roger')
+		p4 = Pessoa(nome = 'Leonardo')
+		m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 1, 1))
+		m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 1, 2))
+		m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 3))
+		m4 = Morador(pessoa = p4, republica = r, data_entrada = date(2007, 1, 4))
 		
+		PesoQuota(morador = m1, peso_quota = Decimal(22), data_cadastro = date(2007, 3, 6))
+		PesoQuota(morador = m1, peso_quota = Decimal(20), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = m1, peso_quota = Decimal(15), data_cadastro = date(2007, 5, 6))
 		
+		objectstore.flush()
+		objectstore.clear()
+		
+		m1 = Morador.get_by(data_entrada = date(2007, 1, 1))
+		
+		assert m1.peso_quota(date(2007, 2, 1)) == 25
+		assert m1.peso_quota(date(2007, 3, 6)) == m1.peso_quota(date(2007, 4, 5)) == 22
+		assert m1.peso_quota(date(2007, 4, 6)) == m1.peso_quota(date(2007, 5, 5)) == 20
+		assert m1.peso_quota(date(2007, 5, 6)) == m1.peso_quota(date(2007, 6, 6)) == 15

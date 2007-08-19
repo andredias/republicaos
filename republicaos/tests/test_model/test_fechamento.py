@@ -8,7 +8,8 @@ from elixir import *
 from datetime import date
 from decimal import Decimal
 from base import BaseTest
-from exibicao_resultados import print_acerto_final
+from exibicao_resultados import print_acerto_final, print_calculo_quotas_participantes
+from pronus_utils import float_equal
 
 class TestFechamento(BaseTest):
 	'''
@@ -219,7 +220,7 @@ class TestFechamento(BaseTest):
 		assert f.total_despesas > 0
 		assert len(f.participantes) == 4
 		assert any(morador.saldo_final for morador in f.rateio.values())
-		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
+		assert float_equal(sum(morador.saldo_final for morador in f.rateio.values()), 0.0)
 	
 	
 	def test_fechamento_2(self):
@@ -260,11 +261,11 @@ class TestFechamento(BaseTest):
 		print_fechamento(f)
 		
 		assert f.total_despesas > 0
-		assert f.total_despesas == sum(f.rateio[morador].quota for morador in f.participantes) + f.total_telefone
+		assert float_equal(f.total_despesas, sum(f.rateio[morador].quota for morador in f.participantes) + f.total_telefone)
 		assert f.total_telefone == self.c.resumo['total_conta']
 		assert len(f.participantes) == 3
 		assert any(morador.saldo_final for morador in f.rateio.values())
-		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
+		assert float_equal(sum(morador.saldo_final for morador in f.rateio.values()), 0.0)
 	
 	
 	def test_fechamento_3(self):
@@ -281,3 +282,233 @@ class TestFechamento(BaseTest):
 		assert f.total_despesas == 0
 		assert len(f.participantes) == 0
 		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
+	
+	
+	def test_calculo_quotas_participantes_1(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Único intervalo e sem porcentagem cadastrada
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 1
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6)
+		assert f.intervalos[0].data_final   == date(2007, 5, 6)
+		assert len(f.participantes) == 4
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+		
+		for morador in f.participantes:
+			assert f.quota(morador) == f.quota_peso(morador) == 25
+		
+		
+	def test_calculo_quotas_participantes_2(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Sem porcentagem cadastrada. Um morador sai em um dia e outro entra no dia seguinte
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 21), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 2
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 4, 21)
+		assert f.intervalos[1].data_inicial == date(2007, 4, 21) and f.intervalos[1].data_final == date(2007, 5, 6)
+		assert len(f.intervalos[0].participantes) == len(f.intervalos[1].participantes) == 3
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+		assert float_equal(f.quota(self.m1), 33.333)
+		assert float_equal(f.quota(self.m2), 16.667)
+		for morador in f.participantes:
+			assert float_equal(f.quota(morador), f.quota_peso(morador))
+		
+		
+	def test_calculo_quotas_participantes_3(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Períodos iguais e sem porcentagem cadastrada
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 20), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 3
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 4, 20)
+		assert f.intervalos[1].data_inicial == date(2007, 4, 20) and f.intervalos[1].data_final == date(2007, 4, 21)
+		assert f.intervalos[2].data_inicial == date(2007, 4, 21) and f.intervalos[2].data_final == date(2007, 5, 6)
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+		assert float_equal(f.intervalos[1].quota(self.m1), 0.833)
+		assert float_equal(f.intervalos[2].quota(self.m1), 16.667)
+		for morador in f.participantes:
+			assert float_equal(f.quota(morador), f.quota_peso(morador))
+	
+	
+	def test_calculo_quotas_participantes_4(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Um intervalo sem ninguém e sem porcentagem cadastrada
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 25), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 4, 30), data_saida = date(2007, 5, 6))
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 4
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 4, 21)
+		assert f.intervalos[1].data_inicial == date(2007, 4, 21) and f.intervalos[1].data_final == date(2007, 4, 25)
+		assert f.intervalos[2].data_inicial == date(2007, 4, 25) and f.intervalos[2].data_final == date(2007, 4, 30)
+		assert f.intervalos[3].data_inicial == date(2007, 4, 30) and f.intervalos[3].data_final == date(2007, 5, 6)
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+		assert f.total_dias == 26
+		for morador in f.participantes:
+			assert float_equal(f.quota(morador), f.quota_peso(morador))
+	
+	
+	def test_calculo_quotas_participantes_peso_1(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Um intervalo único e COM porcentagem cadastrada dando 100%
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		
+		PesoQuota(morador = self.m1, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m2, peso_quota = Decimal(25), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m3, peso_quota = Decimal(15), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 1
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 5, 6)
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+		assert f.total_dias == 30
+		for participante in f.participantes:
+			assert f.quota(participante) == 25
+			assert float_equal(participante.peso_quota(f.data_inicial), f.quota_peso(participante))
+	
+	
+	def test_calculo_quotas_participantes_peso_2(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Três intervalos e COM porcentagem cadastrada
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 15))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 4, 21), data_saida = date(2007, 5, 6))
+		
+		PesoQuota(morador = self.m1, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m2, peso_quota = Decimal(25), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m3, peso_quota = Decimal(15), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 3
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 4, 16)
+		assert f.intervalos[1].data_inicial == date(2007, 4, 16) and f.intervalos[1].data_final == date(2007, 4, 21)
+		assert f.intervalos[2].data_inicial == date(2007, 4, 21) and f.intervalos[2].data_final == date(2007, 5, 6)
+		assert f.intervalos[2].quota_peso(self.m1) == f.intervalos[2].quota_peso(self.m4) == 2 * f.intervalos[2].quota_peso(self.m3)
+		assert float_equal(f.quota_peso(self.m1), 2 * f.quota_peso(self.m3))
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+	
+	
+	def test_calculo_quotas_participantes_peso_3(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Porcentagem maior que 100%
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 5, 6))
+		
+		PesoQuota(morador = self.m1, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m2, peso_quota = Decimal(45), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m3, peso_quota = Decimal(45), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 1
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 5, 6)
+		assert f.quota_peso(self.m1) == f.quota_peso(self.m4) == 20
+		assert f.quota_peso(self.m2) == f.quota_peso(self.m3) == 30
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+	
+	
+	def test_calculo_quotas_participantes_peso_4(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Um intervalo sem ninguém. Porcentagem maior que 100%
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 25), data_saida = date(2007, 5, 6))
+		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 4, 30), data_saida = date(2007, 5, 6))
+		
+		PesoQuota(morador = self.m1, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m2, peso_quota = Decimal(45), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m3, peso_quota = Decimal(45), data_cadastro = date(2007, 4, 6))
+		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
+		
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 4
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 4, 21)
+		assert f.intervalos[1].data_inicial == date(2007, 4, 21) and f.intervalos[1].data_final == date(2007, 4, 25)
+		assert f.intervalos[2].data_inicial == date(2007, 4, 25) and f.intervalos[2].data_final == date(2007, 4, 30)
+		assert f.intervalos[3].data_inicial == date(2007, 4, 30) and f.intervalos[3].data_final == date(2007, 5, 6)
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+		assert f.total_dias == 26
+
