@@ -26,7 +26,10 @@ def seconds_to_time(seconds):
 
 republica  = conta_telefone.republica
 fechamento = republica.fechamento_na_data(conta_telefone.emissao)
-moradores  = republica.moradores(fechamento.data_inicial, fechamento.data_final)
+
+# ex-moradores também podem ser associados a telefonemas. Veja #68
+data_inicial = min(fechamento.data_inicial, conta_telefone.emissao - relativedelta(months = 2))
+moradores    = republica.moradores(data_inicial, fechamento.data_final)
 rateio_conta = [(key.pessoa.nome, conta_telefone.rateio[key]) for key in conta_telefone.rateio.keys()]
 rateio_conta.sort()
 ?>
