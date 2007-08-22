@@ -346,10 +346,14 @@ class Fechamento(Entity):
 	
 	
 	def quota(self, participante):
+		if not hasattr(self, 'intervalos'):
+			self.calcular_quotas_participantes()
 		return sum(intervalo.quota(participante) for intervalo in self.intervalos)
 	
 	
 	def quota_peso(self, participante):
+		if not hasattr(self, 'intervalos'):
+			self.calcular_quotas_participantes()
 		return sum(intervalo.quota_peso(participante) for intervalo in self.intervalos)
 	
 	
@@ -393,7 +397,7 @@ class Fechamento(Entity):
 		# Divisão das contas de telefone
 		contas_telefone = self.republica.contas_telefone(data_inicial, data_final)
 		for conta_telefone in contas_telefone:
-			conta_telefone.executar_rateio()
+			conta_telefone.executar_rateio(self)
 			participantes.update(set(conta_telefone.rateio.keys()))
 		
 		# Contabilização das despesas pagas por cada participante
@@ -633,13 +637,13 @@ class ContaTelefone(Entity):
 		self.determinar_responsaveis_telefonemas()
 	
 	
-	def executar_rateio(self):
+	def executar_rateio(self, fechamento = None):
 		'''
 		Divide a conta de telefone.
 		
 		Critérios:
 		1. Os telefonemas sem dono são debitados da franquia
-		2. A franquia restante é dividida entre os participantes de acordo com o número de dias morados por cada um
+		2. A franquia restante é dividida entre os participantes de acordo com o a quota de cada um
 		3. Os serviços (se houverem) também são divididos de acordo com o número de dias morados
 		4. A quantia excedente é quanto cada participante gastou além da franquia a que tinha direito
 		5. A quantia excedente que cada participante deve pagar pode ser compensado pelo faltante de outro participante em atingir sua franquia
@@ -651,13 +655,11 @@ class ContaTelefone(Entity):
 			Dicionário com as chaves:
 			* total_telefonemas
 			* total_conta
-			* total_dias
 			* total_sem_dono
 			* total_ex_moradores
 		
 		rateio[participante]:
 			Classe MoradorRateio com os campos:
-			* qtd_dias
 			* porcentagem
 			* gastos
 			* franquia
@@ -667,17 +669,15 @@ class ContaTelefone(Entity):
 			* a_pagar
 		
 		'''
-		fechamento = self.republica.fechamento_na_data(self.emissao)
+		if not fechamento:
+			fechamento = self.republica.fechamento_na_data(self.emissao)
 		rateio = dict()
 		
-		total_dias = 0
 		# determina os moradores atuais da república
 		for morador in self.republica.moradores(fechamento.data_inicial, fechamento.data_final):
-			qtd_dias    = morador.qtd_dias_morados(fechamento.data_inicial, fechamento.data_final)
-			total_dias += qtd_dias
-			rateio[morador]          = MoradorRateio()
-			rateio[morador].qtd_dias = Decimal(qtd_dias) # Decimal pois vai ser usado em outras contas depois
-			rateio[morador].gastos   = Decimal(0)
+			rateio[morador]        = MoradorRateio()
+			rateio[morador].gastos = Decimal(0)
+			rateio[morador].quota  = fechamento.quota(morador) / Decimal(100)
 		
 		# Cálculo dos telefonemas de acordo com o responsável: morador, ex-morador ou sem dono
 		total_sem_dono     = Decimal(0)
@@ -691,10 +691,10 @@ class ContaTelefone(Entity):
 			if morador:
 				if morador not in rateio:
 					# ex-morador que tem telefonema pendente
-					rateio[morador]          = MoradorRateio()
-					rateio[morador].qtd_dias = Decimal(0)
-					rateio[morador].gastos   = Decimal(0)
-					total_ex_moradores += telefonema.quantia
+					rateio[morador]        = MoradorRateio()
+					rateio[morador].gastos = Decimal(0)
+					rateio[morador].quota  = fechamento.quota(morador) / Decimal(100)
+					total_ex_moradores    += telefonema.quantia
 				
 				rateio[morador].gastos += quantia
 			else:
@@ -703,17 +703,16 @@ class ContaTelefone(Entity):
 		# determina a franquia e o excedente de cada morador
 		total_excedente = 0
 		for morador in rateio.values():
-			franquia_morador = (self.franquia * morador.qtd_dias) / total_dias
-			div_tel_sem_dono = (total_sem_dono * morador.qtd_dias) / total_dias
+			franquia_morador = self.franquia * morador.quota
+			div_tel_sem_dono = total_sem_dono * morador.quota
 			excedente        = morador.gastos + div_tel_sem_dono - franquia_morador
 			excedente        = excedente if excedente > 0 else Decimal(0)
 			total_excedente += excedente
 			
-			morador.porcentagem = morador.qtd_dias * 100 / total_dias
 			morador.franquia  = franquia_morador
 			morador.sem_dono  = div_tel_sem_dono
 			morador.excedente = excedente
-			morador.servicos  = (self.servicos * morador.qtd_dias) / total_dias
+			morador.servicos  = self.servicos * morador.quota
 		
 		total_conta = self.servicos + (total_telefonemas if total_telefonemas > self.franquia else self.franquia)
 		if total_excedente > 0:
@@ -731,7 +730,6 @@ class ContaTelefone(Entity):
 		resumo = dict()
 		resumo['total_telefonemas']  = total_telefonemas
 		resumo['total_conta']        = total_conta
-		resumo['total_dias']         = total_dias
 		resumo['total_sem_dono']     = total_sem_dono
 		resumo['total_ex_moradores'] = total_ex_moradores
 		

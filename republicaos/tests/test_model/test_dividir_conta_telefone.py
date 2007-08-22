@@ -10,6 +10,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from base import BaseTest
+from pronus_utils import float_equal
 
 
 decimal.setcontext(decimal.BasicContext)
@@ -96,7 +97,7 @@ class TestDividirContaTelefone(BaseTest):
 	def moradores_numero_dias_diferentes(self):
 		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
-		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 21)) # entrou no meio do período
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 18)) # veja test_fechamento.py:TestFechamento.test_calculo_quotas_participantes_5
 		objectstore.flush()
 		
 		return (self.m1, self.m2, self.m3)
@@ -174,7 +175,8 @@ class TestDividirContaTelefone(BaseTest):
 		if qtd_dias_diferentes:
 			assert rateio[m1].franquia == rateio[m2].franquia == (2 * rateio[m3].franquia)
 		else:
-			assert rateio[m1].franquia == rateio[m2].franquia == rateio[m3].franquia == (self.c.franquia / 3)
+			assert rateio[m1].franquia == rateio[m2].franquia == rateio[m3].franquia
+			assert float_equal(rateio[m1].franquia, (self.c.franquia / 3))
 		
 		if tel_sem_dono:
 			assert resumo['total_sem_dono'] == (t1.quantia + t2.quantia)

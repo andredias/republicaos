@@ -391,6 +391,29 @@ class TestFechamento(BaseTest):
 			assert float_equal(f.quota(morador), f.quota_peso(morador))
 	
 	
+	def test_calculo_quotas_participantes_5(self):
+		'''
+		Teste do cálculo da proporção de cada morador. Datas ajustadas para dar 1/5 para um e 2/5 para os outros dois moradores
+		'''
+		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
+		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
+		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 18))
+		objectstore.flush()
+		
+		f = self.r.criar_fechamento(date(2007, 5, 6))
+		f.calcular_quotas_participantes()
+		
+		print_calculo_quotas_participantes(f)
+		
+		assert len(f.intervalos) == 2
+		assert f.intervalos[0].data_inicial == date(2007, 4, 6) and f.intervalos[0].data_final == date(2007, 4, 18)
+		assert f.intervalos[1].data_inicial == date(2007, 4, 18) and f.intervalos[1].data_final == date(2007, 5, 6)
+		assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
+		assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
+		for morador in f.participantes:
+			assert float_equal(f.quota(morador), f.quota_peso(morador))
+	
+	
 	def test_calculo_quotas_participantes_peso_1(self):
 		'''
 		Teste do cálculo da proporção de cada morador. Um intervalo único e COM porcentagem cadastrada dando 100%
