@@ -19,9 +19,9 @@ def print_rateio_conta_telefone(conta, resumo, rateio):
 	
 	moradores = [(key.pessoa.nome, key) for key in rateio.keys()]
 	moradores.sort()
-	campos = ('quota', 'franquia', 'gastos', 'extras', 'excedente', 'a_pagar')
+	campos = ('quota', 'franquia', 'gastos', 'extras', 'excedente', 'abono', 'a_pagar')
 	totais = dict([campo, 0] for campo in campos)
-	write('\n\n----------|%9s|%9s|%9s|%9s|%9s|%9s' % campos)
+	write('\n\n----------|%9s|%9s|%9s|%9s|%9s|%9s|%9s' % campos)
 	for nome, morador in moradores:
 		write('\n%10s' % nome)
 		for campo in campos:

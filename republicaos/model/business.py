@@ -689,9 +689,9 @@ class ContaTelefone(Entity):
 			rateio[morador]     = r_morador = MoradorRateio()
 			r_morador.quota     = fechamento.quota(morador) / Decimal(100)
 			r_morador.gastos    = sum(telefonema.quantia for telefonema in self.telefonemas if telefonema.responsavel is morador)
-			r_morador.extras    = r_morador.quota * total_sem_dono
+			r_morador.extras    = r_morador.quota * (total_sem_dono + self.servicos)
 			r_morador.abono     = Decimal(0)
-			r_morador.franquia  = r_morador.quota * self.franquia
+			r_morador.franquia  = r_morador.quota * (self.franquia + self.servicos)
 			r_morador.a_pagar   = r_morador.gastos + r_morador.extras
 			r_morador.excedente = r_morador.a_pagar - r_morador.franquia
 			if r_morador.excedente > 0:
@@ -736,9 +736,6 @@ class ContaTelefone(Entity):
 				total_abono       += r_morador.abono
 			sobra_franquia -= total_abono
 			ex_moradores    = [morador for morador in ex_moradores if not float_equal(rateio[morador].a_pagar, 0)]
-		
-		for morador in moradores:
-			rateio[morador].a_pagar += rateio[morador].quota * self.servicos
 		
 		resumo = dict()
 		resumo['total_telefonemas']  = total_telefonemas

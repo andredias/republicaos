@@ -204,7 +204,7 @@ class TestDividirContaTelefone(BaseTest):
 			assert rateio[m1].franquia == rateio[m2].franquia == (2 * rateio[m3].franquia)
 		else:
 			assert rateio[m1].franquia == rateio[m2].franquia == rateio[m3].franquia
-			assert float_equal(rateio[m1].franquia, (self.c.franquia / 3))
+			assert float_equal(rateio[m1].franquia, (self.c.franquia + self.c.servicos) / Decimal(3))
 		
 		if tel_sem_dono:
 			assert resumo['total_sem_dono'] == (t1.quantia + t2.quantia)
@@ -423,7 +423,7 @@ class TestDividirContaTelefone(BaseTest):
 	def test_dividir_conta_caso_25(self):
 		'''
 		SER | TEM | TSD | NDD | UF
-		 1  |  0  |  0  | 1
+		 1  |  1  |  0  |  0  | 1
 		'''
 		self.executa_caso_xyz(servicos = 1, tel_ex_morador = 1, tel_sem_dono = 0, qtd_dias_diferentes = 0, ultrapassa_franquia = 1)
 	
@@ -431,7 +431,7 @@ class TestDividirContaTelefone(BaseTest):
 	def test_dividir_conta_caso_26(self):
 		'''
 		SER | TEM | TSD | NDD | UF
-		 1  |  0  |  1  | 0
+		 1  |  1  |  0  |  1  | 0
 		'''
 		self.executa_caso_xyz(servicos = 1, tel_ex_morador = 1, tel_sem_dono = 0, qtd_dias_diferentes = 1, ultrapassa_franquia = 0)
 	
@@ -439,7 +439,7 @@ class TestDividirContaTelefone(BaseTest):
 	def test_dividir_conta_caso_27(self):
 		'''
 		SER | TEM | TSD | NDD | UF
-		 1  |  0  |  1  | 1
+		 1  |  1  |  0  |  1  | 1
 		'''
 		self.executa_caso_xyz(servicos = 1, tel_ex_morador = 1, tel_sem_dono = 0, qtd_dias_diferentes = 1, ultrapassa_franquia = 1)
 	
