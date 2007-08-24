@@ -690,7 +690,6 @@ class ContaTelefone(Entity):
 			r_morador.quota     = fechamento.quota(morador) / Decimal(100)
 			r_morador.gastos    = sum(telefonema.quantia for telefonema in self.telefonemas if telefonema.responsavel is morador)
 			r_morador.extras    = r_morador.quota * (total_sem_dono + self.servicos)
-			r_morador.abono     = Decimal(0)
 			r_morador.franquia  = r_morador.quota * (self.franquia + self.servicos)
 			r_morador.a_pagar   = r_morador.gastos + r_morador.extras
 			r_morador.excedente = r_morador.a_pagar - r_morador.franquia
@@ -709,6 +708,8 @@ class ContaTelefone(Entity):
 			r_morador.gastos   = sum(telefonema.quantia for telefonema in self.telefonemas if telefonema.responsavel is ex_morador)
 			r_morador.a_pagar  = r_morador.excedente = r_morador.gastos
 			
+		for participante in rateio.keys():
+			rateio[participante].devido = rateio[participante].a_pagar
 		# divisão da sobra de franquia entre os moradores que excederam sua quota
 		# a sobra de franquia de uns vai ser usada para compensar o excedente de outros
 		total_telefonemas_moradores = total_telefonemas - total_ex_moradores
@@ -718,10 +719,10 @@ class ContaTelefone(Entity):
 			for morador in excedentes:
 				r_morador = rateio[morador]
 				excesso   = r_morador.a_pagar - r_morador.franquia
-				r_morador.abono    = sobra_franquia * r_morador.quota / total_quota
-				r_morador.abono    = r_morador.abono if r_morador.abono <= excesso else excesso
-				r_morador.a_pagar -= r_morador.abono
-				total_abono       += r_morador.abono
+				abono     = sobra_franquia * r_morador.quota / total_quota
+				abono     = abono if abono <= excesso else excesso
+				r_morador.a_pagar -= abono
+				total_abono       += abono
 			sobra_franquia -= total_abono
 			excedentes      = [morador for morador in excedentes if not float_equal(rateio[morador].a_pagar, rateio[morador].franquia)]
 			
@@ -731,11 +732,14 @@ class ContaTelefone(Entity):
 			total_abono = Decimal(0)
 			for ex_morador in ex_moradores:
 				r_morador = rateio[ex_morador]
-				r_morador.abono    = quota_sobra if quota_sobra <= r_morador.a_pagar else r_morador.a_pagar # todo a_pagar de ex-morador já é o excesso
-				r_morador.a_pagar -= r_morador.abono
-				total_abono       += r_morador.abono
+				abono     = quota_sobra if quota_sobra <= r_morador.a_pagar else r_morador.a_pagar # todo a_pagar de ex-morador já é o excesso
+				r_morador.a_pagar -= abono
+				total_abono       += abono
 			sobra_franquia -= total_abono
 			ex_moradores    = [morador for morador in ex_moradores if not float_equal(rateio[morador].a_pagar, 0)]
+		
+		for participante in rateio.keys():
+			rateio[participante].abono = rateio[participante].devido - rateio[participante].a_pagar
 		
 		resumo = dict()
 		resumo['total_telefonemas']  = total_telefonemas
