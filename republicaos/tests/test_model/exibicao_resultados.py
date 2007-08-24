@@ -10,16 +10,18 @@ import codecs
 unicode_to_utf8 = sw(sys.stdout)
 write = unicode_to_utf8.write
 
-def print_rateio_conta_telefone(resumo, rateio):
+def print_rateio_conta_telefone(conta, resumo, rateio):
 	write('\n\nRATEIO CONTA DE TELEFONE\n------------------------')
+	write('\nFranquia = %s' % conta.franquia)
+	write(u'\nServiços = %s' % conta.servicos)
 	for key, value in resumo.items():
 		write('\n%s = %s' % (key, pretty_decimal(value)))
 	
 	moradores = [(key.pessoa.nome, key) for key in rateio.keys()]
 	moradores.sort()
-	campos = ('quota', 'franquia', 'gastos', 'sem_dono', 'excedente', 'servicos', 'a_pagar')
+	campos = ('quota', 'franquia', 'gastos', 'extras', 'excedente', 'a_pagar')
 	totais = dict([campo, 0] for campo in campos)
-	write('\n\n----------|%9s|%9s|%9s|%9s|%9s|%9s|%9s' % campos)
+	write('\n\n----------|%9s|%9s|%9s|%9s|%9s|%9s' % campos)
 	for nome, morador in moradores:
 		write('\n%10s' % nome)
 		for campo in campos:
@@ -55,10 +57,9 @@ def print_despesas(fechamento):
 
 def print_rateio(fechamento):
 	write(u'\n\nRATEIO\n------\n')
-	write(u' %-*s| %-*s| %-*s| %-*s| %-*s| %-*s| %s' %
+	write(u' %-*s| %-*s| %-*s| %-*s| %-*s| %s' %
 		(
 		9, 'Morador',
-		4, 'Dias',
 		12, u'Participação',
 		8, 'Quota',
 		8, 'Telefone',
@@ -109,15 +110,15 @@ def print_acerto_final(fechamento):
 				if credor in fechamento.acerto_a_pagar[devedor]:
 					a_pagar           = fechamento.acerto_a_pagar[devedor][credor]
 					total_a_pagar    += a_pagar
-					write('|%10s' % a_pagar)
+					write('|%10s' % pretty_decimal(a_pagar))
 				else:
 					write('|%10s' % ' ')
-			write('|%10s' % total_a_pagar)
+			write('|%10s' % pretty_decimal(total_a_pagar))
 	write('\n%s' % ('-' * 10 * (len(fechamento.participantes) + 3)))
 	write('\n   Receber')
 	for credor in fechamento.participantes:
 		if credor in fechamento.acerto_a_receber:
-			write('|%10s' % sum(fechamento.acerto_a_receber[credor].values()))
+			write('|%10s' % pretty_decimal(sum(fechamento.acerto_a_receber[credor].values())))
 		else:
 			write('|%10s' % ' ')
 	write('\n\n\n')

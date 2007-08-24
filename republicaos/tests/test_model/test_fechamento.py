@@ -182,6 +182,18 @@ class TestFechamento(BaseTest):
 		assert len(f.acerto_a_pagar) == 0
 	
 	
+	def assert_geral_fechamento(self, fechamento):
+		assert fechamento.total_despesas > 0
+		assert any(morador.saldo_final for morador in fechamento.rateio.values())
+		assert float_equal(fechamento.total_despesas, sum(fechamento.rateio[morador].quota for morador in fechamento.participantes) + fechamento.total_telefone)
+		assert float_equal(sum(morador.saldo_final for morador in fechamento.rateio.values()), 0.0)
+		for credor, creditos in fechamento.acerto_a_receber.items():
+			assert sum(creditos.values()) == abs(fechamento.rateio[credor].saldo_final)
+		for devedor, dividas in fechamento.acerto_a_pagar.items():
+			assert sum(dividas.values()) == fechamento.rateio[devedor].saldo_final
+		
+	
+	
 	def test_fechamento_1(self):
 		from test_dividir_conta_telefone import TestDividirContaTelefone
 		from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
@@ -193,6 +205,8 @@ class TestFechamento(BaseTest):
 		testa_conta.p2 = self.p2
 		testa_conta.p3 = self.p3
 		testa_conta.p4 = self.p4
+		testa_conta.p5 = self.p5 = Pessoa(nome = 'Alexandre')
+		self.p5.flush()
 		
 		f = self.r.criar_fechamento(data = date(2007, 5, 6))
 		
@@ -217,11 +231,8 @@ class TestFechamento(BaseTest):
 		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_despesas > 0
-		assert len(f.participantes) == 4
-		assert any(morador.saldo_final for morador in f.rateio.values())
-		assert float_equal(sum(morador.saldo_final for morador in f.rateio.values()), 0.0)
-	
+		assert len(f.participantes) == 5
+		self.assert_geral_fechamento(f)
 	
 	def test_fechamento_2(self):
 		'''
@@ -260,12 +271,9 @@ class TestFechamento(BaseTest):
 		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_despesas > 0
-		assert float_equal(f.total_despesas, sum(f.rateio[morador].quota for morador in f.participantes) + f.total_telefone)
 		assert f.total_telefone == self.c.resumo['total_conta']
 		assert len(f.participantes) == 3
-		assert any(morador.saldo_final for morador in f.rateio.values())
-		assert float_equal(sum(morador.saldo_final for morador in f.rateio.values()), 0.0)
+		self.assert_geral_fechamento(f)
 	
 	
 	def test_fechamento_3(self):

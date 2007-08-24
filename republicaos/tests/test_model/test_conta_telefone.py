@@ -223,7 +223,7 @@ class TestContaTelefone(BaseTest):
 		resumo, rateio = c.executar_rateio()
 		
 		from exibicao_resultados import print_rateio_conta_telefone
-		print_rateio_conta_telefone(resumo, rateio)
+		print_rateio_conta_telefone(c, resumo, rateio)
 		
 		assert c.servicos == Decimal('1.05')
 		assert resumo['total_sem_dono'] == Decimal('16.47')
