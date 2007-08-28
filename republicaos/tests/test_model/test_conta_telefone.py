@@ -220,11 +220,11 @@ class TestContaTelefone(BaseTest):
 		objectstore.flush()
 		
 		c.importar_csv(arq)
-		resumo, rateio = c.executar_rateio()
+		rateio = c.rateio
 		
 		from exibicao_resultados import print_rateio_conta_telefone
-		print_rateio_conta_telefone(c, resumo, rateio)
+		print_rateio_conta_telefone(c)
 		
 		assert c.servicos == Decimal('1.05')
-		assert resumo['total_sem_dono'] == Decimal('16.47')
+		assert c.total_sem_dono == Decimal('16.47')
 

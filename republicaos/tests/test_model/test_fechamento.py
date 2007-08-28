@@ -50,32 +50,10 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 	
 	
-	def ajustar_fechamento_para_acerto_final(self, f):
-		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
-		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
-		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
-		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 4, 4))
-		
-		objectstore.flush()
-		
-		f.rateio = dict()
-		f.rateio[self.m1] = MoradorRateio()
-		f.rateio[self.m2] = MoradorRateio()
-		f.rateio[self.m3] = MoradorRateio()
-		f.rateio[self.m4] = MoradorRateio()
-		f.moradores    = f.rateio.keys()
-		f.ex_moradores = []
-		f.participantes = f.moradores + f.ex_moradores
-	
-	
 	def test_periodo_fechamento(self):
 		f1 = self.r.fechamentos[0]
 		f2 = self.r.criar_fechamento(data = date(2007, 5, 6))
 		f3 = self.r.criar_fechamento(data = date(2007, 6, 6))
-		
-		f1.executar_rateio()
-		f2.executar_rateio()
-		f3.executar_rateio()
 		
 		print 'republica: ', self.r
 		print 'fechamentos:'
@@ -93,24 +71,35 @@ class TestFechamento(BaseTest):
 		Acerto Final - Caso 1: 2 credores e 2 devedores
 		'''
 		f = self.r.criar_fechamento(data = date(2007, 5, 6))
-		self.ajustar_fechamento_para_acerto_final(f)
+		m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
+		m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
+		m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
+		m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6))
 		
-		f.rateio[self.m1].saldo_final = Decimal(-84)
-		f.rateio[self.m2].saldo_final = Decimal(166)
-		f.rateio[self.m3].saldo_final = Decimal('-154.50')
-		f.rateio[self.m4].saldo_final = Decimal('72.50')
+		Despesa(data = date(2007, 4, 21), quantia = 225, tipo = self.td1, responsavel = m1)
+		Despesa(data = date(2007, 4, 12), quantia = 75, tipo = self.td3, responsavel = m2)
+		Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = m3)
+		
+		objectstore.flush()
+		
 		
 		f._executar_acerto_final()
 		print_acerto_final(f)
 		
-		assert self.m1 not in f.acerto_a_pagar.keys()
-		assert self.m3 not in f.acerto_a_pagar.keys()
-		assert self.m2 in f.acerto_a_pagar.keys()
-		assert self.m4 in f.acerto_a_pagar.keys()
-		assert sum(quantia for quantia in f.acerto_a_pagar[self.m2].values()) == Decimal(166)
-		assert sum(quantia for quantia in f.acerto_a_pagar[self.m4].values()) == Decimal('72.50')
-		assert sum(quantia for quantia in f.acerto_a_receber[self.m1].values()) == Decimal(84)
-		assert sum(quantia for quantia in f.acerto_a_receber[self.m3].values()) == Decimal('154.50')
+		assert f.saldo_final(m1) == Decimal(-100)
+		assert f.saldo_final(m2) == Decimal(50)
+		assert f.saldo_final(m3) == Decimal(-75)
+		assert f.saldo_final(m4) == Decimal(125)
+		
+		assert m1 not in f.acerto_a_pagar
+		assert m3 not in f.acerto_a_pagar
+		assert m2 in f.acerto_a_pagar
+		assert m4 in f.acerto_a_pagar
+		assert sum(quantia for quantia in f.acerto_a_pagar[m2].values()) == Decimal(50)
+		assert sum(quantia for quantia in f.acerto_a_pagar[m4].values()) == Decimal(125)
+		assert sum(quantia for quantia in f.acerto_a_receber[m1].values()) == Decimal(100)
+		assert sum(quantia for quantia in f.acerto_a_receber[m3].values()) == Decimal(75)
+		assert sum(f.saldo_final(morador) for morador in f.participantes) == 0
 	
 	
 	
@@ -119,24 +108,34 @@ class TestFechamento(BaseTest):
 		Acerto Final - Caso 2: 1 credor e 3 devedores
 		'''
 		f = self.r.criar_fechamento(data = date(2007, 5, 6))
-		self.ajustar_fechamento_para_acerto_final(f)
 		
-		f.rateio[self.m1].saldo_final = Decimal(30)
-		f.rateio[self.m2].saldo_final = Decimal(15)
-		f.rateio[self.m3].saldo_final = Decimal(35)
-		f.rateio[self.m4].saldo_final = Decimal(-80)
+		m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
+		m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
+		m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
+		m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6))
+		
+		Despesa(data = date(2007, 4, 12), quantia = 75, tipo = self.td3, responsavel = m2)
+		Despesa(data = date(2007, 5, 1), quantia = 100, tipo = self.td2, responsavel = m3)
+		Despesa(data = date(2007, 4, 21), quantia = 325, tipo = self.td1, responsavel = m4)
+		
+		objectstore.flush()
 		
 		f._executar_acerto_final()
 		print_acerto_final(f)
 		
-		assert self.m1 in f.acerto_a_pagar.keys()
-		assert self.m2 in f.acerto_a_pagar.keys()
-		assert self.m3 in f.acerto_a_pagar.keys()
-		assert self.m4 not in f.acerto_a_pagar.keys()
-		assert (self.m4 in f.acerto_a_pagar[self.m1]) and f.acerto_a_pagar[self.m1][self.m4] == Decimal(30)
-		assert (self.m4 in f.acerto_a_pagar[self.m2]) and f.acerto_a_pagar[self.m2][self.m4] == Decimal(15)
-		assert (self.m4 in f.acerto_a_pagar[self.m3]) and f.acerto_a_pagar[self.m3][self.m4] == Decimal(35)
-		assert len(f.acerto_a_pagar[self.m1]) == len(f.acerto_a_pagar[self.m2]) == len(f.acerto_a_pagar[self.m3]) == 1
+		assert f.saldo_final(m1) == Decimal(125)
+		assert f.saldo_final(m2) == Decimal(50)
+		assert f.saldo_final(m3) == Decimal(25)
+		assert f.saldo_final(m4) == Decimal(-200)
+		
+		assert m1 in f.acerto_a_pagar and m2 in f.acerto_a_pagar and m3 in f.acerto_a_pagar
+		assert m4 not in f.acerto_a_pagar and m4 in f.acerto_a_receber
+		assert sum(quantia for quantia in f.acerto_a_pagar[m1].values()) == Decimal(125)
+		assert sum(quantia for quantia in f.acerto_a_pagar[m2].values()) == Decimal(50)
+		assert sum(quantia for quantia in f.acerto_a_pagar[m3].values()) == Decimal(25)
+		assert sum(quantia for quantia in f.acerto_a_receber[m4].values()) == Decimal(200)
+		assert len(f.acerto_a_pagar[m1]) == len(f.acerto_a_pagar[m2]) == len(f.acerto_a_pagar[m3]) == 1
+		assert sum(f.saldo_final(morador) for morador in f.participantes) == 0
 	
 	
 	
@@ -145,23 +144,33 @@ class TestFechamento(BaseTest):
 		Acerto Final - Caso 3: 3 credores e 1 devedor
 		'''
 		f = self.r.criar_fechamento(data = date(2007, 5, 6))
-		self.ajustar_fechamento_para_acerto_final(f)
 		
-		f.rateio[self.m1].saldo_final = Decimal(-30)
-		f.rateio[self.m2].saldo_final = Decimal(-15)
-		f.rateio[self.m3].saldo_final = Decimal(-35)
-		f.rateio[self.m4].saldo_final = Decimal(80)
+		m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
+		m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
+		m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
+		m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6))
+		
+		Despesa(data = date(2007, 4, 12), quantia = 175, tipo = self.td3, responsavel = m1)
+		Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = m2)
+		Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = m3)
+		Despesa(data = date(2007, 4, 21), quantia = 175, tipo = self.td1, responsavel = m4)
+		
+		objectstore.flush()
 		
 		f._executar_acerto_final()
 		print_acerto_final(f)
 		
-		assert self.m1 not in f.acerto_a_pagar.keys()
-		assert self.m2 not in f.acerto_a_pagar.keys()
-		assert self.m3 not in f.acerto_a_pagar.keys()
-		assert self.m4 in f.acerto_a_pagar.keys() and len(f.acerto_a_pagar) == 1
-		assert (self.m1 in f.acerto_a_pagar[self.m4]) and f.acerto_a_pagar[self.m4][self.m1] == Decimal(30)
-		assert (self.m2 in f.acerto_a_pagar[self.m4]) and f.acerto_a_pagar[self.m4][self.m2] == Decimal(15)
-		assert (self.m3 in f.acerto_a_pagar[self.m4]) and f.acerto_a_pagar[self.m4][self.m3] == Decimal(35)
+		assert f.saldo_final(m1) == Decimal(-25)
+		assert f.saldo_final(m2) == Decimal(100)
+		assert f.saldo_final(m3) == Decimal(-50)
+		assert f.saldo_final(m4) == Decimal(-25)
+		
+		assert m1 not in f.acerto_a_pagar and m3 not in f.acerto_a_pagar and m4 not in f.acerto_a_pagar
+		assert sum(quantia for quantia in f.acerto_a_receber[m1].values()) == Decimal(25)
+		assert sum(quantia for quantia in f.acerto_a_receber[m3].values()) == Decimal(50)
+		assert sum(quantia for quantia in f.acerto_a_receber[m4].values()) == Decimal(25)
+		assert sum(quantia for quantia in f.acerto_a_pagar[m2].values()) == Decimal(100)
+		assert sum(f.saldo_final(morador) for morador in f.participantes) == 0
 	
 	
 	def test_acerto_final_4(self):
@@ -169,28 +178,33 @@ class TestFechamento(BaseTest):
 		Acerto Final - Caso 4: 0 credores e 0 devedores
 		'''
 		f = self.r.criar_fechamento(data = date(2007, 5, 6))
-		self.ajustar_fechamento_para_acerto_final(f)
 		
-		f.rateio[self.m1].saldo_final = Decimal(0)
-		f.rateio[self.m2].saldo_final = Decimal(0)
-		f.rateio[self.m3].saldo_final = Decimal(0)
-		f.rateio[self.m4].saldo_final = Decimal(0)
+		m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
+		m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
+		m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
+		m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6))
+		
+		Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = m1)
+		Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = m2)
+		Despesa(data = date(2007, 5, 1), quantia = 50, tipo = self.td2, responsavel = m3)
+		Despesa(data = date(2007, 4, 21), quantia = 50, tipo = self.td1, responsavel = m4)
 		
 		f._executar_acerto_final()
 		print_acerto_final(f)
 		
 		assert len(f.acerto_a_pagar) == 0
+		assert sum(f.saldo_final(m) for m in (m1, m2, m3, m4)) == Decimal(0)
 	
 	
 	def assert_geral_fechamento(self, fechamento):
-		assert fechamento.total_despesas > 0
-		assert any(morador.saldo_final for morador in fechamento.rateio.values())
-		assert float_equal(fechamento.total_despesas, sum(fechamento.rateio[morador].quota for morador in fechamento.participantes) + fechamento.total_telefone)
-		assert float_equal(sum(morador.saldo_final for morador in fechamento.rateio.values()), 0.0)
+		assert fechamento.total_despesas() > 0
+		assert any(fechamento.saldo_final(participante) for participante in fechamento.participantes)
+		assert float_equal(fechamento.total_despesas(), sum(fechamento.rateio(morador) for morador in fechamento.participantes) + fechamento.total_telefone())
+		assert float_equal(sum(fechamento.saldo_final(participante) for participante in fechamento.participantes), 0.0)
 		for credor, creditos in fechamento.acerto_a_receber.items():
-			assert sum(creditos.values()) == abs(fechamento.rateio[credor].saldo_final)
+			assert sum(creditos.values()) == abs(fechamento.saldo_final(credor))
 		for devedor, dividas in fechamento.acerto_a_pagar.items():
-			assert sum(dividas.values()) == fechamento.rateio[devedor].saldo_final
+			assert sum(dividas.values()) == abs(fechamento.saldo_final(devedor))
 		
 	
 	
@@ -221,14 +235,13 @@ class TestFechamento(BaseTest):
 		Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.m2)
 		Despesa(data = date(2007, 4, 21), quantia = 150, tipo = self.td2, responsavel = self.m2)
 		Despesa(data = date(2007, 5, 1), quantia = 150, tipo = self.td2, responsavel = self.m3)
-		Despesa(data = date(2007, 5, 5), quantia = self.c.resumo['total_conta'], tipo = self.td5, responsavel = self.m1)
+		Despesa(data = date(2007, 5, 5), quantia = self.c.total, tipo = self.td5, responsavel = self.m1)
 		
 		DespesaPeriodica(quantia = 50, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19))
 		DespesaPeriodica(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1))
 		
 		objectstore.flush()
 		
-		f.executar_rateio()
 		print_fechamento(f)
 		
 		assert len(f.participantes) == 5
@@ -256,22 +269,21 @@ class TestFechamento(BaseTest):
 		self.m2 = testa_conta.m2
 		self.m3 = testa_conta.m3
 		
-		Despesa(data = date(2007, 4, 21), quantia = 20, tipo = self.td1, responsavel = self.m1)
-		Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.m2)
-		Despesa(data = date(2007, 4, 21), quantia = 150, tipo = self.td2, responsavel = self.m2)
-		Despesa(data = date(2007, 5, 1), quantia = 150, tipo = self.td2, responsavel = self.m3)
-		Despesa(data = date(2007, 5, 5), quantia = (self.c.resumo['total_conta'] / 2), tipo = self.td5, responsavel = self.m1)
-		Despesa(data = date(2007, 5, 5), quantia = (self.c.resumo['total_conta'] / 2), tipo = self.td5, responsavel = self.m2)
+		Despesa(data = date(2007, 4, 21), quantia = Decimal(20), tipo = self.td1, responsavel = self.m1)
+		Despesa(data = date(2007, 4, 12), quantia = Decimal(50), tipo = self.td3, responsavel = self.m2)
+		Despesa(data = date(2007, 4, 21), quantia = Decimal(150), tipo = self.td2, responsavel = self.m2)
+		Despesa(data = date(2007, 5, 1),  quantia = Decimal(150), tipo = self.td2, responsavel = self.m3)
+		Despesa(data = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, responsavel = self.m1)
+		Despesa(data = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, responsavel = self.m2)
 		
 		DespesaPeriodica(quantia = 150, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19))
 		DespesaPeriodica(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1))
 		
 		objectstore.flush()
 		
-		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_telefone == self.c.resumo['total_conta']
+		assert f.total_telefone() == self.c.total
 		assert len(f.participantes) == 3
 		self.assert_geral_fechamento(f)
 	
@@ -284,12 +296,11 @@ class TestFechamento(BaseTest):
 		from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
 		
 		f = self.r.criar_fechamento(data = date(2007, 5, 6))
-		f.executar_rateio()
 		print_fechamento(f)
 		
-		assert f.total_despesas == 0
+		assert f.total_despesas() == 0
 		assert len(f.participantes) == 0
-		assert sum(morador.saldo_final for morador in f.rateio.values()) == 0
+		assert sum(f.saldo_final(participante) for participante in f.participantes) == 0
 	
 	
 	def test_calculo_quotas_participantes_1(self):
@@ -303,7 +314,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -329,7 +339,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -356,7 +365,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -383,7 +391,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -409,7 +416,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -439,7 +445,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -470,7 +475,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -501,7 +505,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		
@@ -530,7 +533,6 @@ class TestFechamento(BaseTest):
 		objectstore.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
-		f.calcular_quotas_participantes()
 		
 		print_calculo_quotas_participantes(f)
 		

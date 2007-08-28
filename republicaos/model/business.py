@@ -234,23 +234,6 @@ class Republica(Entity):
 
 
 
-
-class MoradorRateio(object):
-	'''
-	Classe que representa um morador durante o rateio de despesas de telefone _e_ do fechamento das contas do mẽs.
-	
-	Esta classe tem como objetivo encapsular os dados do morador no fechamento sem bagunçar o objeto morador original.
-	'''
-	def __repr__(self):
-		if hasattr(self, 'franquia'): # usado no rateio da conta de telefone
-			return '<franquia:%s, gastos:%s, sem dono:%s, excedentes:%s, serviços:%s, a pagar:%s>' % \
-				(self.franquia, self.gastos, self.sem_dono, self.excedente, self.servicos, self.a_pagar)
-		else:
-			return '<quota:%s, quota_telefone:%s, total_despesas:%s, saldo_final:%s>' % \
-				(self.quota, self.quota_telefone, self.total_despesas, self.saldo_final)
-
-
-
 class Aluguel(Entity):
 	has_field('valor', Money(10, 2), nullable = False)
 	has_field('data_cadastro', Date, primary_key = True)
@@ -282,9 +265,9 @@ class Intervalo(object):
 		
 		self.participantes = [participante for participante in fechamento.participantes if participante.data_entrada < data_final \
 							and (not participante.data_saida or data_inicial <= participante.data_saida)]
-		self.total_peso_quota = Decimal(str(sum(participante.peso_quota(data_inicial) for participante in self.participantes)))
-		self.num_dias         = (data_final - data_inicial).days if len(self.participantes) else 0
-		fechamento.total_dias += self.num_dias
+		self.total_peso_quota  = Decimal(str(sum(participante.peso_quota(data_inicial) for participante in self.participantes)))
+		self.num_dias          = (data_final - data_inicial).days if len(self.participantes) else 0
+		fechamento._total_dias += self.num_dias
 	
 	
 	def quota_peso(self, participante):
@@ -322,6 +305,39 @@ class Fechamento(Entity):
 			)
 	
 	
+	@property
+	def contas_telefone(self):
+		if not hasattr(self, '_contas_telefone'):
+			self._contas_telefone = self.republica.contas_telefone(self.data_inicial, self.data_final)
+		return self._contas_telefone
+	
+	
+	@property
+	def moradores(self):
+		if not hasattr(self, '_moradores'):
+			self._moradores = self.republica.moradores(self.data_inicial, self.data_final)
+		return self._moradores
+	
+	
+	@property
+	def ex_moradores(self):
+		if not hasattr(self, '_ex_moradores'):
+			self._ex_moradores = set()
+			for conta in self.contas_telefone:
+				self._ex_moradores.update(conta.ex_moradores)
+			self._ex_moradores = list(self._ex_moradores)
+			self._ex_moradores.sort(key = lambda obj:obj.pessoa.nome)
+		return self._ex_moradores
+		
+	
+	@property
+	def participantes(self):
+		if not hasattr(self, '_participantes'):
+			self._participantes = self.moradores + self.ex_moradores
+			self._participantes.sort(key = lambda obj:obj.pessoa.nome)
+		return self._participantes
+			
+	
 	def setup(self):
 		'''
 		Idealmente, esta rotina deveria ser executada depois que o fechamento é carregado do BD
@@ -346,26 +362,30 @@ class Fechamento(Entity):
 		return self._data_final
 	
 	
+	@property
+	def total_dias(self):
+		if not hasattr(self, '_total_dias'):
+			self._calcular_quotas_participantes()
+		return self._total_dias
+	
+	
 	def quota(self, participante):
 		if not hasattr(self, 'intervalos'):
-			self.calcular_quotas_participantes()
+			self._calcular_quotas_participantes()
 		return sum(intervalo.quota(participante) for intervalo in self.intervalos)
 	
 	
 	def quota_peso(self, participante):
 		if not hasattr(self, 'intervalos'):
-			self.calcular_quotas_participantes()
+			self._calcular_quotas_participantes()
 		return sum(intervalo.quota_peso(participante) for intervalo in self.intervalos)
 	
 	
-	def calcular_quotas_participantes(self):
-		self.total_dias    = 0
-		self.participantes = self.republica.moradores(self.data_inicial, self.data_final)
-		
+	def _calcular_quotas_participantes(self):
 		# Definição dos intervalos
 		# todas as datas de entrada e saída formam os intervalos do período
 		datas = set()
-		for participante in self.participantes:
+		for participante in self.moradores:
 			data_inicial = max(participante.data_entrada, self.data_inicial)
 			# soma-se um dia à data final pois conta-se apenas dia vencido no cálculo.
 			data_final   = min(self.data_final, participante.data_saida if participante.data_saida else self.data_final) + relativedelta(days = 1)
@@ -377,68 +397,70 @@ class Fechamento(Entity):
 			
 		datas = list(datas)
 		datas.sort()
-		self.total_dias = 0
-		self.intervalos = list()
+		self._total_dias = 0 # vai ser usado pelo Intervalo
+		self.intervalos  = list()
 		for i in range(len(datas) - 1):
 			novo_intervalo = Intervalo(datas[i], datas[i+1], self)
 			self.intervalos.append(novo_intervalo)
 	
 	
-	def executar_rateio(self):
-		'''
-		Calcula a divisão das despesas em determinado período
-		'''
-		data_inicial, data_final = self.data_inicial, self.data_final
-		self.calcular_quotas_participantes()
+	def despesas(self, participante = None):
+		if not hasattr(self, '_despesas'):
+			self._despesas = Despesa.select(
+					and_(
+						Morador.c.id_republica == self.republica.id,
+						Morador.c.id           == Despesa.c.id_morador,
+						Despesa.c.data         >= self.data_inicial,
+						Despesa.c.data         <= self.data_final
+						),
+					order_by = Despesa.c.data
+					)
+		return self._despesas if not participante else [despesa for despesa in self._despesas if despesa.responsavel is participante]
+	
+	
+	def total_despesas(self, participante = None):
+		return sum(despesa.quantia for despesa in self.despesas(participante))
+	
+	
+	def rateio(self, participante):
+		return (self.total_despesas() - self.total_telefone()) * self.quota(participante) / Decimal(100)
+	
+	
+	def saldo_final(self, participante):
+		return self.rateio(participante) + self.total_telefone(participante) - self.total_despesas(participante)
+	
+	
+	def total_telefone(self, participante = None):
+		if not participante:
+			return sum(conta.total for conta in self.contas_telefone)
+		else:
+			return sum(conta.rateio.a_pagar(participante) for conta in self.contas_telefone)
 		
-		despesas      = list()
-		rateio        = dict()
-		participantes = set(self.participantes)
-		
-		# Divisão das contas de telefone
-		contas_telefone = self.republica.contas_telefone(data_inicial, data_final)
-		for conta_telefone in contas_telefone:
-			conta_telefone.executar_rateio(self)
-			participantes.update(set(conta_telefone.rateio.keys()))
-		
-		# Contabilização das despesas pagas por cada participante
-		for participante in participantes:
-			rateio[participante]                = MoradorRateio()
-			rateio[participante].total_despesas = Decimal(0)
-			
-			despesas_morador = participante.despesas(data_inicial, data_final)
-			despesas.extend(despesas_morador)
-			rateio[participante].total_despesas = sum(despesa.quantia for despesa in despesas_morador)
-			rateio[participante].quota_telefone = sum(conta_telefone.rateio[participante].a_pagar for conta_telefone in contas_telefone if participante in conta_telefone.rateio)
-			
-		# Divisão das contas
-		total_despesas = sum(despesa.quantia for despesa in despesas)
-		total_telefone = sum(rateio[participante].quota_telefone for participante in participantes)
-		for participante in participantes:
-			# o total do telefone é uma despesa específica e não deve ser usada no cálculo das quotas
-			# a parte de cada um nos telefones é contabilizada no saldo final
-			rateio[participante].quota       = (total_despesas - total_telefone) * self.quota(participante) / Decimal(100)
-			rateio[participante].saldo_final = rateio[participante].quota + rateio[participante].quota_telefone - rateio[participante].total_despesas
-		
-		self.total_despesas  = total_despesas
-		self.total_telefone  = total_telefone
-		self.despesas        = despesas
-		self.contas_telefone = contas_telefone
-		self.rateio          = rateio
-		self.participantes   = list(participantes)
-		self.total_tipo_despesa = dict(
-			[(tipo_despesa, sum(despesa.quantia for despesa in despesas if despesa.tipo == tipo_despesa))
-			for tipo_despesa in self.republica.tipos_despesa]
-		)
-		
-		for tipo, total in self.total_tipo_despesa.items():
-			if not total: # total == 0
-				self.total_tipo_despesa.pop(tipo)
-		
-		self.despesas.sort(key = lambda obj:(obj.data, obj.responsavel.pessoa.nome))
-		self.participantes.sort(key = lambda obj:obj.pessoa.nome)
-		
-		self._executar_acerto_final()
+	@property
+	def total_tipo_despesa(self):
+		if not hasattr(self, '_total_tipo_despesa'):
+			self._total_tipo_despesa = dict(
+				[(tipo_despesa, sum(despesa.quantia for despesa in self.despesas() if despesa.tipo == tipo_despesa))
+				for tipo_despesa in self.republica.tipos_despesa]
+			)
+			for tipo, total in self.total_tipo_despesa.items():
+				if not total:
+					self.total_tipo_despesa.pop(tipo)
+		return self._total_tipo_despesa
+	
+	
+	@property
+	def acerto_a_pagar(self):
+		if not hasattr(self, '_acerto_a_pagar'):
+			self._executar_acerto_final()
+		return self._acerto_a_pagar
+	
+	
+	@property
+	def acerto_a_receber(self):
+		if not hasattr(self, '_acerto_a_receber'):
+			self._executar_acerto_final()
+		return self._acerto_a_receber
 	
 	
 	def _executar_acerto_final(self):
@@ -446,39 +468,39 @@ class Fechamento(Entity):
 		Executa o acerto final das contas, determinando quem deve pagar o que pra quem. A ordem dos credores
 		e devedores é ordenada para que sempre dê a mesma divisão.
 		'''
-		credores  = [participante for participante in self.participantes if self.rateio[participante].saldo_final <= 0]
-		devedores = list(set(self.participantes) - set(credores))
+		credores  = [participante for participante in self.participantes if self.saldo_final(participante) < 0]
+		devedores = [participante for participante in self.participantes if self.saldo_final(participante) > 0]
 		
 		# ordena a lista de credores e devedores de acordo com o saldo_final
-		credores.sort(key =  lambda obj: (self.rateio[obj].saldo_final, obj.pessoa.nome))
-		devedores.sort(key = lambda obj: (self.rateio[obj].saldo_final, obj.pessoa.nome), reverse = True)
+		credores.sort(key =  lambda obj: (self.saldo_final(obj), obj.pessoa.nome))
+		devedores.sort(key = lambda obj: (self.saldo_final(obj), obj.pessoa.nome), reverse = True)
 		
-		self.acerto_a_pagar   = dict([(devedor, dict()) for devedor in devedores])
-		self.acerto_a_receber = dict([(credor, dict()) for credor in credores])
+		self._acerto_a_pagar   = dict([(devedor, dict()) for devedor in devedores])
+		self._acerto_a_receber = dict([(credor, dict()) for credor in credores])
 		if len(devedores) == 0: return
 		
 		devedores = iter(devedores)
 		try:
 			devedor     = devedores.next()
-			saldo_pagar = self.rateio[devedor].saldo_final
+			saldo_pagar = self.saldo_final(devedor)
 			for credor in credores:
-				saldo_receber = abs(self.rateio[credor].saldo_final)
+				saldo_receber = abs(self.saldo_final(credor))
 				while (saldo_receber > 0):
 						if saldo_receber >= saldo_pagar:
-							self.acerto_a_pagar[devedor][credor] = saldo_pagar
+							self._acerto_a_pagar[devedor][credor] = saldo_pagar
 							saldo_receber -= saldo_pagar
 							devedor        = devedores.next()
-							saldo_pagar    = self.rateio[devedor].saldo_final
+							saldo_pagar    = self.saldo_final(devedor)
 						else:
-							self.acerto_a_pagar[devedor][credor] = saldo_receber
+							self._acerto_a_pagar[devedor][credor] = saldo_receber
 							saldo_pagar  -= saldo_receber
 							saldo_receber = 0
 		except StopIteration:
 			pass
 		
-		for devedor in self.acerto_a_pagar.keys():
-			for credor in self.acerto_a_pagar[devedor].keys():
-				self.acerto_a_receber[credor][devedor] = self.acerto_a_pagar[devedor][credor]
+		for devedor in self._acerto_a_pagar.keys():
+			for credor in self._acerto_a_pagar[devedor].keys():
+				self._acerto_a_receber[credor][devedor] = self._acerto_a_pagar[devedor][credor]
 		return
 	
 	
@@ -495,6 +517,95 @@ class Fechamento(Entity):
 		self.republica.flush()
 
 
+class RateioContaTelefone(object):
+	def __init__(self, conta_telefone):
+		'''
+		Divide a conta de telefone.
+		
+		Critérios:
+		1. Os telefonemas sem dono são debitados da franquia
+		2. A franquia restante é dividida entre os participantes de acordo com o a quota de cada um
+		3. Os serviços (se houverem) também são divididos de acordo com o número de dias morados
+		4. A quantia excedente é quanto cada participante gastou além da franquia a que tinha direito
+		5. A quantia excedente que cada participante deve pagar pode ser compensado pelo faltante de outro participante em atingir sua franquia
+		'''
+		self.conta_telefone = conta_telefone
+		
+		# Determina os excedentes e calcula os abonos de moradores e ex-moradores
+		# Esses valores são armazenados pois o cálculo constante é mais dispendioso em termos de processamento
+		self._excedente = dict([(participante, self.devido(participante) - self.franquia(participante)) for participante in conta_telefone.participantes])
+		self._abono     = dict([(participante, Decimal(0)) for participante in conta_telefone.participantes])
+		sobra_franquia  = sum(abs(self._excedente[morador]) for morador in self.conta_telefone.moradores if self._excedente[morador] < 0)
+				
+		# divisão da sobra de franquia entre os moradores que excederam sua quota
+		# a sobra de franquia de uns vai ser usada para compensar o excedente de outros
+		excedentes = [morador for morador in self.conta_telefone.moradores if self._excedente[morador] > 0]
+		while (not float_equal(sobra_franquia, 0)) and excedentes:
+			total_quota = sum(conta_telefone.fechamento.quota(morador) for morador in excedentes)
+			total_abono = Decimal(0)
+			for morador in excedentes:
+				excedente = self.excedente(morador)
+				abono     = sobra_franquia * conta_telefone.fechamento.quota(morador) / total_quota
+				abono     = abono if abono <= excedente else excedente
+				self._abono[morador] += abono
+				total_abono          += abono
+			sobra_franquia -= total_abono
+			excedentes      = [morador for morador in excedentes if not float_equal(self._abono[morador], self._excedente[morador])]
+			
+		# se ainda há sobra de franquia, então distribuir entre os ex-moradores
+		excedentes = list(conta_telefone.ex_moradores)
+		while (not float_equal(sobra_franquia, 0)) and excedentes:
+			quota_sobra = sobra_franquia / len(excedentes)
+			total_abono = Decimal(0)
+			for ex_morador in excedentes:
+				excedente = self.devido(ex_morador)
+				abono     = quota_sobra if quota_sobra <= excedente else excedente # todo a_pagar de ex-morador já é o excesso
+				self._abono[ex_morador] += abono
+				total_abono             += abono
+			sobra_franquia -= total_abono
+			excedentes      = [ex_morador for ex_morador in excedentes if not float_equal(self._abono[ex_morador], self._excedente[ex_morador])]
+
+	
+	
+	def telefonemas(self, participante):
+		'''
+		Telefonemas do participante
+		'''
+		if participante not in self.conta_telefone.participantes:
+			return 0
+		return sum(telefonema.quantia for telefonema in self.conta_telefone.telefonemas if telefonema.responsavel is participante)
+	
+	
+	def extras(self, participante):
+		'''
+		Relativo aos rateio dos telefonemas sem dono e dos serviços
+		'''
+		return self.conta_telefone.fechamento.quota(participante) * \
+				(self.conta_telefone.total_sem_dono + self.conta_telefone.servicos) / Decimal(100)
+	
+	
+	def franquia(self, participante):
+		return self.conta_telefone.fechamento.quota(participante) * \
+				(self.conta_telefone.franquia + self.conta_telefone.servicos) / Decimal(100)
+	
+	
+	def devido(self, participante):
+		return self.telefonemas(participante) + self.extras(participante)
+	
+	
+	def excedente(self, participante):
+		return self._excedente[participante] if participante in self._excedente else Decimal(0)
+	
+	
+	def abono(self, participante):
+		return self._abono[participante] if participante in self._abono else Decimal(0)
+	
+	
+	def a_pagar(self, participante):
+		if self.excedente(participante) > 0:
+			return self.devido(participante) - self.abono(participante)
+		else:
+			return self.franquia(participante)
 
 
 
@@ -520,6 +631,12 @@ class ContaTelefone(Entity):
 		return '<telefone: %d, emissão: %s, república: %s>' % \
 				(self.telefone, self.emissao.strftime('%d/%m/%Y'), self.republica.nome.encode('utf-8'))
 	
+	
+	@property
+	def rateio(self):
+		if not hasattr(self, '_rateio'):
+			self._rateio = RateioContaTelefone(self)
+		return self._rateio
 	
 	def determinar_responsaveis_telefonemas(self):
 		'''
@@ -636,121 +753,48 @@ class ContaTelefone(Entity):
 				tipo_distancia = atributos['tipo_distancia']
 			).flush()
 		self.determinar_responsaveis_telefonemas()
+		
+	
+	@property
+	def fechamento(self):
+		if not hasattr(self, '_fechamento'):
+			self._fechamento = self.republica.fechamento_na_data(self.emissao)
+		return self._fechamento
 	
 	
-	def executar_rateio(self, fechamento = None):
-		'''
-		Divide a conta de telefone.
-		
-		Critérios:
-		1. Os telefonemas sem dono são debitados da franquia
-		2. A franquia restante é dividida entre os participantes de acordo com o a quota de cada um
-		3. Os serviços (se houverem) também são divididos de acordo com o número de dias morados
-		4. A quantia excedente é quanto cada participante gastou além da franquia a que tinha direito
-		5. A quantia excedente que cada participante deve pagar pode ser compensado pelo faltante de outro participante em atingir sua franquia
-		
-		Saída: (resumo, rateio)
-		-----------------------
-		
-		resumo:
-			Dicionário com as chaves:
-			* total_telefonemas
-			* total_conta
-			* total_sem_dono
-			* total_ex_moradores
-		
-		rateio[participante]:
-			Classe MoradorRateio com os campos:
-			* porcentagem
-			* gastos
-			* franquia
-			* sem_dono
-			* excedente
-			* servicos
-			* a_pagar
-		
-		'''
-		
-		if not fechamento:
-			fechamento = self.republica.fechamento_na_data(self.emissao)
-		
-		moradores = self.republica.moradores(fechamento.data_inicial, fechamento.data_final)
-		
-		# Cálculo dos totais
-		total_sem_dono     = sum(telefonema.quantia for telefonema in self.telefonemas if not telefonema.responsavel)
-		total_telefonemas  = sum(telefonema.quantia for telefonema in self.telefonemas)
-		total_ex_moradores = sum(telefonema.quantia for telefonema in self.telefonemas if telefonema.responsavel and (telefonema.responsavel not in moradores))
-		sobra_franquia     = Decimal(0)
-		
-		# determina os moradores atuais da república
-		rateio     = dict()
-		excedentes = list()
-		for morador in moradores:
-			rateio[morador]     = r_morador = MoradorRateio()
-			r_morador.quota     = fechamento.quota(morador) / Decimal(100)
-			r_morador.gastos    = sum(telefonema.quantia for telefonema in self.telefonemas if telefonema.responsavel is morador)
-			r_morador.extras    = r_morador.quota * (total_sem_dono + self.servicos)
-			r_morador.franquia  = r_morador.quota * (self.franquia + self.servicos)
-			r_morador.a_pagar   = r_morador.gastos + r_morador.extras
-			r_morador.excedente = r_morador.a_pagar - r_morador.franquia
-			if r_morador.excedente > 0:
-				excedentes.append(morador)
-				r_morador.sobra_franquia = Decimal(0)
-			else:
-				sobra_franquia   += abs(r_morador.excedente)
-				r_morador.a_pagar = r_morador.franquia
-		
-		ex_moradores = set([telefonema.responsavel for telefonema in self.telefonemas \
-							if telefonema.responsavel and telefonema.responsavel not in moradores])
-		for ex_morador in ex_moradores:
-			rateio[ex_morador] = r_morador = MoradorRateio()
-			r_morador.quota    = r_morador.extras = r_morador.franquia = r_morador.abono = Decimal(0)
-			r_morador.gastos   = sum(telefonema.quantia for telefonema in self.telefonemas if telefonema.responsavel is ex_morador)
-			r_morador.a_pagar  = r_morador.excedente = r_morador.gastos
-			
-		for participante in rateio.keys():
-			rateio[participante].devido = rateio[participante].a_pagar
-		# divisão da sobra de franquia entre os moradores que excederam sua quota
-		# a sobra de franquia de uns vai ser usada para compensar o excedente de outros
-		total_telefonemas_moradores = total_telefonemas - total_ex_moradores
-		while (not float_equal(sobra_franquia, 0)) and excedentes:
-			total_quota = sum(rateio[morador].quota for r_morador in excedentes)
-			total_abono = Decimal(0)
-			for morador in excedentes:
-				r_morador = rateio[morador]
-				excesso   = r_morador.a_pagar - r_morador.franquia
-				abono     = sobra_franquia * r_morador.quota / total_quota
-				abono     = abono if abono <= excesso else excesso
-				r_morador.a_pagar -= abono
-				total_abono       += abono
-			sobra_franquia -= total_abono
-			excedentes      = [morador for morador in excedentes if not float_equal(rateio[morador].a_pagar, rateio[morador].franquia)]
-			
-		# se ainda há sobra de franquia, então distribuir entre os ex-moradores
-		while (not float_equal(sobra_franquia, 0)) and ex_moradores:
-			quota_sobra = sobra_franquia / len(ex_moradores)
-			total_abono = Decimal(0)
-			for ex_morador in ex_moradores:
-				r_morador = rateio[ex_morador]
-				abono     = quota_sobra if quota_sobra <= r_morador.a_pagar else r_morador.a_pagar # todo a_pagar de ex-morador já é o excesso
-				r_morador.a_pagar -= abono
-				total_abono       += abono
-			sobra_franquia -= total_abono
-			ex_moradores    = [morador for morador in ex_moradores if not float_equal(rateio[morador].a_pagar, 0)]
-		
-		for participante in rateio.keys():
-			rateio[participante].abono = rateio[participante].devido - rateio[participante].a_pagar
-		
-		resumo = dict()
-		resumo['total_telefonemas']  = total_telefonemas
-		resumo['total_conta']        = (total_telefonemas if total_telefonemas > self.franquia else self.franquia) + self.servicos
-		resumo['total_sem_dono']     = total_sem_dono
-		resumo['total_ex_moradores'] = total_ex_moradores
-		
-		self.resumo = resumo
-		self.rateio = rateio
-		
-		return (resumo, rateio)
+	@property
+	def total_telefonemas(self):
+		return sum(telefonema.quantia for telefonema in self.telefonemas)
+	
+	
+	@property
+	def total_sem_dono(self):
+		return sum(telefonema.quantia for telefonema in self.telefonemas if not telefonema.responsavel)
+	
+	
+	@property
+	def total_ex_moradores(self):
+		return sum(telefonema.quantia for telefonema in self.telefonemas if telefonema.responsavel and (telefonema.responsavel not in self.moradores))
+	
+	@property
+	def moradores(self):
+		if not hasattr(self, '_moradores'):
+			self._moradores = set(self.republica.moradores(self.fechamento.data_inicial, self.fechamento.data_final))
+		return self._moradores
+	
+	@property
+	def ex_moradores(self):
+		return set([telefonema.responsavel for telefonema in self.telefonemas \
+					if telefonema.responsavel and telefonema.responsavel not in self.moradores])
+	
+	@property
+	def participantes(self):
+		return set.union(self.moradores, self.ex_moradores)
+	
+	
+	@property
+	def total(self):
+		return self.servicos + (self.franquia if self.franquia >= self.total_telefonemas else self.total_telefonemas)
 
 
 class Telefonema(Entity):

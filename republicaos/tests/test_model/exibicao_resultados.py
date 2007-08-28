@@ -10,28 +10,31 @@ import codecs
 unicode_to_utf8 = sw(sys.stdout)
 write = unicode_to_utf8.write
 
-def print_rateio_conta_telefone(conta, resumo, rateio):
+def print_rateio_conta_telefone(conta):
 	write('\n\nRATEIO CONTA DE TELEFONE\n------------------------')
+	write('\nTotal Conta = %s' % conta.total)
 	write('\nFranquia = %s' % conta.franquia)
 	write(u'\nServiços = %s' % conta.servicos)
-	for key, value in resumo.items():
-		write('\n%s = %s' % (key, pretty_decimal(value)))
+	write('\nTelefonemas = %s' % conta.total_telefonemas)
 	
-	moradores = [(key.pessoa.nome, key) for key in rateio.keys()]
-	moradores.sort()
 	campos = ('quota', 'franquia', 'gastos', 'extras', 'devido', 'excedente', 'abono', 'a_pagar')
-	totais = dict([campo, 0] for campo in campos)
+	funcoes = (conta.fechamento.quota, conta.rateio.franquia, conta.rateio.telefonemas, conta.rateio.extras,
+				conta.rateio.devido, conta.rateio.excedente, conta.rateio.abono, conta.rateio.a_pagar)
+	totais = [Decimal(0) for i in range(len(funcoes))]
 	write('\n\n----------|%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s' % campos)
-	for nome, morador in moradores:
-		write('\n%10s' % nome)
-		for campo in campos:
-			write('|%9.2f' % rateio[morador].__dict__[campo])
-			totais[campo] += rateio[morador].__dict__[campo]
+	moradores = list(conta.participantes)
+	moradores.sort()
+	for morador in moradores:
+		write('\n%10s' % morador.pessoa.nome)
+		for i in range(len(funcoes)):
+			resultado  = funcoes[i](morador)
+			totais[i] += resultado
+			write('|%9.2f' % resultado)
 	
 	# mostra totais
 	write('\n----------')
-	for campo in campos:
-		write('|%9.2f' % totais[campo])
+	for i in range(len(totais)):
+		write('|%9.2f' % totais[i])
 	write('\n\n')
 	sys.stdout.flush()
 
@@ -41,16 +44,16 @@ def print_resumo_despesas(fechamento):
 	tipos_despesa = sorted(fechamento.total_tipo_despesa.keys(), key = lambda obj: obj.nome)
 	for tipo_despesa in tipos_despesa:
 		write(u'\n%15s| %.2f' % (tipo_despesa.nome, fechamento.total_tipo_despesa[tipo_despesa]))
-	write('\n\n%*s = %*s' % (19, 'Total Geral', 7, pretty_decimal(fechamento.total_despesas)))
+	write('\n\n%*s = %*s' % (19, 'Total Geral', 7, pretty_decimal(fechamento.total_despesas())))
 	write(u'\n%*s = %*d' % (19, u'Número de moradores', 4, len(fechamento.participantes)))
 	write(u'\n%*s = %*.2f' % (19, u'Média', 7, \
-		(fechamento.total_despesas / (len(fechamento.participantes) if len(fechamento.participantes) else 1))))
+		(fechamento.total_despesas() / (len(fechamento.participantes) if len(fechamento.participantes) else 1))))
 
 
 def print_despesas(fechamento):
 	write(u'\n\nRELAÇÃO DE DESPESAS\n-------------------\n')
 	write(u'| %-*s| %-*s| %-*s| %s' % (11, 'Data', 9, 'Valor', 15, 'Tipo Despesa', u'Responsável'))
-	for despesa in fechamento.despesas:
+	for despesa in fechamento.despesas():
 		write('\n| %s | %*.2f | %-*s| %s' % (despesa.data, 8, despesa.quantia, 15, despesa.tipo.nome, despesa.responsavel.pessoa.nome))
 	write('\n')
 
@@ -68,25 +71,25 @@ def print_rateio(fechamento):
 		)
 	)
 	for participante in fechamento.participantes:
-		rateio_participante = fechamento.rateio[participante]
 		write('\n %*s| %*s%%| %*s| %*s| %*s| %*s' % \
 			(9, participante.pessoa.nome,
 			11, pretty_decimal(fechamento.quota(participante), 1),
-			8, pretty_decimal(rateio_participante.quota),
-			8, pretty_decimal(rateio_participante.quota_telefone),
-			8, pretty_decimal(rateio_participante.total_despesas),
-			8, pretty_decimal(rateio_participante.saldo_final)))
+			8, pretty_decimal(fechamento.rateio(participante)),
+			8, pretty_decimal(fechamento.total_telefone(participante)),
+			8, pretty_decimal(fechamento.total_despesas(participante)),
+			8, pretty_decimal(fechamento.saldo_final(participante)))
+		)
 		
-	total_porcentagem = sum(fechamento.quota(participante) for participante in fechamento.participantes)
-	total_quotas      = sum(fechamento.rateio[participante].quota       for participante in fechamento.participantes)
-	total_saldo_final = sum(fechamento.rateio[participante].saldo_final for participante in fechamento.participantes)
+	total_porcentagem = sum(fechamento.quota(participante)       for participante in fechamento.participantes)
+	total_quotas      = sum(fechamento.rateio(participante)      for participante in fechamento.participantes)
+	total_saldo_final = sum(fechamento.saldo_final(participante) for participante in fechamento.participantes)
 	write('\n %*s| %*s%%| %*s| %*s| %*s| %*s' % 
 		(
 		9, 'TOTAL  ',
 		11, pretty_decimal(total_porcentagem, 1),
 		8, pretty_decimal(total_quotas),
-		8, pretty_decimal(fechamento.total_telefone),
-		8, pretty_decimal(fechamento.total_despesas),
+		8, pretty_decimal(fechamento.total_telefone()),
+		8, pretty_decimal(fechamento.total_despesas()),
 		8, pretty_decimal(total_saldo_final)
 		)
 	)
