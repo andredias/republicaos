@@ -265,7 +265,7 @@ class Intervalo(object):
 		
 		self.participantes = [participante for participante in fechamento.participantes if participante.data_entrada < data_final \
 							and (not participante.data_saida or data_inicial <= participante.data_saida)]
-		self.total_peso_quota  = Decimal(str(sum(participante.peso_quota(data_inicial) for participante in self.participantes)))
+		self.total_peso_quota  = sum(participante.peso_quota(data_inicial) for participante in self.participantes)
 		self.num_dias          = (data_final - data_inicial).days if len(self.participantes) else 0
 		fechamento._total_dias += self.num_dias
 	
@@ -622,8 +622,7 @@ class ContaTelefone(Entity):
 	has_field('servicos', Money(10,2), default = 0)
 	using_options(tablename = 'conta_telefone')
 	using_table_options(UniqueConstraint('telefone', 'emissao'))
-	many_to_one('republica', of_kind = 'Republica', inverse = 'contas_telefone', colname = 'id_republica',
-		column_kwargs = dict(nullable = False))
+	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
 	one_to_many('telefonemas', of_kind = 'Telefonema', order_by = 'numero')
 	
 	
