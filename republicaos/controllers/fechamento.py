@@ -27,7 +27,6 @@ class FechamentoController(controllers.Controller):
 		if not fechamento:
 			republica.criar_fechamento()
 			fechamento = republica.fechamentos[0]
-		fechamento.executar_rateio()
 		cherrypy.session['fechamento'] = fechamento
 		
 		return dict(fechamento = fechamento)

@@ -39,7 +39,7 @@ num_participantes = len(fechamento.participantes) if len(fechamento.participante
 	<tfoot>
 		<tr>
 			<th>Total</th>
-			<th py:content="pretty_decimal(fechamento.total_despesas)">999,99</th>
+			<th py:content="pretty_decimal(fechamento.total_despesas())">999,99</th>
 		</tr>
 		<tr>
 			<th>Nº Moradores</th>
@@ -47,7 +47,7 @@ num_participantes = len(fechamento.participantes) if len(fechamento.participante
 		</tr>
 		<tr>
 			<th>Média</th>
-			<th py:content="pretty_decimal(fechamento.total_despesas/num_participantes)">999,99</th>
+			<th py:content="pretty_decimal(fechamento.total_despesas()/num_participantes)">999,99</th>
 		</tr>
 	</tfoot>
 	<tbody>
@@ -65,7 +65,7 @@ num_participantes = len(fechamento.participantes) if len(fechamento.participante
 			<th>Morador</th>
 			<th>Qtd Dias<br />Morados</th>
 			<th>Participação<br />nas Despesas</th>
-			<th>Quota</th>
+			<th>Rateio Geral</th>
 			<th>Telefone</th>
 			<th>Despesas</th>
 			<th>Saldo Final</th>
@@ -75,22 +75,22 @@ num_participantes = len(fechamento.participantes) if len(fechamento.participante
 		<tr>
 			<th>Totais</th>
 			<th py:content="fechamento.total_dias"></th>
-			<th py:content="'%s%%' % pretty_decimal(sum(morador.porcentagem for morador in fechamento.rateio.values()), Decimal('0.1'))"></th>
-			<th py:content="pretty_decimal(sum(morador.quota for morador in fechamento.rateio.values()))"></th>
-			<th py:content="pretty_decimal(fechamento.total_telefone)"></th>
-			<th py:content="pretty_decimal(fechamento.total_despesas)"></th>
-			<th py:content="pretty_decimal(sum(morador.saldo_final for morador in fechamento.rateio.values()))"></th>
+			<th py:content="'%s%%' % pretty_decimal(sum(fechamento.quota_peso(participante) for participante in fechamento.participantes), Decimal('0.1'))"></th>
+			<th py:content="pretty_decimal(sum(fechamento.rateio(participante) for participante in fechamento.participantes))"></th>
+			<th py:content="pretty_decimal(fechamento.total_telefone())"></th>
+			<th py:content="pretty_decimal(fechamento.total_despesas())"></th>
+			<th py:content="pretty_decimal(sum(fechamento.saldo_final(participante) for participante in fechamento.participantes))"></th>
 		</tr>
 	</tfoot>
 	<tbody>
-		<tr py:for="morador in fechamento.participantes">
-			<td><span py:replace="morador.pessoa.nome">Fulano de tal</span></td>
-			<td><span py:replace="fechamento.rateio[morador].qtd_dias">30</span></td>
-			<td><span py:replace="'%s%%' % pretty_decimal(fechamento.rateio[morador].porcentagem, Decimal('0.1'))">30%</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].quota)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].quota_telefone)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].total_despesas)">99,99</span></td>
-			<td><span py:replace="pretty_decimal(fechamento.rateio[morador].saldo_final)">999,99</span></td>
+		<tr py:for="participante in fechamento.participantes">
+			<td><span py:replace="participante.pessoa.nome">Fulano de tal</span></td>
+			<td><span py:replace="participante.qtd_dias_morados(fechamento.data_inicial, fechamento.data_final)">30</span></td>
+			<td><span py:replace="'%s%%' % pretty_decimal(fechamento.quota_peso(participante), Decimal('0.1'))">30%</span></td>
+			<td><span py:replace="pretty_decimal(fechamento.rateio(participante))">99,99</span></td>
+			<td><span py:replace="pretty_decimal(fechamento.total_telefone(participante))">99,99</span></td>
+			<td><span py:replace="pretty_decimal(fechamento.total_despesas(participante))">99,99</span></td>
+			<td><span py:replace="pretty_decimal(fechamento.saldo_final(participante))">999,99</span></td>
 		</tr>
 	</tbody>
 </table>
@@ -141,7 +141,7 @@ num_participantes = len(fechamento.participantes) if len(fechamento.participante
 		</tr>
 	</thead>
 	<tbody>
-		<tr py:for="despesa in fechamento.despesas">
+		<tr py:for="despesa in fechamento.despesas()">
 			<td><span py:replace="despesa.data.strftime('%d/%m/%Y')">99/99/9999</span></td>
 			<td><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
 			<td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
