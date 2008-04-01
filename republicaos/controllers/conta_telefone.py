@@ -4,7 +4,7 @@ from turbogears        import controllers, expose, error_handler, redirect, vali
 from republicaos.model import Republica, Morador, ContaTelefone
 from datetime          import date
 from decimal           import Decimal
-from elixir            import objectstore
+from elixir            import session
 from republicaos.utils.flash import flash_errors, flash
 
 import cherrypy
@@ -113,7 +113,7 @@ class ContaTelefoneController(controllers.Controller):
 	@error_handler()
 	@validate(validators = dict(id_conta_telefone = validators.Int(not_empty = True)))
 	def update(self, id_conta_telefone, **kwargs):
-		#objectstore.clear()
+		#session.clear()
 		if kwargs:
 			tg_errors, kwargs = self.valida_conta(**kwargs)
 			if tg_errors:

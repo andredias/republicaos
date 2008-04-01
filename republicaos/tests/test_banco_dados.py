@@ -3,7 +3,7 @@
 
 from test_model.base import BaseTest
 from republicaos.model.business import *
-from elixir import objectstore
+from elixir import session
 from decimal import Decimal
 
 '''
@@ -26,8 +26,8 @@ class BaseBancoDeDados(BaseTest):
 				franquia  = Decimal('12.23'),
 				servicos = Decimal(10)
 				)
-		objectstore.flush()
-		objectstore.clear()
+		session.flush()
+		session.clear()
 		
 	
 	def test_recuperacao(self):

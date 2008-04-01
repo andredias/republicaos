@@ -47,7 +47,7 @@ class TestFechamento(BaseTest):
 		self.td4 = TipoDespesa(nome = 'Internet', republica = self.r)
 		self.td5 = TipoDespesa(nome = 'Telefone', republica = self.r)
 		
-		objectstore.flush()
+		session.flush()
 	
 	
 	def test_periodo_fechamento(self):
@@ -80,7 +80,7 @@ class TestFechamento(BaseTest):
 		Despesa(data = date(2007, 4, 12), quantia = 75, tipo = self.td3, responsavel = m2)
 		Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = m3)
 		
-		objectstore.flush()
+		session.flush()
 		
 		
 		f._executar_acerto_final()
@@ -118,7 +118,7 @@ class TestFechamento(BaseTest):
 		Despesa(data = date(2007, 5, 1), quantia = 100, tipo = self.td2, responsavel = m3)
 		Despesa(data = date(2007, 4, 21), quantia = 325, tipo = self.td1, responsavel = m4)
 		
-		objectstore.flush()
+		session.flush()
 		
 		f._executar_acerto_final()
 		print_acerto_final(f)
@@ -155,7 +155,7 @@ class TestFechamento(BaseTest):
 		Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = m3)
 		Despesa(data = date(2007, 4, 21), quantia = 175, tipo = self.td1, responsavel = m4)
 		
-		objectstore.flush()
+		session.flush()
 		
 		f._executar_acerto_final()
 		print_acerto_final(f)
@@ -240,7 +240,7 @@ class TestFechamento(BaseTest):
 		DespesaPeriodica(quantia = 50, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19))
 		DespesaPeriodica(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1))
 		
-		objectstore.flush()
+		session.flush()
 		
 		print_fechamento(f)
 		
@@ -279,7 +279,7 @@ class TestFechamento(BaseTest):
 		DespesaPeriodica(quantia = 150, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19))
 		DespesaPeriodica(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1))
 		
-		objectstore.flush()
+		session.flush()
 		
 		print_fechamento(f)
 		
@@ -311,7 +311,7 @@ class TestFechamento(BaseTest):
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
 		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -336,7 +336,7 @@ class TestFechamento(BaseTest):
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 21), data_saida = date(2007, 5, 6))
 		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -362,7 +362,7 @@ class TestFechamento(BaseTest):
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 20), data_saida = date(2007, 5, 6))
 		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 5, 6))
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -388,7 +388,7 @@ class TestFechamento(BaseTest):
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 4, 6), data_saida = date(2007, 4, 20))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 25), data_saida = date(2007, 5, 6))
 		self.m4 = Morador(pessoa = self.p4, republica = self.r, data_entrada = date(2007, 4, 30), data_saida = date(2007, 5, 6))
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -413,7 +413,7 @@ class TestFechamento(BaseTest):
 		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 18))
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -442,7 +442,7 @@ class TestFechamento(BaseTest):
 		PesoQuota(morador = self.m3, peso_quota = Decimal(15), data_cadastro = date(2007, 4, 6))
 		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
 		
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -472,7 +472,7 @@ class TestFechamento(BaseTest):
 		PesoQuota(morador = self.m3, peso_quota = Decimal(15), data_cadastro = date(2007, 4, 6))
 		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
 		
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -502,7 +502,7 @@ class TestFechamento(BaseTest):
 		PesoQuota(morador = self.m3, peso_quota = Decimal(45), data_cadastro = date(2007, 4, 6))
 		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
 		
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		
@@ -530,7 +530,7 @@ class TestFechamento(BaseTest):
 		PesoQuota(morador = self.m3, peso_quota = Decimal(45), data_cadastro = date(2007, 4, 6))
 		PesoQuota(morador = self.m4, peso_quota = Decimal(30), data_cadastro = date(2007, 4, 6))
 		
-		objectstore.flush()
+		session.flush()
 		
 		f = self.r.criar_fechamento(date(2007, 5, 6))
 		

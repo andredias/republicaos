@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from turbogears import testutil, database, config
-from elixir import objectstore
+from elixir import session
 from republicaos.model.business import *
 
 # testutil tenta carregar a configuração de test.cfg automaticamente. Contudo, se o teste
@@ -29,4 +29,4 @@ class BaseTest(object):
 		# reinitialized so we can't kill it
 		#database.metadata.engine.echo = False
 		database.metadata.drop_all()
-		objectstore.clear()
+		session.clear()

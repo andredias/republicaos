@@ -16,7 +16,7 @@ def arredonda(numero, referencia):
 
 def pretty_decimal(numero, arredondamento = Decimal('0.01')):
 	numero = arredonda(numero, arredondamento)
-	return _pretty_number(numero)
+	return pretty_number(numero)
 
 
 def pretty_number(numero):

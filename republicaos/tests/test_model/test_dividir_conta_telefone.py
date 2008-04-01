@@ -88,7 +88,7 @@ class TestDividirContaTelefone(BaseTest):
 				republica = self.r
 			)
 		
-		objectstore.flush()
+		session.flush()
 	
 	
 	def set_telefones(self, m1, m2, m3, m4 = None, m5 = None):
@@ -110,7 +110,7 @@ class TestDividirContaTelefone(BaseTest):
 		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
-		objectstore.flush()
+		session.flush()
 		
 		return (self.m1,self.m2, self.m3)
 	
@@ -119,7 +119,7 @@ class TestDividirContaTelefone(BaseTest):
 		self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
 		self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 18)) # veja test_fechamento.py:TestFechamento.test_calculo_quotas_participantes_5
-		objectstore.flush()
+		session.flush()
 		
 		return (self.m1, self.m2, self.m3)
 	
@@ -129,7 +129,7 @@ class TestDividirContaTelefone(BaseTest):
 		self.m5 = Morador(pessoa = self.p5, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 3, 21))
 		Telefonema(numero = 40, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, quantia = Decimal('1.25'))
 		Telefonema(numero = 50, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, quantia = Decimal('2.50'))
-		objectstore.flush()
+		session.flush()
 		return self.m4, self.m5
 	
 	
@@ -177,7 +177,7 @@ class TestDividirContaTelefone(BaseTest):
 		if tel_sem_dono:
 			t1, t2 = self.telefonemas_sem_dono()
 	
-		objectstore.flush()
+		session.flush()
 		
 		print 'República: ', self.r
 		for f in self.r.fechamentos:

@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from elixir      import Unicode, Boolean, Date, DateTime, Time, String, Integer, Numeric
-from elixir      import Entity, has_field, using_options, using_table_options, using_mapper_options
-from elixir      import has_many as one_to_many
-from elixir      import belongs_to as many_to_one
-from elixir      import has_and_belongs_to_many as many_to_many
+from elixir      import Entity, using_options, using_table_options, using_mapper_options
+from elixir      import Field, OneToMany, ManyToOne
 from sqlalchemy  import types, and_, or_, select, UniqueConstraint, func
 from datetime    import date, datetime, time
 import csv
+import elixir
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 from pronus_utils import float_equal, pretty_decimal
 
-from turbogears.database import metadata
 
-
+elixir.options_defaults['shortnames'] = True
 
 class Money(types.TypeEngine):
 	'''
@@ -43,9 +41,9 @@ class ModelIntegrityException(Exception):
 
 
 class Pessoa(Entity):
-	has_field('nome', Unicode(80), nullable = False, unique = True)
-	using_options(tablename = 'pessoa')
-	one_to_many('contatos', of_kind = 'Contato', inverse = 'pessoa', order_by = ['tipo', 'contato'])
+	nome     = Field(Unicode(80), required = True, unique = True)
+	contatos = OneToMany('Contato', order_by = 'contato')
+	using_options(order_by = 'nome')
 	
 	def get_emails():
 		pass
@@ -65,11 +63,8 @@ class Pessoa(Entity):
 
 
 class Contato(Entity):
-	has_field('contato', Unicode(100), nullable = False),
-	has_field('tipo', Integer, nullable = False),
-	many_to_one('pessoa', of_kind = 'Pessoa', inverse = 'contatos', colname = 'id_pessoa',
-		column_kwargs = dict(nullable = False))
-	using_options(tablename = 'contato')
+	contato = Field(Unicode(100), required = True)
+	pessoa  = ManyToOne('Pessoa', colname = 'id_pessoa', required = True)
 	
 	def __repr__(self):
 		return '<contato:%s, pessoa:%s>' % (self.contato.encode('utf-8'), self.pessoa.nome.encode('utf-8'))
@@ -90,17 +85,11 @@ class TelefoneRegistrado(Entity):
 	Não poderá haver mais de um morador sendo responsável pelo telefone em uma república. Essa restrição
 	é reforçada pela chave primária.
 	'''
-	has_field('numero', Numeric(12, 0), primary_key = True)
-	has_field('descricao', Unicode)
+	numero      = Field(Numeric(12, 0), primary_key = True)
+	descricao   = Field(Unicode)
+	republica   = ManyToOne('Republica', colname = 'id_republica', primary_key = True)
+	responsavel = ManyToOne('Morador', colname = 'id_morador', required = True)
 	using_options(tablename = 'telefone')
-	many_to_one(
-			'republica',
-			of_kind = 'Republica',
-			colname = 'id_republica',
-			inverse = 'telefones_registrados',
-			column_kwargs = dict(primary_key = True)
-			)
-	many_to_one('responsavel', of_kind = 'Morador', colname = 'id_morador', inverse = 'telefones', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
 		return "<número: %d, república: '%s', responsável: '%s'>" % (self.numero, self.republica.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
@@ -112,19 +101,17 @@ class TelefoneRegistrado(Entity):
 
 
 class Republica(Entity):
-	has_field('nome', Unicode(80), nullable = False)
-	has_field('data_criacao', Date, default = date.today, nullable = False)
-	has_field('logradouro', Unicode(150))
-	has_field('complemento', Unicode(100))
-	has_field('bairro', Unicode(100))
-	has_field('cidade', Unicode(80))
-	has_field('uf', String(2))
-	has_field('cep', String(8))
-	using_options(tablename = 'republica')
-	one_to_many('fechamentos', of_kind = 'Fechamento', inverse = 'republica', order_by = '-data')
-	one_to_many('tipos_despesa', of_kind = 'TipoDespesa', inverse = 'republica', order_by = 'nome')
-	one_to_many('telefones_registrados', of_kind = 'TelefoneRegistrado', inverse = 'republica', order_by = 'numero')
-	one_to_many('alugueis', of_kind = 'Aluguel', inverse = 'republica', order_by = '-data_cadastro')
+	nome         = Field(Unicode(90), required = True)
+	data_criacao = Field(Date, default = date.today, required = True)
+	logradouro   = Field(Unicode(150))
+	complemento  = Field(Unicode(100))
+	cidade       = Field(Unicode(80))
+	uf           = Field(String(2))
+	cep          = Field(String(8))
+	fechamentos           = OneToMany('Fechamento', order_by = '-data')
+	tipos_despesa         = OneToMany('TipoDespesa', order_by = 'nome')
+	telefones_registrados = OneToMany('TelefoneRegistrado', order_by = 'numero')
+	alugueis              = OneToMany('Aluguel', order_by = '-data_cadastro')
 	
 	
 	def __repr__(self):
@@ -235,19 +222,16 @@ class Republica(Entity):
 
 
 class Aluguel(Entity):
-	has_field('valor', Money(10, 2), nullable = False)
-	has_field('data_cadastro', Date, primary_key = True)
-	many_to_one('republica', of_kind = 'Republica', inverse = 'alugueis', colname = 'id_republica',
-		column_kwargs = dict(primary_key = True))
-	using_options(tablename = 'aluguel')
+	valor = Field(Money(10, 2), required = True)
+	data_cadastro = Field(Date, primary_key = True)
+	republica = ManyToOne('Republica',  colname = 'id_republica', primary_key = True)
 
 
 
 class PesoQuota(Entity):
-	has_field('peso_quota', Money(10,2), nullable = False)
-	has_field('data_cadastro', Date, primary_key = True)
-	many_to_one('morador', of_kind = 'Morador', inverse = 'pesos_quota', colname = 'id_morador',
-		column_kwargs = dict(primary_key = True))
+	peso_quota    = Field(Money(10,2), required = True)
+	data_cadastro = Field(Date, primary_key = True)
+	morador       = ManyToOne('Morador', colname = 'id_morador', primary_key = True)
 	using_options(tablename = 'peso_quota')
 	
 	def __repr__(self):
@@ -290,10 +274,8 @@ class Intervalo(object):
 	
 	
 class Fechamento(Entity):
-	has_field('data', Date, primary_key = True)
-	using_options(tablename = 'fechamento')
-	many_to_one('republica', of_kind = 'Republica', inverse = 'fechamentos', colname = 'id_republica',
-		column_kwargs = dict(primary_key = True))
+	data      = Field(Date, primary_key = True)
+	republica = ManyToOne('Republica', colname = 'id_republica', primary_key = True)
 	
 	def __repr__(self):
 		return "<fechamento:%s [%s, %s], república:'%s'>" % \
@@ -614,17 +596,17 @@ class ContaTelefone(Entity):
 	Representa cada conta de telefone que chega por mês para a república.
 	'''
 	# campo id implícito
-	has_field('vencimento', Date, nullable = False)
-	has_field('emissao', Date, nullable = False)
-	has_field('telefone', Numeric(12, 0))
-	has_field('id_operadora', Integer, nullable = False)
-	has_field('franquia', Money(10,2), default = 0)
-	has_field('servicos', Money(10,2), default = 0)
+	vencimento   = Field(Date, required = True)
+	emissao      = Field(Date, required = True)
+	telefone     = Field(Numeric(12, 0), required = True)
+	id_operadora = Field(Integer, required = True)
+	franquia     = Field(Money(10,2), default = 0)
+	servicos     = Field(Money(10,2), default = 0)
+	republica    = ManyToOne('Republica', colname = 'id_republica', required = True)
+	telefonemas  = OneToMany('Telefonema', order_by = 'numero')
+	
 	using_options(tablename = 'conta_telefone')
 	using_table_options(UniqueConstraint('telefone', 'emissao'))
-	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
-	one_to_many('telefonemas', of_kind = 'Telefonema', order_by = 'numero')
-	
 	
 	def __repr__(self):
 		return '<telefone: %d, emissão: %s, república: %s>' % \
@@ -797,15 +779,13 @@ class ContaTelefone(Entity):
 
 
 class Telefonema(Entity):
-	has_field('numero',         Numeric(12, 0), primary_key = True)
-	has_field('tipo_fone',      Integer,        nullable = False)	# fixo, celular, net fone
-	has_field('tipo_distancia', Integer,        nullable = False)	# Local, DDD, DDI
-	has_field('segundos',       Integer,        nullable = False)
-	has_field('quantia',        Money(10, 2),   nullable = False)
-	many_to_one('responsavel',    of_kind = 'Morador',       colname = 'id_morador')
-	many_to_one('conta_telefone', of_kind = 'ContaTelefone', colname = 'id_conta_telefone', inverse = 'telefonemas',
-		ondelete = 'cascade', column_kwargs = dict(primary_key = True))
-	using_options(tablename = 'telefonema')
+	numero         = Field(Numeric(12, 0), primary_key = True)
+	tipo_fone      = Field(Integer,        required = True)	# fixo, celular, net fone
+	tipo_distancia = Field(Integer,        required = True)	# Local, DDD, DDI
+	segundos       = Field(Integer,        required = True)
+	quantia        = Field(Money(10, 2),   required = True)
+	responsavel    = ManyToOne('Morador',       colname = 'id_morador')
+	conta_telefone = ManyToOne('ContaTelefone', colname = 'id_conta_telefone', ondelete = 'cascade', primary_key = True)
 	
 	def __repr__(self):
 		return "<número:%d, quantia:%s, segundos:%s, responsável:'%s'>" % \
@@ -813,16 +793,15 @@ class Telefonema(Entity):
 
 
 class Morador(Entity):
-	has_field('data_entrada', Date, default = date.today, nullable = False)
-	has_field('data_saida', Date)
-	many_to_one('republica', of_kind = 'Republica', colname = 'id_republica', column_kwargs = dict(nullable = False))
-	many_to_one('pessoa', of_kind = 'Pessoa', colname = 'id_pessoa', column_kwargs = dict(nullable = False))
-	one_to_many('despesas_periodicas', of_kind = 'DespesaPeriodica', inverse = 'responsavel', order_by = 'proximo_vencimento')
-	one_to_many('telefones_sob_responsabilidade', of_kind = 'TelefoneRegistrado', inverse = 'responsavel')
-	one_to_many('pesos_quota', of_kind = 'PesoQuota', inverse = 'morador', order_by = '-data_cadastro')
-	using_options(tablename = 'morador')
-	# UniqueConstraint ainda não funciona nessa versão do elixir. Veja http://groups.google.com/group/sqlelixir/browse_thread/thread/46a2733c894e510b/048cde52cd6afa35?lnk=gst&q=UniqueConstraint&rnum=3#048cde52cd6afa35
-	#using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))
+	data_entrada = Field(Date, default = date.today, required = True)
+	data_saida   = Field(Date)
+	despesas_periodicas = OneToMany('DespesaPeriodica', order_by = 'proximo_vencimento')
+	telefones_sob_responsabilidade = OneToMany('TelefoneRegistrado')
+	republica    = ManyToOne('Republica', colname = 'id_republica', required = True)
+	pessoa       = ManyToOne('Pessoa',    colname = 'id_pessoa', required = True)
+	pesos_quota  = OneToMany('PesoQuota', order_by = '-data_cadastro')
+	
+	using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))
 	
 	def __repr__(self):
 		return "<pessoa:'%s', república:'%s', data_entrada:%s>" % \
@@ -917,21 +896,21 @@ class Morador(Entity):
 
 
 class TipoDespesa(Entity):
-	has_field('nome', Unicode(40), nullable = False)
-	has_field('descricao', String)
+	nome = Field(Unicode(40), required = True)
+	descricao = Field(Unicode)
+	republica = ManyToOne('Republica',  required = True)
+	
 	using_options(tablename = 'tipo_despesa')
-	many_to_one('republica', of_kind = 'Republica', inverse = 'tipo_despesas', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
 		return '<nome:%s>' % self.nome.encode('utf-8')
 
 
 class Despesa(Entity):
-	has_field('data', Date, default = date.today, nullable = False)
-	has_field('quantia', Money(10, 2), nullable = False)
-	using_options(tablename = 'despesa')
-	many_to_one('responsavel',  of_kind = 'Morador',     colname = 'id_morador',      column_kwargs = dict(nullable = False))
-	many_to_one('tipo',         of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
+	data        = Field(Date, default = date.today, required = True)
+	quantia     = Field(Money(10, 2), required = True)
+	responsavel = ManyToOne('Morador',     colname = 'id_morador',      required = True)
+	tipo        = ManyToOne('TipoDespesa', colname = 'id_tipo_despesa', required = True)
 	
 	def __repr__(self):
 		return '<data:%s, quantia:%s, tipo:%s, responsável:%s>' % \
@@ -939,66 +918,14 @@ class Despesa(Entity):
 
 
 class DespesaPeriodica(Entity):
-	has_field('proximo_vencimento', Date, default = date.today, nullable = False)
-	has_field('quantia', Money(10,2), nullable = False)
-	has_field('data_termino', Date)
+	proximo_vencimento = Field(Date, default = date.today, required = True)
+	quantia            = Field(Money(10,2), required = True)
+	data_termino       = Field(Date)
+	responsavel        = ManyToOne('Morador',     colname = 'id_morador',      required = True)
+	tipo               = ManyToOne('TipoDespesa', colname = 'id_tipo_despesa', required = True)
+	
 	using_options(tablename = 'despesa_periodica')
-	many_to_one('responsavel',  of_kind = 'Morador', colname = 'id_morador', inverse = 'despesas_periodicas', column_kwargs = dict(nullable = False))
-	many_to_one('tipo', of_kind = 'TipoDespesa', colname = 'id_tipo_despesa', column_kwargs = dict(nullable = False))
 	
 	def __repr__(self):
 		return "<próximo_vencimento:%s, data_termino:%s, quantia:%s, tipo:'%s', responsável:'%s'>" % \
 			(self.proximo_vencimento.strftime('%d/%m/%Y'), (self.data_termino.strftime('%d/%m/%Y') if self.data_termino else ''), self.quantia, self.tipo.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
-
-
-#
-# identity model
-# 
-
-class Visit(Entity):
-    has_field('visit_key', String(40), primary_key=True)
-    has_field('created', DateTime, nullable=False, default=datetime.now)
-    has_field('expiry', DateTime)
-    using_options(tablename='visit')
-    
-    @classmethod
-    def lookup_visit(cls, visit_key):
-        return Visit.get(visit_key)
-
-class VisitIdentity(Entity):
-    has_field('visit_key', String(40), primary_key=True)
-    many_to_one('user', of_kind='User', colname='user_id', use_alter=True)
-    using_options(tablename='visit_identity')
-
-class Group(Entity):
-    has_field('group_id', Integer, primary_key=True)
-    has_field('group_name', Unicode(16), unique=True)
-    has_field('display_name', Unicode(255))
-    has_field('created', DateTime, default=datetime.now)
-    many_to_many('users', of_kind='User', inverse='groups')
-    many_to_many('permissions', of_kind='Permission', inverse='groups')
-    using_options(tablename='tg_group')
-
-class User(Entity):
-    has_field('user_id', Integer, primary_key=True)
-    has_field('user_name', Unicode(16), unique=True)
-    has_field('email_address', Unicode(255), unique=True)
-    has_field('display_name', Unicode(255))
-    has_field('password', Unicode(40))
-    has_field('created', DateTime, default=datetime.now)
-    many_to_many('groups', of_kind='Group', inverse='users')
-    using_options(tablename='tg_user')
-    
-    @property
-    def permissions(self):
-        perms = set()
-        for g in self.groups:
-            perms = perms | set(g.permissions)
-        return perms
-
-class Permission(Entity):
-    has_field('permission_id', Integer, primary_key=True)
-    has_field('permission_name', Unicode(16), unique=True)
-    has_field('description', Unicode(255))
-    many_to_many('groups', of_kind='Group', inverse='permissions')
-    using_options(tablename='permission')
