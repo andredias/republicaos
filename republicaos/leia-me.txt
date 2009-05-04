@@ -1,0 +1,7 @@
+o esquema de autenticaçãod o slideshare é bastante interessante. 
+Principalmente a parte de criação de novo login. 
+http://www.slideshare.net
+
+1. Ao tentar criar um login, ele já verifica a disponibilidade
+2. Verifica se o e-mail já está cadastrado. Se estiver, é sinal de que 
+a senha foi esquecida.
