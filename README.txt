@@ -1,4 +1,41 @@
-republicaos
+This file is for you to describe the republicaos application. Typically
+you would include information such as the information below:
 
-This is a TurboGears (http://www.turbogears.org) project. It can be
-started by running the start-republicaos.py script.
+Installation and Setup
+======================
+
+Install ``republicaos`` using easy_install::
+
+    easy_install republicaos
+
+Make a config file as follows::
+
+    paster make-config republicaos config.ini
+
+Tweak the config file as appropriate and then setup the application::
+
+    paster setup-app config.ini
+
+Then you are ready to go.
+
+Creating models
+======================
+
+To create a new model class, type::
+
+    paster model mymodel
+
+Once you have defined your model classes in mymodel, import them in republicaos/models/__init__.py::
+
+    from mymodel import MyEntity
+
+To create tables use create_sql::
+
+    paster create_sql
+
+To drop tables use drop_sql::
+
+    paster drop_sql
+
+Note that you must first import your classes into republicaos/models/__init__.py in order for the database commands to work !
+

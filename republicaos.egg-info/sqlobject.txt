@@ -1,2 +1,0 @@
-db_module=republicaos.model
-history_dir=$base/republicaos/sqlobject-history

@@ -18,13 +18,13 @@ log = logging.getLogger("republicaos.controllers")
 
 
 class Root(controllers.RootController):
-	
-	despesa        = DespesaController()
-	conta_telefone = ContaTelefoneController()
-	fechamento     = FechamentoController()
-	
-	@expose()
-	# @identity.require(identity.in_group("admin"))
-	def index(self):
-		cherrypy.session['republica'] = Republica.get_by(id = 1)
-		raise redirect('/fechamento/')
+    
+    despesa        = DespesaController()
+    conta_telefone = ContaTelefoneController()
+    fechamento     = FechamentoController()
+    
+    @expose()
+    # @identity.require(identity.in_group("admin"))
+    def index(self):
+        cherrypy.session['republica'] = Republica.get_by(id = 1)
+        raise redirect('/fechamento/')

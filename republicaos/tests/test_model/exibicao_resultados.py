@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals, print_function
+
 from decimal import Decimal
-from republicaos.utils.pronus_utils import pretty_decimal
+from republicaos.lib.pronus_utils import pretty_decimal
 import sys
 import codecs
 
@@ -14,7 +16,7 @@ def print_rateio_conta_telefone(conta):
     write('\n\nRATEIO CONTA DE TELEFONE\n------------------------')
     write('\nTotal Conta = %s' % conta.total)
     write('\nFranquia = %s' % conta.franquia)
-    write(u'\nServiços = %s' % conta.servicos)
+    write('\nServiços = %s' % conta.servicos)
     write('\nTelefonemas = %s' % conta.total_telefonemas)
     
     campos = ('quota', 'franquia', 'gastos', 'extras', 'devido', 'excedente', 'abono', 'a_pagar')
@@ -41,29 +43,29 @@ def print_rateio_conta_telefone(conta):
 
 def print_resumo_despesas(fechamento):
     write('\n\nRESUMO DAS DESPESAS\n-------------------\nTipo           |  Total')
-    tipos_despesa = sorted(fechamento.total_tipo_despesa.keys(), key = lambda obj: obj.nome)
+    tipos_despesa = sorted(list(fechamento.total_tipo_despesa.keys()), key = lambda obj: obj.nome)
     for tipo_despesa in tipos_despesa:
-        write(u'\n%15s| %.2f' % (tipo_despesa.nome, fechamento.total_tipo_despesa[tipo_despesa]))
+        write('\n%15s| %.2f' % (tipo_despesa.nome, fechamento.total_tipo_despesa[tipo_despesa]))
     write('\n\n%*s = %*s' % (19, 'Total Geral', 7, pretty_decimal(fechamento.total_despesas())))
-    write(u'\n%*s = %*d' % (19, u'Número de moradores', 4, len(fechamento.participantes)))
-    write(u'\n%*s = %*.2f' % (19, u'Média', 7, \
+    write('\n%*s = %*d' % (19, 'Número de moradores', 4, len(fechamento.participantes)))
+    write('\n%*s = %*.2f' % (19, 'Média', 7, \
         (fechamento.total_despesas() / (len(fechamento.participantes) if len(fechamento.participantes) else 1))))
 
 
 def print_despesas(fechamento):
-    write(u'\n\nRELAÇÃO DE DESPESAS\n-------------------\n')
-    write(u'| %-*s| %-*s| %-*s| %s' % (11, 'Data', 9, 'Valor', 15, 'Tipo Despesa', u'Responsável'))
+    write('\n\nRELAÇÃO DE DESPESAS\n-------------------\n')
+    write('| %-*s| %-*s| %-*s| %s' % (11, 'Data', 9, 'Valor', 15, 'Tipo Despesa', 'Responsável'))
     for despesa in fechamento.despesas():
         write('\n| %s | %*.2f | %-*s| %s' % (despesa.data, 8, despesa.quantia, 15, despesa.tipo.nome, despesa.responsavel.pessoa.nome))
     write('\n')
 
 
 def print_rateio(fechamento):
-    write(u'\n\nRATEIO\n------\n')
-    write(u' %-*s| %-*s| %-*s| %-*s| %-*s| %s' %
+    write('\n\nRATEIO\n------\n')
+    write(' %-*s| %-*s| %-*s| %-*s| %-*s| %s' %
         (
         9, 'Morador',
-        12, u'Participação',
+        12, 'Participação',
         8, 'Quota',
         8, 'Telefone',
         8, 'Despesas',
@@ -139,10 +141,10 @@ def print_fechamento(fechamento):
 
 
 def print_calculo_quotas_participantes(fechamento):
-    write(u'\n\nCÁLCULO DAS QUOTAS DO FECHAMENTO\n-----------------')
+    write('\n\nCÁLCULO DAS QUOTAS DO FECHAMENTO\n-----------------')
     write('\nData Inicial: %s | Data Final: %s' % (fechamento.data_inicial.strftime('%d/%m/%Y'), fechamento.data_final.strftime('%d/%m/%Y')))
     write('\nTotal de dias: %d' % fechamento.total_dias)
-    write(u'\nParticipantes | Peso(%) | Quota(%) | Quota_Peso(%)')
+    write('\nParticipantes | Peso(%) | Quota(%) | Quota_Peso(%)')
     total_peso       = 0
     total_quota      = 0
     total_quota_peso = 0
@@ -159,8 +161,8 @@ def print_calculo_quotas_participantes(fechamento):
     for intervalo in fechamento.intervalos:
         write('\n\t--------------')
         write('\n\tData Inicial: %s | Data Final: %s' % (intervalo.data_inicial.strftime('%d/%m/%Y'), intervalo.data_final.strftime('%d/%m/%Y')))
-        write(u'\n\tNúm Dias: %d' % intervalo.num_dias)
-        write(u'\n\tParticipantes | Quota(%) | Quota_Peso(%)')
+        write('\n\tNúm Dias: %d' % intervalo.num_dias)
+        write('\n\tParticipantes | Quota(%) | Quota_Peso(%)')
         total_quota      = 0
         total_quota_peso = 0
         for participante in intervalo.participantes:

@@ -1,63 +1,37 @@
-from setuptools import setup, find_packages
-from turbogears.finddata import find_package_data
-
-import os
-execfile(os.path.join("republicaos", "release.py"))
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup, find_packages
 
 setup(
-    name="republicaos",
-    version=version,
-    
-    # uncomment the following lines if you fill them out in release.py
-    #description=description,
-    #author=author,
-    #author_email=email,
-    #url=url,
-    #download_url=download_url,
-    #license=license,
-    
-    install_requires = [
-        "TurboGears >= 1.0.2.2",
-        "SQLAlchemy", 
+    name='republicaos',
+    version='0.1',
+    description='',
+    author='',
+    author_email='',
+    url='',
+    install_requires=[
+        "Pylons>=0.9.7",
+        "SQLAlchemy>=0.5",
+        "Genshi>=0.4",
     ],
-    scripts = ["start-republicaos.py"],
+    setup_requires=["PasteScript>=1.6.3"],
+    packages=find_packages(exclude=['ez_setup']),
+    include_package_data=True,
+    test_suite='nose.collector',
+    package_data={'republicaos': ['i18n/*/LC_MESSAGES/*.mo']},
+    #message_extractors={'republicaos': [
+    #        ('**.py', 'python', None),
+    #        ('public/**', 'ignore', None)]},
     zip_safe=False,
-    packages=find_packages(),
-    package_data = find_package_data(where='republicaos',
-                                     package='republicaos'),
-    keywords = [
-        # Use keywords if you'll be adding your package to the
-        # Python Cheeseshop
-        
-        # if this has widgets, uncomment the next line
-        # 'turbogears.widgets',
-        
-        # if this has a tg-admin command, uncomment the next line
-        # 'turbogears.command',
-        
-        # if this has identity providers, uncomment the next line
-        # 'turbogears.identity.provider',
-    
-        # If this is a template plugin, uncomment the next line
-        # 'python.templating.engines',
-        
-        # If this is a full application, uncomment the next line
-        # 'turbogears.app',
-    ],
-    classifiers = [
-        'Development Status :: 3 - Alpha',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Framework :: TurboGears',
-        # if this is an application that you'll distribute through
-        # the Cheeseshop, uncomment the next line
-        # 'Framework :: TurboGears :: Applications',
-        
-        # if this is a package that includes widgets that you'll distribute
-        # through the Cheeseshop, uncomment the next line
-        # 'Framework :: TurboGears :: Widgets',
-    ],
-    test_suite = 'nose.collector',
-    )
-    
+    paster_plugins=['Elixir', 'PasteScript', 'Pylons', 'Shabti'],
+    entry_points="""
+    [paste.app_factory]
+    main = republicaos.config.middleware:make_app
+
+    [paste.app_install]
+    main = pylons.util:PylonsInstaller
+    """,
+)

@@ -1,20 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+from __future__ import print_function, unicode_literals
+from datetime   import date, time
+from decimal    import Decimal
+from dateutil.relativedelta import relativedelta
+from republicaos.model import Republica, Fechamento, ContaTelefone, Pessoa, Morador, Telefonema, TelefoneRegistrado
+from republicaos.model import TipoDespesa, DespesaPeriodica, Despesa, PesoQuota, Aluguel
+from republicaos.tests import Session, TestModel
+from exibicao_resultados import print_acerto_final, print_calculo_quotas_participantes
+from republicaos.lib.pronus_utils import float_equal
+
 import decimal
-from datetime import date
-from decimal import Decimal
-
-from elixir import *
-
-from base import BaseTest
-from republicaos.model.model import Republica, Fechamento, ContaTelefone, Pessoa, Morador, Telefonema
-from republicaos.utils.pronus_utils import float_equal
-
 
 decimal.setcontext(decimal.BasicContext)
 
 
-class TestDividirContaTelefone(BaseTest):
+class TestDividirContaTelefone(TestModel):
     '''
     Testa vários casos de divisão de contas:
     
@@ -25,47 +27,47 @@ class TestDividirContaTelefone(BaseTest):
     UF  = ultrapassa a franquia
     
     SER | TEM | TSD | NDD | UF | Caso
-     0  | 0  |  0  |  0  | 0  |  0
-     0  | 0  |  0  |  0  | 1  |  1
-     0  | 0  |  0  |  1  | 0  |  2
-     0  | 0  |  0  |  1  | 1  |  3
-     0  | 0  |  1  |  0  | 0  |  4
-     0  | 0  |  1  |  0  | 1  |  5
-     0  | 0  |  1  |  1  | 0  |  6
-     0  | 0  |  1  |  1  | 1  |  7
-     0  | 1  |  0  |  0  | 0  |  8
-     0  | 1  |  0  |  0  | 1  |  9
-     0  | 1  |  0  |  1  | 0  | 10
-     0  | 1  |  0  |  1  | 1  | 11
-     0  | 1  |  1  |  0  | 0  | 12
-     0  | 1  |  1  |  0  | 1  | 13
-     0  | 1  |  1  |  1  | 0  | 14
-     0  | 1  |  1  |  1  | 1  | 15
-     1  | 0  |  0  |  0  | 0  | 16
-     1  | 0  |  0  |  0  | 1  | 17
-     1  | 0  |  0  |  1  | 0  | 18
-     1  | 0  |  0  |  1  | 1  | 19
-     1  | 0  |  1  |  0  | 0  | 20
-     1  | 0  |  1  |  0  | 1  | 21
-     1  | 0  |  1  |  1  | 0  | 22
-     1  | 0  |  1  |  1  | 1  | 23
-     1  | 1  |  0  |  0  | 0  | 24
-     1  | 1  |  0  |  0  | 1  | 25
-     1  | 1  |  0  |  1  | 0  | 26
-     1  | 1  |  0  |  1  | 1  | 27
-     1  | 1  |  1  |  0  | 0  | 28
-     1  | 1  |  1  |  0  | 1  | 29
-     1  | 1  |  1  |  1  | 0  | 30
-     1  | 1  |  1  |  1  | 1  | 31
+     0  |  0  |  0  |  0  | 0  |  0
+     0  |  0  |  0  |  0  | 1  |  1
+     0  |  0  |  0  |  1  | 0  |  2
+     0  |  0  |  0  |  1  | 1  |  3
+     0  |  0  |  1  |  0  | 0  |  4
+     0  |  0  |  1  |  0  | 1  |  5
+     0  |  0  |  1  |  1  | 0  |  6
+     0  |  0  |  1  |  1  | 1  |  7
+     0  |  1  |  0  |  0  | 0  |  8
+     0  |  1  |  0  |  0  | 1  |  9
+     0  |  1  |  0  |  1  | 0  | 10
+     0  |  1  |  0  |  1  | 1  | 11
+     0  |  1  |  1  |  0  | 0  | 12
+     0  |  1  |  1  |  0  | 1  | 13
+     0  |  1  |  1  |  1  | 0  | 14
+     0  |  1  |  1  |  1  | 1  | 15
+     1  |  0  |  0  |  0  | 0  | 16
+     1  |  0  |  0  |  0  | 1  | 17
+     1  |  0  |  0  |  1  | 0  | 18
+     1  |  0  |  0  |  1  | 1  | 19
+     1  |  0  |  1  |  0  | 0  | 20
+     1  |  0  |  1  |  0  | 1  | 21
+     1  |  0  |  1  |  1  | 0  | 22
+     1  |  0  |  1  |  1  | 1  | 23
+     1  |  1  |  0  |  0  | 0  | 24
+     1  |  1  |  0  |  0  | 1  | 25
+     1  |  1  |  0  |  1  | 0  | 26
+     1  |  1  |  0  |  1  | 1  | 27
+     1  |  1  |  1  |  0  | 0  | 28
+     1  |  1  |  1  |  0  | 1  | 29
+     1  |  1  |  1  |  1  | 0  | 30
+     1  |  1  |  1  |  1  | 1  | 31
     '''
     
     #url = 'postgres://turbo_gears:tgears@localhost/tg_teste'
 
-    def setup(self):
-        BaseTest.setup(self)
-        
+
+    def setUp(self):
+        TestModel.setUp(self)
         self.r = Republica(nome = 'Teste', data_criacao = date(2007, 3, 6), logradouro = 'R. dos Bobos, nº 0')
-        session.commit()
+        Session.commit()
         self.r.criar_fechamento(data = date(2007, 4, 6))
         self.r.criar_fechamento(data = date(2007, 5, 6))
         
@@ -85,8 +87,7 @@ class TestDividirContaTelefone(BaseTest):
                 republica = self.r
             )
         
-        session.commit()
-    
+        Session.commit()    
     
     def set_telefones(self, m1, m2, m3, m4 = None, m5 = None):
         self.r.registrar_responsavel_telefone(numero = 10, responsavel = m1)
@@ -107,7 +108,7 @@ class TestDividirContaTelefone(BaseTest):
         self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
         self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
         self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 3, 6))
-        session.commit()
+        Session.commit()
         
         return (self.m1,self.m2, self.m3)
     
@@ -116,7 +117,7 @@ class TestDividirContaTelefone(BaseTest):
         self.m1 = Morador(pessoa = self.p1, republica = self.r, data_entrada = date(2007, 3, 6))
         self.m2 = Morador(pessoa = self.p2, republica = self.r, data_entrada = date(2007, 3, 6))
         self.m3 = Morador(pessoa = self.p3, republica = self.r, data_entrada = date(2007, 4, 18)) # veja test_fechamento.py:TestFechamento.test_calculo_quotas_participantes_5
-        session.commit()
+        Session.commit()
         
         return (self.m1, self.m2, self.m3)
     
@@ -126,7 +127,7 @@ class TestDividirContaTelefone(BaseTest):
         self.m5 = Morador(pessoa = self.p5, republica = self.r, data_entrada = date(2007, 3, 6), data_saida = date(2007, 3, 21))
         Telefonema(numero = 40, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, quantia = Decimal('1.25'))
         Telefonema(numero = 50, conta_telefone = self.c, tipo_fone = 1, tipo_distancia = 1, segundos = 100, quantia = Decimal('2.50'))
-        session.commit()
+        Session.commit()
         return self.m4, self.m5
     
     
@@ -174,13 +175,13 @@ class TestDividirContaTelefone(BaseTest):
         if tel_sem_dono:
             t1, t2 = self.telefonemas_sem_dono()
     
-        session.commit()
+        Session.commit()
         
-        print 'República: ', self.r
-        for f in self.r.fechamentos:
-            print f
-        print 'Conta Telefone: ', self.c
-        print 'Fechamento: ', self.c.fechamento
+#        print 'República: ', self.r
+#        for f in self.r.fechamentos:
+#            print f
+#        print 'Conta Telefone: ', self.c
+#        print 'Fechamento: ', self.c.fechamento
         
         self.c.determinar_responsaveis_telefonemas()
         rateio = self.c.rateio

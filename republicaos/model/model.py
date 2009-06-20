@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from elixir      import Unicode, Boolean, Date, DateTime, Time, String, Integer, Numeric
 from elixir      import Entity, using_options, using_table_options, using_mapper_options
 from elixir      import Field, OneToMany, ManyToOne
@@ -10,30 +12,11 @@ import elixir
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 
+
 elixir.options_defaults['shortnames'] = True
 
 def float_equal(float1, float2, precision = 0.001):
     return abs(float(float1) - float(float2)) < precision
-
-class Money(types.TypeEngine):
-    '''
-    Classe para poder usar o Decimal com o SQLite e outros BD além do Postgres
-    '''
-    def __init__(self, precision=10, length=2):
-        self.precision = precision
-        self.length = length
-
-    def get_col_spec(self):
-        return 'NUMERIC (%(precision)s, %(length)s)' % {'precision': self.precision, 'length' : self.length}
-
-    def convert_bind_param(self, value, dialect):
-        return str(value)
-
-    def convert_result_value(self, value, dialect):
-        if type(value) is float:
-            value = str(value)
-        return Decimal(value)
-
 
 
 
@@ -53,7 +36,7 @@ class Pessoa(Entity):
         pass
     
     def __repr__(self):
-        return "<nome:'%s'>" % self.nome.encode('utf-8')
+        return "<nome:'%s'>" % self.nome
 
 
 
@@ -68,7 +51,7 @@ class Contato(Entity):
     pessoa  = ManyToOne('Pessoa', colname = 'id_pessoa', required = True)
     
     def __repr__(self):
-        return '<contato:%s, pessoa:%s>' % (self.contato.encode('utf-8'), self.pessoa.nome.encode('utf-8'))
+        return '<contato:%s, pessoa:%s>' % (self.contato, self.pessoa.nome)
 
 
 
@@ -93,7 +76,7 @@ class TelefoneRegistrado(Entity):
     using_options(tablename = 'telefone')
     
     def __repr__(self):
-        return "<número: %d, república: '%s', responsável: '%s'>" % (self.numero, self.republica.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
+        return "<número: %d, república: '%s', responsável: '%s'>" % (self.numero, self.republica.nome, self.responsavel.pessoa.nome)
 
 
 
@@ -117,7 +100,7 @@ class Republica(Entity):
     
     def __repr__(self):
         return '<nome:%s, data_criação:%s>' % \
-                (self.nome.encode('utf-8'), self.data_criacao.strftime('%d/%m/%Y'))
+                (self.nome, self.data_criacao.strftime('%d/%m/%Y'))
     
     
     def after_insert(self):
@@ -206,20 +189,20 @@ class Republica(Entity):
 
 
 class Aluguel(Entity):
-    valor = Field(Money(10, 2), required = True)
+    valor = Field(Numeric(10, 2), required = True)
     data_cadastro = Field(Date, primary_key = True)
     republica = ManyToOne('Republica',  colname = 'id_republica', primary_key = True)
 
 
 
 class PesoQuota(Entity):
-    peso_quota    = Field(Money(10,2), required = True)
+    peso_quota    = Field(Numeric(10,2), required = True)
     data_cadastro = Field(Date, primary_key = True)
     morador       = ManyToOne('Morador', colname = 'id_morador', primary_key = True)
     using_options(tablename = 'peso_quota')
     
     def __repr__(self):
-        return "<peso_quota: %s, %s, %s>" % (self.morador.pessoa.nome.encode('utf-8'), self.peso_quota, self.data_cadastro)
+        return "<peso_quota: %s, %s, %s>" % (self.morador.pessoa.nome, self.peso_quota, self.data_cadastro)
 
 
 
@@ -267,7 +250,7 @@ class Fechamento(Entity):
             self.data.strftime('%d/%m/%Y'),
             self.data_inicial.strftime('%d/%m/%Y'),
             self.data_final.strftime('%d/%m/%Y'),
-            self.republica.nome.encode('utf-8')
+            self.republica.nome
             )
     
     
@@ -581,8 +564,8 @@ class ContaTelefone(Entity):
     emissao      = Field(Date, required = True)
     telefone     = Field(Numeric(12, 0), required = True)
     id_operadora = Field(Integer, required = True)
-    franquia     = Field(Money(10,2), default = 0)
-    servicos     = Field(Money(10,2), default = 0)
+    franquia     = Field(Numeric(10,2), default = 0)
+    servicos     = Field(Numeric(10,2), default = 0)
     republica    = ManyToOne('Republica', colname = 'id_republica', required = True)
     telefonemas  = OneToMany('Telefonema', order_by = 'numero')
     
@@ -591,7 +574,7 @@ class ContaTelefone(Entity):
     
     def __repr__(self):
         return '<telefone: %d, emissão: %s, república: %s>' % \
-                (self.telefone, self.emissao.strftime('%d/%m/%Y'), self.republica.nome.encode('utf-8'))
+                (self.telefone, self.emissao.strftime('%d/%m/%Y'), self.republica.nome)
     
     
     @property
@@ -688,7 +671,8 @@ class ContaTelefone(Entity):
             func_interpreta_csv = None
         
         #arquivo precisa ser uma lista de linhas
-        if type(arquivo) is str:
+        if isinstance(arquivo, basestring):
+            arquivo = arquivo.encode('utf-8')
             arquivo = arquivo.strip().splitlines()
             
         linhas = [linha for linha in csv.reader(arquivo)]
@@ -763,13 +747,13 @@ class Telefonema(Entity):
     tipo_fone      = Field(Integer,        required = True) # fixo, celular, net fone
     tipo_distancia = Field(Integer,        required = True) # Local, DDD, DDI
     segundos       = Field(Integer,        required = True)
-    quantia        = Field(Money(10, 2),   required = True)
+    quantia        = Field(Numeric(10, 2),   required = True)
     responsavel    = ManyToOne('Morador',       colname = 'id_morador')
     conta_telefone = ManyToOne('ContaTelefone', colname = 'id_conta_telefone', ondelete = 'cascade', primary_key = True)
     
     def __repr__(self):
         return "<número:%d, quantia:%s, segundos:%s, responsável:'%s'>" % \
-            (self.numero, self.quantia, self.segundos, (self.responsavel.pessoa.nome.encode('utf-8') if self.responsavel else ''))
+            (self.numero, self.quantia, self.segundos, (self.responsavel.pessoa.nome if self.responsavel else ''))
 
 
 class Morador(Entity):
@@ -785,7 +769,7 @@ class Morador(Entity):
     
     def __repr__(self):
         return "<pessoa:'%s', república:'%s', data_entrada:%s>" % \
-            (self.pessoa.nome.encode('utf-8'), self.republica.nome.encode('utf-8'), self.data_entrada.strftime('%d/%m/%Y'))
+            (self.pessoa.nome, self.republica.nome, self.data_entrada.strftime('%d/%m/%Y'))
     
     
     def _get_despesas(self, data_inicial, data_final):
@@ -878,23 +862,23 @@ class TipoDespesa(Entity):
     using_options(tablename = 'tipo_despesa')
     
     def __repr__(self):
-        return '<nome:%s>' % self.nome.encode('utf-8')
+        return '<nome:%s>' % self.nome
 
 
 class Despesa(Entity):
     data        = Field(Date, default = date.today, required = True)
-    quantia     = Field(Money(10, 2), required = True)
+    quantia     = Field(Numeric(10, 2), required = True)
     responsavel = ManyToOne('Morador',     colname = 'id_morador',      required = True)
     tipo        = ManyToOne('TipoDespesa', colname = 'id_tipo_despesa', required = True)
     
     def __repr__(self):
         return '<data:%s, quantia:%s, tipo:%s, responsável:%s>' % \
-            (self.data.strftime('%d/%m/%Y'), self.quantia, self.tipo.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
+            (self.data.strftime('%d/%m/%Y'), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)
 
 
 class DespesaPeriodica(Entity):
     proximo_vencimento = Field(Date, default = date.today, required = True)
-    quantia            = Field(Money(10,2), required = True)
+    quantia            = Field(Numeric(10,2), required = True)
     data_termino       = Field(Date)
     responsavel        = ManyToOne('Morador',     colname = 'id_morador',      required = True)
     tipo               = ManyToOne('TipoDespesa', colname = 'id_tipo_despesa', required = True)
@@ -903,4 +887,4 @@ class DespesaPeriodica(Entity):
     
     def __repr__(self):
         return "<próximo_vencimento:%s, data_termino:%s, quantia:%s, tipo:'%s', responsável:'%s'>" % \
-            (self.proximo_vencimento.strftime('%d/%m/%Y'), (self.data_termino.strftime('%d/%m/%Y') if self.data_termino else ''), self.quantia, self.tipo.nome.encode('utf-8'), self.responsavel.pessoa.nome.encode('utf-8'))
+            (self.proximo_vencimento.strftime('%d/%m/%Y'), (self.data_termino.strftime('%d/%m/%Y') if self.data_termino else ''), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)

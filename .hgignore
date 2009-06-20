@@ -1,0 +1,6 @@
+syntax: glob
+
+*.pyc
+*.e4?
+republicaos/.ropeproject
+.ropeproject

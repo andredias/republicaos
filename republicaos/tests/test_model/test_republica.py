@@ -1,40 +1,39 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from republicaos.model.model import *
-from elixir import *
-from datetime import date, time
+from __future__ import print_function, unicode_literals
+from datetime   import date, time
+from decimal    import Decimal
 from dateutil.relativedelta import relativedelta
-from sqlalchemy import create_engine
-from base import BaseTest
+from republicaos.model import Republica, Fechamento, ContaTelefone, Pessoa, Morador, Telefonema, TelefoneRegistrado
+from republicaos.model import TipoDespesa, DespesaPeriodica, Despesa, PesoQuota, Aluguel
+from republicaos.tests import Session, TestModel
 
 
-
-class TestRepublica(BaseTest):
+class TestRepublica(TestModel):
     def test_criar_fechamento(self):
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 4, 8),
             logradouro = 'R. dos Bobos, nº 0')
         r.criar_fechamento()
        
-        session.commit()
-        
+        Session.commit()
         
         assert len(r.fechamentos) == 1
         assert r.fechamentos[0].data == date(2007, 5, 8)
         
         r.criar_fechamento()
-        session.commit()
+        Session.commit()
         assert len(r.fechamentos) == 2
         assert r.fechamentos[0].data == date(2007, 6, 8)
         
         r.criar_fechamento(data = date(2007, 5, 15))
-        session.commit()
+        Session.commit()
         assert len(r.fechamentos) == 3
         assert r.fechamentos[1].data == date(2007, 5, 15)
         
         r.criar_fechamento(data = date(2007, 7, 10))
-        session.commit()
+        Session.commit()
         assert len(r.fechamentos) == 4
         assert r.fechamentos[0].data == date(2007, 7, 10)
         
@@ -50,27 +49,27 @@ class TestRepublica(BaseTest):
             data_criacao = date(2007, 4, 8),
             logradouro = 'R. dos Bobos, nº 0')
         
-        session.commit()
+        Session.commit()
         
         assert r.fechamento_na_data(date(2007, 4, 8)) is None
         
         
         Fechamento(data = date(2007, 5, 10), republica = r)
-        session.commit()
-        session.clear()
+        Session.commit()
+        Session.expunge_all()
         r = Republica.get_by()
         
         assert r.fechamento_na_data(date(2007, 4, 8))  == r.fechamentos[-1]
         
         Fechamento(data = date(2007, 6, 10), republica = r)
         Fechamento(data = date(2007, 7, 10), republica = r)
-        session.commit()
-        session.clear()
+        Session.commit()
+        Session.expunge_all()
         r = Republica.get_by()
         
-        print '\nrepública = ', r
-        for fechamento in r.fechamentos:
-            print fechamento
+#        print '\nrepública = ', r
+#        for fechamento in r.fechamentos:
+#            print fechamento
         
         assert len(r.fechamentos) == 3
         for i in range(len(r.fechamentos) - 1):
@@ -95,7 +94,7 @@ class TestRepublica(BaseTest):
         c4 = ContaTelefone(telefone = 22, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r2)
         c5 = ContaTelefone(telefone = 22, id_operadora = 1, emissao = date(2007, 5, 10), vencimento = date(2007, 5, 10), republica = r2)
         
-        session.commit()
+        Session.commit()
         
         assert len(r1.contas_telefone(date(2007, 1, 8), date(2007, 4, 28))) == 0
         assert len(r1.contas_telefone(date(2007, 4, 29), date(2007, 5, 29))) == 2
@@ -157,7 +156,7 @@ class TestRepublica(BaseTest):
         m7 = Morador(pessoa = p7, republica = r, data_entrada = date(2007, 2, 1), data_saida = date(2007, 3, 1))
         m8 = Morador(pessoa = p8, republica = r, data_entrada = date(2007, 2, 1), data_saida = date(2007, 3, 10))
         
-        session.commit()
+        Session.commit()
         
         moradores = r.moradores(date(2007, 3, 10), date(2007, 4, 9))
         
@@ -179,13 +178,13 @@ class TestRepublica(BaseTest):
     
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 2, 1))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 20))
-        session.commit()
+        Session.commit()
         
         r.registrar_responsavel_telefone(numero = 111, responsavel = m1)
         r.registrar_responsavel_telefone(numero = 222, responsavel = m2)
         r.registrar_responsavel_telefone(numero = 333, responsavel = m2)
-        session.commit()
-        session.clear()
+        Session.commit()
+        Session.expunge_all()
         
         r  = Republica.get_by(id = 1)
         m1 = Morador.get_by(id_pessoa = 1)
@@ -204,8 +203,8 @@ class TestRepublica(BaseTest):
         r.registrar_responsavel_telefone(numero = 333, responsavel = m1)
         r.registrar_responsavel_telefone(numero = 111, responsavel = None)
         r.registrar_responsavel_telefone(numero = 777, responsavel = None)
-        session.commit()
-        session.clear()
+        Session.commit()
+        Session.expunge_all()
     
         r  = Republica.get_by(id = 1)
         m1 = Morador.get_by(id_pessoa = 1)
@@ -237,19 +236,19 @@ class TestRepublica(BaseTest):
     
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 2, 1))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 20))
-        session.commit()
+        Session.commit()
         
         r.registrar_responsavel_telefone(numero = 111, responsavel = m1)
-        session.commit()
+        Session.commit()
         try:
             r.registrar_responsavel_telefone(numero = 111, responsavel = m1)
         except:
             assert False, 'Erro no registro do mesmo responsável repetidamente'
         
         r.registrar_responsavel_telefone(numero = 777, responsavel = m1)
-        session.commit()
+        Session.commit()
         r.registrar_responsavel_telefone(numero = 777, responsavel = None)
-        session.commit()
+        Session.commit()
         
         assert TelefoneRegistrado.get_by(numero = 777, republica = r) is None
     
@@ -265,12 +264,12 @@ class TestRepublica(BaseTest):
     
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(2007, 2, 1))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2007, 3, 20))
-        session.commit()
+        Session.commit()
         
         r.registrar_responsavel_telefone(numero = 777, responsavel = m1)
-        session.commit()
+        Session.commit()
         r.registrar_responsavel_telefone(numero = 777, responsavel = None)
-        session.commit()
+        Session.commit()
         
         assert TelefoneRegistrado.get_by(numero = 777, republica = r) is None
     
@@ -281,8 +280,8 @@ class TestRepublica(BaseTest):
         Aluguel(valor = Decimal(100), data_cadastro = date(2007, 1, 1), republica = r)
         Aluguel(valor = Decimal(200), data_cadastro = date(2007, 2, 1), republica = r)
         
-        session.commit()
-        session.clear()
+        Session.commit()
+        Session.expunge_all()
         
         r = Republica.get_by()
         

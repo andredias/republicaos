@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from elixir     import *
+from __future__ import unicode_literals
 from datetime   import date, time
-from sqlalchemy import create_engine
-from base       import BaseTest
 from decimal    import Decimal
 from dateutil.relativedelta import relativedelta
-from republicaos.model.model import *
+from republicaos.model import Republica, Fechamento, ContaTelefone, Pessoa, Morador, Telefonema, TelefoneRegistrado
+from republicaos.model import TipoDespesa, DespesaPeriodica, Despesa, PesoQuota
+from republicaos.tests import Session, TestModel
 
-class TestMorador(BaseTest):
+class TestMorador(TestModel):
     def test_qts_dias_morados(self):
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 4, 8),
@@ -17,7 +17,7 @@ class TestMorador(BaseTest):
         p = Pessoa(nome = 'André')
         m = Morador(pessoa = p, republica = r, data_entrada = date(2007, 5, 8), data_saida = date(2007, 6, 10))
         
-        session.flush()
+        Session.commit()
         
         assert m.qtd_dias_morados(date(2007, 4, 8), date(2007, 5, 7)) == 0
         assert m.qtd_dias_morados(date(2007, 5, 8), date(2007, 6, 7)) == 31
@@ -47,7 +47,7 @@ class TestMorador(BaseTest):
         t4 = Telefonema(numero = 2222, conta_telefone = c2, tipo_fone = 1, tipo_distancia = 1, segundos = 300, quantia = 2.5)
         t5 = Telefonema(numero = 7777, conta_telefone = c2, tipo_fone = 1, tipo_distancia = 1, segundos = 60,  quantia = 0.10)
         
-        session.flush()
+        Session.commit()
         
         c1.determinar_responsaveis_telefonemas()
         c2.determinar_responsaveis_telefonemas()
@@ -84,7 +84,7 @@ class TestMorador(BaseTest):
         td3 = TipoDespesa(nome = 'Internet', republica = r)
         self.tipos_despesa = [td1, td2, td3]
         
-        session.flush()
+        Session.commit()
         
     
     def set_despesas(self):
@@ -97,7 +97,7 @@ class TestMorador(BaseTest):
         d3 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = m2)
         self.despesas = [d1, d2, d3]
         
-        session.flush()
+        Session.commit()
     
     
     def test_despesas(self):
@@ -130,7 +130,7 @@ class TestMorador(BaseTest):
         
         self.despesas = [dp1, dp2, dp3]
         
-        session.flush()
+        Session.commit()
         
     def test_despesa_periodica_1(self):
         self.set_despesas_periodicas()
@@ -191,8 +191,8 @@ class TestMorador(BaseTest):
         PesoQuota(morador = m1, peso_quota = Decimal(20), data_cadastro = date(2007, 4, 6))
         PesoQuota(morador = m1, peso_quota = Decimal(15), data_cadastro = date(2007, 5, 6))
         
-        session.flush()
-        session.clear()
+        Session.commit()
+        Session.expunge_all()
         
         m1 = Morador.get_by(data_entrada = date(2007, 1, 1))
         
