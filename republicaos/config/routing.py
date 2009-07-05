@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Routes configuration
 
 The more specific and detailed routes should be defined first so they
@@ -19,6 +20,21 @@ def make_map():
     map.connect('/error/{action}/{id}', controller='error')
 
     # CUSTOM ROUTES HERE
+    
+    # República
+    map.connect('/republicas', controller='republica', action='index', conditions=dict(method=['GET']))
+    map.connect('/republica', controller='republica', action='create', conditions=dict(method=['POST']))
+    map.connect('/republica/nova', controller='republica', action='new', conditions=dict(method=['GET']))
+    map.connect('/republica/{id}', controller='republica', action='show',
+                conditions=dict(method=['GET']), requirements={'id':'\d+'})
+    map.connect('/republica/{id}', controller='republica', action='update', conditions=dict(method=['PUT']),
+                requirements={'id':'\d+'})
+    map.connect('/republica/{id}', controller='republica', action='delete', conditions=dict(method=['DELETE']),
+                requirements={'id':'\d+'})
+    map.connect('/republica/{id}/editar', controller='republica', action='edit', conditions=dict(method=['GET']),
+                requirements={'id':'\d+'})
+
+    
 
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')

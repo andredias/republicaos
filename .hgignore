@@ -4,3 +4,7 @@ syntax: glob
 *.e4?
 republicaos/.ropeproject
 .ropeproject
+*.orig
+data/sessions/
+development.db
+

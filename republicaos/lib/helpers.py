@@ -4,19 +4,16 @@
 Consists of functions to typically be used within templates, but also
 available to Controllers. This module is available to both as 'h'.
 """
-# Import helpers as desired, or define your own, ie:
-# from webhelpers.html.tags import checkbox, password
-from genshi.core import Markup
-from webhelpers import *
-from routes import url_for, redirect_to
-
 # Scaffolding helper imports
-from webhelpers.html.tags import *
-from webhelpers.html import literal
+from pylons import url
 from webhelpers.pylonslib import Flash
-import sqlalchemy.types as types
+from routes import url_for, redirect_to
+import logging
+
+log = logging.getLogger(__name__)
+
 flash = Flash()
-# End of.
+
 def wrap_helpers(localdict):
     """Wrap the helpers for use in Genshi templates"""
     def helper_wrapper(func):

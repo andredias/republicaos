@@ -13,13 +13,36 @@ from republicaos import model as model
 def setup_app(command, conf, vars):
     """Place any commands to setup republicaos here"""
     load_environment(conf.global_conf, conf.local_conf)
+    import datetime
+    import hashlib
     model.metadata.create_all()
-
-    # Initialisation here ... this sort of stuff:
-
-    # some_entity = model.Session.query(model.<modelfile>.<Some_Entity>).get(1)
-    # e.g. foo = model.Session.query(model.identity.User).get(1)
-    # from datetime import datetime
-    # some_entity.poked_on = datetime.now()
-    # model.Session.add(some_entity)
+    gadmin = model.user.Group(
+            name = "Administrators",
+            description = u"Administration group",
+            created = datetime.datetime.utcnow(),
+            active = True)
+    model.Session.add(gadmin)
+    # model.Session.commit()
+    # Check the status
+    g = model.Session.query(
+            model.user.Group).filter_by(
+                name="Administrators").all()
+    assert len(g) == 1
+    assert g[0] == gadmin
+    admin = model.user.User(
+                username = u"admin", 
+                password=hashlib.sha1("admin").hexdigest(),
+                password_check=hashlib.sha1("admin").hexdigest(), 
+                email="admin@example.com",
+                created = datetime.datetime.utcnow(),
+                active = True)
+    model.Session.add(admin)
+    gadmin.users.append(admin)
+    # model.Session.add(gadmin)
     model.Session.commit()
+    # Check the status
+    u = model.Session.query(
+            model.user.User).filter_by(
+                username=u"admin").all()
+    assert len(u) == 1
+    assert u[0] == admin
