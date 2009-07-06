@@ -6,5 +6,4 @@ republicaos/.ropeproject
 .ropeproject
 *.orig
 data/sessions/
-development.db
-
+db/republicaos.db

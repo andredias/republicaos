@@ -22,19 +22,78 @@ def make_map():
     # CUSTOM ROUTES HERE
     
     # República
-    map.connect('/republicas', controller='republica', action='index', conditions=dict(method=['GET']))
-    map.connect('/republica', controller='republica', action='create', conditions=dict(method=['POST']))
-    map.connect('/republica/nova', controller='republica', action='new', conditions=dict(method=['GET']))
-    map.connect('/republica/{id}', controller='republica', action='show',
-                conditions=dict(method=['GET']), requirements={'id':'\d+'})
-    map.connect('/republica/{id}', controller='republica', action='update', conditions=dict(method=['PUT']),
+    map.connect('/republicas',
+                controller='republica',
+                action='index',
+                conditions=dict(method=['GET']))
+    map.connect('/republica',
+                controller='republica',
+                action='create',
+                conditions=dict(method=['POST']))
+    map.connect('/republica/new',
+                controller='republica',
+                action='new') # GET mostra formulário, POST valida formulário
+    map.connect('/republica/{id}',
+                controller='republica',
+                action='show',
+                conditions=dict(method=['GET']),
                 requirements={'id':'\d+'})
-    map.connect('/republica/{id}', controller='republica', action='delete', conditions=dict(method=['DELETE']),
+    map.connect('/republica/{id}',
+                controller='republica',
+                action='update',
+                conditions=dict(method=['PUT']),
                 requirements={'id':'\d+'})
-    map.connect('/republica/{id}/editar', controller='republica', action='edit', conditions=dict(method=['GET']),
+    map.connect('/republica/{id}',
+                controller='republica',
+                action='delete',
+                conditions=dict(method=['DELETE']),
+                requirements={'id':'\d+'})
+    map.connect('/republica/{id}/edit',
+                controller='republica',
+                action='edit',
+                conditions=dict(method=['GET']),
                 requirements={'id':'\d+'})
 
-    
+
+
+    # República
+    map.connect('/republica/{republica_id}/tipos_despesa',
+                controller='tipo_despesa',
+                action='index',
+                conditions=dict(method=['GET']),
+                requirements={'republica_id':'\d+'})
+    map.connect('/republica/{republica_id}/tipo_despesa',
+                controller='tipo_despesa',
+                action='create',
+                conditions=dict(method=['POST']),
+                requirements={'republica_id':'\d+'})
+    map.connect('/republica/{republica_id}/tipo_despesa/nova',
+                controller='tipo_despesa',
+                action='new',
+                conditions=dict(method=['GET']),
+                requirements={'republica_id':'\d+'})
+    map.connect('/republica/{id}',
+                controller='tipo_despesa',
+                action='show',
+                conditions=dict(method=['GET']),
+                requirements={'republica_id':'\d+', 'id':'\d+'})
+    map.connect('/republica/{republica_id}/tipo_despesa/{id}',
+                controller='tipo_despesa',
+                action='update',
+                conditions=dict(method=['PUT']),
+                requirements={'republica_id':'\d+', 'id':'\d+'})
+    map.connect('/republica/{republica_id}/tipo_despesa/{id}',
+                controller='tipo_despesa',
+                action='delete',
+                conditions=dict(method=['DELETE']),
+                requirements={'republica_id':'\d+', 'id':'\d+'})
+    map.connect('/republica/{republica_id}/tipo_despesa/{id}/editar',
+                controller='tipo_despesa',
+                action='edit',
+                conditions=dict(method=['GET']),
+                requirements={'republica_id':'\d+', 'id':'\d+'})
+
+
 
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
