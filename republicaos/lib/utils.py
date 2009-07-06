@@ -117,16 +117,17 @@ def validate2(schema):
 
 def validate(schema):
     def _validate(func, self, *args, **kwargs):
-        c.errors = {}
-        c.canceled = 'cancel' in request.params
-        #raise Exception()
-        if not c.canceled:
-            # validate data
-            data = request.params.copy()
-            try:
-                c.valid_data = schema.to_python(data)
-            except formencode.Invalid, e:
-                c.errors = e.unpack_errors()
+        if request.method.lower() in ['post', 'put']:
+            c.errors = {}
+            c.canceled = 'cancel' in request.params
+            #raise Exception()
+            if not c.canceled:
+                # validate data
+                data = request.params.copy()
+                try:
+                    c.valid_data = schema.to_python(data)
+                except formencode.Invalid, e:
+                    c.errors = e.unpack_errors()
         return func(self, *args, **kwargs)
-    
+        
     return decorator(_validate)
