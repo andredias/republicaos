@@ -50,7 +50,7 @@ class RepublicaController(BaseController):
     def new(self, format='html'):
         """GET /republica/new: Form to create a new item"""
         if c.canceled:
-            redirect_to(controller='republicas', action='index')
+            redirect_to(controller='republica', action='index')
         elif c.valid_data:
             republica = self.create()
             # TODO: flash indicando que foi adicionado
@@ -59,7 +59,7 @@ class RepublicaController(BaseController):
             redirect_to(controller='republica', action='show', id=republica.id)
         c.action = url_for(controller='republica', action='new')
         c.title  = 'Nova República'
-        return render('republica/form.html')
+        return render('republica/form.html', filler_data=request.params)
 
 
     @validate(RepublicaSchema) # pra garantir
@@ -76,10 +76,15 @@ class RepublicaController(BaseController):
     @validate(RepublicaSchema)
     def edit(self, id, format='html'):
         """GET /republica/id/edit: Form to edit an existing item"""
-        r = get_object_or_404(Republica, id = int(id))
+        if c.canceled:
+            redirect_to(controller='republica', action='index')
+        elif not c.errors:
+            filler_data = get_object_or_404(Republica, id = int(id)).to_dict()
+        else:
+            filler_data = request.params
         c.action = url_for(controller='republica', action='update', id=id)
         c.title = 'Editar Dados da República'
-        return render('republica/form.html', filler_data = r.to_dict())
+        return render('republica/form.html', filler_data = filler_data)
 
 
     def delete(self, id):

@@ -32,7 +32,8 @@ def make_map():
                 conditions=dict(method=['POST']))
     map.connect('/republica/new',
                 controller='republica',
-                action='new') # GET mostra formulário, POST valida formulário
+                action='new',
+                conditions=dict(method=['GET', 'POST'])) # GET mostra formulário, POST valida formulário
     map.connect('/republica/{id}',
                 controller='republica',
                 action='show',
@@ -51,7 +52,7 @@ def make_map():
     map.connect('/republica/{id}/edit',
                 controller='republica',
                 action='edit',
-                conditions=dict(method=['GET']),
+                conditions=dict(method=['GET', 'POST']),
                 requirements={'id':'\d+'})
 
 
