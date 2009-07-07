@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<xi:include href="../layout.html" />
+
+<head>
+    <title>Repúblicas Cadastradas</title>
+</head>
+
+<body>
+    <h1>Repúblicas Cadastradas</h1>
+    <ul>
+        <li py:for="republica in c.republicas">
+            <a href="${h.url_for(controller='republica', action='show', id=republica.id)}">${republica.nome}</a>
+        </li>
+    </ul>
+    <p><a href="${h.url_for(controller='republica', action='new')}">Criar nova república</a></p>
+</body>
+
+</html>

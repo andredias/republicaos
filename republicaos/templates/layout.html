@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+
+<head py:match="head" py:attrs="select('@*')">
+    <title py:with="title = list(select('title/text()'))">
+        Republicaos: <py:if test="title">${title}</py:if>
+    </title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="${url('/layout.css')}" type="text/css" />
+    <!-- !
+    # Se for acesso local, usar uma versão local do jquery. Caso contrário, usar o google.
+    # Evitaria demora para carregar a página em caso de testes locais
+    <script src="http://www.google.com/jsapi"></script>
+    <script>
+      // Load latest jQuery
+      google.load("jquery", "1");
+    </script>
+    -->
+    ${select('*[local-name()!="title"]')}
+</head>
+
+
+<body py:match="body" py:attrs="select('@*')">
+    <div id="header">
+        <a href="/"><img src="${url('/logo.gif')}" width="201" height="79" alt="republicaos" /></a> 
+    </div>
+    
+    <div id="content">
+        ${select('*|text()')}
+    </div>
+
+    <div id="footer">
+        <p>&copy; <a href="http://www.pronus.eng.br/">Pronus Engenharia de Software</a></p>
+    </div>
+</body>
+
+</html>

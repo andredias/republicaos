@@ -26,34 +26,27 @@ def make_map():
                 controller='republica',
                 action='index',
                 conditions=dict(method=['GET']))
+    
     map.connect('/republica',
                 controller='republica',
                 action='create',
                 conditions=dict(method=['POST']))
-    map.connect('/republica/new',
-                controller='republica',
-                action='new',
-                conditions=dict(method=['GET', 'POST'])) # GET mostra formulário, POST valida formulário
     map.connect('/republica/{id}',
                 controller='republica',
-                action='show',
-                conditions=dict(method=['GET']),
+                action='rest_dispatcher',
                 requirements={'id':'\d+'})
-    map.connect('/republica/{id}',
-                controller='republica',
-                action='update',
-                conditions=dict(method=['PUT']),
-                requirements={'id':'\d+'})
-    map.connect('/republica/{id}',
-                controller='republica',
-                action='delete',
-                conditions=dict(method=['DELETE']),
-                requirements={'id':'\d+'})
-    map.connect('/republica/{id}/edit',
-                controller='republica',
-                action='edit',
-                conditions=dict(method=['GET', 'POST']),
-                requirements={'id':'\d+'})
+    
+#    map.connect('/republica/{id}',
+#                controller='republica',
+#                action='update',
+#                conditions=dict(method=['PUT']),
+#                requirements={'id':'\d+'})
+#    map.connect('/republica/{id}',
+#                controller='republica',
+#                action='delete',
+#                conditions=dict(method=['DELETE']),
+#                requirements={'id':'\d+'})
+
 
 
 
@@ -97,6 +90,7 @@ def make_map():
 
 
     map.connect('/{controller}/{action}')
-    map.connect('/{controller}/{action}/{id}')
+    map.connect('/{controller}/{action}/{id}',
+                requirements={'id':'\d+'})
 
     return map
