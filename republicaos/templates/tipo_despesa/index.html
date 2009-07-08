@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<xi:include href="../layout.html" />
+
+<head>
+    <title>Tipos de Despesas Cadastrados</title>
+</head>
+
+<body>
+    <h1>Tipos de Despesas Cadastrados</h1>
+    <ul>
+        <li py:for="tp in c.tipos_despesa">
+            <a href="${h.url_for(controller='tipo_despesa', action='show', republica_id=c.republica.id,
+                    id=tp.id)}">${tp.nome}</a>
+        </li>
+    </ul>
+    <p><a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}">
+    Criar novo tipo de despesa</a></p>
+</body>
+
+</html>

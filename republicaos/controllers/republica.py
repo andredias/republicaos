@@ -30,6 +30,10 @@ class RepublicaSchema(Schema):
 
 class RepublicaController(BaseController):
     """REST Controller styled on the Atom Publishing Protocol"""
+    
+    def __before__(self, id=None):
+        if id:
+            c.republica = get_object_or_404(Republica, id = id)
 
     @dispatch_on(GET='get', POST='create', PUT='update', DELETE='delete')
     def rest_dispatcher(self, id):
@@ -39,8 +43,7 @@ class RepublicaController(BaseController):
 
     @restrict("GET")
     def get(self, id):
-        r = get_object_or_404(Republica, id = int(id))
-        return r.to_dict()
+        return c.republica.to_dict()
 
     @restrict("POST")
     @validate(RepublicaSchema) # pra garantir
@@ -50,8 +53,9 @@ class RepublicaController(BaseController):
             abort(406)
         r = Republica(**c.valid_data)
         Session.commit()
-        # TODO: estudar melhor qual vai ser o retorno dessa função. Analisar o header pra saber json, xml etc.
-        return r
+        # TODO: precisa retornar código 201 - Created
+        response.status = "201 Created"
+        return url_for(controller='republica', id=r.id)
 
     @restrict("PUT")
     @validate(RepublicaSchema) # pra garantir
@@ -59,16 +63,15 @@ class RepublicaController(BaseController):
         """PUT /republica/id: Update an existing item"""
         if not c.valid_data:
            abort(406)
-        r = get_object_or_404(Republica, id = int(id))
-        r.from_dict(c.valid_data)
+        c.republica.from_dict(c.valid_data)
         Session.commit()
-        # TODO: estudar melhor qual vai ser o retorno dessa função. Analisar o header pra saber json, xml etc.
-        return r
+        return
 
     @restrict("DELETE")
     def delete(self, id):
         """DELETE /republica/id: Delete an existing item"""
         abort(403)
+        # se fosse permitido apagar, deveria retornar status 200 OK
 
     # Demais métodos relacionados à formulários
     
@@ -81,9 +84,7 @@ class RepublicaController(BaseController):
     @validate(RepublicaSchema)
     def new(self, format='html'):
         """GET /republica/new: Form to create a new item"""
-        if c.canceled:
-            redirect_to(controller='republica', action='index')
-        elif c.valid_data:
+        if c.valid_data:
             republica = self.create()
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
@@ -98,17 +99,16 @@ class RepublicaController(BaseController):
 
     @validate(RepublicaSchema)
     def edit(self, id, format='html'):
+        """GET /republica/edit/id: Edit a specific item"""
         if c.valid_data:
             request.method = 'PUT'
             self.update(id)
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            c.canceled = True # força o redirecionamento a seguir
-        if c.canceled:
             redirect_to(controller='republica', action='show', id=id)
         elif not c.errors:
-            filler_data = get_object_or_404(Republica, id = int(id)).to_dict()
+            filler_data = c.republica.to_dict()
         else:
             filler_data = request.params
         c.action = url_for(controller='republica', action='edit', id=id)
@@ -117,8 +117,6 @@ class RepublicaController(BaseController):
 
 
     def show(self, id, format='html'):
-        """GET /republica/id: Show a specific item"""
-        r = get_object_or_404(Republica, id = int(id))
+        """GET /republica/show/id: Show a specific item"""
         c.title = 'República'
-        return render('republica/form.html', filler_data = r.to_dict())
-
+        return render('republica/form.html', filler_data = c.republica.to_dict())

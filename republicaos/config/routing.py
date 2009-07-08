@@ -11,7 +11,8 @@ from routes import Mapper
 def make_map():
     """Create, configure and return the routes Mapper"""
     map = Mapper(directory=config['pylons.paths']['controllers'],
-                 always_scan=config['debug'])
+                 always_scan=config['debug'],
+                 explicit=True) # veja http://pylonsbook.com/en/1.0/urls-routing-and-dispatch.html#route-memory)
     map.minimization = False
 
     # The ErrorController route (handles 404/500 error pages); it should
@@ -21,7 +22,9 @@ def make_map():
 
     # CUSTOM ROUTES HERE
     
+    #
     # República
+    #
     map.connect('/republicas',
                 controller='republica',
                 action='index',
@@ -35,62 +38,36 @@ def make_map():
                 controller='republica',
                 action='rest_dispatcher',
                 requirements={'id':'\d+'})
-    
-#    map.connect('/republica/{id}',
-#                controller='republica',
-#                action='update',
-#                conditions=dict(method=['PUT']),
-#                requirements={'id':'\d+'})
-#    map.connect('/republica/{id}',
-#                controller='republica',
-#                action='delete',
-#                conditions=dict(method=['DELETE']),
-#                requirements={'id':'\d+'})
 
 
 
-
-    # República
+    #
+    # Tipo de Despesa
+    #
     map.connect('/republica/{republica_id}/tipos_despesa',
                 controller='tipo_despesa',
                 action='index',
-                conditions=dict(method=['GET']),
-                requirements={'republica_id':'\d+'})
+                requirements={'republica_id':'\d+'},
+                conditions=dict(method=['GET']))
+    
     map.connect('/republica/{republica_id}/tipo_despesa',
                 controller='tipo_despesa',
                 action='create',
-                conditions=dict(method=['POST']),
-                requirements={'republica_id':'\d+'})
-    map.connect('/republica/{republica_id}/tipo_despesa/nova',
-                controller='tipo_despesa',
-                action='new',
-                conditions=dict(method=['GET']),
-                requirements={'republica_id':'\d+'})
-    map.connect('/republica/{id}',
-                controller='tipo_despesa',
-                action='show',
-                conditions=dict(method=['GET']),
-                requirements={'republica_id':'\d+', 'id':'\d+'})
+                conditions=dict(method=['POST']))
+    
     map.connect('/republica/{republica_id}/tipo_despesa/{id}',
                 controller='tipo_despesa',
-                action='update',
-                conditions=dict(method=['PUT']),
+                action='rest_dispatcher',
                 requirements={'republica_id':'\d+', 'id':'\d+'})
-    map.connect('/republica/{republica_id}/tipo_despesa/{id}',
+    
+    map.connect('/republica/{republica_id}/tipo_despesa/{action}',
+                controller='tipo_despesa')
+    map.connect('/republica/{republica_id}/tipo_despesa/{action}/{id}',
                 controller='tipo_despesa',
-                action='delete',
-                conditions=dict(method=['DELETE']),
                 requirements={'republica_id':'\d+', 'id':'\d+'})
-    map.connect('/republica/{republica_id}/tipo_despesa/{id}/editar',
-                controller='tipo_despesa',
-                action='edit',
-                conditions=dict(method=['GET']),
-                requirements={'republica_id':'\d+', 'id':'\d+'})
-
 
 
     map.connect('/{controller}/{action}')
-    map.connect('/{controller}/{action}/{id}',
-                requirements={'id':'\d+'})
+    map.connect('/{controller}/{action}/{id}', requirements={'id':'\d+'})
 
     return map
