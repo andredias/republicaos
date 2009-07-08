@@ -13,12 +13,14 @@
     <!-- !
     # Se for acesso local, usar uma versão local do jquery. Caso contrário, usar o google.
     # Evitaria demora para carregar a página em caso de testes locais
+    # veja http://code.google.com/intl/pt-BR/apis/ajaxlibs/documentation/
     <script src="http://www.google.com/jsapi"></script>
     <script>
       // Load latest jQuery
       google.load("jquery", "1");
     </script>
     -->
+    <script src="/jquery/1.3.1/jquery.min.js" type="text/javascript"></script>
     ${select('*[local-name()!="title"]')}
 </head>
 
