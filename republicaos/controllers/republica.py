@@ -35,15 +35,20 @@ class RepublicaController(BaseController):
         if id:
             c.republica = get_object_or_404(Republica, id = id)
 
-    @dispatch_on(GET='get', POST='create', PUT='update', DELETE='delete')
-    def rest_dispatcher(self, id):
-        abort(404)
+    @dispatch_on(GET='list', POST='create')
+    def rest_dispatcher_collection(self):
+        abort(406)
+
+    @dispatch_on(GET='retrieve', PUT='update', DELETE='delete')
+    def rest_dispatcher_single(self, id):
+        abort(406)
 
     # Métodos REST. A idéia é que não usem interface alguma. Equivalem a get/set de objetos
+    # CRUD - Create | Retrieve | Update | Delete
 
     @restrict("GET")
-    def get(self, id):
-        return c.republica.to_dict()
+    def list(self):
+        pass
 
     @restrict("POST")
     @validate(RepublicaSchema) # pra garantir
@@ -56,6 +61,10 @@ class RepublicaController(BaseController):
         # TODO: precisa retornar código 201 - Created
         response.status = "201 Created"
         return url_for(controller='republica', id=r.id)
+
+    @restrict("GET")
+    def retrieve(self, id):
+        return c.republica.to_dict()
 
     @restrict("PUT")
     @validate(RepublicaSchema) # pra garantir
@@ -76,7 +85,7 @@ class RepublicaController(BaseController):
     # Demais métodos relacionados à formulários
     
     def index(self, format='html'):
-        """GET /republicas: All items in the collection"""
+        """GET /republica: All items in the collection"""
         c.republicas = Republica.query.order_by(Republica.nome).all()
         return render('republica/index.html')
 

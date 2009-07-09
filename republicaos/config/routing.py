@@ -25,40 +25,32 @@ def make_map():
     #
     # República
     #
-    map.connect('/republicas',
-                controller='republica',
-                action='index',
-                conditions=dict(method=['GET']))
-    
     map.connect('/republica',
                 controller='republica',
-                action='create',
-                conditions=dict(method=['POST']))
+                action='rest_dispatcher_collection',
+                conditions=dict(method=['GET', 'POST']))
     map.connect('/republica/{id}',
                 controller='republica',
-                action='rest_dispatcher',
-                requirements={'id':'\d+'})
+                action='rest_dispatcher_single',
+                requirements={'id':'\d+'},
+                conditions=dict(method=['GET', 'PUT', 'DELETE']))
 
 
 
     #
     # Tipo de Despesa
     #
-    map.connect('/republica/{republica_id}/tipos_despesa',
-                controller='tipo_despesa',
-                action='index',
-                requirements={'republica_id':'\d+'},
-                conditions=dict(method=['GET']))
-    
     map.connect('/republica/{republica_id}/tipo_despesa',
                 controller='tipo_despesa',
-                action='create',
-                conditions=dict(method=['POST']))
+                action='rest_dispatcher_collection',
+                requirements={'republica_id':'\d+'},
+                conditions=dict(method=['GET', 'POST']))
     
     map.connect('/republica/{republica_id}/tipo_despesa/{id}',
                 controller='tipo_despesa',
-                action='rest_dispatcher',
-                requirements={'republica_id':'\d+', 'id':'\d+'})
+                action='rest_dispatcher_single',
+                requirements={'republica_id':'\d+', 'id':'\d+'},
+                conditions=dict(method=['GET', 'PUT', 'DELETE']))
     
     map.connect('/republica/{republica_id}/tipo_despesa/{action}',
                 controller='tipo_despesa')

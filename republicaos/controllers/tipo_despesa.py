@@ -30,15 +30,20 @@ class TipoDespesaController(BaseController):
             c.tipo_despesa = get_object_or_404(TipoDespesa, id=id, republica_id=republica_id)
 
 
-    @dispatch_on(GET='get', POST='create', PUT='update', DELETE='delete')
-    def rest_dispatcher(self, id):
-        abort(404)
+    @dispatch_on(GET='list', POST='create')
+    def rest_dispatcher_collection(self):
+        abort(406)
+
+    @dispatch_on(GET='retrieve', PUT='update', DELETE='delete')
+    def rest_dispatcher_single(self, id):
+        abort(406)
+
 
     # Métodos REST. A idéia é que não usem interface alguma. Equivalem a get/set de objetos
 
     @restrict("GET")
-    def get(self, id):
-        return c.tipo_despesa.to_dict()
+    def list(self):
+        pass
 
     @restrict("POST")
     @validate(TipoDespesaSchema) # pra garantir
@@ -51,6 +56,10 @@ class TipoDespesaController(BaseController):
         Session.commit()
         response.status = "201 Created"
         return
+
+    @restrict("GET")
+    def retrieve(self, id):
+        return c.tipo_despesa.to_dict()
 
     @restrict("PUT")
     @validate(TipoDespesaSchema) # pra garantir
