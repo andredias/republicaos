@@ -79,7 +79,7 @@ class TestDividirContaTelefone(TestModel):
         
         self.c = ContaTelefone(
                 telefone = 2409,
-                id_operadora = 1,
+                operadora_id = 1,
                 emissao = date(2007, 4, 29),
                 vencimento = date(2007, 5, 2),
                 franquia = Decimal(30),
@@ -476,4 +476,3 @@ class TestDividirContaTelefone(TestModel):
          1  |  1  |  1  |  1  | 1
         '''
         self.executa_caso_xyz(servicos = 1, tel_ex_morador = 1, tel_sem_dono = 1, qtd_dias_diferentes = 1, ultrapassa_franquia = 1)
-

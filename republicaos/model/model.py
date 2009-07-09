@@ -25,41 +25,11 @@ class ModelIntegrityException(Exception):
 
 
 class Pessoa(Entity):
-    nome     = Field(Unicode(80), required = True, unique = True)
-    contatos = OneToMany('Contato', order_by = 'contato')
-    using_options(order_by = 'nome')
-    
-    def get_emails():
-        pass
-    
-    def get_telefones_contato():
-        pass
-    
-    def __repr__(self):
-        return "<nome:'%s'>" % self.nome
-
-
-
-
-
-
-
-
-
-class Contato(Entity):
-    contato = Field(Unicode(100), required = True)
-    pessoa  = ManyToOne('Pessoa', colname = 'id_pessoa', required = True)
-    
-    def __repr__(self):
-        return '<contato:%s, pessoa:%s>' % (self.contato, self.pessoa.nome)
-
-
-
-
-
-
-
-
+    nome = Field(Unicode(30), unique=True) # undocumented
+    senha = Field(String(40)) # undocumented
+    e_mail = Field(String(255), unique=True) # undocumented
+    contato = Field(Unicode)
+    criacao = Field(DateTime) # undocumented
 
 
 class TelefoneRegistrado(Entity):
@@ -71,8 +41,8 @@ class TelefoneRegistrado(Entity):
     '''
     numero      = Field(Numeric(12, 0), primary_key = True)
     descricao   = Field(Unicode)
-    republica   = ManyToOne('Republica', colname = 'id_republica', primary_key = True)
-    responsavel = ManyToOne('Morador', colname = 'id_morador', required = True)
+    republica   = ManyToOne('Republica', primary_key = True)
+    responsavel = ManyToOne('Morador', required = True)
     using_options(tablename = 'telefone')
     
     def __repr__(self):
@@ -135,7 +105,7 @@ class Republica(Entity):
         '''
         moradores =  Morador.query.filter(
                         and_(
-                            Morador.id_republica == self.id,
+                            Morador.republica_id == self.id,
                             Morador.data_entrada < data_final,
                             or_(Morador.data_saida >= data_inicial, Morador.data_saida == None)
                         )
@@ -150,7 +120,7 @@ class Republica(Entity):
         '''
         return ContaTelefone.query.filter(
                     and_(
-                        ContaTelefone.id_republica == self.id,
+                        ContaTelefone.republica_id == self.id,
                         ContaTelefone.emissao >= data_inicial,
                         ContaTelefone.emissao <= data_final
                     )
@@ -191,14 +161,14 @@ class Republica(Entity):
 class Aluguel(Entity):
     valor = Field(Numeric(10, 2), required = True)
     data_cadastro = Field(Date, primary_key = True)
-    republica = ManyToOne('Republica',  colname = 'id_republica', primary_key = True)
+    republica = ManyToOne('Republica', primary_key = True)
 
 
 
 class PesoQuota(Entity):
     peso_quota    = Field(Numeric(10,2), required = True)
     data_cadastro = Field(Date, primary_key = True)
-    morador       = ManyToOne('Morador', colname = 'id_morador', primary_key = True)
+    morador       = ManyToOne('Morador', primary_key = True)
     using_options(tablename = 'peso_quota')
     
     def __repr__(self):
@@ -242,7 +212,7 @@ class Intervalo(object):
     
 class Fechamento(Entity):
     data      = Field(Date, primary_key = True)
-    republica = ManyToOne('Republica', colname = 'id_republica', primary_key = True)
+    republica = ManyToOne('Republica', primary_key = True)
     
     def __repr__(self):
         return "<fechamento:%s [%s, %s], república:'%s'>" % \
@@ -357,8 +327,8 @@ class Fechamento(Entity):
         if not hasattr(self, '_despesas'):
             self._despesas = Despesa.query.filter(
                     and_(
-                        Morador.id_republica == self.republica.id,
-                        Morador.id           == Despesa.id_morador,
+                        Morador.republica_id == self.republica.id,
+                        Morador.id           == Despesa.responsavel_id,
                         Despesa.data         >= self.data_inicial,
                         Despesa.data         <= self.data_final
                         )).order_by(Despesa.data).all()
@@ -560,14 +530,14 @@ class ContaTelefone(Entity):
     Representa cada conta de telefone que chega por mês para a república.
     '''
     # campo id implícito
-    vencimento   = Field(Date, required = True)
-    emissao      = Field(Date, required = True)
-    telefone     = Field(Numeric(12, 0), required = True)
-    id_operadora = Field(Integer, required = True)
-    franquia     = Field(Numeric(10,2), default = 0)
-    servicos     = Field(Numeric(10,2), default = 0)
-    republica    = ManyToOne('Republica', colname = 'id_republica', required = True)
-    telefonemas  = OneToMany('Telefonema', order_by = 'numero')
+    vencimento = Field(Date, required = True)
+    emissao = Field(Date, required = True)
+    telefone = Field(Numeric(12, 0), required = True)
+    operadora_id = Field(Integer, required = True)
+    franquia = Field(Numeric(10,2), default = 0)
+    servicos = Field(Numeric(10,2), default = 0)
+    republica = ManyToOne('Republica', required = True)
+    telefonemas = OneToMany('Telefonema', order_by = 'numero')
     
     using_options(tablename = 'conta_telefone')
     using_table_options(UniqueConstraint('telefone', 'emissao'))
@@ -665,7 +635,7 @@ class ContaTelefone(Entity):
         o do arquivo importado
         '''
         
-        if self.id_operadora == 1:
+        if self.operadora_id == 1:
             func_interpreta_csv = self._interpreta_csv_net_fone
         else:
             func_interpreta_csv = None
@@ -685,7 +655,7 @@ class ContaTelefone(Entity):
                 self.servicos += encargos
         
         # antes de registrar os novos telefonemas, é necessário apagar os anteriores do mesmo mês
-        Telefonema.table.delete(Telefonema.id_conta_telefone == self.id).execute()
+        Telefonema.table.delete(Telefonema.conta_telefone_id == self.id).execute()
         
         # registra os novos telefonemas
         for numero, atributos in telefonemas.iteritems():
@@ -748,8 +718,8 @@ class Telefonema(Entity):
     tipo_distancia = Field(Integer,        required = True) # Local, DDD, DDI
     segundos       = Field(Integer,        required = True)
     quantia        = Field(Numeric(10, 2),   required = True)
-    responsavel    = ManyToOne('Morador',       colname = 'id_morador')
-    conta_telefone = ManyToOne('ContaTelefone', colname = 'id_conta_telefone', ondelete = 'cascade', primary_key = True)
+    responsavel    = ManyToOne('Morador')
+    conta_telefone = ManyToOne('ContaTelefone', ondelete = 'cascade', primary_key = True)
     
     def __repr__(self):
         return "<número:%d, quantia:%s, segundos:%s, responsável:'%s'>" % \
@@ -758,14 +728,14 @@ class Telefonema(Entity):
 
 class Morador(Entity):
     data_entrada = Field(Date, default = date.today, required = True)
-    data_saida   = Field(Date)
+    data_saida = Field(Date)
     despesas_periodicas = OneToMany('DespesaPeriodica', order_by = 'proximo_vencimento')
     telefones_sob_responsabilidade = OneToMany('TelefoneRegistrado')
-    republica    = ManyToOne('Republica', colname = 'id_republica', required = True)
-    pessoa       = ManyToOne('Pessoa',    colname = 'id_pessoa', required = True)
-    pesos_quota  = OneToMany('PesoQuota', order_by = '-data_cadastro')
+    republica = ManyToOne('Republica', required = True)
+    pessoa = ManyToOne('Pessoa', required = True)
+    pesos_quota = OneToMany('PesoQuota', order_by = '-data_cadastro')
     
-    using_table_options(UniqueConstraint('id_pessoa', 'id_republica', 'data_entrada'))
+    using_table_options(UniqueConstraint('pessoa_id', 'republica_id'))
     
     def __repr__(self):
         return "<pessoa:'%s', república:'%s', data_entrada:%s>" % \
@@ -775,7 +745,7 @@ class Morador(Entity):
     def _get_despesas(self, data_inicial, data_final):
         return Despesa.query.filter(
                     and_(
-                        Despesa.id_morador == self.id,
+                        Despesa.responsavel_id == self.id,
                         Despesa.data       >= data_inicial,
                         Despesa.data       <= data_final
                         )
@@ -814,8 +784,8 @@ class Morador(Entity):
             return None
         return Telefonema.query.filter(
                     and_(
-                        Telefonema.id_conta_telefone == conta_telefone.id,
-                        Telefonema.id_morador == self.id
+                        Telefonema.conta_telefone_id == conta_telefone.id,
+                        Telefonema.responsavel_id == self.id
                         )
                     ).order_by(Telefonema.numero).all()
     
@@ -829,7 +799,6 @@ class Morador(Entity):
     
     def peso_quota(self, data):
         '''Qual o peso_quota do morador em uma determinada data'''
-        
         for peso_quota in self.pesos_quota:
             if peso_quota.data_cadastro <= data:
                 return peso_quota.peso_quota
@@ -841,7 +810,7 @@ class Morador(Entity):
                         [func.count('*')],
                         from_obj = [Morador.table],
                         whereclause = and_(
-                            Morador.id_republica == self.id_republica,
+                            Morador.republica_id == self.republica_id,
                             Morador.data_entrada <= data,
                             or_(Morador.data_saida >= data, Morador.data_saida == None)
                             )
@@ -866,10 +835,10 @@ class TipoDespesa(Entity):
 
 
 class Despesa(Entity):
-    data        = Field(Date, default = date.today, required = True)
-    quantia     = Field(Numeric(10, 2), required = True)
-    responsavel = ManyToOne('Morador',     colname = 'id_morador',      required = True)
-    tipo        = ManyToOne('TipoDespesa', colname = 'id_tipo_despesa', required = True)
+    data = Field(Date, default = date.today, required = True)
+    quantia = Field(Numeric(10, 2),    required = True)
+    responsavel = ManyToOne('Morador',     required = True)
+    tipo = ManyToOne('TipoDespesa', required = True)
     
     def __repr__(self):
         return '<data:%s, quantia:%s, tipo:%s, responsável:%s>' % \
@@ -878,10 +847,10 @@ class Despesa(Entity):
 
 class DespesaPeriodica(Entity):
     proximo_vencimento = Field(Date, default = date.today, required = True)
-    quantia            = Field(Numeric(10,2), required = True)
+    quantia = Field(Numeric(10,2), required = True)
     data_termino       = Field(Date)
-    responsavel        = ManyToOne('Morador',     colname = 'id_morador',      required = True)
-    tipo               = ManyToOne('TipoDespesa', colname = 'id_tipo_despesa', required = True)
+    responsavel = ManyToOne('Morador',     required = True)
+    tipo = ManyToOne('TipoDespesa', required = True)
     
     using_options(tablename = 'despesa_periodica')
     

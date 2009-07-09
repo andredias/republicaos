@@ -19,7 +19,7 @@ class BaseBancoDeDados(BaseTest):
 		
 		c = ContaTelefone(
 				telefone = 1111,
-				id_operadora = 1,
+				operadora_id = 1,
 				emissao = date(2007, 4, 29),
 				vencimento = date(2007, 5, 10),
 				republica = r,

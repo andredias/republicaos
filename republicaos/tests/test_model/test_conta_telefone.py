@@ -20,7 +20,7 @@ class TestContaTelefone(TestModel):
         
         c = ContaTelefone(
                 telefone = 2409,
-                id_operadora = 1,
+                operadora_id = 1,
                 emissao = date(2007, 5, 18),
                 vencimento = date(2007, 6, 10),
                 franquia = Decimal(30),
@@ -67,7 +67,7 @@ class TestContaTelefone(TestModel):
         r2.registrar_responsavel_telefone(numero = 777, responsavel = m3)
         
         
-        c = ContaTelefone(telefone = 1111, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r)
+        c = ContaTelefone(telefone = 1111, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r)
         
         t1 = Telefonema(
                 numero = 1234,
@@ -137,7 +137,7 @@ class TestContaTelefone(TestModel):
         r.registrar_responsavel_telefone(numero = 3333, responsavel = m2)
         r.registrar_responsavel_telefone(numero = 9999, responsavel = m3)
         
-        c = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
+        c = ContaTelefone(telefone = 2409, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
         
         Session.commit()
         
@@ -208,7 +208,7 @@ class TestContaTelefone(TestModel):
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
         m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
         
-        c = ContaTelefone(telefone = 2409, id_operadora = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 10), republica = r)
+        c = ContaTelefone(telefone = 2409, operadora_id = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 10), republica = r)
         c.franquia = Decimal('34.93')
         
         c.importar_csv(arq)

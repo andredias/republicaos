@@ -88,11 +88,11 @@ class TestRepublica(TestModel):
         r1 = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
         r2 = Republica(nome = 'Teste2', data_criacao = date(2007, 5, 8), logradouro = 'R. dos Bobos, nº 1')
         
-        c1 = ContaTelefone(telefone = 11, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r1)
-        c2 = ContaTelefone(telefone = 11, id_operadora = 2, emissao = date(2007, 5, 29), vencimento = date(2007, 5, 10), republica = r1)
-        c3 = ContaTelefone(telefone = 11, id_operadora = 2, emissao = date(2007, 6, 21), vencimento = date(2007, 5, 10), republica = r1)
-        c4 = ContaTelefone(telefone = 22, id_operadora = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r2)
-        c5 = ContaTelefone(telefone = 22, id_operadora = 1, emissao = date(2007, 5, 10), vencimento = date(2007, 5, 10), republica = r2)
+        c1 = ContaTelefone(telefone = 11, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r1)
+        c2 = ContaTelefone(telefone = 11, operadora_id = 2, emissao = date(2007, 5, 29), vencimento = date(2007, 5, 10), republica = r1)
+        c3 = ContaTelefone(telefone = 11, operadora_id = 2, emissao = date(2007, 6, 21), vencimento = date(2007, 5, 10), republica = r1)
+        c4 = ContaTelefone(telefone = 22, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r2)
+        c5 = ContaTelefone(telefone = 22, operadora_id = 1, emissao = date(2007, 5, 10), vencimento = date(2007, 5, 10), republica = r2)
         
         Session.commit()
         
@@ -187,8 +187,8 @@ class TestRepublica(TestModel):
         Session.expunge_all()
         
         r  = Republica.get_by(id = 1)
-        m1 = Morador.get_by(id_pessoa = 1)
-        m2 = Morador.get_by(id_pessoa = 2)
+        m1 = Morador.get_by(pessoa_id = 1)
+        m2 = Morador.get_by(pessoa_id = 2)
         t1 = TelefoneRegistrado.get_by(numero = 111, republica = r)
         t2 = TelefoneRegistrado.get_by(numero = 222, republica = r)
         t3 = TelefoneRegistrado.get_by(numero = 333, republica = r)
@@ -207,8 +207,8 @@ class TestRepublica(TestModel):
         Session.expunge_all()
     
         r  = Republica.get_by(id = 1)
-        m1 = Morador.get_by(id_pessoa = 1)
-        m2 = Morador.get_by(id_pessoa = 2)
+        m1 = Morador.get_by(pessoa_id = 1)
+        m2 = Morador.get_by(pessoa_id = 2)
         t1 = TelefoneRegistrado.get_by(numero = 111, republica = r)
         t2 = TelefoneRegistrado.get_by(numero = 222, republica = r)
         t3 = TelefoneRegistrado.get_by(numero = 333, republica = r)
@@ -290,4 +290,3 @@ class TestRepublica(TestModel):
         assert r.aluguel(date(2007, 1, 15)) == Decimal(100)
         assert r.aluguel(date(2007, 2, 1))  == Decimal(200)
         assert r.aluguel(date(2007, 3, 1))  == Decimal(200)
-

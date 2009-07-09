@@ -30,7 +30,7 @@ class TestFechamento(TestModel):
         
         self.c = ContaTelefone(
                 telefone = 2409,
-                id_operadora = 1,
+                operadora_id = 1,
                 emissao = date(2007, 4, 29),
                 vencimento = date(2007, 5, 2),
                 franquia = Decimal(30),
@@ -543,4 +543,3 @@ class TestFechamento(TestModel):
         assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
         assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
         assert f.total_dias == 26
-
