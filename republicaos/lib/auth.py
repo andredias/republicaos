@@ -1,7 +1,7 @@
 from pylons import request, response
 from repoze.what.plugins.quickstart import setup_sql_auth
 from repoze.what.plugins.pylonshq import ActionProtector, ControllerProtector
-from republicados import model as model
+from republicaos.model import model
 from republicaos.lib.helpers import flash
 
 

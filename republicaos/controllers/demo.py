@@ -10,8 +10,7 @@ log = logging.getLogger(__name__)
 
 import republicaos.model as model
 
-# from republicaos.lib.auth import require
-from republicaos.lib.decorators import require
+from republicaos.lib.auth import require
 
 from repoze.what.predicates import Any, is_user, has_permission, is_anonymous
 from repoze.what.plugins.pylonshq import is_met

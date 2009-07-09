@@ -1,5 +1,5 @@
 from pylons import url
-from repozepylons.tests import *
+from republicaos.tests import *
 
 class TestLoginController(TestController):
     def test_login_index(self):
