@@ -105,7 +105,7 @@ class Republica(Entity):
         '''
         moradores =  Morador.query.filter(
                         and_(
-                            Morador.republica_id == self.id,
+                            Morador.republica == self,
                             Morador.data_entrada < data_final,
                             or_(Morador.data_saida >= data_inicial, Morador.data_saida == None)
                         )
@@ -120,7 +120,7 @@ class Republica(Entity):
         '''
         return ContaTelefone.query.filter(
                     and_(
-                        ContaTelefone.republica_id == self.id,
+                        ContaTelefone.republica == self,
                         ContaTelefone.emissao >= data_inicial,
                         ContaTelefone.emissao <= data_final
                     )
@@ -327,10 +327,10 @@ class Fechamento(Entity):
         if not hasattr(self, '_despesas'):
             self._despesas = Despesa.query.filter(
                     and_(
-                        Morador.republica_id == self.republica.id,
-                        Morador.id           == Despesa.responsavel_id,
-                        Despesa.data         >= self.data_inicial,
-                        Despesa.data         <= self.data_final
+                        Morador.republica == self.republica,
+                        Morador.id        == Despesa.responsavel_id,
+                        Despesa.data      >= self.data_inicial,
+                        Despesa.data      <= self.data_final
                         )).order_by(Despesa.data).all()
         return self._despesas if not participante else [despesa for despesa in self._despesas if despesa.responsavel is participante]
     
@@ -655,7 +655,7 @@ class ContaTelefone(Entity):
                 self.servicos += encargos
         
         # antes de registrar os novos telefonemas, é necessário apagar os anteriores do mesmo mês
-        Telefonema.table.delete(Telefonema.conta_telefone_id == self.id).execute()
+        Telefonema.table.delete(Telefonema.conta_telefone == self).execute()
         
         # registra os novos telefonemas
         for numero, atributos in telefonemas.iteritems():
@@ -745,7 +745,7 @@ class Morador(Entity):
     def _get_despesas(self, data_inicial, data_final):
         return Despesa.query.filter(
                     and_(
-                        Despesa.responsavel_id == self.id,
+                        Despesa.responsavel == self,
                         Despesa.data       >= data_inicial,
                         Despesa.data       <= data_final
                         )
@@ -784,8 +784,8 @@ class Morador(Entity):
             return None
         return Telefonema.query.filter(
                     and_(
-                        Telefonema.conta_telefone_id == conta_telefone.id,
-                        Telefonema.responsavel_id == self.id
+                        Telefonema.conta_telefone == conta_telefone,
+                        Telefonema.responsavel == self
                         )
                     ).order_by(Telefonema.numero).all()
     
@@ -810,7 +810,7 @@ class Morador(Entity):
                         [func.count('*')],
                         from_obj = [Morador.table],
                         whereclause = and_(
-                            Morador.republica_id == self.republica_id,
+                            Morador.republica == self.republica,
                             Morador.data_entrada <= data,
                             or_(Morador.data_saida >= data, Morador.data_saida == None)
                             )
