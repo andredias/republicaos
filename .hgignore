@@ -1,6 +1,6 @@
 syntax: glob
 
-*.pyc
+*.py?
 *.e4?
 republicaos/.ropeproject
 .ropeproject

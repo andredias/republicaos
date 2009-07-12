@@ -12,6 +12,8 @@ from pylons.templating import pylons_globals, render_genshi
 from genshi.filters import HTMLFormFiller
 from os.path import splitext
 from decimal import Decimal
+from babel.numbers import format_number, format_decimal, format_percent
+
 
 
 import logging
@@ -45,11 +47,11 @@ def arredonda_cima(numero, referencia = 1):
 
 def pretty_decimal(numero, arredondamento = Decimal('0.01')):
     numero = arredonda(numero, arredondamento)
-    return pretty_number(numero)
+    return format_decimal(numero)
 
 
 def pretty_number(numero):
-    return _pretty_number(numero)
+    return _pretty_number(numero, locale='pt_BR')
 
 
 def float_equal(float1, float2, precision = 0.001):
