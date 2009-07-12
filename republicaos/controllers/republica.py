@@ -30,7 +30,7 @@ class RepublicaSchema(Schema):
 
 class RepublicaController(BaseController):
     """REST Controller styled on the Atom Publishing Protocol"""
-    
+
     def __before__(self, id=None):
         if id:
             c.republica = get_object_or_404(Republica, id = id)
@@ -56,11 +56,11 @@ class RepublicaController(BaseController):
         """POST /republica: Create a new item"""
         if not c.valid_data:
             abort(406)
-        r = Republica(**c.valid_data)
+        c.republica = Republica(**c.valid_data)
         Session.commit()
         # TODO: precisa retornar código 201 - Created
-        response.status = "201 Created"
-        return url_for(controller='republica', id=r.id)
+        response.status = 201 # Created
+        return
 
     @restrict("GET")
     def retrieve(self, id):
@@ -83,22 +83,22 @@ class RepublicaController(BaseController):
         # se fosse permitido apagar, deveria retornar status 200 OK
 
     # Demais métodos relacionados à formulários
-    
-    def index(self, format='html'):
+
+    def index(self):
         """GET /republica: All items in the collection"""
         c.republicas = Republica.query.order_by(Republica.nome).all()
         return render('republica/index.html')
 
 
     @validate(RepublicaSchema)
-    def new(self, format='html'):
+    def new(self):
         """GET /republica/new: Form to create a new item"""
         if c.valid_data:
-            republica = self.create()
+            self.create()
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(controller='republica', action='show', id=republica.id)
+            redirect_to(controller='republica', action='show', id=c.republica.id)
         c.action = url_for(controller='republica', action='new')
         c.title  = 'Nova República'
         return render('republica/form.html', filler_data=request.params)
@@ -107,7 +107,7 @@ class RepublicaController(BaseController):
 
 
     @validate(RepublicaSchema)
-    def edit(self, id, format='html'):
+    def edit(self, id):
         """GET /republica/edit/id: Edit a specific item"""
         if c.valid_data:
             request.method = 'PUT'
@@ -125,7 +125,7 @@ class RepublicaController(BaseController):
         return render('republica/form.html', filler_data = filler_data)
 
 
-    def show(self, id, format='html'):
+    def show(self, id):
         """GET /republica/show/id: Show a specific item"""
         c.title = 'República'
         return render('republica/form.html', filler_data = c.republica.to_dict())

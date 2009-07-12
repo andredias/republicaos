@@ -51,10 +51,10 @@ class TipoDespesaController(BaseController):
         """POST /tipos_despesa: Create a new item"""
         if not c.valid_data:
             abort(406)
-        t = TipoDespesa(**c.valid_data)
-        t.republica = c.republica
+        c.tipo_despesa = TipoDespesa(**c.valid_data)
+        c.tipo_despesa.republica = c.republica
         Session.commit()
-        response.status = "201 Created"
+        response.status = 201 # Created
         return
 
     @restrict("GET")
