@@ -21,7 +21,7 @@ class PessoaSchema(Schema):
     filter_extra_fields = True
     nome = validators.UnicodeString(not_empty=True)
     senha = validators.UnicodeString(not_empty=True)
-    e_mail = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
+    email = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
 
 
 class PessoaController(BaseController):
@@ -115,6 +115,7 @@ class PessoaController(BaseController):
         elif not c.errors:
             filler_data = c.pessoa.to_dict()
         else:
+            log.debug('PessoaController.edit: c.errors: %r' % c.errors)
             filler_data = request.params
         c.action = url_for(controller='pessoa', action='edit', id=id)
         c.title = 'Editar Dados da Pessoa'
