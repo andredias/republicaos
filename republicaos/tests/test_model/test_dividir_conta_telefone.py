@@ -9,7 +9,7 @@ from republicaos.model import Republica, Fechamento, ContaTelefone, Pessoa, Mora
 from republicaos.model import TipoDespesa, DespesaAgendada, Despesa
 from republicaos.tests import Session, TestModel
 from exibicao_resultados import print_acerto_final, print_calculo_quotas_participantes
-from republicaos.lib.pronus_utils import float_equal
+from republicaos.lib.utils import float_equal
 
 import decimal
 

@@ -1,6 +1,6 @@
 syntax: glob
 
-*.pyc
+*.py?
 *.e4?
 republicaos/.ropeproject
 .ropeproject
@@ -8,3 +8,4 @@ republicaos/.ropeproject
 data/sessions/
 db/republicaos.db
 glob:*Thumbs.db
+republicaos.kde*

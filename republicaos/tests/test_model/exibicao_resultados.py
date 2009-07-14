@@ -4,7 +4,7 @@
 from __future__ import unicode_literals, print_function
 
 from decimal import Decimal
-from republicaos.lib.pronus_utils import pretty_decimal
+from republicaos.lib.utils import pretty_decimal
 import sys
 import codecs
 
