@@ -12,12 +12,14 @@ import csv
 import elixir
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
+from republicaos.model import Session
 
 
-elixir.options_defaults['shortnames'] = True
+import logging
 
-def float_equal(float1, float2, precision = 0.001):
-    return abs(float(float1) - float(float2)) < precision
+log = logging.getLogger(__name__)
+
+
 
 
 
@@ -36,12 +38,11 @@ class Pessoa(Entity):
     senha = Field(String(40), required=True)
     email = Field(String(255), required=True, unique=True)
     data_cadastro = Field(Date, required=True, default=date.today)
-    morador = OneToMany('Morador', order_by=['republica', '-entrada'])
+    morador = OneToMany('Morador', order_by=['-entrada'])
 #    telefones_sob_responsabilidade = OneToMany('TelefoneRegistrado')
 
     def __repr__(self):
-        return "<pessoa:'%s', república:'%s', data_entrada:%s>" % \
-            (self.pessoa.nome, self.republica.nome, self.data_entrada.strftime('%d/%m/%Y'))
+        return "Pessoa <nome:'%s', data_cadastro: %r>" % (self.nome.encode('utf-8'), self.data_cadastro)
 
 
     def periodos_morados(self, republica, data_inicial, data_final):
@@ -51,55 +52,78 @@ class Pessoa(Entity):
                )
 
 
-    def telefonemas(self, conta_telefone):
-        if conta_telefone.republica is not self.republica:
-            return None
-        return Telefonema.query.filter(
-                    and_(
-                        Telefonema.conta_telefone == conta_telefone,
-                        Telefonema.responsavel == self
-                        )
-                    ).order_by(Telefonema.numero).all()
+    #def telefonemas(self, conta_telefone):
+        #if conta_telefone.republica is not self.republica:
+            #return None
+        #return Telefonema.query.filter(
+                    #and_(
+                        #Telefonema.conta_telefone == conta_telefone,
+                        #Telefonema.responsavel == self
+                        #)
+                    #).order_by(Telefonema.numero).all()
 
 
 
-    def qtd_dias_morados(self, data_inicial = None, data_final = None):
-        entrada  = max(self.data_entrada, data_inicial)
-        saida    = min(self.data_saida, data_final) if self.data_saida else data_final
-        qtd_dias = (saida - entrada).days + 1
-        return (qtd_dias if qtd_dias >= 0 else 0)
+    def get_qtd_dias_morados(self, republica, data_inicial = None, data_final = None):
+        if not data_inicial:
+            data_inicial = republica.data_criacao
+        if not data_final:
+            data_final = date.today()
+        intervalos = select(
+                    [
+                        func.max(Morador.entrada, data_inicial),
+                        func.min(func.coalesce(Morador.saida, data_final), data_final)
+                    ],
+                    whereclause = and_(
+                        Morador.republica == republica,
+                        Morador.pessoa == self,
+                        Morador.entrada <= data_final,
+                        or_(Morador.saida == None, Morador.saida >= data_inicial)
+                    )
+                ).execute().fetchall()
+
+        log.debug('Pessoa<%s>.qtd_dias_morados(%r, %r, %r): %r' % (self.nome, republica, data_inicial, data_final, intervalos))
+        qtd_dias = 0
+        for entrada, saida in intervalos:
+            qtd_dias += (saida - entrada).days + 1
+
+        return qtd_dias
 
 
-    def peso_quota(self, data):
-        '''Qual o peso_quota do morador em uma determinada data'''
-        for peso_quota in self.pesos_quota:
-            if peso_quota.data_cadastro <= data:
-                return peso_quota.peso_quota
+    #def peso_quota(self, data):
+        #'''Qual o peso_quota do morador em uma determinada data'''
+        #for peso_quota in self.pesos_quota:
+            #if peso_quota.data_cadastro <= data:
+                #return peso_quota.peso_quota
 
-        # se chegou aqui, não há nenhum peso_quota cadastrada
-        # dividir igualmente entre os moradores cadastrados no período
+        ## se chegou aqui, não há nenhum peso_quota cadastrada
+        ## dividir igualmente entre os moradores cadastrados no período
 
-        num_moradores = select(
-                        [func.count('*')],
-                        from_obj = [Pessoa.table],
-                        whereclause = and_(
-                            Pessoa.republica == self.republica,
-                            Pessoa.data_entrada <= data,
-                            or_(Pessoa.data_saida >= data, Pessoa.data_saida == None)
-                            )
-                        ).execute().fetchone()[0]
+        #num_moradores = select(
+                        #[func.count('*')],
+                        #from_obj = [Pessoa.table],
+                        #whereclause = and_(
+                            #Pessoa.republica == self.republica,
+                            #Pessoa.entrada <= data,
+                            #or_(Pessoa.saida >= data, Pessoa.saida == None)
+                            #)
+                        #).execute().fetchone()[0]
 
-        return Decimal(str(100.0 / num_moradores) if num_moradores else 0)
+        #return Decimal(str(100.0 / num_moradores) if num_moradores else 0)
 
 
 
-class Morador(Entity): # Pessoa
-    entrada = Field(Date, required=True, default=date.today)
+class Morador(Entity):
+    entrada = Field(Date, required=True, primary_key = True)
     saida = Field(Date)
     peso_aluguel = Field(Numeric(5,2))
-    pessoa = ManyToOne('Pessoa', required=True)
-    republica = ManyToOne('Republica', required=True)
-    using_table_options(UniqueConstraint('pessoa', 'republica', 'entrada'))
+    pessoa = ManyToOne('Pessoa', required=True, primary_key = True)
+    republica = ManyToOne('Republica', required=True, primary_key = True)
+
+    def __repr__(self):
+        return 'Morador <pessoa_id: %s, republica_id: %s, entrada: %r, saida: %r>' % (self.pessoa.id, self.republica.id, self.entrada,
+                self.saida)
+
 
     @classmethod
     def get_moradores(self, republica, data_inicial = None, data_final = None):
@@ -121,10 +145,12 @@ class Morador(Entity): # Pessoa
                         and_(
                             Morador.republica == republica,
                             clausula_data,
-                            Morador.pessoa_id == Pessoa.id)
+                            Morador.pessoa_id == Pessoa.id
                         )
                     ).distinct().order_by(Pessoa.nome).all()
+        log.debug('Morador.get_moradores(%r, %r, %r): %r' % (republica, data_inicial, data_final, moradores))
         return moradores
+
 
     @classmethod
     def get_republicas(cls, pessoa, data_inicial = None, data_final = None):
@@ -146,13 +172,15 @@ class Morador(Entity): # Pessoa
                         and_(
                             Morador.pessoa == pessoa,
                             clausula_data,
-                            Morador.republica_id == Republica.id)
+                            Morador.republica_id == Republica.id
                         )
                     ).distinct().order_by(Republica.nome).all()
+        log.debug('Morador.get_republicas(%s, %r, %r): %r' % (pessoa, data_inicial, data_final, moradores))
         return republicas
 
+
     @classmethod
-    def get_intervalos_moradores(cls, republica, data_inicial, data_final):
+    def get_intervalos_de_moradores(cls, republica, data_inicial, data_final):
         '''
         Retorna os intervalos que houve moradores diferentes durante um determinado período de apuração
         '''
@@ -177,7 +205,10 @@ class Morador(Entity): # Pessoa
             intervalo.participantes = [morador for morador in moradores if check_se_morou_no_periodo(morador.entrada,
                                             morador.saida, intervalo.data_inicial, intervalo.data_final)]
 
+        log.debug('Morador.get_intervalos_de_moradores(%r, %r, %r): %r' % (republica, data_inicial, data_final, intevalos))
         return intervalos
+
+
 
 
 
@@ -196,10 +227,6 @@ class TelefoneRegistrado(Entity):
     republica   = ManyToOne('Republica', primary_key = True)
     responsavel = ManyToOne('Pessoa', required = True)
     using_options(tablename = 'telefone')
-
-    def __repr__(self):
-        return "<número: %d, república: '%s', responsável: '%s'>" % (self.numero, self.republica.nome, self.responsavel.pessoa.nome)
-
 
 
 
@@ -220,8 +247,7 @@ class Republica(Entity):
 
 
     def __repr__(self):
-        return '<nome:%s, data_criação:%s>' % \
-                (self.nome, self.data_criacao.strftime('%d/%m/%Y'))
+        return 'Republica: <nome: %s, data_criacao: %r>' % (self.nome.encode('utf-8'), self.data_criacao)
 
 
     def after_insert(self):
@@ -250,24 +276,37 @@ class Republica(Entity):
         return Fechamento(data = data, republica = self)
 
 
-    def get_moradores(self, data_inicial = None, data_final = None):
+    def get_moradores(self, fechamento = None, data_inicial = None, data_final = None):
         '''
         Retorna os moradores da república no período de tempo
         '''
-        if not data_final:
-            clausula_data = (Despesa.data == data_inicial)
-        else:
-            data_final = max(data_inicial, data_final)
-            clausula_data = and_(Despesa.data >= data_inicial, Despesa.data <= data_final)
-        moradores =  Pessoa.query.filter(
-                        and_(
-                            Morador.republica == self,
-                            Morador.data >= data_inicial,
-                            Morador.data <= data_final,
-                            Morador.pessoa.id == Pessoa.id)
-                        )
-                    ).order_by(Pessoa.nome).all()
-        return moradores
+        if fechamento:
+            data_inicial = fechamento.data_inicial
+            data_final = fechamento.data_inicial
+        return Morador.get_moradores(self, data_inicial, data_final)
+
+        # o trecho abaixo não funcionou como o esperado porque Morador.pessoa está voltando todo o registro de morador novamente
+        # mesmo se voltasse só pessoa_id, seria necessário várias consultas para reconstruir objetos de pessoas.
+        #consulta = select(
+                    #[Morador.pessoa, Morador.entrada, func.coalesce(Morador.saida, data_final)],
+                    #whereclause = and_(
+                        #Morador.republica == republica,
+                        #Morador.entrada <= data_final,
+                        #or_(Morador.saida == None, Morador.saida >= data_inicial)
+                    #)
+                #).order_by(Morador.pessoa).execute().fetchall()
+
+
+
+        #pessoa_ref = None
+        #result = {}
+        #for pessoa, entrada, saida in consulta:
+            #if pessoa != pessoa_ref:
+                #result[pessoa] = 0
+                #pessoa_ref = pessoa
+            #result[pessoa_ref] += (saida - entrada).days
+
+        #return result
 
 
     def contas_telefone(self, data_inicial, data_final):
@@ -282,13 +321,6 @@ class Republica(Entity):
                     )
                 ).all()
 
-
-    def aluguel(self, data):
-        for aluguel in self.alugueis:
-            if aluguel.data_cadastro <= data:
-                return aluguel.valor
-
-        return None
 
 
     def registrar_responsavel_telefone(self, numero, responsavel = None, descricao = None):
@@ -313,30 +345,6 @@ class Republica(Entity):
 
 
 
-class Intervalo(object):
-    def __init__(self, data_inicial, data_final):
-        self.data_inicial = data_inicial
-        self.data_final   = data_final
-        self.dias = (data_inicial - data_final).days
-        self.participantes = []
-
-
-    def quota_peso(self, participante):
-        if (not self.total_peso_quota) or (participante not in self.participantes):
-            return 0
-        return self._razao_num_dias() * participante.peso_quota(self.data_inicial) / self.total_peso_quota
-
-
-    def quota(self, participante):
-        if (not self.participantes) or (participante not in self.participantes):
-            return 0
-        return self._razao_num_dias() / len(self.participantes)
-
-
-    def _razao_num_dias(self):
-        if not self.fechamento.total_dias:
-            return 0
-        return Decimal(str(100.0 * self.num_dias / self.fechamento.total_dias))
 
 
 
@@ -344,50 +352,9 @@ class Fechamento(Entity):
     data      = Field(Date, primary_key = True)
     republica = ManyToOne('Republica', primary_key = True)
 
-    def __repr__(self):
-        return "<fechamento:%s [%s, %s], república:'%s'>" % \
-            (
-            self.data.strftime('%d/%m/%Y'),
-            self.data_inicial.strftime('%d/%m/%Y'),
-            self.data_final.strftime('%d/%m/%Y'),
-            self.republica.nome
-            )
-
-
-    @property
-    def contas_telefone(self):
-        if not hasattr(self, '_contas_telefone'):
-            self._contas_telefone = self.republica.contas_telefone(self.data_inicial, self.data_final)
-        return self._contas_telefone
-
-
-    @property
-    def moradores(self):
-        if not hasattr(self, '_moradores'):
-            self._moradores = self.republica.moradores(self.data_inicial, self.data_final)
-        return self._moradores
-
-
-    @property
-    def ex_moradores(self):
-        if not hasattr(self, '_ex_moradores'):
-            self._ex_moradores = set()
-            for conta in self.contas_telefone:
-                self._ex_moradores.update(conta.ex_moradores)
-            self._ex_moradores = list(self._ex_moradores)
-            self._ex_moradores.sort(key = lambda obj:obj.pessoa.nome)
-        return self._ex_moradores
-
-
-    @property
-    def participantes(self):
-        if not hasattr(self, '_participantes'):
-            self._participantes = self.moradores + self.ex_moradores
-            self._participantes.sort(key = lambda obj:obj.pessoa.nome)
-        return self._participantes
-
     @reconstructor
     def setup(self):
+        self.rateado = False # mostra se o rateio já foi feito
         self.data_final = self.data - relativedelta(days = 1)
         if self.data > self.republica.fechamentos[-1].data :
             self.data_inicial = self.republica.fechamentos[self.republica.fechamentos.index(self) + 1].data
@@ -395,132 +362,107 @@ class Fechamento(Entity):
             self.data_inicial = self.republica.data_criacao
 
 
-    @property
-    def total_dias(self):
-        if not hasattr(self, '_total_dias'):
-            self._calcular_quotas_participantes()
-        return self._total_dias
+    def executar_rateio(self):
+        '''
+        Calcula a divisão das despesas em determinado período
+        '''
+        self.setup()
+        self.rateado = True
 
+        # todos os participantes deste fechamento
+        self.participantes = set()
 
-    def quota(self, participante):
-        if not hasattr(self, 'intervalos'):
-            self._calcular_quotas_participantes()
-        return sum(intervalo.quota(participante) for intervalo in self.intervalos)
+        # Divisão das contas de telefone
+        #contas_telefone = self.republica.contas_telefone(data_inicial, data_final)
+        #for conta_telefone in contas_telefone:
+            #conta_telefone.executar_rateio()
+            #self.participantes.update(set(conta_telefone.rateio.keys()))
 
+        # incluir todos os cadastrados como morador
+        self.participantes.update(set(self.republica.get_moradores(self)))
+        self.participantes = sorted(self.participantes, key = lambda obj:obj.nome)
 
-    def quota_peso(self, participante):
-        if not hasattr(self, 'intervalos'):
-            self._calcular_quotas_participantes()
-        return sum(intervalo.quota_peso(participante) for intervalo in self.intervalos)
+        # preencher rateio de telefone
+        #self.quota_telefone = dict(
+                        #(pessoa, sum(conta_telefone.rateio[morador].a_pagar for conta_telefone in contas_telefone if pessoa in conta_telefone.rateio))
+                        #for pessoa in self.participantes
+                    #)
+        #self.total_telefone = sum(quota_telefone for quota_telefone in self.quota_telefone.values)
 
-
-    # TODO: essa função deve ficar com morador
-    def despesas(self, participante = None):
-        if not hasattr(self, '_despesas'):
-            self._despesas = Despesa.query.filter(
-                    and_(
-                        Pessoa.republica == self.republica,
-                        Pessoa.id        == Despesa.responsavel_id,
-                        Despesa.data      >= self.data_inicial,
-                        Despesa.data      <= self.data_final
-                        )).order_by(Despesa.data).all()
-        return self._despesas if not participante else [despesa for despesa in self._despesas if despesa.responsavel is participante]
-
-
-    def total_despesas(self, participante = None):
-        return sum(despesa.quantia for despesa in self.despesas(participante))
-
-
-    def rateio(self, participante):
-        return (self.total_despesas() - self.total_telefone()) * self.quota(participante) / Decimal(100)
-
-
-    def saldo_final(self, participante):
-        return self.rateio(participante) + self.total_telefone(participante) - self.total_despesas(participante)
-
-
-    def total_telefone(self, participante = None):
-        if not participante:
-            return sum(conta.total for conta in self.contas_telefone)
-        else:
-            return sum(conta.rateio.a_pagar(participante) for conta in self.contas_telefone)
-
-    @property
-    def total_tipo_despesa(self):
-        if not hasattr(self, '_total_tipo_despesa'):
-            self._total_tipo_despesa = dict(
-                [(tipo_despesa, sum(despesa.quantia for despesa in self.despesas() if despesa.tipo == tipo_despesa))
-                for tipo_despesa in self.republica.tipos_despesa]
-            )
-            for tipo, total in self.total_tipo_despesa.items():
-                if not total:
-                    self.total_tipo_despesa.pop(tipo)
-        return self._total_tipo_despesa
-
-
-    @property
-    def acerto_a_pagar(self):
-        if not hasattr(self, '_acerto_a_pagar'):
-            self._executar_acerto_final()
-        return self._acerto_a_pagar
-
-
-    @property
-    def acerto_a_receber(self):
-        if not hasattr(self, '_acerto_a_receber'):
-            self._executar_acerto_final()
-        return self._acerto_a_receber
-
-    def_get_despesas(self):
-        despesas = Despesa.get_despesas_republica_periodo(self.republica, self.data_inicial, self.data_final)
-        self.despesas = dict((pessoa, [despesa for despesa in despesas if despesa.pessoa == pessoa]) for pessoa in self.participantes)
+        # obtem despesas
+        despesas = Despesa.get_despesas_no_periodo(republica=self.republica, data_inicial=self.data_inicial, data_final=self.data_final)
+        self.despesas = dict(
+                                (pessoa, sum(despesa.quantia for despesa in despesas if despesa.responsavel == pessoa))
+                                for pessoa in self.participantes
+                            )
         self.total_despesas = sum(despesa.quantia for despesa in despesas)
 
 
+        tipos_despesa = set(despesa.tipo for despesa in despesas)
+        self.total_tipo_despesa = dict(
+                                        (tipo_despesa.nome, sum(despesa.quantia for despesa in despesas if despesa.tipo == tipo_despesa))
+                                        for tipo_despesa in tipos_despesa
+                                    )
 
-    def executar_acerto_final(self):
-        '''
-        Executa o acerto final das contas, determinando quem deve pagar o que pra quem. A ordem dos credores
-        e devedores é ordenada para que sempre dê a mesma divisão.
-        '''
 
-        self.intervalos = Morador.get_intervalos_moradores(self.republica, self.data_inicial, self.data_final)
-        self.participantes = set([intervalo.participantes for intervalo in self.intervalos])
-        self._get_despesas()
+        # Definição de quantidades de dias morados para executar média ponderada
+        self.qtd_dias_morados = dict(
+                                        (pessoa, pessoa.get_qtd_dias_morados(self.republica, self.data_inicial, self.data_final))
+                                        for pessoa in self.participantes
+                                    )
+        self.total_dias_morados = sum(dias for dias in self.qtd_dias_morados.values())
 
-        credores  = [participante for participante in self.participantes if self.saldo_final(participante) < 0]
-        devedores = [participante for participante in self.participantes if self.saldo_final(participante) > 0]
+        #
+        # Divisão das quotas
+        #
+        self.quota = dict()
+        self.porcentagem = dict()
+        self.saldo_final = dict()
+        for pessoa in self.participantes:
+            # o total do telefone é uma despesa específica e não deve ser usada no cálculo das quotas
+            # a parte de cada um nos telefones é contabilizada no saldo final
+            #self.quota[pessoa] = (self.total_despesas - self.total_telefone) * self.qtd_dias_morados[pessoa] / self.total_dias_morados
+            self.quota[pessoa] = self.total_despesas * self.qtd_dias_morados[pessoa] / self.total_dias_morados
+            self.porcentagem[pessoa] = 100 * self.qtd_dias_morados[pessoa] / self.total_dias_morados
+            #self.saldo_final[pessoa] = self.quota[pessoa] + self.quota_telefone[pessoa] - self.despesas[pessoa]
+            self.saldo_final[pessoa] = self.quota[pessoa] - self.despesas[pessoa]
+
+        #
+        # Acerto de contas
+        #
+        credores  = [pessoa for pessoa in self.participantes if self.saldo_final[pessoa] <= 0]
+        devedores = list(set(self.participantes) - set(credores))
 
         # ordena a lista de credores e devedores de acordo com o saldo_final
-        credores.sort(key =  lambda obj: (self.saldo_final(obj), obj.pessoa.nome))
-        devedores.sort(key = lambda obj: (self.saldo_final(obj), obj.pessoa.nome), reverse = True)
+        credores.sort(key =  lambda obj: (self.saldo_final[obj], obj.nome))
+        devedores.sort(key = lambda obj: (self.saldo_final[obj], obj.nome), reverse = True)
 
-        self._acerto_a_pagar   = dict([(devedor, dict()) for devedor in devedores])
-        self._acerto_a_receber = dict([(credor, dict()) for credor in credores])
+        self.acerto_a_pagar   = dict((devedor, {}) for devedor in devedores)
+        self.acerto_a_receber = dict((credor, {}) for credor in credores)
         if len(devedores) == 0: return
 
         devedores = iter(devedores)
         try:
             devedor     = devedores.next()
-            saldo_pagar = self.saldo_final(devedor)
+            saldo_pagar = self.saldo_final[devedor]
             for credor in credores:
-                saldo_receber = abs(self.saldo_final(credor))
+                saldo_receber = abs(self.saldo_final[credor])
                 while (saldo_receber > 0):
                         if saldo_receber >= saldo_pagar:
-                            self._acerto_a_pagar[devedor][credor] = saldo_pagar
+                            self.acerto_a_pagar[devedor][credor] = saldo_pagar
                             saldo_receber -= saldo_pagar
                             devedor        = devedores.next()
-                            saldo_pagar    = self.saldo_final(devedor)
+                            saldo_pagar    = self.saldo_final[devedor]
                         else:
-                            self._acerto_a_pagar[devedor][credor] = saldo_receber
+                            self.acerto_a_pagar[devedor][credor] = saldo_receber
                             saldo_pagar  -= saldo_receber
                             saldo_receber = 0
         except StopIteration:
             pass
 
-        for devedor in self._acerto_a_pagar.keys():
-            for credor in self._acerto_a_pagar[devedor].keys():
-                self._acerto_a_receber[credor][devedor] = self._acerto_a_pagar[devedor][credor]
+        for devedor in self.acerto_a_pagar:
+            for credor in self.acerto_a_pagar[devedor]:
+                self.acerto_a_receber[credor][devedor] = self.acerto_a_pagar[devedor][credor]
         return
 
 
@@ -534,6 +476,7 @@ class Fechamento(Entity):
 
     def after_insert(self):
         self.republica.proximo_rateio = self.data + relativedelta(months = 1)
+
 
 
 class RateioContaTelefone(object):
@@ -644,10 +587,6 @@ class ContaTelefone(Entity):
 
     using_options(tablename = 'conta_telefone')
     using_table_options(UniqueConstraint('telefone', 'emissao'))
-
-    def __repr__(self):
-        return '<telefone: %d, emissão: %s, república: %s>' % \
-                (self.telefone, self.emissao.strftime('%d/%m/%Y'), self.republica.nome)
 
 
     @property
@@ -824,10 +763,6 @@ class Telefonema(Entity):
     responsavel    = ManyToOne('Pessoa')
     conta_telefone = ManyToOne('ContaTelefone', ondelete = 'cascade', primary_key = True)
 
-    def __repr__(self):
-        return "<número:%d, quantia:%s, segundos:%s, responsável:'%s'>" % \
-            (self.numero, self.quantia, self.segundos, (self.responsavel.pessoa.nome if self.responsavel else ''))
-
 
 
 
@@ -845,16 +780,13 @@ class TipoDespesa(Entity):
 
 class Despesa(Entity):
     data = Field(Date, default = date.today, required = True)
-     = Field(Numeric(10, 2), required = True)
+    quantia = Field(Numeric(10, 2), required = True)
     responsavel = ManyToOne('Pessoa', required = True)
     tipo = ManyToOne('TipoDespesa', required = True)
 
-    def __repr__(self):
-        return '<data:%s, quantia:%s, tipo:%s, responsável:%s>' % \
-            (self.data.strftime('%d/%m/%Y'), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)
 
     @classmethod
-    def despesa_no_periodo(cls, data_inicial, data_final = None, pessoa = None, republica = None):
+    def get_despesas_no_periodo(cls, data_inicial, data_final = None, pessoa = None, republica = None):
         # TODO: Alguma situação de busca sem definir nem pessoa nem república?
         #if not (pessoa or republica):
         #   raise Exception???
@@ -878,8 +810,9 @@ class Despesa(Entity):
             ).all()
 
 
+
 class DespesaAgendada(Entity):
-    proximo_vencimento = Field(Date, default = date.today, required = True)
+    proximo_vencimento = Field(Date, required = True)
     data_termino = Field(Date)
     quantia = Field(Numeric(10,2), required = True)
     responsavel = ManyToOne('Pessoa', required = True)
@@ -888,8 +821,9 @@ class DespesaAgendada(Entity):
     using_options(tablename = 'despesa_agendada')
 
     def __repr__(self):
-        return "<próximo_vencimento:%s, data_termino:%s, quantia:%s, tipo:'%s', responsável:'%s'>" % \
-            (self.proximo_vencimento.strftime('%d/%m/%Y'), (self.data_termino.strftime('%d/%m/%Y') if self.data_termino else ''), self.quantia, self.tipo.nome, self.responsavel.pessoa.nome)
+        return 'DespesaAgendada <tipo: %r, proximo_vencimento: %r, data_termino: %r, responsavel: %r, quantia: %r>' % \
+                (self.tipo, self.proximo_vencimento, self.data_termino, self.responsavel, self.quantia)
+
 
 
     @classmethod
@@ -903,10 +837,12 @@ class DespesaAgendada(Entity):
         '''
         hoje = date.today()
         despesas_agendadas = DespesaAgendada.query.filter(DespesaAgendada.proximo_vencimento <= hoje).all()
+        log.debug('DespesaAgendada.cadastrar_despesas_agendadas(): %r' % despesas_agendadas)
         if not despesas_agendadas:
             return
         for despesa in despesas_agendadas:
             data_ref = hoje if not despesa.data_termino else min(despesa.data_termino, hoje)
+            log.debug('DespesaAgendada.cadastrar_despesas_agendadas: Cadastrar %r até %r' % (despesa, data_ref))
             while despesa.proximo_vencimento <= data_ref:
                 nova_despesa = Despesa(
                         data        = despesa.proximo_vencimento,
@@ -916,6 +852,7 @@ class DespesaAgendada(Entity):
                     )
                 despesa.proximo_vencimento += relativedelta(months = 1)
             if despesa.data_termino and despesa.data_termino < despesa.proximo_vencimento:
+                log.debug('DespesaAgendada.cadastrar_despesas_agendadas: Excluir %r. Fim do prazo' % despesa)
                 despesa.delete()
         # TODO: verficar se dá pra salvar só esse objeto sem comprometer toda a sessão.
         Session.commit() # novas despesas e também a despesa_agendada com próximo vencimento atualizado

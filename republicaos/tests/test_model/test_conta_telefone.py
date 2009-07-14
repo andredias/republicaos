@@ -8,16 +8,16 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 
-class TestContaTelefone(TestModel):
-    
+class _TestContaTelefone(TestModel):
+
     def test_fechamento_da_conta(self):
         r = Republica(nome = 'Teste',
             data_criacao   = date(2000, 05, 10),
             logradouro     = 'R. dos Bobos, n 0')
-        
+
         Fechamento(data = date(2007, 06, 10), republica = r)
         Fechamento(data = date(2007, 07, 10), republica = r)
-        
+
         c = ContaTelefone(
                 telefone = 2409,
                 operadora_id = 1,
@@ -27,48 +27,48 @@ class TestContaTelefone(TestModel):
                 servicos = Decimal(0),
                 republica = r
             )
-        
+
         Session.commit()
         Session.expunge_all()
-        
+
         r = Republica.get_by()
         c = ContaTelefone.get_by()
-        
+
 #        print('República: ', r)
 #        for f in r.fechamentos:
 #            print('\t', f)
 #        print('Conta Telefone: ', c)
-        
+
         assert len(r.fechamentos) == 2
         assert r.fechamento_na_data(c.emissao) == r.fechamentos[-1]
-    
-    
+
+
     def test_determinar_responsavel_telefonema(self):
         p1 = Pessoa(nome = 'André')
         p2 = Pessoa(nome = 'Felipe')
         p3 = Pessoa(nome = 'Dias')
-        
+
         r = Republica(nome = 'Teste',
             data_criacao = date.today(),
             logradouro = 'R. dos Bobos, nº 0')
-        
+
         r2 = Republica(nome = 'Outra República',
             data_criacao = date(2000, 05, 10),
             logradouro = 'R. dos Bobos, nº 1')
-        
+
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
         m3 = Morador(pessoa = p3, republica = r2, data_entrada = date(2002, 11, 22))
         Session.commit()
-        
+
         r.registrar_responsavel_telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
         r.registrar_responsavel_telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
         r.registrar_responsavel_telefone(numero = 3333, responsavel = m2)
         r2.registrar_responsavel_telefone(numero = 777, responsavel = m3)
-        
-        
+
+
         c = ContaTelefone(telefone = 1111, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r)
-        
+
         t1 = Telefonema(
                 numero = 1234,
                 conta_telefone = c,
@@ -77,7 +77,7 @@ class TestContaTelefone(TestModel):
                 segundos = 150,
                 quantia = Decimal('1.4')
             )
-        
+
         t2 = Telefonema(
                 numero = 3333,
                 conta_telefone = c,
@@ -86,7 +86,7 @@ class TestContaTelefone(TestModel):
                 segundos = 299,
                 quantia = Decimal('2.15')
             )
-        
+
         t3 = Telefonema(
                 numero = 777,
                 conta_telefone = c,
@@ -95,18 +95,18 @@ class TestContaTelefone(TestModel):
                 segundos = 90,
                 quantia = Decimal('0.15')
             )
-        
+
         c.determinar_responsaveis_telefonemas()
-        
+
         Session.commit()
-        
-       
+
+
         assert t1.responsavel is m1
         assert t2.responsavel is m2
         assert t3.responsavel is None
 
-    
-    
+
+
     def test_importacao_conta_telefone_csv(self):
         arq = '''Detalhes da fatura
 
@@ -118,42 +118,42 @@ class TestContaTelefone(TestModel):
 "0000005   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","5555                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
 "0000006   ","1921212409                                        ","04 - LIGACOES DDD PARA CELULARES                  ","99/99/99 A  99/99/99     ","2222                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","5000    ","MIN     "," 0.45"
 "0000007   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONES FIXOS         ","99/99/99 A  99/99/99     ","5555                ","CAS -SP   ","CAS -SP             ","               ","                    ","E   ","          ","10000   ","MIN     "," 0.98"'''
-        
+
         p1 = Pessoa(nome = 'André')
         p2 = Pessoa(nome = 'Felipe')
         p3 = Pessoa(nome = 'Dias')
-        
+
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 3, 6),
             logradouro = 'R. dos Bobos, nº 0')
-            
+
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1), data_saida = date(2006, 12, 1))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
         m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
         Session.commit()
-        
+
         r.registrar_responsavel_telefone(numero = 1234, descricao = 'tel. do trabalho', responsavel = m1)
         r.registrar_responsavel_telefone(numero = 2222, descricao = 'pizzaria', responsavel = m1)
         r.registrar_responsavel_telefone(numero = 3333, responsavel = m2)
         r.registrar_responsavel_telefone(numero = 9999, responsavel = m3)
-        
+
         c = ContaTelefone(telefone = 2409, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 2), republica = r)
-        
+
         Session.commit()
-        
+
         c.importar_csv(arq)
-        
+
         t1 = Telefonema.get_by(numero = 1234, conta_telefone = c)
         t2 = Telefonema.get_by(numero = 2222, conta_telefone = c)
         t3 = Telefonema.get_by(numero = 5555, conta_telefone = c)
         t4 = Telefonema.get_by(numero = 9999, conta_telefone = c)
-        
+
         assert t1.quantia == Decimal('2.99') and t1.segundos == 150 and t1.tipo_fone == 0 and t1.tipo_distancia == 1 and t1.responsavel == m1
         assert t2.quantia == Decimal('0.72') and t2.segundos == 330 and t2.tipo_fone == 1 and t2.tipo_distancia == 1 and t2.responsavel == m1
         assert t3.quantia == Decimal('1.18') and t3.segundos == 720 and t3.tipo_fone == 0 and t3.tipo_distancia == 0 and t3.responsavel == None
         assert t4.quantia == Decimal('3.11') and t4.segundos == 156 and t4.tipo_fone == 1 and t4.tipo_distancia == 2 and t4.responsavel == m3
-    
-    
+
+
     def test_importacao_csv_2(self):
         arq = '''Detalhes da fatura
 
@@ -194,30 +194,30 @@ class TestContaTelefone(TestModel):
 "0000034   ","1921212409                                        ","04 - LIGACOES LOCAIS PARA TELEFONE FIXO  - TOTAIS ","99/99/99 A  99/99/99     ","1938697483          ","CAS -SP   ","VOS -SP             ","               ","                    ","E   ","          ","2000    ","MIN     "," 0.20"
 "0000035   ","1921212409                                        ","05 - COMPLEMENTO DE FRANQUIA                      ","12/04/07 A  11/05/07     ","                    ","CAS -SP   ","    -               ","               ","                    ","E   ","          ","1000    ","UNID    "," 18.46"'''
 
-        
+
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 3, 6),
             logradouro = 'R. dos Bobos, nº 0')
-            
+
         f = Fechamento(data = date(2007, 6, 6), republica = r)
         p1 = Pessoa(nome = 'André')
         p2 = Pessoa(nome = 'Felipe')
         p3 = Pessoa(nome = 'Dias')
-        
+
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
         m3 = Morador(pessoa = p3, republica = r, data_entrada = date(2007, 1, 11))
-        
+
         c = ContaTelefone(telefone = 2409, operadora_id = 1, emissao = date(2007, 5, 18), vencimento = date(2007, 6, 10), republica = r)
         c.franquia = Decimal('34.93')
-        
+
         c.importar_csv(arq)
         rateio = c.rateio
-        
+
         from exibicao_resultados import print_rateio_conta_telefone
         print_rateio_conta_telefone(c)
         Session.commit()
-        
+
         assert c.servicos == Decimal('1.05')
         assert c.total_sem_dono == Decimal('16.47')
 
