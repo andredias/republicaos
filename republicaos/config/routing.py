@@ -35,6 +35,20 @@ def make_map():
                 requirements={'id':'\d+'},
                 conditions=dict(method=['GET', 'PUT', 'DELETE']))
 
+    #
+    # Pessoa
+    #
+    map.connect('/pessoa',
+                controller='pessoa',
+                action='rest_dispatcher_collection',
+                conditions=dict(method=['GET', 'POST']))
+    map.connect('/pessoa/{id}',
+                controller='pessoa',
+                action='rest_dispatcher_single',
+                requirements={'id':'\d+'},
+                conditions=dict(method=['GET', 'PUT', 'DELETE']))
+
+
 
 
     #

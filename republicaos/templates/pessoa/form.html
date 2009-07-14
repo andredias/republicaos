@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<xi:include href="../layout.html" />
+
+<head>
+    <title>${c.title}</title>
+</head>
+
+<body>
+    <h1>${c.title}</h1>
+    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
+    <py:if test="c.errors">
+        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+        ${select('.')}
+        <span class="error-message" py:if="error" py:content="error"></span>
+        </div>
+    </py:if>
+    <form action="${c.action}" method="post">
+        <input py:if="c.method == 'put'" type="hidden" name="_method" value="put" />
+        <table>
+            <tbody>
+                <tr>
+                    <td><label>Nome</label></td>
+                    <td><input type="text" name="nome" /></td>
+                </tr>
+                <tr>
+                    <td><label>e-mail</label></td>
+                    <td><input type="text" name="email" /></td>
+                </tr>
+                <tr>
+                    <td><label>Senha</label></td>
+                    <td><input type="password" name="senha" /></td>
+                </tr>
+                <tr>
+                    <td><label>Confirmar Senha</label></td>
+                    <td><input type="password" name="confirma_senha" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div py:if="c.action">
+                            <input type="submit" value="Ok" />
+                            <a href="">Cancelar</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</body>
+
+</html>

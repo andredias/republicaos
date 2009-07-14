@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<xi:include href="../layout.html" />
+
+<head>
+    <title>Pessoas Cadastradas</title>
+</head>
+
+<body>
+    <h1>Pessoas Cadastradas</h1>
+    <ul>
+        <li py:for="pessoa in c.pessoas">
+            <a href="${h.url_for(controller='pessoa', action='show', id=pessoa.id)}">${pessoa.nome}: ${pessoa.email}</a>
+        </li>
+    </ul>
+    <p><a href="${h.url_for(controller='pessoa', action='new')}">Criar nova pessoa</a></p>
+</body>
+
+</html>

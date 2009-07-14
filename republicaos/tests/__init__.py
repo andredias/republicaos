@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Pylons application test package
 
 This package assumes the Pylons environment is already loaded, such as
@@ -22,7 +23,7 @@ from republicaos.model import meta
 from republicaos import model as model
 from sqlalchemy import engine_from_config
 
-__all__ = ['environ', 'url', 'TestController', 'TestModel', 
+__all__ = ['environ', 'url', 'TestController', 'TestModel',
            'TestAuthenticatedController', 'TestProtectedAreasController']
 
 
@@ -46,6 +47,18 @@ engine = engine_from_config(config, 'sqlalchemy.')
 model.init_model(engine)
 metadata = elixir.metadata
 Session = elixir.session = meta.Session
+
+
+#
+#veja http://blog.ianbicking.org/illusive-setdefaultencoding.html
+# estava dando uns erros na hora de imprimir mensagens de erro na tela pelo unittest.py
+# o remendo abaixo deve poder ser excluído com o Pyhton 3.x, eu espero
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+
+
 
 class Individual(Entity):
     """Table 'Individual'.
@@ -74,7 +87,7 @@ def teardown():
 class TestModel(TestCase):
     def setUp(self):
         setup_all(True)
-    
+
     def tearDown(self):
         drop_all(engine)
         Session.expunge_all()
@@ -97,9 +110,9 @@ class TestModel(TestCase):
 #        # assert len(g) == 1
 #        # assert g[0] == gadmin
 #        admin = model.user.User(
-#                    username = u"admin", 
+#                    username = u"admin",
 #                    password=hashlib.sha1("admin").hexdigest(),
-#                    password_check=hashlib.sha1("admin").hexdigest(), 
+#                    password_check=hashlib.sha1("admin").hexdigest(),
 #                    email="admin@example.com",
 #                    created = datetime.datetime.utcnow(),
 #                    active = True)
@@ -112,9 +125,9 @@ class TestModel(TestCase):
 #                    username=u"admin").all()
 #        assert len(u) == 1
 #        assert u[0] == admin
-#        self.user = model.user.User(username = u'tester', 
-#                               password = hashlib.sha1('test').hexdigest(), 
-#                               password_check = hashlib.sha1('test').hexdigest(), 
+#        self.user = model.user.User(username = u'tester',
+#                               password = hashlib.sha1('test').hexdigest(),
+#                               password_check = hashlib.sha1('test').hexdigest(),
 #                               created = datetime.datetime.utcnow(),
 #                               email = 'test@here.com',
 #                               active=True)
@@ -129,8 +142,8 @@ class TestModel(TestCase):
 #        self.ngroup.permissions.append(model.user.Permission(name = u'add_users'))
 #        Session.add(self.ngroup)
 #        Session.commit()
-#    
-#    
+#
+#
 #    def tearDown(self):
 #        Session.rollback()
 #        model.metadata.drop_all(engine)
@@ -150,7 +163,7 @@ class TestController(TestCase):
 
 
 class TestAuthenticatedController(TestModel):
-    
+
     def __init__(self, *args, **kwargs):
         if pylons.test.pylonsapp:
             wsgiapp = pylons.test.pylonsapp
@@ -159,7 +172,7 @@ class TestAuthenticatedController(TestModel):
         self.app = TestApp(wsgiapp, extra_environ=dict(REMOTE_USER='admin'))
         url._push_object(URLGenerator(config['routes.map'], environ))
         TestCase.__init__(self, *args, **kwargs)
-    
+
 
 
 class TestProtectedAreasController(TestModel):
@@ -169,4 +182,4 @@ class TestProtectedAreasController(TestModel):
         self.app = TestApp(wsgiapp)
         url._push_object(URLGenerator(config['routes.map'], environ))
         TestCase.__init__(self, *args, **kwargs)
-    
+
