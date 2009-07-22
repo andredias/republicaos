@@ -1,0 +1,81 @@
+body {
+	font-family: arial, sans-serif;
+}
+
+#nav,
+#userinfo,
+fieldset,
+.page-nav,
+div.actions,
+.footer-nav,
+td.action, 
+th.action,
+.field,
+.adsense-top {
+	display: none;
+}
+
+#operation-list {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#operation-list tbody td {
+	border-bottom: 1px solid #222;
+}
+
+#operation-list thead th {
+	border-bottom: 3px solid #222;
+	border-top: 3px solid #222;
+}
+
+td, th {
+	font-family: arial;
+	font-size: 11px;
+}
+
+#operation-list td, 
+#operation-list th {
+	padding: 3px 6px;
+}
+
+.amount {
+	text-align: right;
+}
+
+.sign {
+	font-family: monospace;
+}
+
+.status {
+	text-align: center;
+}
+
+.date, .title {
+	text-align: left;
+}
+
+span.title {
+	font-weight: bold;
+}
+
+h1 a {
+	color: #222;
+	text-decoration: none;
+}
+
+h1 {
+	margin: 0
+}
+
+#info {
+	margin-left: auto;
+}
+
+#info th, #info td {
+	text-align: right;
+}
+
+#footer {
+	font-size: 11px;
+}

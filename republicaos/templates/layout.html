@@ -9,7 +9,19 @@
         Republicaos: <py:if test="title">${title}</py:if>
     </title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="${h.url_for('/css/layout.css')}" type="text/css" />
+    <meta name="author" content="Pronus Engenharia de Software" />
+    <meta name="robots" content="ALL" />
+    <meta name="distribution" content="Global" />
+    <meta name="rating" content="General" />
+    <meta name="doc-class" content="Completed" />
+    <meta name="description" content="Republicaos é um aplicativo web simples e amigável que irá ajudá-lo a controlar as contas da sua república!" />
+
+    <meta name="keywords" content="organizador financeiro, software de controle financeiro, controle de gastos, controle financeiro, controle financeiro doméstico, finanças, money, quicken, investimento, planejamento financeiro, pronus engenharia de software, finanças pessoais, controle financeiro simples, gastos sob controle, como controlar gastos, cuide bem do seu dinheiro, cuide do seu futuro, controla fácil, gerenciamento financeiro, programa para controle financeiro, software controla os gastos" />
+    <link href="${h.url_for('/css/default.css')}" media="screen" rel="Stylesheet" type="text/css" />
+    <link href="${h.url_for('/css/print.css')}" media="print" rel="Stylesheet" type="text/css" />
+    <link href="${h.url_for('/css/text.css')}" media="screen" rel="Stylesheet" type="text/css" />
+
+    <!--[if IE 6]><link href="/stylesheets/ie6.css?1247101076" media="screen" rel="Stylesheet" type="text/css" /><![endif]-->
     <!-- !
     # Se for acesso local, usar uma versão local do jquery. Caso contrário, usar o google.
     # Evitaria demora para carregar a página em caso de testes locais
@@ -21,20 +33,46 @@
     </script>
     -->
     <script src="/jquery/1.3.1/jquery.min.js" type="text/javascript"></script>
+
     ${select('*[local-name()!="title"]')}
 </head>
 
-
 <body py:match="body" py:attrs="select('@*')">
-    <div id="header">
-    </div>
+    <div id="page" class="index">
+        <div id="header">
+            <h1><a href="/" title="Ir para home">spesa</a></h1>
+            <ul id="nav">
+                <li id="skip"><a href="#content">Ir direto ao conteúdo</a></li>
+                <li class="blog"><span><a href="http://spesa.com.br/blog/">Blog</a></span></li>
+                <li class="tools"><span><a href="/tools">Ferramentas</a></span></li>
+                <li class="login"><a href="/login">Entre</a></li>
+                <li class="signup"><a href="/account/signup">Cadastre-se</a></li>
+            </ul>
+            <dl id="userinfo" py:if="c.user">
+                <dt>Olá, <strong>${c.user.nome}</strong>.</dt>
 
-    <div id="content">
-        ${select('*|text()')}
-    </div>
+                <dd><a href="${h.url_for(controller='pessoa', action='edit', id=c.user.id)}" class="data">Preferências</a></dd>
+                <dd><a href="/logout_handler" class="exit">Sair</a></dd>
+            </dl>
 
-    <div id="footer">
-        <p>&copy; <a href="http://www.pronus.eng.br/">Pronus Engenharia de Software</a></p>
+        </div>
+
+        <hr />
+
+        <div id="content">
+            ${select('*|text()')}
+        </div>
+
+        <hr />
+
+        <div id="footer">
+            <span>&copy; <a href="http://www.pronus.eng.br/">Pronus Engenharia de Software</a> | Todos os direitos reservados. All rights reserved.</span>
+            <ul class="footer-nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/contato">Contato</a></li>
+                <li><a href="/termos">Termos de Uso</a></li>
+            </ul>
+        </div>
     </div>
 </body>
 
