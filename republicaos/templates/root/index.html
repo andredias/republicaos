@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+<xi:include href="../layout.html" />
+
+<head>
+    <title>republicaos.com.br &rsaquo;    Nunca foi tão fácil controlar seus gastos</title>
+</head>
+<body id="home">
+
+        <div id="main">
+
+            <div id="teaser">
+                <p class="first-line">Republicaos é o aplicativo web simples e amigável de finanças pessoais que irá ajudá-lo a <strong>controlar seu orçamento</strong>.</p>
+                <p class="second-line">Já parou para pensar em cada coisinha que você compra, muitas vezes por impulso, e no fim do mês percebe que não sobrou muito para investir? Isto é, quando sobra... Tenha controle sobre sua conta!</p>
+                <p><a href="/account/signup" class="cadastre">Cadastre-se gratuitamente!</a></p>
+                <p><img alt="Screen" src="/images/screen.png?1247101076" /></p>
+            </div>
+
+            <div id="text">
+                <h2>A maneira mais fácil de se organizar.</h2>
+                <h3>Não fique mais imaginando para onde está indo seu dinheiro.</h3>
+                <p>Para usar o Republicaos você não precisa instalar nada. Basta <a href="/account/signup">cadastrar-se</a> gratuitamente. Conheça outros motivos para usar o Republicaos:</p>
+
+                <dl>
+                    <dt>Adicione gastos, recebimentos e contas</dt>
+                    <dd>Faça um rastreamento de todas as operações envolvendo sua conta.</dd>
+
+                    <dt>Simplicidade</dt>
+                    <dd>Planilhas são complicadas, além do software que você precisa ter instalado. No Republicaos, você só precisa estar conectado e ter um browser.</dd>
+
+                    <dt>De qualquer lugar, a qualquer hora</dt>
+                    <dd>Acesse suas finanças de qualquer lugar, a qualquer hora, sem precisar fazer download de softwares complicados.</dd>
+
+                    <dt>Muito mais fácil de acompanhar</dt>
+                    <dd>É possível realizar operações por e-mail e acompanhar tudo através de seu leitor de RSS.</dd>
+
+                    <dt>Receba notificações em seu e-mail</dt>
+                    <dd>Seja avisado em seu e-mail um dia antes do vencimento de contas.</dd>
+
+                    <dt>É gratuito!</dt>
+                    <dd>Nosso serviço é totalmente gratuito. Por isso, você pode usar e indicar para todo mundo.</dd>
+                </dl>
+            </div>
+
+            <div id="sidebar" py:if="c.user">
+                <py:if test="c.republicas">
+                    <h3 >República(s) de que participa:</h3>
+                    <ul>
+                        <li py:for="republica in c.republicas"><a href="${h.url_for(controller='republica', action='show', id=republica.id)}">${republica.nome}</a></li>
+                    </ul>
+                </py:if>
+
+                <py:if test="c.convites">
+                    <h3>Recados</h3>
+                    <ul>
+                        <li py:for="convite in c.convites">Você foi convidado a fazer parte da república <strong>${convite.republica.nome}</strong>. <a href="{h.url_for(controller='convite', action='aceitar', id=convite.id)}">Clique aqui para aceitar o convite</a></li>
+                    </ul>
+                </py:if>
+                <a href="${h.url_for(controller='republica', action='new')}">Criar uma nova república</a>
+            </div>
+        </div>
+
+
+
+</body>
+</html>

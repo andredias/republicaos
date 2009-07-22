@@ -21,7 +21,7 @@ def make_map():
     map.connect('/error/{action}/{id}', controller='error')
 
     # CUSTOM ROUTES HERE
-    
+
     #
     # República
     #
@@ -59,19 +59,22 @@ def make_map():
                 action='rest_dispatcher_collection',
                 requirements={'republica_id':'\d+'},
                 conditions=dict(method=['GET', 'POST']))
-    
+
     map.connect('/republica/{republica_id}/tipo_despesa/{id}',
                 controller='tipo_despesa',
                 action='rest_dispatcher_single',
                 requirements={'republica_id':'\d+', 'id':'\d+'},
                 conditions=dict(method=['GET', 'PUT', 'DELETE']))
-    
+
     map.connect('/republica/{republica_id}/tipo_despesa/{action}',
                 controller='tipo_despesa')
     map.connect('/republica/{republica_id}/tipo_despesa/{action}/{id}',
                 controller='tipo_despesa',
                 requirements={'republica_id':'\d+', 'id':'\d+'})
 
+
+    map.connect('/', controller='root', action='index')
+    map.connect('/{action}', controller='root')
 
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}', requirements={'id':'\d+'})

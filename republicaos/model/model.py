@@ -13,6 +13,9 @@ import elixir
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 from republicaos.model import Session
+from hashlib import sha1
+from elixir.ext.encrypted import acts_as_encrypted
+
 
 
 import logging
@@ -35,14 +38,22 @@ def check_se_morou_periodo(entrada_morador, saida_morador, inicio_periodo, fim_p
 
 class Pessoa(Entity):
     nome = Field(Unicode(30), required=True)
-    senha = Field(String(40), required=True)
+    _senha = Field(String(40), required=True)
     email = Field(String(255), required=True, unique=True)
     data_cadastro = Field(Date, required=True, default=date.today)
     morador = OneToMany('Morador', order_by=['-entrada'])
 #    telefones_sob_responsabilidade = OneToMany('TelefoneRegistrado')
 
+    def _set_senha(self, password):
+        self._senha = sha1(password).hexdigest()
+
+    def _get_senha(self):
+        return self._senha
+
+    senha = property(_get_senha, _set_senha)
+
     def __repr__(self):
-        return "Pessoa <nome:'%s', data_cadastro: %r>" % (self.nome.encode('utf-8'), self.data_cadastro)
+        return "Pessoa <nome:'%s', data_cadastro: %r>" % (self.nome, self.data_cadastro)
 
 
     def periodos_morados(self, republica, data_inicial, data_final):
@@ -90,26 +101,21 @@ class Pessoa(Entity):
         return qtd_dias
 
 
-    #def peso_quota(self, data):
-        #'''Qual o peso_quota do morador em uma determinada data'''
-        #for peso_quota in self.pesos_quota:
-            #if peso_quota.data_cadastro <= data:
-                #return peso_quota.peso_quota
+    def check_password(self, password):
+        """
+        Check the password against existing credentials.
 
-        ## se chegou aqui, não há nenhum peso_quota cadastrada
-        ## dividir igualmente entre os moradores cadastrados no período
+        :param password: the password that was provided by the user to
+            try and authenticate. This is the clear text version that we will
+            need to match against the hashed one in the database.
+        :type password: unicode object.
+        :return: Whether the password is valid.
+        :rtype: bool
 
-        #num_moradores = select(
-                        #[func.count('*')],
-                        #from_obj = [Pessoa.table],
-                        #whereclause = and_(
-                            #Pessoa.republica == self.republica,
-                            #Pessoa.entrada <= data,
-                            #or_(Pessoa.saida >= data, Pessoa.saida == None)
-                            #)
-                        #).execute().fetchone()[0]
+        """
+        log.debug('Pessoa.check_password')
+        return sha1(password).hexdigest() == self.senha
 
-        #return Decimal(str(100.0 / num_moradores) if num_moradores else 0)
 
 
 
