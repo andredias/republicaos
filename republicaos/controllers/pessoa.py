@@ -3,15 +3,19 @@
 from __future__ import unicode_literals, print_function
 
 import logging
+import formencode
 
 from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for
+from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
-from republicaos.model import Pessoa, Session
+from republicaos.model import Pessoa, CadastroPendente, Session
+from republicaos.forms.validators.unique import Unique
 from formencode import Schema, validators
+from paste.request import construct_url
+
 
 log = logging.getLogger(__name__)
 
@@ -19,9 +23,12 @@ log = logging.getLogger(__name__)
 class PessoaSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
-    nome = validators.UnicodeString(not_empty=True)
-    senha = validators.UnicodeString(not_empty=True)
-    email = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
+    nome = validators.UnicodeString(not_empty=True, strip=True)
+    email = formencode.All(validators.Email(not_empty=True), Unique(model=Pessoa, attr='email'))
+    senha = validators.UnicodeString(not_empty=True, min=4)
+    confirmacao_senha = validators.UnicodeString()
+    aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
+    chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
 
 
 class PessoaController(BaseController):
@@ -90,13 +97,20 @@ class PessoaController(BaseController):
     def new(self):
         """GET /pessoa/new: Form to create a new item"""
         if c.valid_data:
-            pessoa = self.create()
-            # TODO: flash indicando que foi adicionado
-            # algum outro processamento para determinar a localização da república e agregar
-            # serviços próximos
-            redirect_to(controller='pessoa', action='show', id=c.pessoa.id)
+            pendencia = CadastroPendente.get_by(email = c.valid_data['email'])
+            if not pendencia:
+                pendencia = CadastroPendente(**c.valid_data)
+            else:
+                pendencia.from_dict(c.valid_data)
+                flash('(info) Já existe um pedido de cadastro pendente para o e-mail fornecido.')
+            Session.commit()
+            url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
+                                action='cadastro', id=pendencia.hash), with_path_info=False)
+            pendencia.enviar_pedido_confirmacao(url)
+            flash('(info) Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.')
+            redirect_to(controller='root', action='index')
         c.action = url_for(controller='pessoa', action='new')
-        c.title  = 'Nova República'
+        c.title  = 'Crie sua conta'
         return render('pessoa/form.html', filler_data=request.params)
 
 

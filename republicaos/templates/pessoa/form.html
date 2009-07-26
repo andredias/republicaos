@@ -9,8 +9,11 @@
     <title>${c.title}</title>
 </head>
 
-<body>
-    <h1>${c.title}</h1>
+<body id="account">
+    <h2>${c.title}</h2>
+
+    <p>Preencha os campos abaixo. Após o seu cadastro, um código de ativação será enviado ao e-mail informado. Nenhum dado fornecido por você será distribuído. <strong>Nós respeitamos a sua privacidade!</strong></p>
+
     <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
     <py:if test="c.errors">
         <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
@@ -18,38 +21,30 @@
         <span class="error-message" py:if="error" py:content="error"></span>
         </div>
     </py:if>
-    <form action="${c.action}" method="post">
-        <input py:if="c.method == 'put'" type="hidden" name="_method" value="put" />
-        <table>
-            <tbody>
-                <tr>
-                    <td><label>Nome</label></td>
-                    <td><input type="text" name="nome" /></td>
-                </tr>
-                <tr>
-                    <td><label>e-mail</label></td>
-                    <td><input type="text" name="email" /></td>
-                </tr>
-                <tr>
-                    <td><label>Senha</label></td>
-                    <td><input type="password" name="senha" /></td>
-                </tr>
-                <tr>
-                    <td><label>Confirmar Senha</label></td>
-                    <td><input type="password" name="confirma_senha" /></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <div py:if="c.action">
-                            <input type="submit" value="Ok" />
-                            <a href="">Cancelar</a>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-</body>
 
+
+    <form action="${c.action}" method="post" class="signup">
+        <p><label>E-mail</label>
+        <input class="text" id="email" name="email" size="80" type="text" /></p>
+
+        <p><label>Nome</label>
+        <input class="text" name="nome" size="30" type="text" /></p>
+
+        <p><label>Senha</label>
+        <input class="text" name="senha" size="30" type="password" /></p>
+
+        <p><label>Confirme sua senha</label>
+        <input class="text" name="confirmacao_senha" size="30" type="password" /></p>
+
+        <p>
+            <label class="skip">Concordo com os <a href="/termo_uso">Termos de Uso</a> &nbsp;</label>
+            <input name="aceito_termos" type="checkbox" value="1" />
+        </p>
+
+        <p><input name="commit" type="submit" value="Criar" /> <span class="already-member">Já é cadastrado? <a href="/login">Entre aqui!</a></span></p>
+    </form>
+
+
+</body>
 </html>
+

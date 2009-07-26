@@ -23,6 +23,7 @@ if elixir.options_defaults.get('autoload', False) \
 # # import other entities here, e.g.
 # from republicaos.model.blog import BlogEntry, BlogComment
 from republicaos.model.model import *
+from republicaos.model.pendencias import *
 
 # Finally, call elixir to set up the tables.
 # but not if using reflected tables

@@ -14,7 +14,6 @@ from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 from republicaos.model import Session
 from hashlib import sha1
-from elixir.ext.encrypted import acts_as_encrypted
 
 
 
@@ -39,7 +38,7 @@ def check_se_morou_periodo(entrada_morador, saida_morador, inicio_periodo, fim_p
 class Pessoa(Entity):
     nome = Field(Unicode(30), required=True)
     _senha = Field(String(40), required=True)
-    email = Field(String(255), required=True, unique=True)
+    email = Field(String(80), required=True, unique=True)
     data_cadastro = Field(Date, required=True, default=date.today)
     morador = OneToMany('Morador', order_by=['-entrada'])
 #    telefones_sob_responsabilidade = OneToMany('TelefoneRegistrado')

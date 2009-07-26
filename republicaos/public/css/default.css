@@ -157,28 +157,28 @@ body, #footer .footer-nav a {
 #tools-list:after,
 #available-tags:after,
 .date-picker-block:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
     visibility: hidden;
 }
 
-.block li, 
-#content, 
-#tools-list, 
-#available-tags, 
+.block li,
+#content,
+#tools-list,
+#available-tags,
 .date-picker-block {display: inline-block;}
 
 /* Hides from IE-mac \*/
-* html #content, 
-* html .block li, 
-* html #tools-list, 
-* html #available-tags, 
+* html #content,
+* html .block li,
+* html #tools-list,
+* html #available-tags,
 * .date-picker-block {height: 1%;}
-#content, 
-#tools-list, 
-.block li, 
+#content,
+#tools-list,
+.block li,
 #available-tags,
 .date-picker-block {display: block;}
 /* End hide from IE-mac */
@@ -197,7 +197,7 @@ body, #footer .footer-nav a {
 
 /*=#header*/
 #header h1 {
-	
+
 }
 
 #header h1 a {
@@ -231,7 +231,7 @@ body, #footer .footer-nav a {
 	width: 97px;
 }
 
-#overview #nav .overview a, 
+#overview #nav .overview a,
 #nav .overview a:hover {
 	background-position: 0 -22px;
 }
@@ -369,7 +369,7 @@ body, #footer .footer-nav a {
 
 /*=features*/
 #features {
-	
+
 }
 
 #features dd {
@@ -500,10 +500,10 @@ body, #footer .footer-nav a {
 
 /*=signup*/
 #account .signup  form p {
-	
+
 }
 
-#account .signup input.text, 
+#account .signup input.text,
 #account .login input.text {
 	padding: .2em;
 }
@@ -515,10 +515,15 @@ body, #footer .footer-nav a {
 	width: 13em;
 }
 
-#account .signup #user_email, 
+#account .signup #user_email,
 #account .login #email,
 #contact #contact_name {
 	width: 15em;
+}
+
+#account #email {
+    width: 20em;
+    font-size: 1.7em;
 }
 
 #account .signup label.skip {
@@ -693,7 +698,7 @@ dd.income {
 }
 
 dl .amount {
-	position: absolute; 
+	position: absolute;
 	right: 1em;
 }
 
@@ -745,7 +750,7 @@ span.negative {
 	background: #fff;
 }
 
-#operation-list th, 
+#operation-list th,
 #operation-list td {
     text-align: left;
     padding: .5em;
@@ -1111,7 +1116,7 @@ ul.block {
 	right: .5em;
 }
 
-body#account .index #data, 
+body#account .index #data,
 body#account .index #schedules {
 	margin-top: 3em;
 }
@@ -1342,12 +1347,12 @@ p.all-tags {
 	width: 30em;
 }
 
-#page form input#schedule_raw_amount, 
+#page form input#schedule_raw_amount,
 #page form input#operation_raw_amount {
 	width: 13em;
 }
 
-html body #page form #operation_title, 
+html body #page form #operation_title,
 html body #page form #schedule_title {
 	width: 22.5em;
 }
@@ -1540,7 +1545,7 @@ a.month-picker {
 	float: left;
 	overflow: hidden;
 	cursor: pointer;
-	background: url(../images/calendar.png) no-repeat; 
+	background: url(../images/calendar.png) no-repeat;
 	position: absolute;
 	right: .4em;
 	top: 0;
@@ -1566,7 +1571,7 @@ div.month-picker-block a {
 	text-align: center;
 }
 
-div.date-picker-holder, 
+div.date-picker-holder,
 div.date-picker-holder * {
 	margin: 0;
 	padding: 0;
@@ -1642,7 +1647,7 @@ div.popup-calendar table {
 * html div.popup-calendar table {
 	display: inline;
 }
-div.popup-calendar table th, 
+div.popup-calendar table th,
 div.popup-calendar table td {
 	background: #eee;
 	width: 15px;
@@ -1652,7 +1657,7 @@ div.popup-calendar table td {
 div.popup-calendar table td.inactive {
 	color: #aaa;
 }
-div.popup-calendar table th.weekend, 
+div.popup-calendar table th.weekend,
 div.popup-calendar table td.weekend {
 	background: #f6f6f6;
 }
@@ -1673,7 +1678,7 @@ div.popup-calendar table td a {
 div.popup-calendar table td.today a {
 	/*border-color: #aaa;*/
 }
-div.popup-calendar table td a.selected, 
+div.popup-calendar table td a.selected,
 div.popup-calendar table td a:hover,
 div.month-picker table a:hover {
 	background: #ee3a42;
@@ -1706,7 +1711,7 @@ a:hover img {
 	top: 1em;
 }
 
-#form-containers form, 
+#form-containers form,
 #form-containers fieldset,
 #form-containers p {
 	display: inline;

@@ -1,6 +1,11 @@
-from formencode import *
-from formencode import validators 
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from formencode import Invalid, Schema, validators
 import pylons
+
+import logging
+
+log = logging.getLogger(__name__)
 
 _ = validators._ # dummy translation string
 
@@ -13,40 +18,31 @@ class FilteringSchema(Schema):
 
 # Model-based validators
 
+
 class Unique(validators.FancyValidator):
-    
+
     """
-    Checks if given value is unique to the model.Will check the state: if state object
-    is the same as the instance, or the state contains a property with the same name
-    as the context name. For example:
-    
-    validator = validators.Unique(model.NewsItem, "title", context_name="news_item")
-    
-    This will check if there is an existing instance with the same "title". If there
-    is a matching instance, will check if the state passed into the validator is the
-    same instance, or if the state contains a property "news_item" which is the same
-    instance.
+    Verifica se o valor é único no banco de dados. Exemplo
+
+    validator = validators.Unique(model = Pessoa, attr = 'email')
+
+    Durante a validação, se houver um ou mais registros no banco de dados para o atributo, então
+    lança a Exceção.
     """
-    
-    __unpackargs__ = ('model', 'attr', "model_name", "context_name", "attribute_name")
+
+    __unpackargs__ = ('model', 'field')
     messages = {
-        'notUnique' : _("%(modelName)s already exists with this %(attrName)s"),
+        #FIXME: acentuação na mensagem
+        'notUnique' : _("Valor ja registrado no banco de dados"),
     }
-    
-    model_name = "Item"
-    attribute_name = None
-    context_name = None
-    
+
+
     def validate_python(self, value, state):
+        if isinstance(self.attr, unicode):
+            self.attr = str(self.attr)
         instance = self.model.get_by(**{self.attr : value})
         if instance:
-            context_name = self.context_name or self.model.__name__.lower()
-            if state != instance and \
-                getattr(state, context_name, None) != instance:
-                attr_name = self.attribute_name or self.attr
-                raise Invalid(self.message('notUnique', state, 
-                                           modelName=self.model_name,
-                                           attrName=attr_name), 
-                              value, state)
- 
+           raise Invalid(self.message('notUnique', state), value, state)
+
+
 validators.Unique = Unique
