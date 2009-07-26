@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import inspect
+import re
 import formencode
 from decorator import decorator
 from pylons import request, response, session, tmpl_context as c
@@ -14,6 +15,7 @@ from os.path import splitext
 from decimal import Decimal
 from babel.numbers import format_number, format_decimal, format_percent
 
+from republicaos.lib.helpers import flash
 
 
 import logging
@@ -30,22 +32,22 @@ def arredonda_decimal(numero, referencia):
     result = (numero / referencia).to_integral() * referencia
     return result.quantize(referencia)
 
-def arredonda(numero, referencia = 1):
+def arredonda(numero, referencia=1):
     if type(numero) is Decimal or type(referencia) is Decimal:
         return arredonda_decimal(numero, referencia)
     else:
         return round(numero / referencia) * referencia
 
 
-def arredonda_cima(numero, referencia = 1):
+def arredonda_cima(numero, referencia=1):
     quociente = numero / referencia
-    sinal = 1 if quociente >= 0 else -1
+    sinal = 1 if quociente >= 0 else - 1
     fracao = abs(quociente - int(quociente))
     ajuste = (1 if fracao > 0.01 else 0) * sinal
     return (int(quociente) + ajuste) * referencia
 
 
-def pretty_decimal(numero, arredondamento = Decimal('0.01')):
+def pretty_decimal(numero, arredondamento=Decimal('0.01')):
     numero = arredonda(numero, arredondamento)
     return format_decimal(numero)
 
@@ -54,7 +56,7 @@ def pretty_number(numero):
     return _pretty_number(numero, locale='pt_BR')
 
 
-def float_equal(float1, float2, precision = 0.001):
+def float_equal(float1, float2, precision=0.001):
     return abs(float(float1) - float(float2)) < precision
 
 
@@ -78,19 +80,19 @@ def dict_to_attributes(attributes, object):
 template_loader = config['pylons.app_globals'].genshi_loader
 
 
-def render(template, filler_data = {}, method = 'xhtml', doctype = 'xhtml'):
+def render(template, filler_data={}, method='xhtml', doctype='xhtml'):
     globs = pylons_globals()
-    #log.debug("render | template: '%s', globs: %r, filler_data: %r, doctype: '%s'" % 
+    #log.debug("render | template: '%s', globs: %r, filler_data: %r, doctype: '%s'" %
     #          (template, globs, filler_data, doctype))
     # A junção de globs com filler_data possibilita usar variáveis diretamente no template, sem ter de
     # usar 'c.variavel', já que o HTMLFormFiller só preenche formulários e não variáveis.
     # Atenção: É importante que filler_data não tenha atributos comuns com globs como, por exemplo,
     # 'url' que é uma função no pylons.
     globs.update(filler_data)
-    tmpl  = template_loader.load(template)
+    tmpl = template_loader.load(template)
     stream = tmpl.generate(**globs)
     if filler_data:
-        stream = stream | HTMLFormFiller(data = filler_data)
+        stream = stream | HTMLFormFiller(data=filler_data)
     return stream.render(method, doctype=doctype)
 
 
@@ -127,5 +129,31 @@ def validate(schema):
             except formencode.Invalid, e:
                 c.errors = e.unpack_errors()
         return func(self, *args, **kwargs)
-        
+
     return decorator(_validate)
+
+
+
+
+re_flash_message = re.compile('(^\((?P<css>[\w]+)\)\s)?(?P<mensagem>.*)')
+
+def get_flash_messages():
+    '''
+    organiza as mensagens enviadas para flash em um dicionário em que as chaves são as classes css
+    que deverão ser usadas nos templates html e os itens são as mensagens a serem apresentadas.
+    
+    As mensagens devem seguir o seguinte padrão:
+    
+    (css) mensagem a ser exibida
+    
+    Por exemplo:
+    
+    (warning) Preencha um endereço válido de e-mail
+    '''
+    messages = flash.pop_messages()
+    result = {}
+    for message in messages:
+        classificado = re_flash_message.match(message).groupdict()
+        result.setdefault(classificado['css'], []).append(classificado['mensagem'])
+    return result
+

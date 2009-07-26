@@ -21,7 +21,7 @@
     <link href="${h.url_for('/css/print.css')}" media="print" rel="Stylesheet" type="text/css" />
     <link href="${h.url_for('/css/text.css')}" media="screen" rel="Stylesheet" type="text/css" />
 
-    <!--[if IE 6]><link href="/stylesheets/ie6.css?1247101076" media="screen" rel="Stylesheet" type="text/css" /><![endif]-->
+    <!--[if IE 6]><link href="/stylesheets/ie6.css" media="screen" rel="Stylesheet" type="text/css" /><![endif]-->
     <!-- !
     # Se for acesso local, usar uma versão local do jquery. Caso contrário, usar o google.
     # Evitaria demora para carregar a página em caso de testes locais
@@ -37,16 +37,19 @@
     ${select('*[local-name()!="title"]')}
 </head>
 
+
+<?python from republicaos.lib.utils import get_flash_messages ?>
+
 <body py:match="body" py:attrs="select('@*')">
     <div id="page" class="index">
         <div id="header">
             <h1><a href="/" title="Ir para home">spesa</a></h1>
             <ul id="nav">
                 <li id="skip"><a href="#content">Ir direto ao conteúdo</a></li>
-                <li class="blog"><span><a href="http://spesa.com.br/blog/">Blog</a></span></li>
+                <li class="blog"><span><a href="http://republicaos.com.br/blog/">Blog</a></span></li>
                 <li class="tools"><span><a href="/tools">Ferramentas</a></span></li>
                 <li class="login"><a href="/login">Entre</a></li>
-                <li class="signup"><a href="/account/signup">Cadastre-se</a></li>
+                <li class="signup"><a href="/pessoa/new">Cadastre-se</a></li>
             </ul>
             <dl id="userinfo" py:if="c.user">
                 <dt>Olá, <strong>${c.user.nome}</strong>.</dt>
@@ -60,6 +63,13 @@
         <hr />
 
         <div id="content">
+            <div py:with="flash_messages = get_flash_messages()">
+                <dl py:for="css_class, messages in flash_messages.items()" id="${css_class}" class="${css_class}" >
+                    <dd py:for="message in messages">${message}</dd>
+                    <a onclick="Republicaos.utils.close('${css_class}');" class="close" href="javascript:;">Fechar</a>
+                </dl>
+            </div>
+            
             ${select('*|text()')}
         </div>
 

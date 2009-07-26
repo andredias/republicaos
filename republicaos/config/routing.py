@@ -77,6 +77,6 @@ def make_map():
     map.connect('/{action}', controller='root')
 
     map.connect('/{controller}/{action}')
-    map.connect('/{controller}/{action}/{id}', requirements={'id':'\d+'})
+    map.connect('/{controller}/{action}/{id}')
 
     return map
