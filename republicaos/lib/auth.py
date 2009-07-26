@@ -17,11 +17,14 @@ from pylons import config
 from decorator import decorator
 from pylons.controllers.util import abort
 from repoze.what.authorize import check_authorization, NotAuthorizedError
+from paste.httpexceptions import HTTPUnauthorized
+
 
 
 import logging
-log = logging.getLogger(__name__)
 
+log = logging.getLogger(__name__)
+cookie_name = 'republicaos.com.br'
 
 def get_user():
     """Return the current user's database object."""
@@ -29,7 +32,17 @@ def get_user():
         return request.environ.get('repoze.who.identity')['user']
     else:
         return None
+        
 
+
+def set_user(userid):
+    '''
+    Define o usuário do sistema. Tipo um login feito por programação. Baseado em http://bugs.repoze.org/issue58
+    '''
+    identity = {'repoze.who.userid': userid}
+    headers = request.environ['repoze.who.plugins'][cookie_name].remember(request.environ, identity)
+    for k, v in headers:
+        response.headers.add(k, v)
 
 
 def add_auth(app, skip_authentication):
@@ -42,9 +55,7 @@ def add_auth(app, skip_authentication):
     sqlauth.translations['user_name'] = 'email'
     sqlauth.translations['validate_password'] = 'check_password'
 
-    cookie_name = 'republicaos_cookie'
-
-    cookie = AuthTktCookiePlugin(config['beaker.session.secret'], cookie_name) # TODO: pegar o secret do config
+    cookie = AuthTktCookiePlugin(config['beaker.session.secret'], cookie_name)
 
     form = FriendlyFormPlugin(
         login_form_url = '/login',
@@ -77,58 +88,6 @@ def add_auth(app, skip_authentication):
 
 
 
-#def authz_denial_handler(reason):
-    #"""
-    #A repoze.what-pylons authorization denial handler.
-
-    #:param reason: The user-friendly message on why authorization was denied.
-
-    #For more information about denial handlers, check:
-    #http://code.gustavonarea.net/repoze.what-pylons/Manual/Protecting.html#using-denial-handlers
-
-    #"""
-    #if response.status_int == 401:
-        #message = 'Oops, you have to login: %s' % reason
-    #else:
-        #identity = request.environ['repoze.who.identity']
-        #userid = identity['repoze.who.userid']
-        #message = "Come on, %s, you know you can't do that: %s" % (userid,
-                                                                   #reason)
-    #flash(message)
-    #abort(response.status_int, comment=reason)
-
-
-#class require(ActionProtector):
-    #"""
-    #Protect controller actions with a :mod:`repoze.what` predicate checker.
-
-    #:func:`authz_denial_handler` is called when authorization is denied.
-
-    #For more information about action protectors, check:
-    #http://code.gustavonarea.net/repoze.what-pylons/Manual/Protecting.html#protecting-a-controller-action
-
-    #"""
-
-    #default_denial_handler = staticmethod(authz_denial_handler)
-
-
-#class protect(ControllerProtector):
-    #"""
-    #Class decorator for controller-wide authorization using a :mod:`repoze.what`
-    #predicate checker.
-
-    #:func:`authz_denial_handler` is called when authorization is denied.
-
-    #For more information about controller-wide protectors, check:
-    #http://code.gustavonarea.net/repoze.what-pylons/Manual/Protecting.html#protecting-a-controller
-
-    #"""
-
-    #default_denial_handler = staticmethod(authz_denial_handler)
-
-
-
-
 def require(predicate):
     """
     Make repoze.what verify that the predicate is met.
@@ -146,7 +105,8 @@ def require(predicate):
         except NotAuthorizedError, reason:
             # TODO: We should warn the user
             #flash(reason, status='warning')
-            abort(401)
+            raise HTTPUnauthorized()
+
 
         return func(*args, **kwargs)
     return check_auth
