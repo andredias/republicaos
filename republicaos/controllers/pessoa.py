@@ -11,7 +11,7 @@ from pylons.decorators.rest import restrict, dispatch_on
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
-from republicaos.model import Pessoa, CadastroPendente, Session
+from republicaos.model import Pessoa, CadastroPendente, TrocaSenha, Session
 from republicaos.forms.validators.unique import Unique
 from formencode import Schema, validators
 from paste.request import construct_url
@@ -29,6 +29,11 @@ class PessoaSchema(Schema):
     confirmacao_senha = validators.UnicodeString()
     aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
     chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
+
+class TrocaSenhaSchema(Schema):
+    allow_extra_fields = True
+    filter_extra_fields = True
+    email = validators.Email(not_empty=True)
 
 
 class PessoaController(BaseController):
@@ -140,3 +145,17 @@ class PessoaController(BaseController):
         """GET /pessoa/show/id: Show a specific item"""
         c.title = 'Pessoa'
         return render('pessoa/form.html', filler_data = c.pessoa.to_dict())
+    
+    
+    @validate(TrocaSenhaSchema)
+    def esqueceu_senha(self):
+        if c.valid_data:
+            pessoa = Pessoa.get_by(email = c.valid_data['email'])
+            if pessoa:
+                TrocaSenha(pessoa_id=pessoa.id)
+                Session.commit()
+                redirect_to(controller='root', action='index')
+            else:
+                flash('(error) Este endereço de e-mail não está cadastrado no Republicaos!')
+        
+        return render('pessoa/esqueceu_senha.html')

@@ -20,11 +20,9 @@ class ConfirmacaoController(BaseController):
     def cadastro(self, id):
         cp = CadastroPendente.get_by(hash = id)
         if cp:
-            pessoa = Pessoa(nome=cp.nome, _senha=cp._senha, email=cp.email)
-            authentication.set_user(pessoa.email)
-            flash('(info) Bem vindo ao Republicaos, %s!' % pessoa.nome)
-            cp.delete()
-            Session.commit()
+            authentication.set_user(cp.email)
+            flash('(info) Bem vindo ao Republicaos, %s!' % cp.nome)
+            cp.confirma_cadastro()
             redirect_to(controller='root', action='index')
         else:
             return render('confirmacao/confirmacao_invalida.html')
