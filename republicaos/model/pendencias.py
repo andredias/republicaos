@@ -82,7 +82,7 @@ Equipe Republicaos'''
 
 class TrocaSenha(Entity):
     hash = Field(String(40), primary_key = True)
-    pessoa_id = Field(Integer, required = True)
+    pessoa = ManyToOne('Pessoa', required=True)
     data_pedido = Field(Date, default = date.today)
     
     subject = 'Republicaos: Alteração de senha'
@@ -102,8 +102,7 @@ Equipe Republicaos'''
 
 
     @before_insert
-    def _adjust_fields(self):
-        self.pessoa = Pessoa.get_by(id = self.pessoa_id)
+    def _set_hash(self):
         self.hash = hash_calc(self.pessoa.nome, self.pessoa.email)
 
     @after_insert

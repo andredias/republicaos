@@ -36,12 +36,13 @@
         <p><label>Confirme sua senha</label>
         <input class="text" name="confirmacao_senha" size="30" type="password" /></p>
 
-        <p>
+        <p py:if="'Criar' == c.submit">
             <label class="skip">Concordo com os <a href="/termo_uso">Termos de Uso</a> &nbsp;</label>
             <input name="aceito_termos" type="checkbox" value="1" />
+            <span class="already-member">Já é cadastrado? <a href="/login">Entre aqui!</a></span>
         </p>
 
-        <p><input name="commit" type="submit" value="Criar" /> <span class="already-member">Já é cadastrado? <a href="/login">Entre aqui!</a></span></p>
+        <p><input name="commit" type="submit" value="${c.submit}" /></p>
     </form>
 
 

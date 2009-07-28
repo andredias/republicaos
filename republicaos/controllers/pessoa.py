@@ -15,6 +15,8 @@ from republicaos.model import Pessoa, CadastroPendente, TrocaSenha, Session
 from republicaos.forms.validators.unique import Unique
 from formencode import Schema, validators
 from paste.request import construct_url
+from republicaos.lib.auth import require, get_user, IsOwner
+
 
 
 log = logging.getLogger(__name__)
@@ -29,6 +31,20 @@ class PessoaSchema(Schema):
     confirmacao_senha = validators.UnicodeString()
     aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
     chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
+
+
+class PessoaEdicaoSchema(Schema):
+    '''
+    A senha não é obrigatória nesse caso, a não ser que queira mudá-la
+    '''
+    allow_extra_fields = True
+    filter_extra_fields = True
+    nome = validators.UnicodeString(not_empty=True, strip=True)
+    email = validators.Email(not_empty=True)
+    senha = validators.UnicodeString()
+    confirmacao_senha = validators.UnicodeString()
+    chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
+
 
 class TrocaSenhaSchema(Schema):
     allow_extra_fields = True
@@ -115,29 +131,33 @@ class PessoaController(BaseController):
             flash('(info) Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.')
             redirect_to(controller='root', action='index')
         c.action = url_for(controller='pessoa', action='new')
+        c.submit = 'Criar'
         c.title  = 'Crie sua conta'
         return render('pessoa/form.html', filler_data=request.params)
 
 
 
-
-    @validate(PessoaSchema)
+    @require(IsOwner())
+    @validate(PessoaEdicaoSchema)
     def edit(self, id, format='html'):
         """GET /pessoa/edit/id: Edit a specific item"""
         if c.valid_data:
+            if not c.valid_data['senha']: # alteração de senha não é obrigatória na edição
+                c.valid_data.pop('senha')
             request.method = 'PUT'
             self.update(id)
-            # TODO: flash indicando que foi adicionado
+            flash('(info) Dados alterados com sucesso!')
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(controller='pessoa', action='show', id=id)
+            redirect_to(controller='root', action='index')
         elif not c.errors:
             filler_data = c.pessoa.to_dict()
         else:
             log.debug('PessoaController.edit: c.errors: %r' % c.errors)
             filler_data = request.params
         c.action = url_for(controller='pessoa', action='edit', id=id)
-        c.title = 'Editar Dados da Pessoa'
+        c.submit = 'Atualizar'
+        c.title = 'Editar Dados Pessoais'
         return render('pessoa/form.html', filler_data = filler_data)
 
 
@@ -152,7 +172,7 @@ class PessoaController(BaseController):
         if c.valid_data:
             pessoa = Pessoa.get_by(email = c.valid_data['email'])
             if pessoa:
-                TrocaSenha(pessoa_id=pessoa.id)
+                TrocaSenha(pessoa=pessoa)
                 Session.commit()
                 redirect_to(controller='root', action='index')
             else:

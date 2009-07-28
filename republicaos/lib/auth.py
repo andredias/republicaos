@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from __future__ import unicode_literals, print_function
 from pylons import request, response
 from repoze.what.plugins.pylonshq import ActionProtector, ControllerProtector
 from republicaos.model import Pessoa, Session
@@ -11,13 +11,14 @@ from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 
 from repoze.what.middleware import setup_auth
 from repoze.what.plugins.sql import configure_sql_adapters
+from repoze.what.predicates import Predicate
 
 from pylons import config
 
 from decorator import decorator
 from pylons.controllers.util import abort
 from repoze.what.authorize import check_authorization, NotAuthorizedError
-from paste.httpexceptions import HTTPUnauthorized
+from paste.httpexceptions import HTTPUnauthorized, HTTPForbidden
 
 
 
@@ -102,11 +103,37 @@ def require(predicate):
         environ = request.environ
         try:
             predicate.check_authorization(environ)
+        # trecho retirado de repoze.what_pylons class ActionProtector
         except NotAuthorizedError, reason:
-            # TODO: We should warn the user
-            #flash(reason, status='warning')
-            raise HTTPUnauthorized()
-
+            message = reason.message
+            flash(message)
+            if get_user():
+                # The user is authenticated.
+                raise HTTPForbidden(comment=message)
+            else:
+                # The user is not authenticated.
+                raise HTTPUnauthorized(comment=message)
 
         return func(*args, **kwargs)
     return check_auth
+
+
+class UsuarioAutenticado(Predicate):
+    def evaluate(self, environment, credentials):
+        self.user = get_user()
+        if not self.user:
+            # FIXME: traduzir depois com o Babel
+            self.unmet('(error) É necessário entrar no sistema para acessar este recurso')
+
+
+
+class IsOwner(UsuarioAutenticado):
+    def __init__(self, field_name = 'id', **kwargs):
+        UsuarioAutenticado.__init__(self, **kwargs)
+        self.field_name = field_name
+    
+    def evaluate(self, environment, credentials):
+        UsuarioAutenticado.evaluate(self, environment, credentials)
+        if int(request.urlvars[self.field_name]) != self.user.id:
+            # FIXME: traduzir depois com o Babel
+            self.unmet('(error) Só o proprietário desse recurso pode manipulá-lo.')
