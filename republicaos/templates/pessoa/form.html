@@ -18,7 +18,7 @@
     <py:if test="c.errors">
         <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
         ${select('.')}
-        <span class="error-message" py:if="error" py:content="error"></span>
+        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
         </div>
     </py:if>
 
