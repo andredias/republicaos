@@ -32,9 +32,11 @@ __all__ = ['environ', 'url', 'TestController', 'TestModel',
 
 # additional imports ...
 import os
+import logging
 from paste.deploy import appconfig
 from republicaos.config.environment import load_environment
 
+log = logging.getLogger(__name__)
 here_dir = os.path.dirname(__file__)
 conf_dir = os.path.dirname(os.path.dirname(here_dir))
 
@@ -150,7 +152,7 @@ class TestModel(TestCase):
 #        Session.close()
 
 
-class TestController(TestCase):
+class TestController(TestModel):
 
     def __init__(self, *args, **kwargs):
         if pylons.test.pylonsapp:
