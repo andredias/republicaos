@@ -14,13 +14,13 @@
 <h2>Acesse sua conta</h2>
 <div id="main">
     <p><span class="want-to-signup">Não é cadastrado? <a href="/account/signup">Crie sua conta agora!</a></span></p>
-    <form action="${h.url('/login_handler', came_from=c.came_from, __logins=c.login_counter)}" method="post">
+    <form action="${h.url_for(controller='root', action='login')}" method="post">
     <fieldset>
         <legend>Entre agora!</legend>
         <p><label for="email">E-mail</label>
-        <input class="text" id="email" name="login" type="text" /></p>
+        <input class="text" id="email" name="email" type="text" /></p>
         <p><label for="password">Senha</label>
-        <input class="text" id="password" name="password" type="password" value="" /></p>
+        <input class="text" id="password" name="senha" type="password" /></p>
         <p><input name="commit" type="submit" value="Entrar" /> <a href="/pessoa/esqueceu_senha">Esqueceu sua senha?</a></p>
     </fieldset>
     </form>

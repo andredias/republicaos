@@ -38,7 +38,12 @@
 </head>
 
 
-<?python from republicaos.lib.utils import get_flash_messages ?>
+<?python
+
+from republicaos.lib.utils import get_flash_messages
+from republicaos.lib.auth import get_user
+user = get_user()
+?>
 
 <body py:match="body" py:attrs="select('@*')">
     <div id="page" class="index">
@@ -51,11 +56,11 @@
                 <li class="login"><a href="/login">Entre</a></li>
                 <li class="signup"><a href="/pessoa/new">Cadastre-se</a></li>
             </ul>
-            <dl id="userinfo" py:if="c.user">
-                <dt>Olá, <strong>${c.user.nome}</strong>.</dt>
+            <dl id="userinfo" py:if="user">
+                <dt>Olá, <strong>${user.nome}</strong>.</dt>
 
-                <dd><a href="${h.url_for(controller='pessoa', action='edit', id=c.user.id)}" class="data">Preferências</a></dd>
-                <dd><a href="/logout_handler" class="exit">Sair</a></dd>
+                <dd><a href="${h.url_for(controller='pessoa', action='edit', id=user.id)}" class="data">Preferências</a></dd>
+                <dd><a href="${h.url_for(controller='root', action='logout')}" class="exit">Sair</a></dd>
             </dl>
 
         </div>
