@@ -8,7 +8,6 @@ command.
 This module initializes the application via ``websetup`` (`paster
 setup-app`) and provides the base testing objects.
 """
-from unittest import TestCase
 
 from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand
@@ -51,8 +50,7 @@ metadata = elixir.metadata
 Session = elixir.session = meta.Session
 
 
-#
-#veja http://blog.ianbicking.org/illusive-setdefaultencoding.html
+# veja http://blog.ianbicking.org/illusive-setdefaultencoding.html
 # estava dando uns erros na hora de imprimir mensagens de erro na tela pelo unittest.py
 # o remendo abaixo deve poder ser excluído com o Pyhton 3.x, eu espero
 import sys
@@ -86,7 +84,7 @@ def setup():
 def teardown():
     pass
 
-class TestModel(TestCase):
+class TestModel(object):
     def setUp(self):
         setup_all(True)
 
@@ -95,64 +93,10 @@ class TestModel(TestCase):
         Session.expunge_all()
 
 
-
-#    def setUp(self):
-#        import datetime
-#        import hashlib
-#        metadata.create_all()
-#        gadmin = model.user.Group(
-#                name = u"Administrators",
-#                description = u"Administration group",
-#                created = datetime.datetime.utcnow(),
-#                active = True)
-#        Session.add(gadmin)
-#        g = model.Session.query(
-#                model.user.Group).filter_by(
-#                    name=u"Administrators").all()
-#        # assert len(g) == 1
-#        # assert g[0] == gadmin
-#        admin = model.user.User(
-#                    username = u"admin",
-#                    password=hashlib.sha1("admin").hexdigest(),
-#                    password_check=hashlib.sha1("admin").hexdigest(),
-#                    email="admin@example.com",
-#                    created = datetime.datetime.utcnow(),
-#                    active = True)
-#        Session.add(admin)
-#        gadmin.users.append(admin)
-#        Session.commit()
-#        # Check the status
-#        u = Session.query(
-#                model.user.User).filter_by(
-#                    username=u"admin").all()
-#        assert len(u) == 1
-#        assert u[0] == admin
-#        self.user = model.user.User(username = u'tester',
-#                               password = hashlib.sha1('test').hexdigest(),
-#                               password_check = hashlib.sha1('test').hexdigest(),
-#                               created = datetime.datetime.utcnow(),
-#                               email = 'test@here.com',
-#                               active=True)
-#        Session.add(self.user)
-#        u2 = Session.query(
-#                model.user.User).filter_by(
-#                    username=u"tester").all()
-#        assert len(u2) == 1
-#        assert u2[0] == self.user
-#        self.ngroup = model.user.Group(name = u'Subscription Members',
-#                                       created = datetime.datetime.utcnow())
-#        self.ngroup.permissions.append(model.user.Permission(name = u'add_users'))
-#        Session.add(self.ngroup)
-#        Session.commit()
-#
-#
-#    def tearDown(self):
-#        Session.rollback()
-#        model.metadata.drop_all(engine)
-#        Session.close()
-
-
 class TestController(TestModel):
+    def setUp(self):
+        TestModel.setUp(self)
+        self.app.reset()
 
     def __init__(self, *args, **kwargs):
         if pylons.test.pylonsapp:
@@ -161,7 +105,7 @@ class TestController(TestModel):
             wsgiapp = loadapp('config:%s' % config['__file__'])
         self.app = TestApp(wsgiapp)
         url._push_object(URLGenerator(config['routes.map'], environ))
-        TestCase.__init__(self, *args, **kwargs)
+        TestModel.__init__(self, *args, **kwargs)
 
 
 class TestAuthenticatedController(TestModel):
@@ -173,7 +117,7 @@ class TestAuthenticatedController(TestModel):
             wsgiapp = loadapp('config:%s' % config['__file__'])
         self.app = TestApp(wsgiapp, extra_environ=dict(REMOTE_USER='admin'))
         url._push_object(URLGenerator(config['routes.map'], environ))
-        TestCase.__init__(self, *args, **kwargs)
+        TestModel.__init__(self, *args, **kwargs)
 
 
 
@@ -183,5 +127,5 @@ class TestProtectedAreasController(TestModel):
         wsgiapp = loadapp('config:%s#main_without_authn' % config['__file__'])
         self.app = TestApp(wsgiapp)
         url._push_object(URLGenerator(config['routes.map'], environ))
-        TestCase.__init__(self, *args, **kwargs)
+        TestModel.__init__(self, *args, **kwargs)
 
