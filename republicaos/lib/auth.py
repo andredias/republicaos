@@ -1,23 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-from pylons import request, response
-from repoze.what.plugins.pylonshq import ActionProtector, ControllerProtector
-from republicaos.model import Pessoa, Session
+
+from pylons import request, response, session
+from republicaos.model import Pessoa
 from republicaos.lib.helpers import flash
-
-from repoze.who.plugins.auth_tkt import AuthTktCookiePlugin
-from repoze.who.plugins.sa import SQLAlchemyAuthenticatorPlugin, SQLAlchemyUserMDPlugin
-from repoze.who.plugins.friendlyform import FriendlyFormPlugin
-
-from repoze.what.middleware import setup_auth
-from repoze.what.plugins.sql import configure_sql_adapters
-from repoze.what.predicates import Predicate
+from pylons.controllers.util import abort, redirect_to
 
 from pylons import config
 
 from decorator import decorator
-from pylons.controllers.util import abort
-from repoze.what.authorize import check_authorization, NotAuthorizedError
 from paste.httpexceptions import HTTPUnauthorized, HTTPForbidden
 
 
@@ -25,115 +16,48 @@ from paste.httpexceptions import HTTPUnauthorized, HTTPForbidden
 import logging
 
 log = logging.getLogger(__name__)
-cookie_name = 'republicaos.com.br'
+
+def check_user(email, senha):
+    return Pessoa.get_by(email=email, _senha=Pessoa.encrypt_senha(senha))
+
 
 def get_user():
-    """Return the current user's database object."""
-    if 'repoze.who.identity' in request.environ:
-        return request.environ.get('repoze.who.identity')['user']
-    else:
-        return None
-        
+    '''
+    Obtém o usuário autenticado no sistema, se houver
+    '''
+    return Pessoa.get_by(id=session['userid']) if 'userid' in session else None
+    
 
 
-def set_user(userid):
+def set_user(user = None):
     '''
     Define o usuário do sistema. Tipo um login feito por programação. Baseado em http://bugs.repoze.org/issue58
     '''
-    identity = {'repoze.who.userid': userid}
-    headers = request.environ['repoze.who.plugins'][cookie_name].remember(request.environ, identity)
-    for k, v in headers:
-        response.headers.add(k, v)
-
-
-def add_auth(app, skip_authentication):
-    """
-    Baseado no código-fonte de setup_sql_auth em repoze.what_quickstart quickstart.py
-    """
-
-    # Setting the repoze.who authenticators:
-    sqlauth = SQLAlchemyAuthenticatorPlugin(Pessoa, Session)
-    sqlauth.translations['user_name'] = 'email'
-    sqlauth.translations['validate_password'] = 'check_password'
-
-    cookie = AuthTktCookiePlugin(config['beaker.session.secret'], cookie_name)
-
-    form = FriendlyFormPlugin(
-        login_form_url = '/login',
-        login_handler_path = '/login_handler',
-        post_login_url = '/post_login',
-        logout_handler_path = '/logout_handler',
-        post_logout_url = '/',
-        login_counter_name='login_counter',
-        rememberer_name=cookie_name
-        )
-
-    # Setting up the repoze.who mdproviders:
-    sql_user_md = SQLAlchemyUserMDPlugin(Pessoa, Session)
-    sql_user_md.translations['user_name'] = 'email'
-
-    group_adapters = permission_adapters = None
-
-    middleware = setup_auth(
-                    app,
-                    group_adapters,
-                    permission_adapters,
-                    identifiers = [('main_identifier', form), (cookie_name, cookie)],
-                    authenticators = [('sqlauth', sqlauth)],
-                    challengers = [('form', form)],
-                    mdproviders = [('sql_user_md', sql_user_md)],
-                    log_level=logging.INFO,
-                    skip_authentication=skip_authentication
-                )
-    return middleware
+    log.debug('set_user(%s)', user)
+    if user is None and 'userid' in session:
+        del session['userid']
+    else:
+        session['userid'] = user.id
+    session.save()
 
 
 
-def require(predicate):
-    """
-    Make repoze.what verify that the predicate is met.
-
-    :param predicate: A repoze.what predicate.
-    :return: The decorator that checks authorization.
-
-    """
-
-    @decorator
-    def check_auth(func, *args, **kwargs):
-        environ = request.environ
-        try:
-            predicate.check_authorization(environ)
-        # trecho retirado de repoze.what_pylons class ActionProtector
-        except NotAuthorizedError, reason:
-            message = reason.message
-            flash(message)
-            if get_user():
-                # The user is authenticated.
-                raise HTTPForbidden(comment=message)
-            else:
-                # The user is not authenticated.
-                raise HTTPUnauthorized(comment=message)
-
-        return func(*args, **kwargs)
-    return check_auth
+@decorator
+def login_required(func, self, *args, **kwargs):
+    if not get_user():
+        session['came_from'] = request.path_info
+        session.save()
+        flash('(info) Antes de continuar, é necessário entrar no sistema')
+        redirect_to(controller='root', action='login')
+    return func(self, *args, **kwargs)
 
 
-class UsuarioAutenticado(Predicate):
-    def evaluate(self, environment, credentials):
-        self.user = get_user()
-        if not self.user:
-            # FIXME: traduzir depois com o Babel
-            self.unmet('(error) É necessário entrar no sistema para acessar este recurso')
+@decorator
+@login_required
+def owner_required(func, self, *args, **kwargs):
+    user = get_user()
+    if int(request.urlvars['id']) != user.id:
+        raise HTTPForbidden(comment = '(error) Só o proprietário desse recurso pode manipulá-lo.')
+    return func(self, *args, **kwargs)
 
 
-
-class IsOwner(UsuarioAutenticado):
-    def __init__(self, field_name = 'id', **kwargs):
-        UsuarioAutenticado.__init__(self, **kwargs)
-        self.field_name = field_name
-    
-    def evaluate(self, environment, credentials):
-        UsuarioAutenticado.evaluate(self, environment, credentials)
-        if int(request.urlvars[self.field_name]) != self.user.id:
-            # FIXME: traduzir depois com o Babel
-            self.unmet('(error) Só o proprietário desse recurso pode manipulá-lo.')
