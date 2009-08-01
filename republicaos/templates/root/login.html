@@ -14,6 +14,13 @@
 <h2>Acesse sua conta</h2>
 <div id="main">
     <p><span class="want-to-signup">Não é cadastrado? <a href="/account/signup">Crie sua conta agora!</a></span></p>
+    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
+    <py:if test="c.errors">
+        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+        ${select('.')}
+        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
+        </div>
+    </py:if>
     <form action="${h.url_for(controller='root', action='login')}" method="post">
     <fieldset>
         <legend>Entre agora!</legend>

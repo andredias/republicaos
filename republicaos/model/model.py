@@ -7,6 +7,7 @@ from elixir      import Entity, using_options, using_table_options, using_mapper
 from elixir      import Field, OneToMany, ManyToOne
 from sqlalchemy  import types, and_, or_, select, UniqueConstraint, func
 from sqlalchemy.orm import reconstructor
+from sqlalchemy.sql.expression import desc
 from datetime    import date, datetime, time
 import csv
 import elixir
@@ -43,8 +44,13 @@ class Pessoa(Entity):
     morador = OneToMany('Morador', order_by=['-entrada'])
 #    telefones_sob_responsabilidade = OneToMany('TelefoneRegistrado')
 
+    @classmethod
+    def encrypt_senha(cls, password):
+        return sha1(password).hexdigest()
+
+
     def _set_senha(self, password):
-        self._senha = sha1(password).hexdigest()
+        self._senha = self.encrypt_senha(password)
 
     def _get_senha(self):
         return self._senha
@@ -54,12 +60,6 @@ class Pessoa(Entity):
     def __repr__(self):
         return "Pessoa <nome:'%s', data_cadastro: %r>" % (self.nome, self.data_cadastro)
 
-
-    def periodos_morados(self, republica, data_inicial, data_final):
-        return ((max(m.entrada, data_inicial), min(m.saida, data_final) if m.saida else data_final, m.quota_aluguel)
-                for m in self.morador
-                    if m.republica == republica and check_se_morou_periodo(m.entrada, m.saida, data_inicial, data_final)
-               )
 
 
     #def telefonemas(self, conta_telefone):
@@ -98,22 +98,30 @@ class Pessoa(Entity):
             qtd_dias += (saida - entrada).days + 1
 
         return qtd_dias
+    
+    def morador_em_republicas(self):
+        hoje = date.today()
+        return Republica.query.filter(
+                                and_(
+                                    Morador.pessoa == self,
+                                    Morador.entrada <= hoje,
+                                    Morador.saida == None
+                                    )
+                                ).order_by(desc(Morador.entrada)).all()
+    
+    
+    def ex_morador_em_republicas(self):
+        hoje = date.today()
+        return Republica.query.filter(
+                                and_(
+                                    Morador.pessoa == self,
+                                    Morador.saida < hoje
+                                    )
+                                ).order_by(desc(Morador.saida)).all()
 
 
-    def check_password(self, password):
-        """
-        Check the password against existing credentials.
 
-        :param password: the password that was provided by the user to
-            try and authenticate. This is the clear text version that we will
-            need to match against the hashed one in the database.
-        :type password: unicode object.
-        :return: Whether the password is valid.
-        :rtype: bool
 
-        """
-        log.debug('Pessoa.check_password')
-        return sha1(password).hexdigest() == self.senha
 
 
 
@@ -145,7 +153,7 @@ class Morador(Entity):
                 data_final = max(data_inicial, data_final)
             clausula_data = and_(Morador.entrada < data_final,
                         or_(Morador.saida >= data_inicial, Morador.saida == None))
-
+    
         moradores =  Pessoa.query.filter(
                         and_(
                             Morador.republica == republica,

@@ -71,6 +71,16 @@ def make_map():
     map.connect('/republica/{republica_id}/tipo_despesa/{action}/{id}',
                 controller='tipo_despesa',
                 requirements={'republica_id':'\d+', 'id':'\d+'})
+    
+    
+    
+    #
+    # Teste de Recurso Controlado
+    #
+    map.connect('/republica/{republica_id}/test/{action}', controller='test')
+    map.connect('/republica/{republica_id}/test/{action}/{id}',
+                controller='test',
+                requirements={'republica_id':'\d+', 'id':'\d+'})
 
 
     map.connect('/', controller='root', action='index')

@@ -11,7 +11,7 @@ from pylons.controllers.util import abort, redirect_to
 from pylons import config
 from pylons.templating import pylons_globals, render_genshi
 from genshi.filters import HTMLFormFiller
-from os.path import splitext
+from os.path import split
 from decimal import Decimal
 from babel.numbers import format_number, format_decimal, format_percent
 
@@ -23,6 +23,12 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def check_testing():
+    '''
+    Verifica se o estado da execução do sistema está em teste.
+    '''
+    log.debug('check_testing: config __file__: %s', config['__file__'])
+    return split(config['__file__'])[-1] == 'test.ini'
 
 def arredonda_decimal(numero, referencia):
     if type(numero) is not Decimal:
