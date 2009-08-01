@@ -89,7 +89,7 @@ class TestModel(object):
         setup_all(True)
 
     def tearDown(self):
-        drop_all(engine)
+        drop_all()
         Session.expunge_all()
 
 
