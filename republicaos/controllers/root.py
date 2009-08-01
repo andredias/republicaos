@@ -38,8 +38,8 @@ class RootController(BaseController):
             user = check_user(c.valid_data['email'], c.valid_data['senha'])
             if user:
                 set_user(user)
-                came_from = session.get('came_from', url_for(controller='root', action='index'))
-                redirect_to(came_from)
+                destino = session.pop('came_from', url_for(controller='root', action='index'))
+                redirect_to(destino)
             else:
                 flash('(warning) O e-mail e/ou a senha fornecidos não conferem')
         return render('root/login.html')

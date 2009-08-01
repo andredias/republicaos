@@ -15,7 +15,7 @@ from republicaos.model import Pessoa, CadastroPendente, TrocaSenha, Session
 from republicaos.forms.validators.unique import Unique
 from formencode import Schema, validators
 from paste.request import construct_url
-from republicaos.lib.auth import require, get_user, IsOwner
+from republicaos.lib.auth import get_user, owner_required
 
 
 
@@ -137,7 +137,7 @@ class PessoaController(BaseController):
 
 
 
-    @require(IsOwner())
+    @owner_required
     @validate(PessoaEdicaoSchema)
     def edit(self, id, format='html'):
         """GET /pessoa/edit/id: Edit a specific item"""
