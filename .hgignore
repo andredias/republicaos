@@ -12,5 +12,6 @@ glob:*Thumbs.db
 republicaos.kde*
 .amateras
 .project
+.noseids
 .pydevproject
 .settings/org.eclipse.core.resources.prefs
