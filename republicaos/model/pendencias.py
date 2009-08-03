@@ -109,11 +109,11 @@ class TrocaSenha(Entity):
     mensagem_recadastro = '''
 Oi %(nome)s,
 
-Recebemos um pedido para recadastro da senha no Republicaos. Para isto, basta clicar no link abaixo:
+Recebemos um pedido para recadastro da sua senha no Republicaos. Para isto, basta clicar no link abaixo:
 
 %(link)s
 
-Caso não tenha interesse em recadastrar uma noa senha, nenhuma ação é necessária. Esse pedido expirará automaticamente em alguns dias.
+Caso não tenha interesse em recadastrar uma nova senha, nenhuma ação é necessária. Esse pedido expirará automaticamente em alguns dias.
 
 Atenciosamente,
 
