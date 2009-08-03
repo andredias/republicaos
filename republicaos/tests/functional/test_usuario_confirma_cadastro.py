@@ -18,6 +18,7 @@ class TestUsuarioConfirmaCadastro(TestController):
         O link para confirmar o cadastro pendente é inválido
         '''
         cp = CadastroPendente(nome='Fulano', email='abc@xyz.com', senha='1234')
+        CadastroPendente(nome='Beltrano', email='beltrano@xyz.com', senha='1234')
         Session.commit()
         link = cp.link_confirmacao[:-10] # produzindo um link inválido
         response = self.app.get(url=link)

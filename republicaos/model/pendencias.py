@@ -125,13 +125,26 @@ Equipe Republicaos'''
     def _set_hash(self):
         self.hash = hash_calc(self.pessoa.nome, self.pessoa.email)
 
+    @property
+    def link_confirmacao(self):
+        try:
+            url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
+                            action='troca_senha', id=self.hash), with_path_info=False)
+        except TypeError:
+            # fora de uma chamada a uma requisição, request não fica registrado
+            # acontece em alguns casos de teste
+            url = url_for(controller='confirmacao', action='troca_senha', id=self.hash)
+        return url
+
     @after_insert
     @after_update
     def enviar_mensagem(self):
-        url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
-                        action='troca_senha', id=self.hash), with_path_info=False)
-        mensagem = self.mensagem_recadastro % {'nome':self.pessoa.nome, 'link':url}
+        mensagem = self.mensagem_recadastro % {'nome':self.pessoa.nome, 'link':self.link_confirmacao}
         send_email(to_address=self.pessoa.email, message=mensagem, subject=self.subject)
-        flash('(info) Um link para a página da troca de senha foi enviada para seu e-mail')
+        try:
+            flash('(info) Um link para a página da troca de senha foi enviada para seu e-mail')
+        except TypeError:
+            # exceção esperada em um caso de teste fora de uma request
+            pass
         return
 

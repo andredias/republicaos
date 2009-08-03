@@ -35,7 +35,7 @@ class ConfirmacaoController(BaseController):
     def troca_senha(self, id):
         ts = TrocaSenha.get_by(hash=id)
         if ts:
-            authentication.set_user(ts.pessoa.email)
+            authentication.set_user(ts.pessoa)
             flash('(info) Entre com a nova senha')
             ts.delete()
             Session.commit()
