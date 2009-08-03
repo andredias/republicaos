@@ -7,13 +7,14 @@ import logging
 from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
-from republicaos.lib.utils import render, validate
+from republicaos.lib.utils import render, validate, check_testing
 from republicaos.lib.auth import login_required, owner_required
 from republicaos.lib.base import BaseController
 from formencode import Schema, validators
 from republicaos.lib.auth import check_user, get_user, set_user, owner_required
 from republicaos.lib.auth import morador_ou_ex_required, morador_required, republica_required
-from republicaos.lib.utils import check_testing
+from republicaos.lib.auth import republica_resource_required
+from republicaos.model import TipoDespesa
 
 
 import logging
@@ -68,3 +69,10 @@ class TestController(BaseController):
         '''
         return 'Apenas morador pode acessar esse recurso'
 
+
+    @republica_resource_required(TipoDespesa)
+    def requer_recurso_republica(self, id):
+        '''
+        O tipo de despesa sendo acessado tem de ser da república
+        '''
+        return

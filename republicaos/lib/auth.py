@@ -29,6 +29,9 @@ def get_user():
     return Pessoa.get_by(id=id) if id else None
     
 
+#
+# É necessário que a configuração defina beaker.session.auto = True
+#
 
 def set_user(user = None):
     '''
@@ -40,7 +43,6 @@ def set_user(user = None):
     else:
         session['userid'] = user.id
         request.environ['REMOTE_USER'] = user.id
-#    session.save()
 
 
 
@@ -49,7 +51,6 @@ def login_required(func, self, *args, **kwargs):
     log.debug('login_required')
     if not get_user():
         session['came_from'] = request.path_info
-#        session.save()
         flash('(info) Antes de continuar, é necessário entrar no sistema')
         redirect_to(controller='root', action='login')
     return func(self, *args, **kwargs)
@@ -108,3 +109,24 @@ def morador_required(func, self, *args, **kwargs):
         raise HTTPForbidden(comment = '(error) Só moradores da república têm acesso a este recurso.')
     return func(self, *args, **kwargs)
 
+
+
+def republica_resource_required(entity):
+    '''
+    Recurso deve pertencer à republica sendo acessada.
+    Já define o recurso ao objeto.
+    '''
+    @morador_required
+    def _republica_resource_required(func, self, *args, **kwargs):
+        id = request.urlvars.get('id')
+        if id:
+            resource = entity.get_by(id=id)
+            setattr(self, entity.table.name, resource)
+            if not resource:
+                abort(404)
+            if not hasattr(resource, 'republica'):
+                abort(406)
+            if str(resource.republica.id) != request.urlvars['republica_id']:
+                abort(403)
+        return func(self, *args, **kwargs)
+    return decorator(_republica_resource_required)

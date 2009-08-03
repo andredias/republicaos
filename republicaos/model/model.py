@@ -101,6 +101,7 @@ class Pessoa(Entity):
         hoje = date.today()
         return Republica.query.filter(
                                 and_(
+                                    Morador.republica_id == Republica.id,
                                     Morador.pessoa == self,
                                     Morador.entrada <= hoje,
                                     Morador.saida == None
@@ -112,6 +113,7 @@ class Pessoa(Entity):
         hoje = date.today()
         return Republica.query.filter(
                                 and_(
+                                    Morador.republica_id == Republica.id,
                                     Morador.pessoa == self,
                                     Morador.saida < hoje
                                     )
