@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, TipoDespesa, Session
 from republicaos.lib.helpers import flash, url_for
@@ -167,9 +168,9 @@ class TestAutenticacaoAutorizacao(TestController):
         assert urlparse(response.response.location).path == url_for(controller='root', action='login')
         assert response.session['came_from'] == destino
         
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'1'}) # morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'2'}, status=403) # ex-morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'3'}, status=403) # não-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('1')}) # morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('2')}, status=403) # ex-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('3')}, status=403) # não-morador
 
         # tenta acessar recurso sem especificar a república
         destino = url_for(
@@ -178,9 +179,9 @@ class TestAutenticacaoAutorizacao(TestController):
                           id='1'
                         )
         response = self.app.get(url=destino, status=404) # anônimo
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'1'}, status=404) # morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'2'}, status=404) # ex-morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'3'}, status=404) # não-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('1')}, status=404) # morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('2')}, status=404) # ex-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('3')}, status=404) # não-morador
     
     
     def test_requer_morador_ou_ex(self):
@@ -199,9 +200,9 @@ class TestAutenticacaoAutorizacao(TestController):
         assert urlparse(response.response.location).path == url_for(controller='root', action='login')
         assert response.session['came_from'] == destino
         
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'1'}) # morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'2'}) # ex-morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'3'}, status=403) # não-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('1')}) # morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('2')}) # ex-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('3')}, status=403) # não-morador
         
         # tenta acessar recurso sem especificar a república
         destino = url_for(
@@ -210,9 +211,9 @@ class TestAutenticacaoAutorizacao(TestController):
                           id='1'
                         )
         response = self.app.get(url=destino, status=404) # anônimo
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'1'}, status=404) # morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'2'}, status=404) # ex-morador
-        response = self.app.get(url=destino, extra_environ={'REMOTE_USER':'3'}, status=404) # não-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('1')}, status=404) # morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('2')}, status=404) # ex-morador
+        response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('3')}, status=404) # não-morador
 
 
     def test_requer_republica(self):
@@ -269,7 +270,7 @@ class TestAutenticacaoAutorizacao(TestController):
                                 republica_id=1,
                                 id='1'
                         ),
-                        extra_environ={'REMOTE_USER':'1'},
+                        extra_environ={str('REMOTE_USER'):str('1')},
                     )
         
         # tenta acesso anônimo
@@ -291,7 +292,7 @@ class TestAutenticacaoAutorizacao(TestController):
                                 republica_id=1,
                                 id='1'
                         ),
-                        extra_environ={'REMOTE_USER':'2'},
+                        extra_environ={str('REMOTE_USER'):str('2')},
                         status=403
                     )
         
@@ -302,7 +303,7 @@ class TestAutenticacaoAutorizacao(TestController):
                                 action='requer_recurso_republica',
                                 id='1'
                         ),
-                        extra_environ={'REMOTE_USER':'1'},
+                        extra_environ={str('REMOTE_USER'):str('1')},
                         status=404
                     )
     
