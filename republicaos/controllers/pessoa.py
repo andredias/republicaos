@@ -14,7 +14,6 @@ from republicaos.lib.base import BaseController
 from republicaos.model import Pessoa, CadastroPendente, TrocaSenha, Session
 from republicaos.forms.validators.unique import Unique
 from formencode import Schema, validators
-from paste.request import construct_url
 from republicaos.lib.auth import get_user, owner_required
 
 
@@ -123,12 +122,8 @@ class PessoaController(BaseController):
                 pendencia = CadastroPendente(**c.valid_data)
             else:
                 pendencia.from_dict(c.valid_data)
-                flash('(info) Já existe um pedido de cadastro pendente para o e-mail fornecido.')
+#                flash('(info) Já existe um pedido de cadastro pendente para o e-mail fornecido.')
             Session.commit()
-            url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
-                                action='cadastro', id=pendencia.hash), with_path_info=False)
-            pendencia.enviar_pedido_confirmacao(url)
-            flash('(info) Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.')
             redirect_to(controller='root', action='index')
         c.action = url_for(controller='pessoa', action='new')
         c.submit = 'Criar'

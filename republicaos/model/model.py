@@ -41,8 +41,6 @@ class Pessoa(Entity):
     _senha = Field(String(40), required=True)
     email = Field(String(80), required=True, unique=True)
     data_cadastro = Field(Date, required=True, default=date.today)
-    morador = OneToMany('Morador', order_by=['-entrada'])
-#    telefones_sob_responsabilidade = OneToMany('TelefoneRegistrado')
 
     @classmethod
     def encrypt_senha(cls, password):

@@ -13,8 +13,8 @@ from republicaos.model import Session, Pessoa
 from republicaos.lib.mail import send_email
 from hashlib import sha1
 from pylons import config
-
 from paste.request import construct_url
+
 from pylons import request, response, tmpl_context as c
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
 
@@ -69,14 +69,34 @@ Equipe Republicaos'''
 
 
     def confirma_cadastro(self):
-        p = Pessoa(nome=self.nome, _senha=self._senha, email=self.email, data_cadastro = date.today())
+        pessoa = Pessoa(nome=self.nome, _senha=self._senha, email=self.email, data_cadastro = date.today())
         self.delete()
         Session.commit()
+        return pessoa
 
-    def enviar_pedido_confirmacao(self, link):
-        mensagem = self.mensagem_confirmacao % {'nome':self.nome, 'link':link}
+    @property
+    def link_confirmacao(self):
+        try:
+            url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
+                            action='cadastro', id=self.hash), with_path_info=False)
+        except TypeError:
+            # fora de uma chamada a uma requisição, request não fica registrado
+            # acontece em alguns casos de teste
+            url = url_for(controller='confirmacao', action='cadastro', id=self.hash)
+        return url
+
+
+    @after_insert
+    @after_update
+    def enviar_pedido_confirmacao(self):
+        mensagem = self.mensagem_confirmacao % {'nome':self.nome, 'link':self.link_confirmacao}
         log.debug('CADASTRO_PENDENTE: enviar_pedido_confirmacao: %s' % mensagem)
         send_email(to_address=self.email, message=mensagem, subject=self.subject)
+        try:
+            flash('(info) Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.')
+        except TypeError:
+            # exceção esperada em um caso de teste fora de uma request
+            pass
         return
 
 

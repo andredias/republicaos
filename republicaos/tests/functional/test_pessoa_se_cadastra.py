@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from republicaos.tests import *
+from republicaos.tests import TestController
 from republicaos.model import Pessoa, CadastroPendente, Session
 from republicaos.lib.helpers import flash, url_for
 from urlparse import urlparse
@@ -58,7 +58,7 @@ class TestPessoaSeCadastra(TestController):
         """
         Usa um endereço de e-mail que já tem pedido de cadastro pendente
         """
-        CadastroPendente(nome='user1', senha='1234', email='suporte@pronus.eng.br')
+        CadastroPendente(nome='Fulano', email='abc@xyz.com', senha='1234')
         Session.commit()
         
         response = self.app.post(
@@ -72,7 +72,6 @@ class TestPessoaSeCadastra(TestController):
             }
         )
         messages = ' '.join(response.session['flash'])
-        assert 'Já existe um pedido de cadastro pendente para o e-mail fornecido.' in messages
         assert 'Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido' in messages
     
     
