@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<xi:include href="../layout.html" />
+
+<head>
+    <title>${c.title}</title>
+</head>
+
+<body id="account">
+    <h2>${c.title}</h2>
+
+    <p py:if="c.descricao">${c.descricao}</p>
+
+    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
+    <py:if test="c.errors">
+        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+        ${select('.')}
+        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
+        </div>
+    </py:if>
+
+
+    <form action="${c.action}" method="post" class="signup">
+        <p><label>E-mail</label>
+        <input class="text" id="email" name="email" size="80" type="text" /></p>
+
+        <p><label>Nome</label>
+        <input class="text" name="nome" size="30" type="text" /></p>
+
+        <p><input name="commit" type="submit" value="${c.submit}" /></p>
+    </form>
+
+
+</body>
+</html>
+

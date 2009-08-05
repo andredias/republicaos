@@ -49,6 +49,28 @@ def make_map():
                 conditions=dict(method=['GET', 'PUT', 'DELETE']))
 
 
+    #
+    # Morador
+    #
+    map.connect('/republica/{republica_id}/morador',
+                controller='morador',
+                action='rest_dispatcher_collection',
+                requirements={'republica_id':'\d+'},
+                conditions=dict(method=['GET', 'POST']))
+
+    map.connect('/republica/{republica_id}/morador/{id}',
+                controller='morador',
+                action='rest_dispatcher_single',
+                requirements={'republica_id':'\d+', 'id':'\d+'},
+                conditions=dict(method=['GET', 'PUT', 'DELETE']))
+
+    map.connect('/republica/{republica_id}/morador/{action}',
+                controller='morador')
+    map.connect('/republica/{republica_id}/morador/{action}/{id}',
+                controller='morador',
+                requirements={'republica_id':'\d+', 'id':'\d+'})
+
+
 
 
     #

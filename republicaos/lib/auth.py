@@ -29,6 +29,11 @@ def get_user():
     return Pessoa.get_by(id=id) if id else None
     
 
+def get_republica():
+    return Republica.get_by(id=request.urlvars.get('republica_id'))
+    
+
+
 #
 # É necessário que a configuração defina beaker.session.auto = True
 #
@@ -69,8 +74,7 @@ def owner_required(func, self, *args, **kwargs):
 
 @decorator
 def republica_required(func, self, *args, **kwargs):
-    id = request.urlvars.get('republica_id')
-    republica = Republica.get_by(id=id)
+    republica = get_republica()
     if not id or not republica:
         erro = '(error) República inexistente ou não referenciada'
         flash(erro)
@@ -89,9 +93,9 @@ def morador_ou_ex_required(func, self, *args, **kwargs):
     # qual o status do usuário em relação à república
     user = get_user()
     republica = Republica.get_by(id=request.urlvars.get('republica_id'))
-    if republica in user.morador_em_republicas():
+    if republica in user.morador_em_republicas:
         session['user_status'] = user_status_morador
-    elif republica in user.ex_morador_em_republicas():
+    elif republica in user.ex_morador_em_republicas:
         session['user_status'] = user_status_ex_morador
     else:
         session.pop('user_status')

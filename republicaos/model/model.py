@@ -97,6 +97,7 @@ class Pessoa(Entity):
 
         return qtd_dias
     
+    @property
     def morador_em_republicas(self):
         hoje = date.today()
         return Republica.query.filter(
@@ -108,7 +109,7 @@ class Pessoa(Entity):
                                     )
                                 ).order_by(desc(Morador.entrada)).all()
     
-    
+    @property
     def ex_morador_em_republicas(self):
         hoje = date.today()
         return Republica.query.filter(
