@@ -41,8 +41,9 @@
 <?python
 
 from republicaos.lib.utils import get_flash_messages
-from republicaos.lib.auth import get_user
+from republicaos.lib.auth import get_user, get_republica
 user = get_user()
+republica = get_republica()
 ?>
 
 <body py:match="body" py:attrs="select('@*')">

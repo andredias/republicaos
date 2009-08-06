@@ -30,7 +30,8 @@ def get_user():
     
 
 def get_republica():
-    return Republica.get_by(id=request.urlvars.get('republica_id'))
+    id = request.urlvars.get('republica_id')
+    return Republica.get_by(id=id) if id else None
     
 
 

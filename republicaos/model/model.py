@@ -128,7 +128,7 @@ class Pessoa(Entity):
 
 
 class Morador(Entity):
-    entrada = Field(Date, required=True, primary_key = True)
+    entrada = Field(Date, required=True, primary_key = True, default=date.today)
     saida = Field(Date)
     peso_aluguel = Field(Numeric(5,2))
     pessoa = ManyToOne('Pessoa', required=True, primary_key = True)

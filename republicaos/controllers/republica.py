@@ -7,10 +7,11 @@ import logging
 from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for
+from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
-from republicaos.model import Republica, Session
+from republicaos.lib.auth import get_user, get_republica, login_required
+from republicaos.model import Republica, Morador, Session
 from formencode import Schema, validators
 
 log = logging.getLogger(__name__)
@@ -20,21 +21,22 @@ class RepublicaSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
     # TODO: definir tamanhos máximos
-    nome         = validators.UnicodeString(not_empty=True)
-    logradouro   = validators.UnicodeString(not_empty=True)
-    complemento  = validators.UnicodeString(not_empty=True)
-    cidade       = validators.UnicodeString(not_empty=True)
-    uf           = validators.UnicodeString(not_empty=True)
-    cep          = validators.UnicodeString(not_empty=True)
+    nome         = validators.UnicodeString(not_empty=True, max=90)
+    logradouro   = validators.UnicodeString(not_empty=True, max=150)
+    complemento  = validators.UnicodeString()
+    cidade       = validators.UnicodeString(not_empty=True, max=80)
+    uf           = validators.UnicodeString(not_empty=True, max=2)
 
 
 class RepublicaController(BaseController):
     """REST Controller styled on the Atom Publishing Protocol"""
 
+    @login_required
     def __before__(self, id=None):
         if id:
             c.republica = get_object_or_404(Republica, id = id)
-
+    
+    
     @dispatch_on(GET='list', POST='create')
     def rest_dispatcher_collection(self):
         abort(406)
@@ -57,6 +59,7 @@ class RepublicaController(BaseController):
         if not c.valid_data:
             abort(406)
         c.republica = Republica(**c.valid_data)
+        Morador(pessoa=get_user(), republica=c.republica)
         Session.commit()
         # TODO: precisa retornar código 201 - Created
         response.status = 201 # Created
@@ -93,14 +96,15 @@ class RepublicaController(BaseController):
     @validate(RepublicaSchema)
     def new(self):
         """GET /republica/new: Form to create a new item"""
-        if c.valid_data:
+        user = get_user()
+        if len(user.morador_em_republicas) >= 2:
+            flash('(warning) Você já está associado a duas repúblicas. Não é possível criar uma nova!')
+        elif c.valid_data:
             self.create()
-            # TODO: flash indicando que foi adicionado
-            # algum outro processamento para determinar a localização da república e agregar
-            # serviços próximos
+            flash('(info) República criada com sucesso!')
             redirect_to(controller='republica', action='show', id=c.republica.id)
         c.action = url_for(controller='republica', action='new')
-        c.title  = 'Nova República'
+        c.title  = 'Criar Nova República'
         return render('republica/form.html', filler_data=request.params)
 
 
