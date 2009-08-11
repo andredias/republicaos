@@ -14,14 +14,14 @@
             <div id="teaser">
                 <p class="first-line">Republicaos é o aplicativo web simples e amigável de finanças pessoais que irá ajudá-lo a <strong>controlar seu orçamento</strong>.</p>
                 <p class="second-line">Já parou para pensar em cada coisinha que você compra, muitas vezes por impulso, e no fim do mês percebe que não sobrou muito para investir? Isto é, quando sobra... Tenha controle sobre sua conta!</p>
-                <p><a href="/account/signup" class="cadastre">Cadastre-se gratuitamente!</a></p>
+                <p><a href="${h.url_for(controller='pessoa', action='new')}" class="cadastre">Cadastre-se gratuitamente!</a></p>
                 <p><img alt="Screen" src="/images/screen.png?1247101076" /></p>
             </div>
 
             <div id="text">
                 <h2>A maneira mais fácil de se organizar.</h2>
                 <h3>Não fique mais imaginando para onde está indo seu dinheiro.</h3>
-                <p>Para usar o Republicaos você não precisa instalar nada. Basta <a href="/account/signup">cadastrar-se</a> gratuitamente. Conheça outros motivos para usar o Republicaos:</p>
+                <p>Para usar o Republicaos você não precisa instalar nada. Basta <a href="${h.url_for(controller='pessoa', action='new')}">cadastrar-se</a> gratuitamente. Conheça outros motivos para usar o Republicaos:</p>
 
                 <dl>
                     <dt>Adicione gastos, recebimentos e contas</dt>
