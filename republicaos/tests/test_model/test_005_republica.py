@@ -12,90 +12,45 @@ from republicaos.tests import Session, TestModel
 
 class TestRepublica(TestModel):
 
-    def test_criar_fechamento(self):
+    def test_fechamento(self):
+        mes_retrasado = date.today() - relativedelta(months=2)
         r = Republica(nome = 'Teste',
-            data_criacao = date(2007, 4, 8),
+            data_criacao = mes_retrasado,
             logradouro = 'R. dos Bobos, n. 0',
             cidade = 'Sumare',
             uf = 'SP')
-        r.criar_fechamento()
-
-        Session.commit()
-
-        assert len(r.fechamentos) == 1
-        assert r.fechamentos[0].data == date(2007, 5, 8)
-
-        r.criar_fechamento()
+        
+        assert r.ultimo_fechamento == mes_retrasado
+        assert r.proximo_fechamento == mes_retrasado + relativedelta(months=1)
+        assert len(r.fechamentos) == 0
         Session.commit()
         Session.expunge_all()
-        r = Republica.get_by()
-
+        
+        r = Republica.get_by() # deve acionar @reconstructor e _preenche_fechamentos
         assert len(r.fechamentos) == 2
-        assert r.fechamentos[0].data == date(2007, 6, 8)
-
-        r.criar_fechamento(data = date(2007, 5, 15))
-        Session.commit()
-        Session.expunge_all()
-        r = Republica.get_by()
-
-        assert len(r.fechamentos) == 3
-        assert r.fechamentos[1].data == date(2007, 5, 15)
-
-        r.criar_fechamento(data = date(2007, 7, 10))
-        Session.commit()
-        Session.expunge_all()
-        r = Republica.get_by()
-
+        assert r.proximo_fechamento == date.today() + relativedelta(months=1)
+        
+        # Fechamentos criados manualmente
+        Fechamento(data=r.proximo_fechamento, republica=r)
+        Fechamento(data=r.proximo_fechamento, republica=r)
+        
         assert len(r.fechamentos) == 4
-        assert r.fechamentos[0].data == date(2007, 7, 10)
-
-
-    def test_fechamento_na_data(self):
-        '''
-        Testa se o próximo fechamento está no intervalo correto.
-
-        O intervalo esperado é [data_ultimo_periodo_fechamento, data_ultimo_periodo_fechamento + 1 mês - 1 dia] ou escrito de outra forma
-        [data_ultimo_periodo_fechamento, data_ultimo_periodo_fechamento + 1 mês[
-        '''
-        r = Republica(nome = 'Teste',
-            data_criacao = date(2007, 4, 8),
-            logradouro = 'R. dos Bobos, n. 0',
-            cidade = 'Sumare',
-            uf = 'SP')
-
         Session.commit()
-
-
-        assert r.fechamento_na_data(date(2007, 4, 8)) is None
-
-
-        Fechamento(data = date(2007, 5, 10), republica = r)
+        
+        
+        # verificar _check_proximo_fechamento
+        r2 = Republica(nome = 'Mae Joana',
+            logradouro = 'R. tralala',
+            cidade = 'Vitoria',
+            uf = 'ES')
         Session.commit()
-        Session.expunge_all()
-        r = Republica.get_by()
+        
+        assert r2.data_criacao == r2.ultimo_fechamento == date.today()
+        assert r2.proximo_fechamento == r2.ultimo_fechamento + relativedelta(months=1)
 
-        assert r.fechamento_na_data(date(2007, 4, 8))  == r.fechamentos[-1]
 
-        Fechamento(data = date(2007, 6, 10), republica = r)
-        Fechamento(data = date(2007, 7, 10), republica = r)
-        Session.commit()
-        Session.expunge_all()
-        r = Republica.get_by()
 
-#        print '\nrepública = ', r
-#        for fechamento in r.fechamentos:
-#            print fechamento
 
-        assert len(r.fechamentos) == 3
-        for i in range(len(r.fechamentos) - 1):
-            assert r.fechamentos[i].data_inicial == r.fechamentos[i + 1].data
-            assert r.fechamentos[i].data_final   == (r.fechamentos[i].data - relativedelta(days = 1))
-
-        assert r.fechamento_na_data(date(2007, 5, 9))  == r.fechamentos[-1]
-        assert r.fechamento_na_data(date(2007, 5, 10)) == r.fechamentos[-2]
-        assert r.fechamento_na_data(date(2007, 6, 9))  == r.fechamentos[-2]
-        assert r.fechamento_na_data(date(2007, 6, 10)) == r.fechamentos[0]
-        assert r.fechamento_na_data(date(2007, 7, 10)) is None
 
 
 
@@ -189,9 +144,6 @@ class TestRepublica(TestModel):
         assert p8 in moradores
 
 
-    def test_get_intervalos_de_moradores(self):
-        # TODO: implementar. Provavelmente quando for tratar de pesos diferentes no aluguel
-        pass
 
 
     # desabilitado

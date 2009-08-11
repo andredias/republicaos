@@ -10,7 +10,7 @@ from sqlalchemy.orm import reconstructor
 from sqlalchemy.sql.expression import desc
 from datetime    import date, datetime, time
 import csv
-import elixir
+from elixir.events import reconstructor, before_insert, before_update
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 from republicaos.model import Session
@@ -254,8 +254,9 @@ class Republica(Entity):
     complemento  = Field(Unicode(100))
     cidade       = Field(Unicode(80), required = True)
     uf           = Field(String(2), required = True)
+    _proximo_fechamento = Field(Date, required = True)
 
-    fechamentos           = OneToMany('Fechamento', order_by = '-data')
+    fechamentos           = OneToMany('Fechamento', order_by = 'data')
     tipos_despesa         = OneToMany('TipoDespesa', order_by = 'nome')
     telefones_registrados = OneToMany('TelefoneRegistrado', order_by = 'numero')
 
@@ -264,30 +265,47 @@ class Republica(Entity):
         return 'Republica: <nome: %s, data_criacao: %r>' % (self.nome.encode('utf-8'), self.data_criacao)
 
 
-    def after_insert(self):
-        criar_fechamento(self.data_criacao + relativedelta(months = 1))
+    @property
+    def ultimo_fechamento(self):
+#        result = select(
+#                    [max(Fechamento.data)],
+#                    whereclause = Fechamento.republica == self,
+#                ).execute().fetchone()[0]
+#        return result if result else self.data_criacao
+        return self.fechamentos[-1].data if len(self.fechamentos) else self.data_criacao
 
 
-    def fechamento_na_data(self, data = None):
-        '''
-        Fechamento em que determinada data está contida
-        '''
-        if not data:
-            data = date.today()
-
-        if len(self.fechamentos) and (self.fechamentos[0].data > data >= self.data_criacao):
-            for i in range(len(self.fechamentos) - 1):
-                if self.fechamentos[i].data > data >= self.fechamentos[i + 1].data:
-                    return self.fechamentos[i]
-            return self.fechamentos[-1]
-        else:
-            return None
+    def _set_proximo_fechamento(self, data):
+        assert data > self.ultimo_fechamento
+        self._proximo_fechamento = data
 
 
-    def criar_fechamento(self, data = None):
-        if not data:
-            data = (self.fechamentos[0].data if len(self.fechamentos) else self.data_criacao) + relativedelta(months = 1)
-        return Fechamento(data = data, republica = self)
+    def _get_proximo_fechamento(self):
+        if not self._proximo_fechamento or \
+                self._proximo_fechamento <= self.ultimo_fechamento:
+            self._proximo_fechamento = self.ultimo_fechamento + relativedelta(months=1)
+        return self._proximo_fechamento
+    
+    proximo_fechamento = property(_get_proximo_fechamento, _set_proximo_fechamento)
+
+    @before_insert
+    @before_update
+    def _check_proximo_fechamento(self):
+        if not self.data_criacao:
+            self.data_criacao = date.today()
+        self._proximo_fechamento = self._get_proximo_fechamento()
+
+
+    @reconstructor
+    def _preenche_fechamentos(self):
+        hoje = date.today()
+        while hoje >= self._proximo_fechamento:
+            Fechamento(data = self._proximo_fechamento, republica = self)
+            self._proximo_fechamento += relativedelta(months=1)
+        Session.commit()
+
+
+
 
 
     def get_moradores(self, fechamento = None, data_inicial = None, data_final = None):
@@ -301,14 +319,14 @@ class Republica(Entity):
 
         # o trecho abaixo não funcionou como o esperado porque Morador.pessoa está voltando todo o registro de morador novamente
         # mesmo se voltasse só pessoa_id, seria necessário várias consultas para reconstruir objetos de pessoas.
-        #consulta = select(
-                    #[Morador.pessoa, Morador.entrada, func.coalesce(Morador.saida, data_final)],
-                    #whereclause = and_(
-                        #Morador.republica == republica,
-                        #Morador.entrada <= data_final,
-                        #or_(Morador.saida == None, Morador.saida >= data_inicial)
-                    #)
-                #).order_by(Morador.pessoa).execute().fetchall()
+#        consulta = select(
+#                    [Morador.pessoa, Morador.entrada, func.coalesce(Morador.saida, data_final)],
+#                    whereclause = and_(
+#                        Morador.republica == republica,
+#                        Morador.entrada <= data_final,
+#                        or_(Morador.saida == None, Morador.saida >= data_inicial)
+#                    )
+#                ).order_by(Morador.pessoa).execute().fetchall()
 
 
 
@@ -366,12 +384,17 @@ class Fechamento(Entity):
     data      = Field(Date, primary_key = True)
     republica = ManyToOne('Republica', primary_key = True)
 
+    def __repr__(self):
+        return 'Fechamento: <data: %s, republica:%s>' % (self.data, self.republica)
+
+
     @reconstructor
     def setup(self):
         self.rateado = False # mostra se o rateio já foi feito
         self.data_final = self.data - relativedelta(days = 1)
-        if self.data > self.republica.fechamentos[-1].data :
-            self.data_inicial = self.republica.fechamentos[self.republica.fechamentos.index(self) + 1].data
+        index = self.republica.fechamentos.index(self)
+        if index > 0:
+            self.data_inicial = self.republica.fechamentos[index - 1].data
         else:
             self.data_inicial = self.republica.data_criacao
 
@@ -484,12 +507,9 @@ class Fechamento(Entity):
     # Funções a seguir deveriam já estar habilitadas no Elixir para funcionar como os triggers do Banco de Dados
     #
     def before_insert(self):
-        if self.data > self.republica.fechamentos[0].data:
+        if self.data > self.republica.ultimo_fechamento:
             raise ModelIntegrityException(message = 'Não é permitido lançar fechamento atrasado')
 
-
-    def after_insert(self):
-        self.republica.proximo_rateio = self.data + relativedelta(months = 1)
 
 
 

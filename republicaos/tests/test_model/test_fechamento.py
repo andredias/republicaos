@@ -26,7 +26,7 @@ class TestFechamento(TestModel):
             logradouro = 'R. dos Bobos, n. 0',
             cidade = 'Sumare',
             uf = 'SP')
-        self.r.criar_fechamento(data = date(2007, 4, 6))
+        Fechamento(data = date(2007, 4, 6), republica = self.r)
 
         self.p1 = Pessoa(nome = 'André', senha = '1234', email = 'xyz@xyz.com')
         self.p2 = Pessoa(nome = 'Marcos', senha = '1234', email = 'yzx@xyz.com')
@@ -56,8 +56,8 @@ class TestFechamento(TestModel):
 
     def test_periodo_fechamento(self):
         f1 = self.r.fechamentos[0]
-        f2 = self.r.criar_fechamento(data = date(2007, 5, 6))
-        f3 = self.r.criar_fechamento(data = date(2007, 6, 6))
+        f2 = Fechamento(data = date(2007, 5, 6), republica = self.r)
+        f3 = Fechamento(data = date(2007, 6, 6), republica = self.r)
         Session.commit()
 
 #        print 'republica: ', self.r
@@ -79,7 +79,7 @@ class TestFechamento(TestModel):
         '''
         Acerto Final - Caso 1: 2 credores e 2 devedores
         '''
-        f = self.r.criar_fechamento(data = date(2007, 5, 6))
+        f = Fechamento(data = date(2007, 5, 6), republica = self.r)
         m1 = Morador(pessoa = self.p1, republica = self.r, entrada = date(2007, 3, 6))
         m2 = Morador(pessoa = self.p2, republica = self.r, entrada = date(2007, 3, 6))
         m3 = Morador(pessoa = self.p3, republica = self.r, entrada = date(2007, 3, 6))
@@ -115,7 +115,7 @@ class TestFechamento(TestModel):
         '''
         Acerto Final - Caso 2: 1 credor e 3 devedores
         '''
-        f = self.r.criar_fechamento(data = date(2007, 5, 6))
+        f = Fechamento(data = date(2007, 5, 6), republica=self.r)
 
         m1 = Morador(pessoa = self.p1, republica = self.r, entrada = date(2007, 3, 6))
         m2 = Morador(pessoa = self.p2, republica = self.r, entrada = date(2007, 3, 6))
@@ -151,7 +151,7 @@ class TestFechamento(TestModel):
         '''
         Acerto Final - Caso 3: 3 credores e 1 devedor
         '''
-        f = self.r.criar_fechamento(data = date(2007, 5, 6))
+        f = Fechamento(data = date(2007, 5, 6), republica=self.r)
 
         Morador(pessoa = self.p1, republica = self.r, entrada = date(2007, 3, 6))
         Morador(pessoa = self.p2, republica = self.r, entrada = date(2007, 3, 6))
@@ -185,7 +185,7 @@ class TestFechamento(TestModel):
         '''
         Acerto Final - Caso 4: 0 credores e 0 devedores
         '''
-        f = self.r.criar_fechamento(data = date(2007, 5, 6))
+        f = Fechamento(data = date(2007, 5, 6), republica=self.r)
 
         Morador(pessoa = self.p1, republica = self.r, entrada = date(2007, 3, 6))
         Morador(pessoa = self.p2, republica = self.r, entrada = date(2007, 3, 6))
@@ -231,7 +231,7 @@ class TestFechamento(TestModel):
        testa_conta.p5 = self.p5 = Pessoa(nome = 'Alexandre')
        self.p5.commit()
 
-       f = self.r.criar_fechamento(data = date(2007, 5, 6))
+       f = Fechamento(data = date(2007, 5, 6), republica=self.r)
 
        testa_conta.test_dividir_conta_caso_15()
 
@@ -272,7 +272,7 @@ class TestFechamento(TestModel):
        testa_conta.p2 = self.p2
        testa_conta.p3 = self.p3
 
-       f = self.r.criar_fechamento()
+       f = Fechamento(data=self.r.proximo_fechamento, republica=self.r)
 
        testa_conta.test_dividir_conta_caso_07()
 
@@ -303,7 +303,7 @@ class TestFechamento(TestModel):
         '''
         Fechamento sem nenhum morador
         '''
-        f = self.r.criar_fechamento(data = date(2007, 5, 6))
+        f = Fechamento(data = date(2007, 5, 6), republica=self.r)
         f.executar_rateio()
         print_fechamento(f)
 
@@ -321,7 +321,7 @@ class TestFechamento(TestModel):
         self.m3 = Morador(pessoa = self.p3, republica = self.r, entrada = date(2007, 3, 6), saida = date(2007, 5, 6))
         self.m4 = Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 3, 6), saida = date(2007, 5, 6))
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
         f.executar_rateio()
         Session.commit()
 
@@ -348,7 +348,7 @@ class TestFechamento(TestModel):
         self.m4 = Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 3, 6), saida = date(2007, 5, 6))
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
@@ -374,7 +374,7 @@ class TestFechamento(TestModel):
         self.m4 = Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 3, 6), saida = date(2007, 5, 6))
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
@@ -400,7 +400,7 @@ class TestFechamento(TestModel):
         self.m4 = Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 4, 30), saida = date(2007, 5, 6))
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
@@ -425,7 +425,7 @@ class TestFechamento(TestModel):
         self.m3 = Morador(pessoa = self.p3, republica = self.r, entrada = date(2007, 4, 18))
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
@@ -454,7 +454,7 @@ class TestFechamento(TestModel):
 
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
@@ -484,7 +484,7 @@ class TestFechamento(TestModel):
 
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
@@ -514,7 +514,7 @@ class TestFechamento(TestModel):
 
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
@@ -542,7 +542,7 @@ class TestFechamento(TestModel):
 
         Session.commit()
 
-        f = self.r.criar_fechamento(date(2007, 5, 6))
+        f = Fechamento(date(2007, 5, 6), republica=self.r)
 
         print_calculo_quotas_participantes(f)
 
