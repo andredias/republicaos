@@ -7,7 +7,7 @@ import logging
 from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for
+from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.auth import morador_required, get_user, get_republica
@@ -22,6 +22,7 @@ class MoradorSchema(Schema):
     filter_extra_fields = True
     nome = validators.UnicodeString(not_empty=True)
     email = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
+    entrada = validators.DateConverter(month_style = 'dd/mm/yyyy', not_empty = True)
 
 
 class MoradorController(BaseController):
@@ -85,21 +86,31 @@ class MoradorController(BaseController):
     @morador_required
     @validate(MoradorSchema)
     def new(self):
+        republica = get_republica()
         if c.valid_data:
-            republica = get_republica()
-            ConviteMorador.convidar_moradores(
-                        nomes=c.valid_data['nome'],
-                        emails=c.valid_data['email'],
-                        user=get_user(),
-                        republica=republica
-                    )
-            Session.commit()
-            redirect_to(controller='republica', action='show', id=republica.id)
+            # validação adicional que não está sendo feita pelo MoradorSchema
+            if (republica.ultimo_fechamento <= c.valid_data['entrada'] < 
+                    republica.proximo_fechamento):
+                ConviteMorador.convidar_moradores(
+                            nomes=c.valid_data['nome'],
+                            emails=c.valid_data['email'],
+                            user=get_user(),
+                            republica=republica,
+                            entrada=c.valid_data['entrada']
+                        )
+                Session.commit()
+                redirect_to(controller='republica', action='show', id=republica.id)
+            else:
+                c.errors['entrada'] = 'Data de entrada fora dos limites!'
             
-        c.action = url_for(controller='morador', action='convidar_morador',
-                            republica_id=request.urlvars['republica.id'])
+        c.action = url_for(controller='morador', action='new',
+                            republica_id=request.urlvars['republica_id'])
         c.submit = 'Enviar convite'
-        render('morador/form.html')
+        #FIXME: problemas com unicode
+        c.title = 'Convidar morador para republica %s' % republica.nome
+        for key, value in c.errors.items():
+            flash('(error) %s: %s' % (key, value))
+        return render('morador/form.html', filler_data=request.params)
 
 
 

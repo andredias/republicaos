@@ -156,6 +156,7 @@ class ConviteMorador(Entity):
     hash = Field(String(40), primary_key = True)
     nome =  Field(Unicode(30), required=True)
     email = Field(String(80), required=True, unique=True)
+    entrada = Field(Date, default=date.today())
     data_pedido = Field(DateTime, required=True, default=datetime.now)
     user = ManyToOne('Pessoa', required=True)
     republica = ManyToOne('Republica', required=True)
@@ -219,7 +220,7 @@ Equipe Republicaos'''
     
     
     @classmethod
-    def convidar_moradores(cls, emails, nomes, user, republica):
+    def convidar_moradores(cls, emails, nomes, user, republica, entrada):
         if isinstance(emails,basestring):
             emails=[emails]
         if isinstance(nomes,basestring):
@@ -236,7 +237,8 @@ Equipe Republicaos'''
                 continue
             convite = ConviteMorador.get_by(email=email)
             if not convite:
-                convite = ConviteMorador(nome=nome, email=email, user=user, republica=republica)
+                convite = ConviteMorador(
+                            nome=nome, email=email, user=user, republica=republica, entrada=entrada)
                 Session.commit()
             else:
                 convite.enviar_mensagem()

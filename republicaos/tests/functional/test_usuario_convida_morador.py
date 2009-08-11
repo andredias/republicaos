@@ -28,6 +28,8 @@ class TestUsuarioConvidaMorador(TestController):
         # depois que Session para de valer, não dá para acessar novamente seus atributos
         p1 = p1.to_dict()
         p2 = p2.to_dict()
+        ultimo_fechamento = republica.ultimo_fechamento
+        proximo_fechamento = republica.proximo_fechamento
         republica = republica.to_dict()
         
         # acesso sem especificar a república
@@ -42,13 +44,46 @@ class TestUsuarioConvidaMorador(TestController):
         response = self.app.post(url=url, status=302)
         assert ConviteMorador.get_by() is None
         
+        # convite com data de entrada < último_fechamento
+        email = 'siclano@republicaos.com.br'
+        response = self.app.post(
+                        url=url,
+                        params={
+                            'nome':'Siclano',
+                            'email':email,
+                            'entrada': (ultimo_fechamento - timedelta(days=1)).strftime('%d/%m/%Y')
+                            },
+                        extra_environ={str('REMOTE_USER'):str('1')}
+                    )
+        
+        assert 'erro_entrada' in response
+        assert str(response).count('class="error-message"') == 1
+
+        # convite com data de entrada >= próximo_fechamento
+        email = 'siclano@republicaos.com.br'
+        response = self.app.post(
+                        url=url,
+                        params={
+                            'nome':'Siclano',
+                            'email':email,
+                            'entrada': proximo_fechamento.strftime('%d/%m/%Y')
+                            },
+                        extra_environ={str('REMOTE_USER'):str('1')}
+                    )
+        
+        assert 'erro_entrada' in response
+        assert str(response).count('class="error-message"') == 1
+
+
+
         # convite ok
         email = 'siclano@republicaos.com.br'
         response = self.app.post(
                         url=url,
                         params={
                             'nome':'Siclano',
-                            'email':email
+                            'email':email,
+                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -62,7 +97,8 @@ class TestUsuarioConvidaMorador(TestController):
                         url=url,
                         params={
                             'nome':'Beltranix da Silva',
-                            'email':p2['email']
+                            'email':p2['email'],
+                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -76,7 +112,8 @@ class TestUsuarioConvidaMorador(TestController):
                         url=url,
                         params={
                             'nome':'Fulanix de Tal',
-                            'email':p1['email']
+                            'email':p1['email'],
+                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
