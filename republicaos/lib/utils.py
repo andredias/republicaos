@@ -127,8 +127,8 @@ def validate2(schema):
 
 def validate(schema):
     def _validate(func, self, *args, **kwargs):
+        c.errors = {}
         if request.method.lower() in ['post', 'put']:
-            c.errors = {}
             data = request.params.copy()
             try:
                 c.valid_data = schema.to_python(data)
