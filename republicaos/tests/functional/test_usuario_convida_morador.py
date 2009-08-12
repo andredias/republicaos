@@ -21,8 +21,14 @@ class TestUsuarioConvidaMorador(TestController):
                         logradouro = 'R. dos Bobos, n. 0',
                         cidade = 'Sumare',
                         uf = 'SP')
+        republica2 = Republica(nome='Jeronimo', 
+                        data_criacao = mes_passado,
+                        logradouro = 'R. Jeronimo Pattaro, 186',
+                        cidade = 'Campinas',
+                        uf = 'SP')
         Morador(pessoa=p1, republica=republica, entrada=date.today())
         Morador(pessoa=p2, republica=republica, entrada=mes_passado, saida=ontem)
+        Morador(pessoa=p2, republica=republica2, entrada=ontem)
         Session.commit()
         
         # depois que Session para de valer, não dá para acessar novamente seus atributos
@@ -31,6 +37,7 @@ class TestUsuarioConvidaMorador(TestController):
         ultimo_fechamento = republica.ultimo_fechamento
         proximo_fechamento = republica.proximo_fechamento
         republica = republica.to_dict()
+        republica2 = republica2.to_dict()
         
         # acesso sem especificar a república
         response = self.app.post(
@@ -88,8 +95,23 @@ class TestUsuarioConvidaMorador(TestController):
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
         
-        assert ConviteMorador.get_by()
-        assert ConviteMorador.get_by().email == email
+        assert ConviteMorador.get_by(email=email)
+        assert 'link com o convite' in ' '.join(response.session['flash'])
+        
+        # convite ok para morar na outra república
+        
+        email = 'siclano@republicaos.com.br'
+        response = self.app.post(
+                        url=url_for(controller='morador', action='new', republica_id=republica2['id']),
+                        params={
+                            'nome':'Siclano',
+                            'email':email,
+                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
+                            },
+                        extra_environ={str('REMOTE_USER'):str('2')}
+                    )
+        
+        assert ConviteMorador.get_by(email=email, republica_id=republica2['id'])
         assert 'link com o convite' in ' '.join(response.session['flash'])
         
         # convite a um ex-morador | pessoa já cadastrada

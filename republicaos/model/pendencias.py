@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from elixir      import Unicode, Boolean, Date, DateTime, Time, String, Integer, Numeric
 from elixir      import Entity, using_options, using_table_options, using_mapper_options
 from elixir      import Field, OneToMany, ManyToOne
+from sqlalchemy  import types, and_, or_, select, UniqueConstraint, func
 
 from elixir.events import before_insert, after_insert, after_update
 from datetime import datetime, date
@@ -155,11 +156,12 @@ class ConviteMorador(Entity):
 
     hash = Field(String(40), primary_key = True)
     nome =  Field(Unicode(30), required=True)
-    email = Field(String(80), required=True, unique=True)
+    email = Field(String(80), required=True)
     entrada = Field(Date, default=date.today())
     data_pedido = Field(DateTime, required=True, default=datetime.now)
     user = ManyToOne('Pessoa', required=True)
     republica = ManyToOne('Republica', required=True)
+    using_table_options(UniqueConstraint('email', 'republica_id'))
     
     subject = 'Republicaos: Convite de %(anfitriao)s para ingressar na república %(republica)s'
     mensagem = '''
@@ -187,7 +189,7 @@ Equipe Republicaos'''
 
     @before_insert
     def _set_hash(self):
-        self.hash = hash_calc(self.email)
+        self.hash = hash_calc(self.email, str(self.republica.id))
 
     @property
     def link_confirmacao(self):
@@ -235,7 +237,7 @@ Equipe Republicaos'''
                     pass
                     
                 continue
-            convite = ConviteMorador.get_by(email=email)
+            convite = ConviteMorador.get_by(email=email, republica=republica)
             if not convite:
                 convite = ConviteMorador(
                             nome=nome, email=email, user=user, republica=republica, entrada=entrada)
