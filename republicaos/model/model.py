@@ -10,7 +10,7 @@ from sqlalchemy.orm import reconstructor
 from sqlalchemy.sql.expression import desc
 from datetime    import date, datetime, time
 import csv
-from elixir.events import reconstructor, before_insert, before_update
+from elixir.events import reconstructor, before_insert, before_update, after_insert
 from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 from republicaos.model import Session
@@ -305,6 +305,13 @@ class Republica(Entity):
         Session.commit()
 
 
+    @after_insert
+    def _preenche_tipos_despesa(self):
+        # obter os tipos de despesa a partir da configuração
+        tipos_despesa = ('Água', 'Energia Elétrica', 'Aluguel', 'Gás')
+        for tipo in tipos_despesa:
+            TipoDespesa(nome='tipo', republica=self)
+        # não precisa de Session.commit() Ainda está na mesma transação
 
 
 

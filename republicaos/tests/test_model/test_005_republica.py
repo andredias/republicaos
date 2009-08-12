@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals
 from datetime   import date, time
 from decimal    import Decimal
 from dateutil.relativedelta import relativedelta
-from republicaos.model import Republica, Fechamento, ContaTelefone, Pessoa, Morador, Telefonema, TelefoneRegistrado
+from republicaos.model import Republica, Fechamento, ContaTelefone, Pessoa, Morador, Telefonema, TelefoneRegistrado, TipoDespesa
 from republicaos.model import TipoDespesa, DespesaAgendada, Despesa
 from republicaos.tests import Session, TestModel
 
@@ -27,6 +27,7 @@ class TestRepublica(TestModel):
         Session.expunge_all()
         
         r = Republica.get_by() # deve acionar @reconstructor e _preenche_fechamentos
+        assert len(r.tipos_despesa) > 0
         assert len(r.fechamentos) == 2
         assert r.proximo_fechamento == date.today() + relativedelta(months=1)
         
