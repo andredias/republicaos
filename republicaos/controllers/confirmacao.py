@@ -10,10 +10,38 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib import auth as authentication
-from republicaos.model import CadastroPendente, TrocaSenha, Pessoa, Session
+from republicaos.model import CadastroPendente, TrocaSenha, Pessoa, Session, ConviteMorador, Morador
 from formencode import Schema, validators
+from datetime import date, timedelta
 
 log = logging.getLogger(__name__)
+
+class ConviteMoradorSchema(Schema):
+    allow_extra_fields = True
+    filter_extra_fields = True
+    nome = validators.UnicodeString(not_empty=True, strip=True)
+#    email = formencode.All(validators.Email(not_empty=True), Unique(model=Pessoa, attr='email'))
+    senha = validators.UnicodeString(not_empty=True, min=4)
+    confirmacao_senha = validators.UnicodeString()
+    chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
+    aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
+    entrada = validators.DateConverter(month_style = 'dd/mm/yyyy', not_empty = True)
+
+
+class ConviteMoradorSchema2(Schema):
+    allow_extra_fields = True
+    filter_extra_fields = True
+    entrada = validators.DateConverter(month_style = 'dd/mm/yyyy', not_empty = True)
+
+
+def check_convidado_is_user():
+    hash = request.urlvars.get('id')
+    log.debug('check_convidado_is_user: hash: %s', hash)
+    convite = ConviteMorador.get_by(hash=hash)
+    if not convite:
+        return False
+    user = Pessoa.get_by(email=convite.email)
+    return user
 
 
 class ConfirmacaoController(BaseController):
@@ -28,8 +56,44 @@ class ConfirmacaoController(BaseController):
             return render('confirmacao/confirmacao_invalida.html')
 
 
-    def convite(self, id):
-        pass
+
+    @validate(ConviteMoradorSchema, alternative_schema=ConviteMoradorSchema2, check_function=check_convidado_is_user)
+    def convite_morador(self, id):
+        c.convite = ConviteMorador.get_by(hash=id)
+        if not c.convite:
+            return render('confirmacao/confirmacao_invalida.html')
+
+        user = Pessoa.get_by(email=c.convite.email)
+        authentication.set_user(user)
+        if c.valid_data:
+            # validação feita depois de validate por causa da obtenção da república
+            if not (c.convite.republica.ultimo_fechamento <= c.valid_data['entrada'] < 
+                    c.convite.republica.proximo_fechamento):
+                c.errors['entrada'] = 'A data de entrada deve ser entre os dias %s e %s' % (
+                    c.convite.republica.ultimo_fechamento, c.convite.republica.proximo_fechamento - timedelta(days=1))
+            else:
+                # cadastrar pessoa
+                if not user:
+                    user = Pessoa(
+                                  nome=c.valid_data['nome'],
+                                  senha=c.valid_data['senha'],
+                                  email=c.convite.email
+                                )
+                Morador(pessoa=user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
+                flash('(info) Bem vindo(a) à república %s!' % c.convite.republica.nome)
+                destino = url_for(controller='republica', action='show', id=c.convite.republica.id)
+                c.convite.delete()
+                Session.commit()
+                authentication.set_user(user)
+                redirect_to(destino)
+        # FIXME: problemas com unicode
+        c.title = 'Confirmacao do convite para participar da republica %s' % c.convite.republica.nome
+        c.action = url_for(controller='confirmacao', action='convite_morador', id=id)
+        filler_data = request.params or c.convite.to_dict()
+        if isinstance(filler_data.get('entrada'), date):
+            filler_data['entrada'] = filler_data['entrada'].strftime('%d/%m/%Y')
+        return render('confirmacao/convite_morador.html', filler_data=filler_data)
+        
     
     
     def troca_senha(self, id):
