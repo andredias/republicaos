@@ -43,12 +43,13 @@ def set_user(user = None):
     '''
     Define o usuário do sistema. Tipo um login feito por programação. Baseado em http://bugs.repoze.org/issue58
     '''
-    if user is None and 'userid' in session:
-        del session['userid']
-        request.environ.pop('REMOTE_USER', None)
-    else:
+    if user != None:
         session['userid'] = user.id
         request.environ['REMOTE_USER'] = user.id
+    else:
+        session.pop('userid', None)
+        request.environ.pop('REMOTE_USER', None)
+
 
 
 
