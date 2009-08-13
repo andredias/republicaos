@@ -125,7 +125,10 @@ def validate2(schema):
     return decorator(_validate2)
 
 
-def validate(schema):
+def validate_(schema):
+    '''
+    versão anterior da rotina validate
+    '''
     def _validate(func, self, *args, **kwargs):
         c.errors = {}
         if request.method.lower() in ['post', 'put']:
@@ -138,6 +141,24 @@ def validate(schema):
 
     return decorator(_validate)
 
+
+def validate(schema, alternative_schema=None, check_function=None):
+    '''
+    Se só for passado um schema, usa este. Caso haja uma função de checagem,
+    então é possível usar um ou outro esquema dependendo do resultado de check_function
+    '''
+    def _validate(func, self, *args, **kwargs):
+        c.errors = {}
+        if request.method.lower() in ['post', 'put']:
+            data = request.params.copy()
+            try:
+                c.valid_data = alternative_schema.to_python(data) \
+                        if callable(check_function) and check_function() else schema.to_python(data)
+            except formencode.Invalid, e:
+                c.errors = e.unpack_errors()
+        return func(self, *args, **kwargs)
+
+    return decorator(_validate)
 
 
 
