@@ -96,7 +96,7 @@ class Pessoa(Entity):
             qtd_dias += (saida - entrada).days + 1
 
         return qtd_dias
-    
+
     @property
     def morador_em_republicas(self):
         hoje = date.today()
@@ -105,10 +105,13 @@ class Pessoa(Entity):
                                     Morador.republica_id == Republica.id,
                                     Morador.pessoa == self,
                                     Morador.entrada <= hoje,
-                                    Morador.saida == None
+                                    or_(
+                                        Morador.saida == None,
+                                        Morador.saida >= hoje
+                                        )
                                     )
                                 ).order_by(desc(Morador.entrada)).all()
-    
+
     @property
     def ex_morador_em_republicas(self):
         hoje = date.today()
@@ -154,7 +157,7 @@ class Morador(Entity):
                 data_final = max(data_inicial, data_final)
             clausula_data = and_(Morador.entrada < data_final,
                         or_(Morador.saida >= data_inicial, Morador.saida == None))
-    
+
         moradores =  Pessoa.query.filter(
                         and_(
                             Morador.republica == republica,
@@ -285,7 +288,7 @@ class Republica(Entity):
                 self._proximo_fechamento <= self.ultimo_fechamento:
             self._proximo_fechamento = self.ultimo_fechamento + relativedelta(months=1)
         return self._proximo_fechamento
-    
+
     proximo_fechamento = property(_get_proximo_fechamento, _set_proximo_fechamento)
 
     @before_insert
@@ -395,6 +398,7 @@ class Fechamento(Entity):
         return 'Fechamento: <data: %s, republica:%s>' % (self.data, self.republica)
 
 
+    #TODO: verificar se reconstructor está funcionando
     @reconstructor
     def setup(self):
         self.rateado = False # mostra se o rateio já foi feito
@@ -509,13 +513,6 @@ class Fechamento(Entity):
                 self.acerto_a_receber[credor][devedor] = self.acerto_a_pagar[devedor][credor]
         return
 
-
-    #
-    # Funções a seguir deveriam já estar habilitadas no Elixir para funcionar como os triggers do Banco de Dados
-    #
-    def before_insert(self):
-        if self.data > self.republica.ultimo_fechamento:
-            raise ModelIntegrityException(message = 'Não é permitido lançar fechamento atrasado')
 
 
 

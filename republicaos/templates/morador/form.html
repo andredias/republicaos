@@ -32,10 +32,9 @@ from datetime import timedelta
 
         <p><label>Nome</label>
         <input class="text" name="nome" maxlength="30" size="30" type="text" /></p>
-        
+
         <p><label>Data da entrada</label>
         <input class="text" name="entrada" maxlength="10" type="text" />
-        <span py:if="republica">A data deve estar entre <span py:replace="republica.ultimo_fechamento.strftime('%d/%m/%Y')"></span> e <span py:replace="(republica.proximo_fechamento - timedelta(days=1)).strftime('%d/%m/%Y')"></span></span>
         </p>
 
         <p><input name="commit" type="submit" value="${c.submit}" /></p>

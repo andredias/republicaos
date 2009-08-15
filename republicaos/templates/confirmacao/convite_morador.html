@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<xi:include href="../layout.html" />
+
+<head>
+    <title>${c.title}</title>
+</head>
+
+<body id="account">
+    <h2>${c.title}</h2>
+
+    <p>Você foi convidado por <strong py:content="c.convite.user.nome">anfitrião</strong> para fazer parte da república <strong py:content="c.convite.republica.nome"></strong>. Para ser cadastrado como morador, preencha os campos abaixo e clique no botão "enviar".</p>
+
+    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
+    <py:if test="c.errors">
+        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+        ${select('.')}
+        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
+        </div>
+    </py:if>
+
+    <form action="${c.action}" method="post" class="signup">
+        <p><label>E-mail</label>
+        <span id="email">${c.convite.email}</span></p>
+        
+        <p><label>Nome</label>
+        <input class="text" name="nome" size="30" type="text" py:if="not user" />
+        <span class="text" py:if="user">${user.nome}</span>
+        </p>
+
+        <p py:if="not user"><label>Senha</label>
+        <input class="text" name="senha" size="30" type="password" /></p>
+
+        <p py:if="not user"><label>Confirme sua senha</label>
+        <input class="text" name="confirmacao_senha" size="30" type="password" /></p>
+        
+        <p><label>Data de entrada na república</label>
+        <input class="text" name="entrada" size="10" type="text" /></p>
+
+        <p py:if="not user">
+            <label class="skip">Concordo com os <a href="/termo_uso">Termos de Uso</a> &nbsp;</label>
+            <input name="aceito_termos" type="checkbox" value="1" />
+        </p>
+
+        <p><input name="commit" type="submit" value="Enviar" /></p>
+    </form>
+
+
+</body>
+</html>
+

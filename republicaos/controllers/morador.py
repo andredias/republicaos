@@ -11,6 +11,7 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.auth import morador_required, get_user, get_republica
+from republicaos.lib.validators import DataNoFechamento
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Session
 from formencode import Schema, validators
 
@@ -22,7 +23,7 @@ class MoradorSchema(Schema):
     filter_extra_fields = True
     nome = validators.UnicodeString(not_empty=True)
     email = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
-    entrada = validators.DateConverter(month_style = 'dd/mm/yyyy', not_empty = True)
+    entrada = DataNoFechamento(get_republica=get_republica)
 
 
 class MoradorController(BaseController):
@@ -88,21 +89,17 @@ class MoradorController(BaseController):
     def new(self):
         republica = get_republica()
         if c.valid_data:
-            # validação adicional que não está sendo feita pelo MoradorSchema
-            if (republica.ultimo_fechamento <= c.valid_data['entrada'] < 
-                    republica.proximo_fechamento):
-                ConviteMorador.convidar_moradores(
-                            nomes=c.valid_data['nome'],
-                            emails=c.valid_data['email'],
-                            user=get_user(),
-                            republica=republica,
-                            entrada=c.valid_data['entrada']
-                        )
-                Session.commit()
-                redirect_to(controller='republica', action='show', id=republica.id)
-            else:
-                c.errors['entrada'] = 'Data de entrada fora dos limites!'
-            
+            ConviteMorador.convidar_moradores(
+                        nomes=c.valid_data['nome'],
+                        emails=c.valid_data['email'],
+                        user=get_user(),
+                        republica=republica,
+                        entrada=c.valid_data['entrada']
+                    )
+            Session.commit()
+            redirect_to(controller='republica', action='show', id=republica.id)
+
+
         c.action = url_for(controller='morador', action='new',
                             republica_id=request.urlvars['republica_id'])
         c.submit = 'Enviar convite'
@@ -113,6 +110,19 @@ class MoradorController(BaseController):
         return render('morador/form.html', filler_data=request.params)
 
 
+    #@morador_required
+    #@validate(SaidaSchema)
+    #def sair(new):
+        #if c.valid_data:
+            #user = get_user()
+            #republica = get_republica()
+            #morador = Morador.get_by(pessoa=user, republica=republica)
+            #morador.saida = c.valid_data['saida']
+            #flash('(info) Você não é mais morador da república')
+            #Session.commit()
+            #redirect_to(controller='root', action='index')
+
+        #return render('morador/saida.html')
 
 
 
@@ -140,4 +150,4 @@ class MoradorController(BaseController):
         """GET /pessoa/show/id: Show a specific item"""
         c.title = 'Morador'
         return render('pessoa/form.html', filler_data = c.pessoa.to_dict())
-    
+

@@ -9,12 +9,17 @@ from pylons.controllers.util import abort, redirect_to
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
+from republicaos.lib.validators import DataNoFechamento
 from republicaos.lib import auth as authentication
 from republicaos.model import CadastroPendente, TrocaSenha, Pessoa, Session, ConviteMorador, Morador
 from formencode import Schema, validators
 from datetime import date, timedelta
 
 log = logging.getLogger(__name__)
+
+def get_republica_from_convite_morador():
+    c.convite = ConviteMorador.get_by(hash=request.urlvars['id'])
+    return c.convite.republica if c.convite else None
 
 class ConviteMoradorSchema(Schema):
     allow_extra_fields = True
@@ -25,13 +30,13 @@ class ConviteMoradorSchema(Schema):
     confirmacao_senha = validators.UnicodeString()
     chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
     aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
-    entrada = validators.DateConverter(month_style = 'dd/mm/yyyy', not_empty = True)
+    entrada = DataNoFechamento(not_empty=True, get_republica=get_republica_from_convite_morador)
 
 
 class ConviteMoradorSchema2(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
-    entrada = validators.DateConverter(month_style = 'dd/mm/yyyy', not_empty = True)
+    entrada = DataNoFechamento(not_empty=True, get_republica=get_republica_from_convite_morador)
 
 
 def check_convidado_is_user():
@@ -66,26 +71,20 @@ class ConfirmacaoController(BaseController):
         user = Pessoa.get_by(email=c.convite.email)
         authentication.set_user(user)
         if c.valid_data:
-            # validação feita depois de validate por causa da obtenção da república
-            if not (c.convite.republica.ultimo_fechamento <= c.valid_data['entrada'] < 
-                    c.convite.republica.proximo_fechamento):
-                c.errors['entrada'] = 'A data de entrada deve ser entre os dias %s e %s' % (
-                    c.convite.republica.ultimo_fechamento, c.convite.republica.proximo_fechamento - timedelta(days=1))
-            else:
-                # cadastrar pessoa
-                if not user:
-                    user = Pessoa(
-                                  nome=c.valid_data['nome'],
-                                  senha=c.valid_data['senha'],
-                                  email=c.convite.email
-                                )
-                Morador(pessoa=user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
-                flash('(info) Bem vindo(a) à república %s!' % c.convite.republica.nome)
-                destino = url_for(controller='republica', action='show', id=c.convite.republica.id)
-                c.convite.delete()
-                Session.commit()
-                authentication.set_user(user)
-                redirect_to(destino)
+            # cadastrar pessoa
+            if not user:
+                user = Pessoa(
+                                nome=c.valid_data['nome'],
+                                senha=c.valid_data['senha'],
+                                email=c.convite.email
+                            )
+            Morador(pessoa=user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
+            flash('(info) Bem vindo(a) à república %s!' % c.convite.republica.nome)
+            destino = url_for(controller='republica', action='show', id=c.convite.republica.id)
+            c.convite.delete()
+            Session.commit()
+            authentication.set_user(user)
+            redirect_to(destino)
         # FIXME: problemas com unicode
         c.title = 'Confirmacao do convite para participar da republica %s' % c.convite.republica.nome
         c.action = url_for(controller='confirmacao', action='convite_morador', id=id)
@@ -93,9 +92,9 @@ class ConfirmacaoController(BaseController):
         if isinstance(filler_data.get('entrada'), date):
             filler_data['entrada'] = filler_data['entrada'].strftime('%d/%m/%Y')
         return render('confirmacao/convite_morador.html', filler_data=filler_data)
-        
-    
-    
+
+
+
     def troca_senha(self, id):
         ts = TrocaSenha.get_by(hash=id)
         if ts:
