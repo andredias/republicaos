@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<xi:include href="../layout.html" />
+
+<head>
+    <title>Registrar desligamento da repúbica ${republica.nome}</title>
+</head>
+
+<?python
+from datetime import timedelta, date
+from babel.dates import format_date
+?>
+
+<body id="account">
+    <h2>Registrar desligamento da ${republica.nome}</h2>
+
+    <p>Preencha o campo abaixo com a data de desligamento da república. Essa data deve estar entre <strong py:content="format_date(republica.ultimo_fechamento)">99/99/9999</strong> e <strong py:content="format_date(republica.proximo_fechamento - timedelta(days=1))">99/99/9999</strong>.</p>
+
+    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
+    <py:if test="c.errors">
+        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+        ${select('.')}
+        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
+        </div>
+    </py:if>
+
+
+    <form action="${c.action}" method="post" class="signup">
+        <p><label>E-mail</label>
+        <span id="email">${user.email}</span></p>
+
+        <p><label>Nome</label>
+        <span class="text">${user.nome}</span>
+        </p>
+
+        <p><label>Data de desligamento</label>
+        <input class="text" name="saida" size="10" type="text" /></p>
+
+        <p><input name="commit" type="submit" value="Enviar" /></p>
+    </form>
+
+</body>
+</html>

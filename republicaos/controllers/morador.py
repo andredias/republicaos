@@ -14,6 +14,8 @@ from republicaos.lib.auth import morador_required, get_user, get_republica
 from republicaos.lib.validators import DataNoFechamento
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Session
 from formencode import Schema, validators
+from babel.dates import format_date
+from datetime import date
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +26,12 @@ class MoradorSchema(Schema):
     nome = validators.UnicodeString(not_empty=True)
     email = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
     entrada = DataNoFechamento(get_republica=get_republica)
+
+
+class SaidaMoradorSchema(Schema):
+    allow_extra_fields = True
+    filter_extra_fields = True
+    saida = DataNoFechamento(get_republica=get_republica)
 
 
 class MoradorController(BaseController):
@@ -110,19 +118,22 @@ class MoradorController(BaseController):
         return render('morador/form.html', filler_data=request.params)
 
 
-    #@morador_required
-    #@validate(SaidaSchema)
-    #def sair(new):
-        #if c.valid_data:
-            #user = get_user()
-            #republica = get_republica()
-            #morador = Morador.get_by(pessoa=user, republica=republica)
-            #morador.saida = c.valid_data['saida']
-            #flash('(info) Você não é mais morador da república')
-            #Session.commit()
-            #redirect_to(controller='root', action='index')
+    @morador_required
+    @validate(SaidaMoradorSchema)
+    def sair(self):
+        republica = get_republica()
+        user = get_user()
+        morador = Morador.registro_mais_recente(pessoa=user, republica=republica)
+        if c.valid_data:
+            morador.saida = c.valid_data['saida']
+            Session.commit()
+            flash('(info) Sua saída da república foi registrada!')
+            redirect_to(controller='root', action='index')
 
-        #return render('morador/saida.html')
+        c.action = url_for(controller='morador', action='sair', republica_id=republica.id)
+        filler = {}
+        filler[str('saida')] = request.params.get('saida') or format_date(morador.saida or date.today())
+        return render('morador/saida.html', filler_data = filler)
 
 
 
