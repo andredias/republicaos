@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from republicaos.tests import TestController
-from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Session
+from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Fechamento, Session
 from republicaos.lib.helpers import flash, url_for
 from datetime import date, datetime, timedelta
 from urlparse import urlparse
@@ -13,21 +13,23 @@ log = logging.getLogger(__name__)
 class TestUsuarioConvidaMorador(TestController):
     def test_usuario_anonimo_tenta_acessar(self):
         ontem = date.today() - timedelta(days=1)
-        mes_passado = date.today() - timedelta(days=30)
+        ano_passado = date.today() - timedelta(days=365)
         p1 = Pessoa(nome='Fulano', email='abc@xyz.com.br', senha='1234')
         p2 = Pessoa(nome='Beltrano', email='beltrano@republicaos.com.br', senha='1234')
         republica = Republica(nome='Mae Joana', 
-                        data_criacao = mes_passado,
+                        data_criacao = ano_passado,
                         logradouro = 'R. dos Bobos, n. 0',
                         cidade = 'Sumare',
                         uf = 'SP')
         republica2 = Republica(nome='Jeronimo', 
-                        data_criacao = mes_passado,
+                        data_criacao = ano_passado,
                         logradouro = 'R. Jeronimo Pattaro, 186',
                         cidade = 'Campinas',
                         uf = 'SP')
+        Fechamento(data=date.today() - timedelta(days=30), republica=republica)
+        Fechamento(data=date.today() - timedelta(days=30), republica=republica2)
         Morador(pessoa=p1, republica=republica, entrada=date.today())
-        Morador(pessoa=p2, republica=republica, entrada=mes_passado, saida=ontem)
+        Morador(pessoa=p2, republica=republica, entrada=ano_passado, saida=ano_passado + timedelta(days=100))
         Morador(pessoa=p2, republica=republica2, entrada=ontem)
         Session.commit()
         
@@ -85,6 +87,7 @@ class TestUsuarioConvidaMorador(TestController):
 
         # convite ok
         email = 'siclano@republicaos.com.br'
+        assert ConviteMorador.get_by(email=email) == None
         response = self.app.post(
                         url=url,
                         params={

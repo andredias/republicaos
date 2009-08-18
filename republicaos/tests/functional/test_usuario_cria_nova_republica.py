@@ -103,7 +103,7 @@ class TestUsuarioCriaRepublica(TestController):
         assert 'erro' not in response
         p2 = Pessoa.get_by(email='beltrano@republicaos.com.br')
         assert len(p2.morador_em_republicas) == 1
-        assert p2.morador_em_republicas[0].nome == 'Saudade da Mamãe'
+        assert list(p2.morador_em_republicas)[0].nome == 'Saudade da Mamãe'
         assert urlparse(response.response.location).path == url_for(
                                             controller='republica', action='show', id='3')
 

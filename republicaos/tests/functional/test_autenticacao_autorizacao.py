@@ -129,15 +129,16 @@ class TestAutenticacaoAutorizacao(TestController):
     
     def _cadastra_massa_testes(self):
         ontem = date.today() - timedelta(days=1)
+        ano_passado = date.today() - timedelta(days=365)
         p1 = Pessoa(nome='Fulano', email='abc@xyz.com.br', senha='1234')
         p2 = Pessoa(nome='Beltrano', email='beltrano@republicaos.com.br', senha='1234')
         republica = Republica(nome='Mae Joana', 
-                        data_criacao = ontem,
+                        data_criacao = ano_passado,
                         logradouro = 'R. dos Bobos, n. 0',
                         cidade = 'Sumare',
                         uf = 'SP')
         Morador(pessoa=p1, republica=republica, entrada=date.today())
-        Morador(pessoa=p2, republica=republica, entrada=ontem, saida=ontem)
+        Morador(pessoa=p2, republica=republica, entrada=ano_passado, saida=ano_passado + timedelta(days=100))
         TipoDespesa(nome='luz', republica=republica)
         Session.commit()
         

@@ -4,7 +4,7 @@
 from __future__ import unicode_literals, print_function
 from sqlalchemy.exceptions import IntegrityError
 from republicaos.tests import Session, TestModel
-from republicaos.model import Pessoa, Republica, Morador
+from republicaos.model import Pessoa, Republica, Fechamento, Morador
 from datetime   import date, time, timedelta
 from decimal import Decimal
 
@@ -77,6 +77,9 @@ class TestPessoa(TestModel):
         Morador(pessoa=p2, republica=r1, entrada=date(2008, 1, 1), saida=date.today())
         Morador(pessoa=p2, republica=r2, entrada=date.today(), saida=date.today() + timedelta(days=10))
         Morador(pessoa=p3, republica=r2, entrada=date.today() + timedelta(days=1), saida=date.today() + timedelta(days=30))
+        
+        Fechamento(data=date.today() - timedelta(days=20), republica=r1)
+        Fechamento(data=date.today() - timedelta(days=20), republica=r2)
 
         Session.commit()
 

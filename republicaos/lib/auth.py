@@ -100,7 +100,7 @@ def morador_ou_ex_required(func, self, *args, **kwargs):
     elif republica in user.ex_morador_em_republicas:
         session['user_status'] = user_status_ex_morador
     else:
-        session.pop('user_status')
+        session.pop('user_status', None)
         erro = '(error) Recurso acessível apenas por moradores ou ex-moradores da república'
         flash(erro)
         abort(403, comment=erro)

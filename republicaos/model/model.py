@@ -99,18 +99,14 @@ class Pessoa(Entity):
 
     @property
     def morador_em_republicas(self):
-        hoje = date.today()
-        return Republica.query.filter(
-                                and_(
-                                    Morador.republica_id == Republica.id,
-                                    Morador.pessoa == self,
-                                    Morador.entrada <= hoje,
-                                    or_(
-                                        Morador.saida == None,
-                                        Morador.saida >= hoje
-                                        )
-                                    )
-                                ).order_by(desc(Morador.entrada)).all()
+        registros = Morador.query.filter(
+                                    Morador.pessoa == self
+                                ).all()
+        return set(registro.republica for registro in registros
+                    if registro.saida is None or registro.republica.ultimo_fechamento <= registro.saida <
+                        registro.republica.proximo_fechamento
+                    )
+
 
     @property
     def ex_morador_em_republicas(self):
@@ -140,6 +136,12 @@ class Morador(Entity):
     def __repr__(self):
         return 'Morador <pessoa_id: %s, republica_id: %s, entrada: %r, saida: %r>' % (self.pessoa.id, self.republica.id, self.entrada,
                 self.saida)
+    
+    @before_insert
+    @before_update
+    def check(self):
+        if self.saida:
+            assert self.entrada <= self.saida
 
 
     @classmethod
@@ -224,6 +226,16 @@ class Morador(Entity):
 
         log.debug('Morador.get_intervalos_de_moradores(%r, %r, %r): %r' % (republica, data_inicial, data_final, intevalos))
         return intervalos
+
+    @classmethod
+    def registro_mais_recente(cls, pessoa, republica):
+        morador =  Morador.query.filter(
+                                    and_(
+                                        Morador.republica_id == republica.id,
+                                        Morador.pessoa_id == pessoa.id
+                                        )
+                                    ).order_by(desc(Morador.entrada)).limit(1).all()
+        return morador[0] if morador else None
 
 
 
