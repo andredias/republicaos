@@ -64,7 +64,7 @@ class TestUsuarioCriaRepublica(TestController):
         p1 = Pessoa.get_by(email='abc@xyz.com.br')
         assert len(p1.morador_em_republicas) == 2
         assert urlparse(response.response.location).path == url_for(
-                                                controller='republica', action='show', id='2')
+                                                controller='republica', action='show', republica_id='2')
 
         # usuário p1 tenta cadastrar uma 3a república
         response = self.app.post(
@@ -105,7 +105,7 @@ class TestUsuarioCriaRepublica(TestController):
         assert len(p2.morador_em_republicas) == 1
         assert list(p2.morador_em_republicas)[0].nome == 'Saudade da Mamãe'
         assert urlparse(response.response.location).path == url_for(
-                                            controller='republica', action='show', id='3')
+                                            controller='republica', action='show', republica_id='3')
 
 
 

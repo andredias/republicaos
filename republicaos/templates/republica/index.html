@@ -21,7 +21,7 @@ num_participantes = len(c.fechamento.participantes) if len(c.fechamento.particip
 <body>
 <h1>${c.title}</h1>
 
-<form action="${h.url_for(controller='republica', action='show')}" method="post">
+<form action="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" method="post">
     <h2>Fechamento de 
     <select name="data_fechamento">
         <option py:for="f in republica.fechamentos" py:content="format_date(f.data)" value="${f.data}" selected="${'selected' if f.data == c.fechamento.data else ''}" >dd/mm/yyyy</option>

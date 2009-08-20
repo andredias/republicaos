@@ -103,7 +103,7 @@ class RepublicaController(BaseController):
         elif c.valid_data:
             self.create()
             flash('(info) República criada com sucesso!')
-            redirect_to(controller='republica', action='show', id=c.republica.id)
+            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
         c.action = url_for(controller='republica', action='new')
         c.title  = 'Criar Nova República'
         return render('republica/form.html', filler_data=request.params)
@@ -120,7 +120,7 @@ class RepublicaController(BaseController):
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(controller='republica', action='show', id=id)
+            redirect_to(controller='republica', action='show', republica_id=id)
         elif not c.errors:
             filler_data = c.republica.to_dict()
         else:

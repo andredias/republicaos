@@ -105,7 +105,7 @@ class MoradorController(BaseController):
                         entrada=c.valid_data['entrada']
                     )
             Session.commit()
-            redirect_to(controller='republica', action='show', id=republica.id)
+            redirect_to(controller='republica', action='show', republica_id=republica.id)
 
 
         c.action = url_for(controller='morador', action='new',

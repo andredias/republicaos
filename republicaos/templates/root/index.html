@@ -48,7 +48,7 @@
                 <py:if test="user.morador_em_republicas">
                     <h3>República(s) de que participa:</h3>
                     <ul>
-                        <li py:for="rep in user.morador_em_republicas"><a href="${h.url_for(controller='republica', action='show', id=rep.id)}">${rep.nome}</a></li>
+                        <li py:for="rep in user.morador_em_republicas"><a href="${h.url_for(controller='republica', action='show', republica_id=rep.id)}">${rep.nome}</a></li>
                     </ul>
                 </py:if>
 

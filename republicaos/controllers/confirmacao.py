@@ -80,7 +80,7 @@ class ConfirmacaoController(BaseController):
                             )
             Morador(pessoa=user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
             flash('(info) Bem vindo(a) à república %s!' % c.convite.republica.nome)
-            destino = url_for(controller='republica', action='show', id=c.convite.republica.id)
+            destino = url_for(controller='republica', action='show', republica_id=c.convite.republica.id)
             c.convite.delete()
             Session.commit()
             authentication.set_user(user)

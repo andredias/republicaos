@@ -91,7 +91,7 @@ class TipoDespesaController(BaseController):
     def new(self):
         if c.valid_data:
             tipo_despesa = self.create()
-            redirect_to(controller='republica', action='show', id=c.republica.id)
+            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
         c.action = url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)
         c.title  = 'Novo Tipo de Despesa'
         return render('tipo_despesa/form.html', filler_data=request.params)
@@ -108,7 +108,7 @@ class TipoDespesaController(BaseController):
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(controller='republica', action='show', id=c.republica.id)
+            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
         elif not c.errors:
             filler_data = c.tipo_despesa.to_dict()
         else:

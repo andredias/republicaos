@@ -25,7 +25,7 @@ def make_map():
     #
     # República
     #
-    map.connect('/republica/{republica_id}',
+    map.connect('/republica/{republica_id}', # tem de ser republica_id por causa do get_republica()
                 controller='republica',
                 action='show',
                 requirements={'republica_id':'\d+'})
