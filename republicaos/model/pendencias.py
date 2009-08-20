@@ -223,9 +223,9 @@ Equipe Republicaos'''
     
     @classmethod
     def convidar_moradores(cls, emails, nomes, user, republica, entrada):
-        if isinstance(emails,basestring):
+        if isinstance(emails, basestring):
             emails=[emails]
-        if isinstance(nomes,basestring):
+        if isinstance(nomes, basestring):
             nomes=[nomes]
         for email, nome in izip(emails, nomes):
             pessoa = Pessoa.get_by(email=email)
@@ -234,6 +234,7 @@ Equipe Republicaos'''
                     flash('(warning) %s não foi convidado(a) pois já é morador(a) da república')
                 except TypeError:
                     # exceção esperada em um caso de teste fora de uma request
+                    log.debug('(warning) %s não foi convidado(a) pois já é morador(a) da república')
                     pass
                     
                 continue

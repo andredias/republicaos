@@ -40,10 +40,10 @@ class TestMoradorSaiDaRepublica(TestController):
         p1 = p1.to_dict()
         p2 = p2.to_dict()
         p3 = p3.to_dict()
-        ultimo_fechamento = republica.ultimo_fechamento
-        proximo_fechamento = republica.proximo_fechamento
+
         republica = republica.to_dict()
         republica2 = republica2.to_dict()
+        
 
         
 
@@ -84,7 +84,7 @@ class TestMoradorSaiDaRepublica(TestController):
         response = self.app.post(
                         url=url,
                         params={
-                            'saida': format_date(proximo_fechamento)
+                            'saida': format_date(date.today() + timedelta(days=100))
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )

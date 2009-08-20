@@ -65,13 +65,14 @@ class TestFechamento(TestModel):
 #        for f in self.r.fechamentos:
 #            print f
 
-        f1.setup()
-        f2.setup()
-        f3.setup()
+        data_inicial_f1, data_final_f1 = f1.intervalo
+        data_inicial_f2, data_final_f2 = f2.intervalo
+        data_inicial_f3, data_final_f3 = f3.intervalo
 
-        assert f1.data_inicial == self.r.data_criacao and f1.data_final == (f1.data - relativedelta(days = 1))
-        assert f2.data_inicial == f1.data and f2.data_final == (f2.data - relativedelta(days = 1))
-        assert f3.data_inicial == f2.data and f3.data_final == (f3.data - relativedelta(days = 1))
+        assert data_inicial_f1 == self.r.data_criacao
+        assert data_final_f1 == (f1.data - relativedelta(days = 1))
+        assert data_inicial_f2 == f1.data and data_final_f2 == (f2.data - relativedelta(days = 1))
+        assert data_inicial_f3 == f2.data and data_final_f3 == (f3.data - relativedelta(days = 1))
 
 
 
@@ -85,9 +86,9 @@ class TestFechamento(TestModel):
         m3 = Morador(pessoa = self.p3, republica = self.r, entrada = date(2007, 3, 6))
         m4 = Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 3, 6))
 
-        Despesa(data = date(2007, 4, 21), quantia = 225, tipo = self.td1, responsavel = self.p1)
-        Despesa(data = date(2007, 4, 12), quantia = 75, tipo = self.td3, responsavel = self.p2)
-        Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = self.p3)
+        Despesa(data = date(2007, 4, 21), quantia = 225, tipo = self.td1, responsavel = self.p1, republica = self.r)
+        Despesa(data = date(2007, 4, 12), quantia = 75, tipo = self.td3, responsavel = self.p2, republica = self.r)
+        Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = self.p3, republica = self.r)
 
         Session.commit()
 
@@ -122,9 +123,9 @@ class TestFechamento(TestModel):
         m3 = Morador(pessoa = self.p3, republica = self.r, entrada = date(2007, 3, 6))
         m4 = Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 3, 6))
 
-        Despesa(data = date(2007, 4, 12), quantia = 75, tipo = self.td3, responsavel = self.p2)
-        Despesa(data = date(2007, 5, 1), quantia = 100, tipo = self.td2, responsavel = self.p3)
-        Despesa(data = date(2007, 4, 21), quantia = 325, tipo = self.td1, responsavel = self.p4)
+        Despesa(data = date(2007, 4, 12), quantia = 75, tipo = self.td3, responsavel = self.p2, republica = self.r)
+        Despesa(data = date(2007, 5, 1), quantia = 100, tipo = self.td2, responsavel = self.p3, republica = self.r)
+        Despesa(data = date(2007, 4, 21), quantia = 325, tipo = self.td1, responsavel = self.p4, republica = self.r)
 
         Session.commit()
 
@@ -158,10 +159,10 @@ class TestFechamento(TestModel):
         Morador(pessoa = self.p3, republica = self.r, entrada = date(2007, 3, 6))
         Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 3, 6))
 
-        Despesa(data = date(2007, 4, 12), quantia = 175, tipo = self.td3, responsavel = self.p1)
-        Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.p2)
-        Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = self.p3)
-        Despesa(data = date(2007, 4, 21), quantia = 175, tipo = self.td1, responsavel = self.p4)
+        Despesa(data = date(2007, 4, 12), quantia = 175, tipo = self.td3, responsavel = self.p1, republica = self.r)
+        Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.p2, republica = self.r)
+        Despesa(data = date(2007, 5, 1), quantia = 200, tipo = self.td2, responsavel = self.p3, republica = self.r)
+        Despesa(data = date(2007, 4, 21), quantia = 175, tipo = self.td1, responsavel = self.p4, republica = self.r)
 
         Session.commit()
 
@@ -192,10 +193,10 @@ class TestFechamento(TestModel):
         Morador(pessoa = self.p3, republica = self.r, entrada = date(2007, 3, 6))
         Morador(pessoa = self.p4, republica = self.r, entrada = date(2007, 3, 6))
 
-        Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.p1)
-        Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.p2)
-        Despesa(data = date(2007, 5, 1), quantia = 50, tipo = self.td2, responsavel = self.p3)
-        Despesa(data = date(2007, 4, 21), quantia = 50, tipo = self.td1, responsavel = self.p4)
+        Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.p1, republica = self.r)
+        Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.p2, republica = self.r)
+        Despesa(data = date(2007, 5, 1), quantia = 50, tipo = self.td2, responsavel = self.p3, republica = self.r)
+        Despesa(data = date(2007, 4, 21), quantia = 50, tipo = self.td1, responsavel = self.p4, republica = self.r)
 
         f.executar_rateio()
         print_acerto_final(f)
@@ -240,14 +241,14 @@ class TestFechamento(TestModel):
        self.m3 = testa_conta.m3
        self.m4 = testa_conta.m4
 
-       Despesa(data = date(2007, 4, 21), quantia = 20, tipo = self.td1, responsavel = self.m1)
-       Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.self.p2)
-       Despesa(data = date(2007, 4, 21), quantia = 150, tipo = self.td2, responsavel = self.m2)
-       Despesa(data = date(2007, 5, 1), quantia = 150, tipo = self.td2, responsavel = self.m3)
-       Despesa(data = date(2007, 5, 5), quantia = self.c.total, tipo = self.td5, responsavel = self.m1)
+       Despesa(data = date(2007, 4, 21), quantia = 20, tipo = self.td1, responsavel = self.m1, republica = self.r)
+       Despesa(data = date(2007, 4, 12), quantia = 50, tipo = self.td3, responsavel = self.self.p2, republica = self.r)
+       Despesa(data = date(2007, 4, 21), quantia = 150, tipo = self.td2, responsavel = self.m2, republica = self.r)
+       Despesa(data = date(2007, 5, 1), quantia = 150, tipo = self.td2, responsavel = self.m3, republica = self.r)
+       Despesa(data = date(2007, 5, 5), quantia = self.c.total, tipo = self.td5, responsavel = self.m1, republica = self.r)
 
-       DespesaAgendada(quantia = 50, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19))
-       DespesaAgendada(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1))
+       DespesaAgendada(quantia = 50, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19), republica = self.r)
+       DespesaAgendada(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1), republica = self.r)
 
        Session.commit()
 
@@ -280,15 +281,15 @@ class TestFechamento(TestModel):
        self.m2 = testa_conta.m2
        self.m3 = testa_conta.m3
 
-       Despesa(data = date(2007, 4, 21), quantia = Decimal(20), tipo = self.td1, responsavel = self.m1)
-       Despesa(data = date(2007, 4, 12), quantia = Decimal(50), tipo = self.td3, responsavel = self.m2)
-       Despesa(data = date(2007, 4, 21), quantia = Decimal(150), tipo = self.td2, responsavel = self.m2)
-       Despesa(data = date(2007, 5, 1),  quantia = Decimal(150), tipo = self.td2, responsavel = self.m3)
-       Despesa(data = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, responsavel = self.m1)
-       Despesa(data = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, responsavel = self.m2)
+       Despesa(data = date(2007, 4, 21), quantia = Decimal(20), tipo = self.td1, responsavel = self.m1, republica = self.r)
+       Despesa(data = date(2007, 4, 12), quantia = Decimal(50), tipo = self.td3, responsavel = self.m2, republica = self.r)
+       Despesa(data = date(2007, 4, 21), quantia = Decimal(150), tipo = self.td2, responsavel = self.m2, republica = self.r)
+       Despesa(data = date(2007, 5, 1),  quantia = Decimal(150), tipo = self.td2, responsavel = self.m3, republica = self.r)
+       Despesa(data = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, responsavel = self.m1, republica = self.r)
+       Despesa(data = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, responsavel = self.m2, republica = self.r)
 
-       DespesaAgendada(quantia = 150, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19))
-       DespesaAgendada(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1))
+       DespesaAgendada(quantia = 150, tipo = self.td4, responsavel = self.m1, proximo_vencimento = date(2007, 4, 19), republica = self.r)
+       DespesaAgendada(quantia = 45, tipo = self.td1, responsavel = self.m1, proximo_vencimento = date(2007, 6, 1), republica = self.r)
 
        Session.commit()
 

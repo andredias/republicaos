@@ -25,15 +25,10 @@ def make_map():
     #
     # República
     #
-    map.connect('/republica',
+    map.connect('/republica/{republica_id}',
                 controller='republica',
-                action='rest_dispatcher_collection',
-                conditions=dict(method=['GET', 'POST']))
-    map.connect('/republica/{id}',
-                controller='republica',
-                action='rest_dispatcher_single',
-                requirements={'id':'\d+'},
-                conditions=dict(method=['GET', 'PUT', 'DELETE']))
+                action='show',
+                requirements={'republica_id':'\d+'})
 
     #
     # Pessoa

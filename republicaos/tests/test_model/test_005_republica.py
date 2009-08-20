@@ -19,24 +19,29 @@ class TestRepublica(TestModel):
             logradouro = 'R. dos Bobos, n. 0',
             cidade = 'Sumare',
             uf = 'SP')
-        
-        assert r.ultimo_fechamento == mes_retrasado
-        assert r.proximo_fechamento == mes_retrasado + relativedelta(months=1)
-        assert len(r.fechamentos) == 0
         Session.commit()
+        
+        inicio, fim = r.fechamento_atual.intervalo
+        
+        assert inicio == mes_retrasado
+        assert r.fechamento_atual.data == mes_retrasado + relativedelta(months=1)
+        assert len(r.fechamentos) == 1
+
         Session.expunge_all()
         
-        r = Republica.get_by() # deve acionar @reconstructor e _preenche_fechamentos
+        r = Republica.get_by()
+        r._preencher_fechamentos()
         assert len(r.tipos_despesa) > 0
-        assert len(r.fechamentos) == 2
-        assert r.proximo_fechamento == date.today() + relativedelta(months=1)
+        assert len(r.fechamentos) == 3, r.fechamentos
+        assert r.fechamento_atual.data == date.today() + relativedelta(months=1)
         
         # Fechamentos criados manualmente
-        Fechamento(data=r.proximo_fechamento, republica=r)
-        Fechamento(data=r.proximo_fechamento, republica=r)
-        
-        assert len(r.fechamentos) == 4
+        Fechamento(data=date.today() + relativedelta(months=2), republica=r)
+        Fechamento(data=date.today() + relativedelta(months=3), republica=r)
         Session.commit()
+        
+        assert r.fechamento_atual.data == date.today() + relativedelta(months=3)
+        assert len(r.fechamentos) == 5, r.fechamentos
         
         
         # verificar _check_proximo_fechamento
@@ -46,8 +51,8 @@ class TestRepublica(TestModel):
             uf = 'ES')
         Session.commit()
         
-        assert r2.data_criacao == r2.ultimo_fechamento == date.today()
-        assert r2.proximo_fechamento == r2.ultimo_fechamento + relativedelta(months=1)
+        assert r2.data_criacao == r2.fechamento_atual.intervalo[0] == date.today()
+        assert r2.fechamento_atual.data == date.today() + relativedelta(months=1)
 
 
 

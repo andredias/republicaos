@@ -78,10 +78,11 @@ class TestPessoa(TestModel):
         Morador(pessoa=p2, republica=r2, entrada=date.today(), saida=date.today() + timedelta(days=10))
         Morador(pessoa=p3, republica=r2, entrada=date.today() + timedelta(days=1), saida=date.today() + timedelta(days=30))
         
-        Fechamento(data=date.today() - timedelta(days=20), republica=r1)
-        Fechamento(data=date.today() - timedelta(days=20), republica=r2)
-
         Session.commit()
+        
+        r1._preencher_fechamentos()
+        r2._preencher_fechamentos()
+
 
         assert r1 not in p1.morador_em_republicas
         assert r1 in p1.ex_morador_em_republicas

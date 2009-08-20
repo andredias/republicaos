@@ -56,7 +56,7 @@ class TestMorador(TestModel):
 
 
     def set_moradores(self):
-        r = Republica(nome = 'Teste',
+        self.r = Republica(nome = 'Teste',
             data_criacao = date(2007, 3, 6),
             logradouro = 'R. dos Bobos, n. 0',
             cidade = 'ABC',
@@ -67,12 +67,12 @@ class TestMorador(TestModel):
         p2 = Pessoa(nome = 'Marcos', senha = '1234', email = 'yzx@xyz.com')
         self.pessoas = [p1, p2]
 
-        Morador(pessoa = p1, republica = r, entrada = date(2007, 3, 6))
-        Morador(pessoa = p2, republica = r, entrada = date(2007, 3, 6))
+        Morador(pessoa = p1, republica = self.r, entrada = date(2007, 3, 6))
+        Morador(pessoa = p2, republica = self.r, entrada = date(2007, 3, 6))
 
-        td1 = TipoDespesa(nome = 'Água',     republica = r)
-        td2 = TipoDespesa(nome = 'Aluguel',  republica = r)
-        td3 = TipoDespesa(nome = 'Internet', republica = r)
+        td1 = TipoDespesa(nome = 'Água',     republica = self.r)
+        td2 = TipoDespesa(nome = 'Aluguel',  republica = self.r)
+        td3 = TipoDespesa(nome = 'Internet', republica = self.r)
         self.tipos_despesa = [td1, td2, td3]
 
         Session.commit()
@@ -83,9 +83,9 @@ class TestMorador(TestModel):
         td1, td2, td3 = self.tipos_despesa
         p1, p2        = self.pessoas
 
-        d1 = Despesa(data = date(2007, 4, 10), quantia = 20, tipo = td1, responsavel = p1)
-        d2 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = p1)
-        d3 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = p2)
+        d1 = Despesa(data = date(2007, 4, 10), quantia = 20, tipo = td1, responsavel = p1, republica = self.r)
+        d2 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = p1, republica = self.r)
+        d3 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = p2, republica = self.r)
         self.despesas = [d1, d2, d3]
 
         Session.commit()
@@ -114,10 +114,11 @@ class TestMorador(TestModel):
                 tipo               = td3,
                 responsavel        = p1,
                 proximo_vencimento = date(2007, 4, 19),
-                data_termino       = date(2007, 7, 10)
+                data_termino       = date(2007, 7, 10),
+                republica          = self.r
                 )
-        dp2 = DespesaAgendada(quantia = 45, tipo = td1, responsavel = p1, proximo_vencimento = date(2007, 5, 2))
-        dp3 = DespesaAgendada(quantia = 10, tipo = td2, responsavel = p1, proximo_vencimento = date(2007, 6, 10))
+        dp2 = DespesaAgendada(quantia = 45, tipo = td1, responsavel = p1, proximo_vencimento = date(2007, 5, 2), republica = self.r)
+        dp3 = DespesaAgendada(quantia = 10, tipo = td2, responsavel = p1, proximo_vencimento = date(2007, 6, 10), republica = self.r)
 
         self.despesas_agendadas = [dp1, dp2, dp3]
 

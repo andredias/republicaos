@@ -67,11 +67,10 @@ class DataNoFechamento(validators.FancyValidator):
 
     def validate_python(self, value, state):
         republica = self.get_republica() if callable(self.get_republica) else self.get_republica
-        data_inicial = republica.ultimo_fechamento
-        data_final = republica.proximo_fechamento - timedelta(days=1)
+        data_inicial, data_final = republica.fechamento_atual.intervalo
         log.debug('validate_python: data_inicial: %s, data_final: %s, value: %s', data_inicial, data_final, value)
-
-        if not (data_inicial <= value <= data_final):
+        
+        if not republica.fechamento_atual.data_no_intervalo(value):
             raise Invalid(
                     self.message('fora_dos_limites', state,
                                  data_inicial=format_date(data_inicial),

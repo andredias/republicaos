@@ -90,7 +90,7 @@ class Pessoa(Entity):
                     )
                 ).execute().fetchall()
 
-        log.debug('Pessoa<%s>.qtd_dias_morados(%r, %r, %r): %r' % (self.nome, republica, data_inicial, data_final, intervalos))
+#        log.debug('Pessoa<%s>.qtd_dias_morados(%r, %r, %r): %r' % (self.nome, republica, data_inicial, data_final, intervalos))
         qtd_dias = 0
         for entrada, saida in intervalos:
             qtd_dias += (saida - entrada).days + 1
@@ -103,9 +103,9 @@ class Pessoa(Entity):
                                     Morador.pessoa == self
                                 ).all()
         return set(registro.republica for registro in registros
-                    if registro.saida is None or registro.republica.ultimo_fechamento <= registro.saida <
-                        registro.republica.proximo_fechamento
-                    )
+                    if registro.saida is None or
+                        registro.republica.fechamento_atual.data_no_intervalo(registro.saida)
+                )
 
 
     @property
@@ -167,7 +167,7 @@ class Morador(Entity):
                             Morador.pessoa_id == Pessoa.id
                         )
                     ).distinct().order_by(Pessoa.nome).all()
-        log.debug('Morador.get_moradores(%r, %r, %r): %r' % (republica, data_inicial, data_final, moradores))
+        #log.debug('Morador.get_moradores(%r, %r, %r): %r' % (republica, data_inicial, data_final, moradores))
         return moradores
 
 
@@ -269,63 +269,38 @@ class Republica(Entity):
     complemento  = Field(Unicode(100))
     cidade       = Field(Unicode(80), required = True)
     uf           = Field(String(2), required = True)
-    _proximo_fechamento = Field(Date, required = True)
 
-    fechamentos           = OneToMany('Fechamento', order_by = 'data')
+    fechamentos           = OneToMany('Fechamento', order_by = '-data')
     tipos_despesa         = OneToMany('TipoDespesa', order_by = 'nome')
     telefones_registrados = OneToMany('TelefoneRegistrado', order_by = 'numero')
 
 
     def __repr__(self):
-        return 'Republica: <nome: %s, data_criacao: %r>' % (self.nome.encode('utf-8'), self.data_criacao)
+        return 'Republica: <nome: %s, data_criacao: %r>' % (self.nome, self.data_criacao)
 
 
     @property
-    def ultimo_fechamento(self):
-#        result = select(
-#                    [max(Fechamento.data)],
-#                    whereclause = Fechamento.republica == self,
-#                ).execute().fetchone()[0]
-#        return result if result else self.data_criacao
-        return self.fechamentos[-1].data if len(self.fechamentos) else self.data_criacao
+    def fechamento_atual(self):
+        return self.fechamentos[0]
 
 
-    def _set_proximo_fechamento(self, data):
-        assert data > self.ultimo_fechamento
-        self._proximo_fechamento = data
-
-
-    def _get_proximo_fechamento(self):
-        if not self._proximo_fechamento or \
-                self._proximo_fechamento <= self.ultimo_fechamento:
-            self._proximo_fechamento = self.ultimo_fechamento + relativedelta(months=1)
-        return self._proximo_fechamento
-
-    proximo_fechamento = property(_get_proximo_fechamento, _set_proximo_fechamento)
-
-    @before_insert
-    @before_update
-    def _check_proximo_fechamento(self):
-        if not self.data_criacao:
-            self.data_criacao = date.today()
-        self._proximo_fechamento = self._get_proximo_fechamento()
-
-
-    @reconstructor
-    def _preenche_fechamentos(self):
+    def _preencher_fechamentos(self):
         hoje = date.today()
-        while hoje >= self._proximo_fechamento:
-            Fechamento(data = self._proximo_fechamento, republica = self)
-            self._proximo_fechamento += relativedelta(months=1)
+        data_ref = self.fechamento_atual.data
+        while hoje >= data_ref:
+            data_ref += relativedelta(months=1)
+            Fechamento(data = data_ref, republica = self)
         Session.commit()
 
 
     @after_insert
-    def _preenche_tipos_despesa(self):
+    def _pos_insert(self):
         # obter os tipos de despesa a partir da configuração
         tipos_despesa = ('Água', 'Energia Elétrica', 'Aluguel', 'Gás')
         for tipo in tipos_despesa:
-            TipoDespesa(nome='tipo', republica=self)
+            TipoDespesa(nome=tipo, republica=self)
+        if len(self.fechamentos) == 0:
+            Fechamento(data=self.data_criacao + relativedelta(months=1), republica=self)
         # não precisa de Session.commit() Ainda está na mesma transação
 
 
@@ -334,33 +309,16 @@ class Republica(Entity):
         '''
         Retorna os moradores da república no período de tempo
         '''
+        if not (fechamento or (data_inicial and data_final)):
+            fechamento = self.fechamento_atual
+            data_inicial, data_final = fechamento.intervalo
         if fechamento:
-            data_inicial = fechamento.data_inicial
-            data_final = fechamento.data_inicial
+            data_inicial, data_final = fechamento.intervalo
+        elif not (data_inicial and data_final):
+            fechamento = self.fechamento_atual
+            data_inicial, data_final = fechamento.intervalo
         return Morador.get_moradores(self, data_inicial, data_final)
 
-        # o trecho abaixo não funcionou como o esperado porque Morador.pessoa está voltando todo o registro de morador novamente
-        # mesmo se voltasse só pessoa_id, seria necessário várias consultas para reconstruir objetos de pessoas.
-#        consulta = select(
-#                    [Morador.pessoa, Morador.entrada, func.coalesce(Morador.saida, data_final)],
-#                    whereclause = and_(
-#                        Morador.republica == republica,
-#                        Morador.entrada <= data_final,
-#                        or_(Morador.saida == None, Morador.saida >= data_inicial)
-#                    )
-#                ).order_by(Morador.pessoa).execute().fetchall()
-
-
-
-        #pessoa_ref = None
-        #result = {}
-        #for pessoa, entrada, saida in consulta:
-            #if pessoa != pessoa_ref:
-                #result[pessoa] = 0
-                #pessoa_ref = pessoa
-            #result[pessoa_ref] += (saida - entrada).days
-
-        #return result
 
 
     def contas_telefone(self, data_inicial, data_final):
@@ -410,64 +368,58 @@ class Fechamento(Entity):
         return 'Fechamento: <data: %s, republica:%s>' % (self.data, self.republica)
 
 
-    #TODO: verificar se reconstructor está funcionando
-    @reconstructor
-    def setup(self):
-        self.rateado = False # mostra se o rateio já foi feito
-        self.data_final = self.data - relativedelta(days = 1)
+    @property
+    def intervalo(self):
+        '''
+        Período contábil do fechamento
+        '''
+        data_final = self.data - relativedelta(days = 1)
         index = self.republica.fechamentos.index(self)
-        if index > 0:
-            self.data_inicial = self.republica.fechamentos[index - 1].data
+        if (index + 1) < len(self.republica.fechamentos):
+            data_inicial = self.republica.fechamentos[index + 1].data
         else:
-            self.data_inicial = self.republica.data_criacao
+            data_inicial = self.republica.data_criacao
+        return (data_inicial, data_final)
+
+
+    def data_no_intervalo(self, data):
+        inicio, fim = self.intervalo
+        return inicio <= data <= fim
 
 
     def executar_rateio(self):
         '''
         Calcula a divisão das despesas em determinado período
         '''
-        self.setup()
         self.rateado = True
+        data_inicial, data_final = self.intervalo
 
         # todos os participantes deste fechamento
         self.participantes = set()
-
-        # Divisão das contas de telefone
-        #contas_telefone = self.republica.contas_telefone(data_inicial, data_final)
-        #for conta_telefone in contas_telefone:
-            #conta_telefone.executar_rateio()
-            #self.participantes.update(set(conta_telefone.rateio.keys()))
 
         # incluir todos os cadastrados como morador
         self.participantes.update(set(self.republica.get_moradores(self)))
         self.participantes = sorted(self.participantes, key = lambda obj:obj.nome)
 
-        # preencher rateio de telefone
-        #self.quota_telefone = dict(
-                        #(pessoa, sum(conta_telefone.rateio[morador].a_pagar for conta_telefone in contas_telefone if pessoa in conta_telefone.rateio))
-                        #for pessoa in self.participantes
-                    #)
-        #self.total_telefone = sum(quota_telefone for quota_telefone in self.quota_telefone.values)
-
         # obtem despesas
-        despesas = Despesa.get_despesas_no_periodo(republica=self.republica, data_inicial=self.data_inicial, data_final=self.data_final)
-        self.despesas = dict(
-                                (pessoa, sum(despesa.quantia for despesa in despesas if despesa.responsavel == pessoa))
+        self.despesas = Despesa.get_despesas_no_periodo(republica=self.republica, data_inicial=data_inicial, data_final=data_final)
+        self.despesas_por_pessoa = dict(
+                                (pessoa, sum(despesa.quantia for despesa in self.despesas if despesa.responsavel == pessoa))
                                 for pessoa in self.participantes
                             )
-        self.total_despesas = sum(despesa.quantia for despesa in despesas)
+        self.total_despesas = sum(despesa.quantia for despesa in self.despesas)
 
 
-        tipos_despesa = set(despesa.tipo for despesa in despesas)
+        tipos_despesa = set(despesa.tipo for despesa in self.despesas)
         self.total_tipo_despesa = dict(
-                                        (tipo_despesa.nome, sum(despesa.quantia for despesa in despesas if despesa.tipo == tipo_despesa))
+                                        (tipo_despesa.nome, sum(despesa.quantia for despesa in self.despesas if despesa.tipo == tipo_despesa))
                                         for tipo_despesa in tipos_despesa
                                     )
 
 
         # Definição de quantidades de dias morados para executar média ponderada
         self.qtd_dias_morados = dict(
-                                        (pessoa, pessoa.get_qtd_dias_morados(self.republica, self.data_inicial, self.data_final))
+                                    (pessoa, pessoa.get_qtd_dias_morados(self.republica, data_inicial, data_final))
                                         for pessoa in self.participantes
                                     )
         self.total_dias_morados = sum(dias for dias in self.qtd_dias_morados.values())
@@ -479,13 +431,9 @@ class Fechamento(Entity):
         self.porcentagem = dict()
         self.saldo_final = dict()
         for pessoa in self.participantes:
-            # o total do telefone é uma despesa específica e não deve ser usada no cálculo das quotas
-            # a parte de cada um nos telefones é contabilizada no saldo final
-            #self.quota[pessoa] = (self.total_despesas - self.total_telefone) * self.qtd_dias_morados[pessoa] / self.total_dias_morados
             self.quota[pessoa] = self.total_despesas * self.qtd_dias_morados[pessoa] / self.total_dias_morados
-            self.porcentagem[pessoa] = 100 * self.qtd_dias_morados[pessoa] / self.total_dias_morados
-            #self.saldo_final[pessoa] = self.quota[pessoa] + self.quota_telefone[pessoa] - self.despesas[pessoa]
-            self.saldo_final[pessoa] = self.quota[pessoa] - self.despesas[pessoa]
+            self.porcentagem[pessoa] = 100.0 * self.qtd_dias_morados[pessoa] / self.total_dias_morados
+            self.saldo_final[pessoa] = self.quota[pessoa] - self.despesas_por_pessoa[pessoa]
 
         #
         # Acerto de contas
@@ -832,6 +780,7 @@ class Despesa(Entity):
     data = Field(Date, default = date.today, required = True)
     quantia = Field(Numeric(10, 2), required = True)
     responsavel = ManyToOne('Pessoa', required = True)
+    republica = ManyToOne('Republica', required = True)
     tipo = ManyToOne('TipoDespesa', required = True)
 
 
@@ -866,6 +815,7 @@ class DespesaAgendada(Entity):
     data_termino = Field(Date)
     quantia = Field(Numeric(10,2), required = True)
     responsavel = ManyToOne('Pessoa', required = True)
+    republica = ManyToOne('Republica', required = True)
     tipo = ManyToOne('TipoDespesa', required = True)
 
     using_options(tablename = 'despesa_agendada')
@@ -898,6 +848,7 @@ class DespesaAgendada(Entity):
                         data        = despesa.proximo_vencimento,
                         quantia     = despesa.quantia,
                         responsavel = despesa.responsavel,
+                        republica   = despesa.republica,
                         tipo        = despesa.tipo
                     )
                 despesa.proximo_vencimento += relativedelta(months = 1)

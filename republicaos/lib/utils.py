@@ -39,7 +39,7 @@ def arredonda_decimal(numero, referencia):
     return result.quantize(referencia)
 
 def arredonda(numero, referencia=1):
-    if type(numero) is Decimal or type(referencia) is Decimal:
+    if isinstance(numero, Decimal) or isinstance(referencia, Decimal):
         return arredonda_decimal(numero, referencia)
     else:
         return round(numero / referencia) * referencia
@@ -53,9 +53,10 @@ def arredonda_cima(numero, referencia=1):
     return (int(quociente) + ajuste) * referencia
 
 
-def pretty_decimal(numero, arredondamento=Decimal('0.01')):
-    numero = arredonda(numero, arredondamento)
-    return format_decimal(numero)
+formato = "#,##0.00"
+def pretty_decimal(numero, arredondamento=0.01):
+#    numero = arredonda(numero, arredondamento)
+    return format_decimal(numero, formato)
 
 
 def pretty_number(numero):

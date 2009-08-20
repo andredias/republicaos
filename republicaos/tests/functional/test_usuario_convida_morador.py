@@ -6,6 +6,7 @@ from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Fecham
 from republicaos.lib.helpers import flash, url_for
 from datetime import date, datetime, timedelta
 from urlparse import urlparse
+from babel.dates import format_date
 
 import logging
 log = logging.getLogger(__name__)
@@ -26,18 +27,23 @@ class TestUsuarioConvidaMorador(TestController):
                         logradouro = 'R. Jeronimo Pattaro, 186',
                         cidade = 'Campinas',
                         uf = 'SP')
+
+        Fechamento(data=ano_passado + timedelta(days=30), republica=republica)
+        Fechamento(data=ano_passado + timedelta(days=30), republica=republica2)
+
         Fechamento(data=date.today() - timedelta(days=30), republica=republica)
         Fechamento(data=date.today() - timedelta(days=30), republica=republica2)
         Morador(pessoa=p1, republica=republica, entrada=date.today())
-        Morador(pessoa=p2, republica=republica, entrada=ano_passado, saida=ano_passado + timedelta(days=100))
+        Morador(pessoa=p2, republica=republica, entrada=ano_passado, saida=ano_passado + timedelta(days=10))
         Morador(pessoa=p2, republica=republica2, entrada=ontem)
         Session.commit()
         
         # depois que Session para de valer, não dá para acessar novamente seus atributos
+        inicio_intervalo, fim_intervalo = republica.fechamento_atual.intervalo
+        
         p1 = p1.to_dict()
         p2 = p2.to_dict()
-        ultimo_fechamento = republica.ultimo_fechamento
-        proximo_fechamento = republica.proximo_fechamento
+
         republica = republica.to_dict()
         republica2 = republica2.to_dict()
         
@@ -60,7 +66,7 @@ class TestUsuarioConvidaMorador(TestController):
                         params={
                             'nome':'Siclano',
                             'email':email,
-                            'entrada': (ultimo_fechamento - timedelta(days=1)).strftime('%d/%m/%Y')
+                            'entrada': format_date(inicio_intervalo - timedelta(days=1))
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -75,7 +81,7 @@ class TestUsuarioConvidaMorador(TestController):
                         params={
                             'nome':'Siclano',
                             'email':email,
-                            'entrada': proximo_fechamento.strftime('%d/%m/%Y')
+                            'entrada': format_date(fim_intervalo + timedelta(days=1))
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -93,7 +99,7 @@ class TestUsuarioConvidaMorador(TestController):
                         params={
                             'nome':'Siclano',
                             'email':email,
-                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
+                            'entrada': format_date(inicio_intervalo)
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -109,7 +115,7 @@ class TestUsuarioConvidaMorador(TestController):
                         params={
                             'nome':'Siclano',
                             'email':email,
-                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
+                            'entrada': format_date(inicio_intervalo)
                             },
                         extra_environ={str('REMOTE_USER'):str('2')}
                     )
@@ -123,7 +129,7 @@ class TestUsuarioConvidaMorador(TestController):
                         params={
                             'nome':'Beltranix da Silva',
                             'email':p2['email'],
-                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
+                            'entrada': format_date(inicio_intervalo)
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -138,7 +144,7 @@ class TestUsuarioConvidaMorador(TestController):
                         params={
                             'nome':'Fulanix de Tal',
                             'email':p1['email'],
-                            'entrada': ultimo_fechamento.strftime('%d/%m/%Y')
+                            'entrada': format_date(inicio_intervalo)
                             },
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
