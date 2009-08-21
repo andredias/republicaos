@@ -138,5 +138,5 @@ class RepublicaController(BaseController):
         c.fechamento.executar_rateio()
         
         # Só pode editar o fechamento atual
-        c.read_only = c.fechamento.data < republica.fechamento_atual.data
+        c.read_only = c.fechamento.read_only
         return render('republica/index.html')

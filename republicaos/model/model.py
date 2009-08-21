@@ -282,6 +282,11 @@ class Republica(Entity):
     @property
     def fechamento_atual(self):
         return self.fechamentos[0]
+    
+    
+    @property
+    def intervalo_valido_lancamento(self):
+        return self.fechamento_atual.intervalo
 
 
     def _preencher_fechamentos(self):
@@ -380,6 +385,11 @@ class Fechamento(Entity):
         else:
             data_inicial = self.republica.data_criacao
         return (data_inicial, data_final)
+
+
+    @property
+    def read_only(self):
+        return date.today() > self.data
 
 
     def data_no_intervalo(self, data):
@@ -857,5 +867,4 @@ class DespesaAgendada(Entity):
                 despesa.delete()
         # TODO: verficar se dá pra salvar só esse objeto sem comprometer toda a sessão.
         Session.commit() # novas despesas e também a despesa_agendada com próximo vencimento atualizado
-
 

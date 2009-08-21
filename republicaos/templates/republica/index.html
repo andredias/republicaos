@@ -127,7 +127,7 @@ num_participantes = len(c.fechamento.participantes) if len(c.fechamento.particip
 <hr />
 
 <h2>Lista de Despesas do Período</h2>
-<p py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='insert', republica_id=republica.id)}">Cadastrar nova despesa</a></p>
+<p py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='new', republica_id=republica.id)}">Cadastrar nova despesa</a></p>
 <table>
     <thead>
         <tr>

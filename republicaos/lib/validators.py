@@ -67,7 +67,7 @@ class DataNoFechamento(validators.FancyValidator):
 
     def validate_python(self, value, state):
         republica = self.get_republica() if callable(self.get_republica) else self.get_republica
-        data_inicial, data_final = republica.fechamento_atual.intervalo
+        data_inicial, data_final = republica.intervalo_valido_lancamento
         log.debug('validate_python: data_inicial: %s, data_final: %s, value: %s', data_inicial, data_final, value)
         
         if not republica.fechamento_atual.data_no_intervalo(value):
@@ -89,4 +89,3 @@ class DataNoFechamento(validators.FancyValidator):
 
         self.validate_python(date, state)
         return date
-
