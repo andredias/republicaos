@@ -11,7 +11,7 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.auth import get_user, get_republica, login_required, morador_required
-from republicaos.model import Republica, Morador, Session
+from republicaos.model import Republica, Morador, Fechamento, Session
 from babel.dates import parse_date
 from formencode import Schema, validators
 
@@ -132,8 +132,11 @@ class RepublicaController(BaseController):
     @morador_required
     def show(self, republica_id):
         """GET /republica/id: Show a specific item"""
-        data = request.urlvars.get('data_fechamento', None)
+        data = request.params.get('data_fechamento', None)
         republica = get_republica()
         c.fechamento = Fechamento.get_by(data=parse_date(data), republica=republica) if data else republica.fechamento_atual
         c.fechamento.executar_rateio()
+        
+        # Só pode editar o fechamento atual
+        c.read_only = c.fechamento.data < republica.fechamento_atual.data
         return render('republica/index.html')
