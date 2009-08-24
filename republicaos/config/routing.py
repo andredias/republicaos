@@ -44,60 +44,10 @@ def make_map():
                 conditions=dict(method=['GET', 'PUT', 'DELETE']))
 
 
-    #
-    # Morador
-    #
-    map.connect('/republica/{republica_id}/morador',
-                controller='morador',
-                action='rest_dispatcher_collection',
-                requirements={'republica_id':'\d+'},
-                conditions=dict(method=['GET', 'POST']))
-
-    map.connect('/republica/{republica_id}/morador/{id}',
-                controller='morador',
-                action='rest_dispatcher_single',
-                requirements={'republica_id':'\d+', 'id':'\d+'},
-                conditions=dict(method=['GET', 'PUT', 'DELETE']))
-
-    map.connect('/republica/{republica_id}/morador/{action}',
-                controller='morador')
-    map.connect('/republica/{republica_id}/morador/{action}/{id}',
-                controller='morador',
+    map.connect('/republica/{republica_id}/{controller}/{action}')
+    map.connect('/republica/{republica_id}/{controller}/{action}/{id}',
                 requirements={'republica_id':'\d+', 'id':'\d+'})
 
-
-
-
-    #
-    # Tipo de Despesa
-    #
-    map.connect('/republica/{republica_id}/tipo_despesa',
-                controller='tipo_despesa',
-                action='rest_dispatcher_collection',
-                requirements={'republica_id':'\d+'},
-                conditions=dict(method=['GET', 'POST']))
-
-    map.connect('/republica/{republica_id}/tipo_despesa/{id}',
-                controller='tipo_despesa',
-                action='rest_dispatcher_single',
-                requirements={'republica_id':'\d+', 'id':'\d+'},
-                conditions=dict(method=['GET', 'PUT', 'DELETE']))
-
-    map.connect('/republica/{republica_id}/tipo_despesa/{action}',
-                controller='tipo_despesa')
-    map.connect('/republica/{republica_id}/tipo_despesa/{action}/{id}',
-                controller='tipo_despesa',
-                requirements={'republica_id':'\d+', 'id':'\d+'})
-    
-    
-    
-    #
-    # Teste de Recurso Controlado
-    #
-    map.connect('/republica/{republica_id}/test/{action}', controller='test')
-    map.connect('/republica/{republica_id}/test/{action}/{id}',
-                controller='test',
-                requirements={'republica_id':'\d+', 'id':'\d+'})
 
 
     map.connect('/', controller='root', action='index')
