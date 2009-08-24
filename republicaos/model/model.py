@@ -66,7 +66,7 @@ class Pessoa(Entity):
         #return Telefonema.query.filter(
                     #and_(
                         #Telefonema.conta_telefone == conta_telefone,
-                        #Telefonema.responsavel == self
+                        #Telefonema.pessoa == self
                         #)
                     #).order_by(Telefonema.numero).all()
 
@@ -254,7 +254,7 @@ class TelefoneRegistrado(Entity):
     numero      = Field(Numeric(12, 0), primary_key = True)
     descricao   = Field(Unicode)
     republica   = ManyToOne('Republica', primary_key = True)
-    responsavel = ManyToOne('Pessoa', required = True)
+    pessoa = ManyToOne('Pessoa', required = True)
     using_options(tablename = 'telefone')
 
 
@@ -414,7 +414,7 @@ class Fechamento(Entity):
         # obtem despesas
         self.despesas = Despesa.get_despesas_no_periodo(republica=self.republica, data_inicial=data_inicial, data_final=data_final)
         self.despesas_por_pessoa = dict(
-                                (pessoa, sum(despesa.quantia for despesa in self.despesas if despesa.responsavel == pessoa))
+                                (pessoa, sum(despesa.quantia for despesa in self.despesas if despesa.pessoa == pessoa))
                                 for pessoa in self.participantes
                             )
         self.total_despesas = sum(despesa.quantia for despesa in self.despesas)
@@ -787,9 +787,9 @@ class TipoDespesa(Entity):
 
 
 class Despesa(Entity):
-    data = Field(Date, default = date.today, required = True)
+    lancamento = Field(Date, default = date.today, required = True)
     quantia = Field(Numeric(10, 2), required = True)
-    responsavel = ManyToOne('Pessoa', required = True)
+    pessoa = ManyToOne('Pessoa', required = True)
     republica = ManyToOne('Republica', required = True)
     tipo = ManyToOne('TipoDespesa', required = True)
 
@@ -803,16 +803,22 @@ class Despesa(Entity):
         # monta as cláusulas que serão usadas na pesquisa das despesas
         DespesaAgendada.cadastrar_despesas_agendadas()
         if not data_final:
-            clausula_data = (Despesa.data == data_inicial)
+            clausula_data = (Despesa.lancamento == data_inicial)
         else:
             data_final = max(data_inicial, data_final)
-            clausula_data = and_(Despesa.data >= data_inicial, Despesa.data <= data_final)
-        clausula_pessoa = (Despesa.responsavel == pessoa) if pessoa else None
-        clausula_republica = and_(Despesa.tipo_id == TipoDespesa.id, TipoDespesa.republica == republica) if republica else None
+            clausula_lancamento = and_(
+                                 Despesa.lancamento >= data_inicial,
+                                 Despesa.lancamento <= data_final
+                                )
+        clausula_pessoa = (Despesa.pessoa == pessoa) if pessoa else None
+        clausula_republica = and_(
+                                  Despesa.tipo_id == TipoDespesa.id,
+                                  TipoDespesa.republica == republica
+                                  ) if republica else None
 
         return Despesa.query.filter(
                 and_(
-                    clausula_data,
+                    clausula_lancamento,
                     clausula_pessoa,
                     clausula_republica
                     )
@@ -821,19 +827,24 @@ class Despesa(Entity):
 
 
 class DespesaAgendada(Entity):
-    proximo_vencimento = Field(Date, required = True)
-    data_termino = Field(Date)
+    proximo_lancamento = Field(Date, required = True)
+    termino = Field(Date)
     quantia = Field(Numeric(10,2), required = True)
-    responsavel = ManyToOne('Pessoa', required = True)
+    pessoa = ManyToOne('Pessoa', required = True)
     republica = ManyToOne('Republica', required = True)
     tipo = ManyToOne('TipoDespesa', required = True)
 
     using_options(tablename = 'despesa_agendada')
 
     def __repr__(self):
-        return 'DespesaAgendada <tipo: %r, proximo_vencimento: %r, data_termino: %r, responsavel: %r, quantia: %r>' % \
-                (self.tipo, self.proximo_vencimento, self.data_termino, self.responsavel, self.quantia)
+        return 'DespesaAgendada <tipo: %r, proximo_lancamento: %r, termino: %r, pessoa: %r, quantia: %r>' % \
+                (self.tipo, self.proximo_lancamento, self.termino, self.pessoa, self.quantia)
 
+    @before_insert
+    @before_update
+    def check_values(self):
+        if self.termino:
+            assert self.termino > self.republica.intervalo_valido_lancamento[1]
 
 
     @classmethod
@@ -846,25 +857,24 @@ class DespesaAgendada(Entity):
         Elimina a necessidade de um cron job pra fazer o serviço de cadastro diário
         '''
         hoje = date.today()
-        despesas_agendadas = DespesaAgendada.query.filter(DespesaAgendada.proximo_vencimento <= hoje).all()
+        despesas_agendadas = DespesaAgendada.query.filter(DespesaAgendada.proximo_lancamento <= hoje).all()
         log.debug('DespesaAgendada.cadastrar_despesas_agendadas(): %r' % despesas_agendadas)
         if not despesas_agendadas:
             return
         for despesa in despesas_agendadas:
-            data_ref = hoje if not despesa.data_termino else min(despesa.data_termino, hoje)
+            data_ref = hoje if not despesa.termino else min(despesa.termino, hoje)
             log.debug('DespesaAgendada.cadastrar_despesas_agendadas: Cadastrar %r até %r' % (despesa, data_ref))
-            while despesa.proximo_vencimento <= data_ref:
+            while despesa.proximo_lancamento <= data_ref:
                 nova_despesa = Despesa(
-                        data        = despesa.proximo_vencimento,
-                        quantia     = despesa.quantia,
-                        responsavel = despesa.responsavel,
-                        republica   = despesa.republica,
-                        tipo        = despesa.tipo
+                        lancamento = despesa.proximo_lancamento,
+                        quantia = despesa.quantia,
+                        pessoa = despesa.pessoa,
+                        republica = despesa.republica,
+                        tipo = despesa.tipo
                     )
-                despesa.proximo_vencimento += relativedelta(months = 1)
-            if despesa.data_termino and despesa.data_termino < despesa.proximo_vencimento:
+                despesa.proximo_lancamento += relativedelta(months = 1)
+            if despesa.termino and despesa.termino < despesa.proximo_lancamento:
                 log.debug('DespesaAgendada.cadastrar_despesas_agendadas: Excluir %r. Fim do prazo' % despesa)
                 despesa.delete()
         # TODO: verficar se dá pra salvar só esse objeto sem comprometer toda a sessão.
         Session.commit() # novas despesas e também a despesa_agendada com próximo vencimento atualizado
-

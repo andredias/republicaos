@@ -83,9 +83,9 @@ class TestMorador(TestModel):
         td1, td2, td3 = self.tipos_despesa
         p1, p2        = self.pessoas
 
-        d1 = Despesa(data = date(2007, 4, 10), quantia = 20, tipo = td1, responsavel = p1, republica = self.r)
-        d2 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = p1, republica = self.r)
-        d3 = Despesa(data = date(2007, 4, 21), quantia = 50, tipo = td2, responsavel = p2, republica = self.r)
+        d1 = Despesa(lancamento = date(2007, 4, 10), quantia = 20, tipo = td1, pessoa = p1, republica = self.r)
+        d2 = Despesa(lancamento = date(2007, 4, 21), quantia = 50, tipo = td2, pessoa = p1, republica = self.r)
+        d3 = Despesa(lancamento = date(2007, 4, 21), quantia = 50, tipo = td2, pessoa = p2, republica = self.r)
         self.despesas = [d1, d2, d3]
 
         Session.commit()
@@ -112,13 +112,13 @@ class TestMorador(TestModel):
         dp1 = DespesaAgendada(
                 quantia            = 50,
                 tipo               = td3,
-                responsavel        = p1,
-                proximo_vencimento = date(2007, 4, 19),
-                data_termino       = date(2007, 7, 10),
+                pessoa        = p1,
+                proximo_lancamento = date(2007, 4, 19),
+                termino       = date(2007, 7, 10),
                 republica          = self.r
                 )
-        dp2 = DespesaAgendada(quantia = 45, tipo = td1, responsavel = p1, proximo_vencimento = date(2007, 5, 2), republica = self.r)
-        dp3 = DespesaAgendada(quantia = 10, tipo = td2, responsavel = p1, proximo_vencimento = date(2007, 6, 10), republica = self.r)
+        dp2 = DespesaAgendada(quantia = 45, tipo = td1, pessoa = p1, proximo_lancamento = date(2007, 5, 2), republica = self.r)
+        dp3 = DespesaAgendada(quantia = 10, tipo = td2, pessoa = p1, proximo_lancamento = date(2007, 6, 10), republica = self.r)
 
         self.despesas_agendadas = [dp1, dp2, dp3]
 
@@ -130,8 +130,8 @@ class TestMorador(TestModel):
         p1 = self.pessoas[0]
 
         despesas = Despesa.get_despesas_no_periodo(data_inicial = date(2007, 4, 10), data_final = date(2007, 5, 10), pessoa = p1)
-        d1 = Despesa.get_by(tipo = td3, data = date(2007, 4, 19))
-        d2 = Despesa.get_by(tipo = td1, data = date(2007, 5, 2))
+        d1 = Despesa.get_by(tipo = td3, lancamento = date(2007, 4, 19))
+        d2 = Despesa.get_by(tipo = td1, lancamento = date(2007, 5, 2))
 
         assert d1 in despesas
         assert d2 in despesas
@@ -140,14 +140,14 @@ class TestMorador(TestModel):
         mes_q_vem = hoje + relativedelta(months=1)
         mes_passado = hoje - relativedelta(months=1)
 
-        assert Despesa.get_by(data = date(mes_passado.year, mes_passado.month, 2)) is not None
-        assert Despesa.get_by(data = date(mes_passado.year, mes_passado.month, 10)) is not None
+        assert Despesa.get_by(lancamento = date(mes_passado.year, mes_passado.month, 2)) is not None
+        assert Despesa.get_by(lancamento = date(mes_passado.year, mes_passado.month, 10)) is not None
 
         dp1, dp2, dp3 = self.despesas_agendadas
 
         assert dp1 not in Session # foi deletado pois o prazo chegou ao fim
-        assert hoje < dp2.proximo_vencimento <= date(mes_q_vem.year, mes_q_vem.month, 2), dp2.proximo_vencimento
-        assert hoje < dp3.proximo_vencimento <= date(mes_q_vem.year, mes_q_vem.month, 10), dp3.proximo_vencimento
+        assert hoje < dp2.proximo_lancamento <= date(mes_q_vem.year, mes_q_vem.month, 2), dp2.proximo_lancamento
+        assert hoje < dp3.proximo_lancamento <= date(mes_q_vem.year, mes_q_vem.month, 10), dp3.proximo_lancamento
 
 
     # desabilitado

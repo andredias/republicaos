@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+<xi:include href="../layout.html" />
+
+<?python
+from datetime               import date
+from dateutil.relativedelta import relativedelta
+from republicaos.lib.utils  import pretty_decimal
+from decimal                import Decimal
+
+moradores  = republica.get_moradores()
+
+?>
+
+<head>
+    <title>Cadastrar Despesa</title>
+</head>
+
+
+<body>
+<h1>Cadastrar Despesa</h1>
+
+    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
+    <py:if test="c.errors">
+        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+        ${select('.')}
+        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
+        </div>
+    </py:if>
+    
+    <form action="${c.action}" method="post">
+        <p>
+            <label for="pessoa_id">Responsável</label><br />
+            <select name="pessoa_id">
+                <option py:for="pessoa in moradores" value="${pessoa.id}" py:attrs="dict(selected='selected') if pessoa_id == pessoa.id else dict()">
+                    <span py:replace="pessoa.nome">Nome do Morador</span> &lt;<span py:replace="pessoa.email">email</span>&gt;
+                </option>
+            </select>
+        </p>
+        
+        <p>
+            <label for="tipo_id">Tipo da Despesa</label><br />
+            <select class="campo_importante" name="tipo_id">
+                <option py:for="tipo_despesa in republica.tipos_despesa" value="${tipo_despesa.id}" py:attrs="dict(selected='selected') if tipo_id == tipo_despesa.id else dict()">
+                    <span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
+                </option>
+            </select>
+        </p>
+        
+        <p>
+            <label for="quantia">Quantia</label><br/>
+            <input class="campo_importante" name="quantia" size="15" type="text" />
+            <span class="hint">Ex.: 295,00 ou 1.024,50</span>
+        </p>
+        
+        <p>
+            <label for="lancamento">Data Lançamento</label>
+            <input maxlength="10" name="lancamento" size="10" type="text" />
+        </p>
+        <p>
+            <div py:if="'new' in c.action">
+                <input name="agendamento" type="checkbox" value="mensal" py:attrs="dict(selected='selected') if agendamento else dict()" />Repetir mensalmente até (opcional)
+                <input maxlength="10" name="termino" size="10" type="text" />
+            </div>
+        </p>
+        
+        <p>
+            <input type="submit" value="Salvar" /> ou 
+            <a href="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" class="cancel">Voltar à Página Principal</a>
+        </p>
+    </form>
+
+
+</body>
+</html>

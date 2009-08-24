@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from formencode import Invalid, Schema, validators
 from datetime import date, timedelta
 from babel.dates import parse_date, get_date_format, format_date
+from babel.numbers import parse_decimal
+from republicaos.lib.utils import pretty_decimal
 import pylons
 
 import logging
@@ -89,3 +91,36 @@ class DataNoFechamento(validators.FancyValidator):
 
         self.validate_python(date, state)
         return date
+
+
+
+class Number(validators.FancyValidator):
+    '''
+    validators.Number não está funcionando direito.
+    '''
+    messages = {
+        'tooLow': "Forneça um número que seja %(min)s ou maior",
+        'tooHigh': "Forneça um número que seja %(max)s ou menor",
+        'number': "Forneça um número válido",
+    }
+
+    min = None
+    max = None
+
+    def validate_python(self, value, state):
+        if self.min is not None:
+            if value < self.min:
+                msg = self.message("tooLow", state, min=pretty_decimal(self.min))
+                raise Invalid(msg, value, state)
+        if self.max is not None:
+            if value > self.max:
+                msg = self.message("tooHigh", state, max=pretty_decimal(self.max))
+                raise Invalid(msg, value, state)
+    
+    
+    def _to_python(self, value, state):
+        try:
+            return parse_decimal(value)
+        except NumberFormatError:
+            raise Invalid(self.message('number', state), value, state)
+

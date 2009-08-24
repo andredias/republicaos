@@ -56,7 +56,7 @@ def print_despesas(fechamento):
     write('\n\nRELAÇÃO DE DESPESAS\n-------------------\n')
     write('| %-*s| %-*s| %-*s| %s' % (11, 'Data', 9, 'Valor', 15, 'Tipo Despesa', 'Responsável'))
     for despesa in fechamento.despesas:
-        write('\n| %s | %*.2f | %-*s| %s' % (despesa.data, 8, despesa.quantia, 15, despesa.tipo.nome, despesa.responsavel.pessoa.nome))
+        write('\n| %s | %*.2f | %-*s| %s' % (despesa.data, 8, despesa.quantia, 15, despesa.tipo.nome, despesa.pessoa.nome))
     write('\n')
 
 
@@ -177,6 +177,5 @@ def print_calculo_quotas_participantes(fechamento):
             write('\n\t%14s|%9.2f |%9.2f' % (participante.pessoa.nome, quota, quota_peso))
         write('\n\t%14s|%9.2f |%9.2f\n\n' % (' TOTAL', total_quota, total_quota_peso))
     sys.stdout.flush()
-
 
 
