@@ -145,7 +145,7 @@ num_participantes = len(c.fechamento.participantes) if len(c.fechamento.particip
             <td><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
             <td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
             <td><span py:replace="despesa.pessoa.nome">Fulano</span></td>
-            <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='editar', republica_id=republica.id, id=despesa.id)}">Editar</a></span></td>
+            <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=republica.id, id=despesa.id)}">Editar</a></span></td>
             <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=republica.id, id=despesa.id)}">Excluir</a></span></td>
         </tr>
     </tbody>

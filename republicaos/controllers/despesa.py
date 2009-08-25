@@ -140,23 +140,31 @@ class DespesaController(BaseController):
     def show(self, id, format='html'):
         return render('despesa/form.html', filler_data = c.despesa.to_dict())
 
+    @republica_resource_required(Despesa)
     @validate(DespesaSchema)
     def edit(self, id, format='html'):
+        if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
+            flash('(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
+            redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
         if c.valid_data:
-            request.method = 'PUT'
-            self.update(id)
-            # TODO: flash indicando que foi adicionado
-            # algum outro processamento para determinar a localização da república e agregar
-            # serviços próximos
-            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
+            log.debug('\nc.despesa: %r\n', c.despesa.to_dict())
+            # complementa as chaves que faltam na validação para usar em from_dict
+            c.valid_data['pessoa_id'] = request.params['pessoa_id']
+            c.valid_data['tipo_id'] = request.params['tipo_id']
+            c.despesa.from_dict(c.valid_data)
+            Session.commit()
+            flash('(info) Despesa alterada com sucesso')
+            redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
         elif not c.errors:
             filler_data = c.despesa.to_dict()
+            filler_data['lancamento'] = format_date(filler_data['lancamento'])
+            filler_data['quantia'] = pretty_decimal(filler_data['quantia'])
         else:
             filler_data = request.params
         c.action = url_for(controller='despesa', action='edit', id=id,
-                           republica_id=c.republica.id)
-        c.title = 'Editar Tipo de Despesa'
-        return render('despesa/form.html', filler_data = filler_data)
+                           republica_id=c.despesa.republica.id)
+        c.title = 'Editar Despesa'
+        return render('despesa/despesa.html', filler_data = filler_data)
 
 
     

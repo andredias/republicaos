@@ -56,14 +56,14 @@ moradores  = republica.get_moradores()
         </p>
         
         <p>
-            <label for="lancamento">Data Lançamento</label>
+            <label for="lancamento">Data Lançamento</label><br/>
             <input maxlength="10" name="lancamento" size="10" type="text" />
         </p>
         <p>
             <div py:if="'new' in c.action">
                 <input name="agendamento" type="checkbox" value="mensal" py:attrs="dict(selected='selected') if agendamento else dict()" />Repetir mensalmente até (opcional)
-                <input maxlength="10" name="termino" size="10" type="text" />
             </div>
+            <input maxlength="10" name="termino" size="10" type="text" py:attrs="dict(type='hidden') if 'new' not in c.action else dict()" />
         </p>
         
         <p>

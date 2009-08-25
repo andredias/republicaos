@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from formencode import Invalid, Schema, validators
 from datetime import date, timedelta
 from babel.dates import parse_date, get_date_format, format_date
-from babel.numbers import parse_decimal
+from babel.numbers import parse_decimal, NumberFormatError
 from republicaos.lib.utils import pretty_decimal
 import pylons
 
