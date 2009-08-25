@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 
-from pylons import request, response, session
+from pylons import request, response, session, tmpl_context as c
+
 from republicaos.model import Pessoa, Republica
 from republicaos.lib.helpers import flash
 from republicaos.lib.base import BaseController
@@ -124,15 +125,13 @@ def republica_resource_required(entity):
     '''
     @morador_required
     def _republica_resource_required(func, self, *args, **kwargs):
-        id = request.urlvars.get('id')
-        if id:
-            resource = entity.get_by(id=id)
-            setattr(self, entity.table.name, resource)
-            if not resource:
-                abort(404)
-            if not hasattr(resource, 'republica'):
-                abort(406)
-            if str(resource.republica.id) != request.urlvars['republica_id']:
-                abort(403)
+        resource = entity.get_by(id=request.urlvars.get('id'))
+        if not resource:
+            abort(404)
+        if not hasattr(resource, 'republica'):
+            abort(406)
+        if str(resource.republica.id) != request.urlvars['republica_id']:
+            abort(403)
+        setattr(c, entity.table.name, resource)
         return func(self, *args, **kwargs)
     return decorator(_republica_resource_required)

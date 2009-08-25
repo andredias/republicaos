@@ -7,6 +7,7 @@ from pylons.controllers.util import abort, redirect_to
 from pylons.decorators.rest import restrict, dispatch_on
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.auth import morador_required, get_republica, get_user
+from republicaos.lib.auth import republica_resource_required
 from republicaos.lib.utils import render, validate, pretty_decimal
 from republicaos.lib.base import BaseController
 from republicaos.lib.validators import DataNoFechamento, Number
@@ -83,13 +84,16 @@ class DespesaController(BaseController):
         return
 
 
-    @restrict("DELETE")
+    @republica_resource_required(Despesa)
     def delete(self, id):
-        abort(403)
-        # se fosse permitido apagar, deveria retornar status 200 OK
-        c.despesa.delete()
-        Session.commit()
-        return
+        if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
+            flash('(error) Despesa com lançamento fora do fechamento corrente não pode ser excluída')
+        else:
+            c.despesa.delete()
+            Session.commit()
+            flash('(info) Despesa removida')
+        redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
+
 
     #
     # Demais métodos relacionados à formulários
