@@ -122,7 +122,7 @@ class DespesaController(BaseController):
             c.valid_data['pessoa'] = Pessoa.get_by(id=request.params['pessoa_id'])
             c.valid_data['tipo'] = TipoDespesa.get_by(id=request.params['tipo_id'])
             despesa = Despesa(republica=republica, **c.valid_data)
-            if request.params['agendamento'] == 'True':
+            if request.params.get('agendamento') == 'True':
                 log.debug("\n\nnew: DespesaAgendada")
                 DespesaAgendada(
                         republica=republica,
