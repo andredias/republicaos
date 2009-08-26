@@ -3,6 +3,8 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Session
+from republicaos.model import DespesaAgendada
+from sqlalchemy  import and_
 from republicaos.lib.helpers import flash, url_for
 from datetime import date, datetime, timedelta
 from babel.dates import format_date
@@ -34,6 +36,25 @@ class TestMoradorSaiDaRepublica(TestController):
         Morador(pessoa=p2, republica=republica, entrada=mes_passado, saida=ontem)
         Morador(pessoa=p2, republica=republica2, entrada=ontem)
         Morador(pessoa=p3, republica=republica2, entrada=mes_passado)
+        
+        Session.commit()
+        
+        DespesaAgendada(
+                    pessoa=p1,
+                    republica=republica,
+                    quantia=100,
+                    proximo_lancamento=date.today() + timedelta(days=30),
+                    tipo_id='1'
+                    )
+        DespesaAgendada(
+                    pessoa=p1,
+                    republica=republica,
+                    quantia=123,
+                    proximo_lancamento=date.today() + timedelta(days=15),
+                    termino=date.today() + timedelta(days=150),
+                    tipo_id='2'
+                    )
+        
         Session.commit()
         
         # depois que Session para de valer, não dá para acessar novamente seus atributos
@@ -116,6 +137,12 @@ class TestMoradorSaiDaRepublica(TestController):
         assert url_for(controller='root', action='index') in response
         m = Morador.registro_mais_recente(pessoa=Pessoa.get_by(id=1), republica=Republica.get_by(id=1))
         assert m.saida == ontem
+        assert DespesaAgendada.query.filter(
+                                    and_(
+                                        DespesaAgendada.pessoa_id=='1',
+                                        DespesaAgendada.republica_id=='1'
+                                        )
+                                    ).count() == 0
         
         
         # morador tenta sair mais de uma vez

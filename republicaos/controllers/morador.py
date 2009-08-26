@@ -12,7 +12,8 @@ from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.auth import morador_required, get_user, get_republica
 from republicaos.lib.validators import DataNoFechamento
-from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Session
+from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, DespesaAgendada, Session
+from sqlalchemy  import and_
 from formencode import Schema, validators
 from babel.dates import format_date
 from datetime import date
@@ -126,6 +127,13 @@ class MoradorController(BaseController):
         morador = Morador.registro_mais_recente(pessoa=user, republica=republica)
         if c.valid_data:
             morador.saida = c.valid_data['saida']
+            # retira as despesas agendadas para morador
+            DespesaAgendada.query.filter(
+                                and_(
+                                     DespesaAgendada.pessoa==user,
+                                     DespesaAgendada.republica==republica
+                                    )
+                                ).delete()
             Session.commit()
             flash('(info) Sua saída da república foi registrada!')
             redirect_to(controller='root', action='index')
