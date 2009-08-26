@@ -781,6 +781,7 @@ class TipoDespesa(Entity):
     republica = ManyToOne('Republica',  required = True)
 
     using_options(tablename = 'tipo_despesa')
+    using_table_options(UniqueConstraint('nome', 'republica_id'))
 
     def __repr__(self):
         return '<nome:%s>' % self.nome

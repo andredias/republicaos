@@ -44,14 +44,11 @@ class TestFechamento(TestModel):
                 republica = self.r
             )
 
-
-        self.td1 = TipoDespesa(nome = u'Água',    republica = self.r)
-        self.td2 = TipoDespesa(nome = 'Aluguel',  republica = self.r)
-        self.td3 = TipoDespesa(nome = 'Luz',      republica = self.r)
-        self.td4 = TipoDespesa(nome = 'Internet', republica = self.r)
-        self.td5 = TipoDespesa(nome = 'Telefone', republica = self.r)
+        TipoDespesa(nome = 'Internet', republica = self.r)
+        TipoDespesa(nome = 'Telefone', republica = self.r)
 
         Session.commit()
+        self.td1, self.td2, self.td3, self.td4, self.td5 = self.r.tipos_despesa[0:5]
 
 
     def test_periodo_fechamento(self):

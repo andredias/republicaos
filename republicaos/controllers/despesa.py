@@ -107,6 +107,7 @@ class DespesaController(BaseController):
     @validate(DespesaSchema)
     def new(self):
         republica = get_republica()
+        session['came_from'] = request.path_info
         c.title  = 'Novo Tipo de Despesa'
         c.action = url_for(controller='despesa', action='new', republica_id=republica.id)
         filler = {
@@ -143,6 +144,7 @@ class DespesaController(BaseController):
     @republica_resource_required(Despesa)
     @validate(DespesaSchema)
     def edit(self, id, format='html'):
+        session['came_from'] = request.path_info
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
             flash('(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
             redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)

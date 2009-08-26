@@ -70,12 +70,8 @@ class TestMorador(TestModel):
         Morador(pessoa = p1, republica = self.r, entrada = date(2007, 3, 6))
         Morador(pessoa = p2, republica = self.r, entrada = date(2007, 3, 6))
 
-        td1 = TipoDespesa(nome = 'Água',     republica = self.r)
-        td2 = TipoDespesa(nome = 'Aluguel',  republica = self.r)
-        td3 = TipoDespesa(nome = 'Internet', republica = self.r)
-        self.tipos_despesa = [td1, td2, td3]
-
         Session.commit()
+        self.tipos_despesa = self.r.tipos_despesa[0:3]
 
 
     def set_despesas(self):

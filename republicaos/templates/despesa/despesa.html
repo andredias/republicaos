@@ -47,6 +47,8 @@ moradores  = republica.get_moradores()
                     <span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
                 </option>
             </select>
+            <!-- !TODO: como fazer para passar o valor do item selecionado para o link a a ser aberto -->
+            <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=republica.id)}">novo</a> <a href="">editar</a>
         </p>
         
         <p>
