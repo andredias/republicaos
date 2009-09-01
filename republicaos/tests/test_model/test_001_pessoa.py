@@ -56,25 +56,33 @@ class TestPessoa(TestModel):
 
 
     def test_morador_em_republica(self):
+        mes_passado = date.today() - timedelta(days=30)
+        ontem = date.today() - timedelta(days=1)
         r1 = Republica(nome = 'Pronus',
                 logradouro = 'Av. Ipe Amarelo, 320 c. 21',
                 cidade = 'Sumare',
                 uf = 'SP',
-                data_criacao = date(2007, 1, 1)
+                data_criacao = mes_passado
             )
+        Fechamento(data=date.today(), republica=r1)
+        Fechamento(data=date.today() + timedelta(days=30), republica=r1)
+        
         r2 = Republica(nome = 'Mae Joana',
                 logradouro = 'Av. Ipe Amarelo, 320 c. 21',
                 cidade = 'Sumare',
                 uf = 'SP',
-                data_criacao = date(2009, 8, 13)
+                data_criacao = date.today()
             )
+        Fechamento(data=date.today(), republica=r2)
+        Fechamento(data=date.today() + timedelta(days=30), republica=r2)
+        
         p1 = Pessoa(nome = 'André', senha='123', email='abc@xyz.com')
         p2 = Pessoa(nome = 'Felipe', senha='123', email='felipe@xyz.com')
         p3 = Pessoa(nome = 'Dias', senha='123', email='dias@xyz.com')
 
-        Morador(pessoa=p1, republica=r1, entrada=date(2007, 1, 1), saida=date(2007, 10, 1))
-        Morador(pessoa=p1, republica=r2, entrada=date(2007, 10, 1))
-        Morador(pessoa=p2, republica=r1, entrada=date(2008, 1, 1), saida=date.today())
+        Morador(pessoa=p1, republica=r1, entrada=mes_passado, saida=ontem)
+        Morador(pessoa=p1, republica=r2, entrada=date.today())
+        Morador(pessoa=p2, republica=r1, entrada=mes_passado, saida=date.today())
         Morador(pessoa=p2, republica=r2, entrada=date.today(), saida=date.today() + timedelta(days=10))
         Morador(pessoa=p3, republica=r2, entrada=date.today() + timedelta(days=1), saida=date.today() + timedelta(days=30))
         

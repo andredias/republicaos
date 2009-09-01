@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from republicaos.tests import TestController
-from republicaos.model import Pessoa, Republica, Morador, TipoDespesa, Session
+from republicaos.model import Pessoa, Republica, Morador, TipoDespesa, Fechamento, Session
 from republicaos.lib.helpers import flash, url_for
 from republicaos.lib.utils import check_testing
 from urlparse import urlparse
@@ -140,6 +140,8 @@ class TestAutenticacaoAutorizacao(TestController):
         Morador(pessoa=p1, republica=republica, entrada=date.today())
         Morador(pessoa=p2, republica=republica, entrada=ano_passado, saida=ano_passado + timedelta(days=100))
         TipoDespesa(nome='luz', republica=republica)
+        Fechamento(data=date.today(), republica=republica)
+        Fechamento(data=date.today() + timedelta(days=30), republica=republica)
         Session.commit()
         
         p3 = Pessoa(nome='Siclano', email='siclano@republicaos.com.br', senha='1234')

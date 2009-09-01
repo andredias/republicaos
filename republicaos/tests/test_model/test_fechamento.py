@@ -27,6 +27,8 @@ class TestFechamento(TestModel):
             cidade = 'Sumare',
             uf = 'SP')
         Fechamento(data = date(2007, 4, 6), republica = self.r)
+        Fechamento(data = date.today() + relativedelta(days=1), republica = self.r)
+        Fechamento(data = date.today() + relativedelta(months=1), republica = self.r)
 
         self.p1 = Pessoa(nome = 'André', senha = '1234', email = 'xyz@xyz.com')
         self.p2 = Pessoa(nome = 'Marcos', senha = '1234', email = 'yzx@xyz.com')
@@ -50,26 +52,6 @@ class TestFechamento(TestModel):
         Session.commit()
         self.td1, self.td2, self.td3, self.td4, self.td5 = self.r.tipos_despesa[0:5]
 
-
-    def test_periodo_fechamento(self):
-        f1 = self.r.fechamentos[0]
-        f2 = Fechamento(data = date(2007, 5, 6), republica = self.r)
-        f3 = Fechamento(data = date(2007, 6, 6), republica = self.r)
-        Session.commit()
-
-#        print 'republica: ', self.r
-#        print 'fechamentos:'
-#        for f in self.r.fechamentos:
-#            print f
-
-        data_inicial_f1, data_final_f1 = f1.intervalo
-        data_inicial_f2, data_final_f2 = f2.intervalo
-        data_inicial_f3, data_final_f3 = f3.intervalo
-
-        assert data_inicial_f1 == self.r.data_criacao
-        assert data_final_f1 == (f1.data - relativedelta(days = 1))
-        assert data_inicial_f2 == f1.data and data_final_f2 == (f2.data - relativedelta(days = 1))
-        assert data_inicial_f3 == f2.data and data_final_f3 == (f3.data - relativedelta(days = 1))
 
 
 
@@ -552,3 +534,6 @@ class TestFechamento(TestModel):
         assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
         assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)
         assert f.total_dias == 26
+    
+    def test_fechamento_atual(self):
+        assert self.r.fechamento_atual.data == date.today() + relativedelta(days=1)

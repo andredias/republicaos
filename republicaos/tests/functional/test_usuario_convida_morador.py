@@ -33,6 +33,10 @@ class TestUsuarioConvidaMorador(TestController):
 
         Fechamento(data=date.today() - timedelta(days=30), republica=republica)
         Fechamento(data=date.today() - timedelta(days=30), republica=republica2)
+        
+        Fechamento(data=date.today() + timedelta(days=30), republica=republica)
+        Fechamento(data=date.today() + timedelta(days=30), republica=republica2)
+        
         Morador(pessoa=p1, republica=republica, entrada=date.today())
         Morador(pessoa=p2, republica=republica, entrada=ano_passado, saida=ano_passado + timedelta(days=10))
         Morador(pessoa=p2, republica=republica2, entrada=ontem)

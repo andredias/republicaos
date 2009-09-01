@@ -14,34 +14,30 @@ class TestRepublica(TestModel):
 
     def test_fechamento(self):
         mes_retrasado = date.today() - relativedelta(months=2)
+        mes_q_vem = date.today() + relativedelta(months=1)
         r = Republica(nome = 'Teste',
             data_criacao = mes_retrasado,
             logradouro = 'R. dos Bobos, n. 0',
             cidade = 'Sumare',
             uf = 'SP')
+        Fechamento(data=date.today(), republica=r)
+        Fechamento(data=mes_q_vem, republica=r)
+        Fechamento(data=date.today() + relativedelta(months=2), republica=r)
         Session.commit()
         
         inicio, fim = r.fechamento_atual.intervalo
         
-        assert inicio == mes_retrasado
-        assert r.fechamento_atual.data == mes_retrasado + relativedelta(months=1)
-        assert len(r.fechamentos) == 1
+        assert inicio == date.today()
+        assert r.fechamento_atual.data == mes_q_vem
+        assert len(r.fechamentos) == 3
 
         Session.expunge_all()
         
-        r = Republica.get_by()
-        r._preencher_fechamentos()
-        assert len(r.tipos_despesa) > 0
-        assert len(r.fechamentos) == 3, r.fechamentos
-        assert r.fechamento_atual.data == date.today() + relativedelta(months=1)
-        
-        # Fechamentos criados manualmente
-        Fechamento(data=date.today() + relativedelta(months=2), republica=r)
-        Fechamento(data=date.today() + relativedelta(months=3), republica=r)
-        Session.commit()
-        
-        assert r.fechamento_atual.data == date.today() + relativedelta(months=3)
-        assert len(r.fechamentos) == 5, r.fechamentos
+#        r = Republica.get_by()
+#        r._preencher_fechamentos()
+#        assert len(r.tipos_despesa) > 0
+#        assert len(r.fechamentos) == 3, r.fechamentos
+#        assert r.fechamento_atual.data == date.today() + relativedelta(months=1)
         
         
         # verificar _check_proximo_fechamento

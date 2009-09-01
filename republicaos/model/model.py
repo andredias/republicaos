@@ -281,7 +281,22 @@ class Republica(Entity):
 
     @property
     def fechamento_atual(self):
-        return self.fechamentos[0]
+        q = select(
+                [
+                Fechamento.republica_id.label('id'),
+                func.min(Fechamento.data).label('min_data')
+                ],
+                whereclause=and_(
+                                Fechamento.data > date.today(),
+                                Fechamento.republica_id==self.id
+                                )
+                )
+        return Fechamento.query.filter(
+                                    and_(
+                                       Fechamento.data == q.c.min_data,
+                                       Fechamento.republica_id == q.c.id
+                                    )
+                                ).one()
     
     
     @property
@@ -840,13 +855,6 @@ class DespesaAgendada(Entity):
     def __repr__(self):
         return 'DespesaAgendada <tipo: %r, proximo_lancamento: %r, termino: %r, pessoa: %r, quantia: %r>' % \
                 (self.tipo, self.proximo_lancamento, self.termino, self.pessoa, self.quantia)
-
-    @before_insert
-    @before_update
-    def check_values(self):
-        if self.termino:
-            assert self.termino > self.republica.intervalo_valido_lancamento[1]
-
 
     @classmethod
     def cadastrar_despesas_agendadas(cls):
