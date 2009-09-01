@@ -118,14 +118,15 @@ def morador_required(func, self, *args, **kwargs):
 
 
 
-def republica_resource_required(entity):
+def republica_resource_required(entity, id='id', convert=lambda x:x):
     '''
     Recurso deve pertencer à republica sendo acessada.
     Já define o recurso ao objeto.
     '''
     @morador_required
     def _republica_resource_required(func, self, *args, **kwargs):
-        resource = entity.get_by(id=request.urlvars.get('id'))
+        # gambiarra pra ficar "genérica"
+        resource = entity.get_by(**{str(id):convert(request.urlvars.get(id))})
         if not resource:
             abort(404)
         if not hasattr(resource, 'republica'):

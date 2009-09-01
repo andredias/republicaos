@@ -124,3 +124,36 @@ class Number(validators.FancyValidator):
         except NumberFormatError:
             raise Invalid(self.message('number', state), value, state)
 
+
+
+class Date(validators.FancyValidator):
+    '''
+    validators.DateConverter e DateValidator não estão atendendo
+    '''
+    min = None
+    max = None
+    
+    messages = {
+        'tooLow': "Forneça uma data igual à %(min)s ou posterior",
+        'tooHigh': "Forneça uma data que igual à  %(max)s ou anterior",
+        'invalido': "Forneça uma data válida",
+    }
+    
+    def validate_python(self, value, state):
+        if self.min:
+            min = self.min() if callable(self.min) else self.min
+            if value < min:
+                msg = self.message("tooLow", state, min=format_date(min))
+                raise Invalid(msg, value, state)
+        if self.max:
+            max = self.max() if callable(self.max) else self.max
+            if value > max:
+                msg = self.message("tooHigh", state, max=format_date(max))
+                raise Invalid(msg, value, state)
+    
+    
+    def _to_python(self, value, state):
+        try:
+            return parse_date(value)
+        except:
+            raise Invalid(self.message('invalido', state), value, state)

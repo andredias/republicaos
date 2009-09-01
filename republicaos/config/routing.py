@@ -48,6 +48,9 @@ def make_map():
     map.connect('/republica/{republica_id}/{controller}/{action}/{id}',
                 requirements={'republica_id':'\d+', 'id':'\d+'})
 
+    map.connect('/republica/{republica_id}/fechamento/{action}/{data}',
+                controller='fechamento')
+
 
 
     map.connect('/', controller='root', action='index')

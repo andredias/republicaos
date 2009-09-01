@@ -14,6 +14,7 @@ from genshi.filters import HTMLFormFiller
 from os.path import split
 from decimal import Decimal
 from babel.numbers import format_number, format_decimal, format_percent
+from datetime import date
 
 from republicaos.lib.helpers import flash
 
@@ -185,3 +186,5 @@ def get_flash_messages():
         result.setdefault(classificado['css'], []).append(classificado['mensagem'])
     return result
 
+def iso_to_date(text):
+    return date(*[int(num) for num in text.split('-')])
