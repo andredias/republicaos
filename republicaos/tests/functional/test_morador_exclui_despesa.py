@@ -38,6 +38,7 @@ class TestMoradorExcluiDespesa(TestController):
                         cidade = 'Campinas',
                         uf = 'SP')
         
+        Fechamento(data=date.today() - relativedelta(weeks=2), republica=republica2)
         Fechamento(data=date.today(), republica=republica2)
         Fechamento(data=date.today() + relativedelta(months=1), republica=republica2)
         

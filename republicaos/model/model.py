@@ -102,10 +102,12 @@ class Pessoa(Entity):
         registros = Morador.query.filter(
                                     Morador.pessoa == self
                                 ).all()
-        return set(registro.republica for registro in registros
-                    if registro.saida is None or
-                        registro.republica.fechamento_atual.data_no_intervalo(registro.saida)
-                )
+        result = set()
+        for registro in registros:
+            inicio, fim = registro.republica.intervalo_valido_lancamento
+            if registro.entrada <= fim and (registro.saida is None or registro.saida >= inicio):
+                result.add(registro.republica)
+        return result
 
 
     @property
@@ -157,7 +159,7 @@ class Morador(Entity):
                 data_final = data_inicial
             else:
                 data_final = max(data_inicial, data_final)
-            clausula_data = and_(Morador.entrada < data_final,
+            clausula_data = and_(Morador.entrada <= data_final,
                         or_(Morador.saida >= data_inicial, Morador.saida == None))
 
         moradores =  Pessoa.query.filter(
@@ -184,7 +186,7 @@ class Morador(Entity):
                 data_final = data_inicial
             else:
                 data_final = max(data_inicial, data_final)
-            clausula_data = and_(Morador.entrada < data_final,
+            clausula_data = and_(Morador.entrada <= data_final,
                         or_(Morador.saida == None, Morador.saida >= data_inicial))
 
         republicas =  Republica.query.filter(
@@ -287,8 +289,8 @@ class Republica(Entity):
                 func.min(Fechamento.data).label('min_data')
                 ],
                 whereclause=and_(
-                                Fechamento.data > date.today(),
-                                Fechamento.republica_id==self.id
+                                Fechamento.data >= date.today(),
+                                Fechamento.republica_id == self.id,
                                 )
                 )
         return Fechamento.query.filter(
@@ -393,12 +395,13 @@ class Fechamento(Entity):
         '''
         Período contábil do fechamento
         '''
-        data_final = self.data - relativedelta(days = 1)
-        index = self.republica.fechamentos.index(self)
-        if (index + 1) < len(self.republica.fechamentos):
-            data_inicial = self.republica.fechamentos[index + 1].data
+        fechamentos = self.republica.fechamentos
+        index = fechamentos.index(self)
+        if (index + 1) < len(fechamentos):
+            data_inicial = fechamentos[index + 1].data + relativedelta(days=1)
         else:
             data_inicial = self.republica.data_criacao
+        data_final = self.data
         return (data_inicial, data_final)
 
 

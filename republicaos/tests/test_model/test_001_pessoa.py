@@ -64,6 +64,7 @@ class TestPessoa(TestModel):
                 uf = 'SP',
                 data_criacao = mes_passado
             )
+        Fechamento(data=date.today() - timedelta(days=15), republica=r1)
         Fechamento(data=date.today(), republica=r1)
         Fechamento(data=date.today() + timedelta(days=30), republica=r1)
         
@@ -80,25 +81,16 @@ class TestPessoa(TestModel):
         p2 = Pessoa(nome = 'Felipe', senha='123', email='felipe@xyz.com')
         p3 = Pessoa(nome = 'Dias', senha='123', email='dias@xyz.com')
 
-        Morador(pessoa=p1, republica=r1, entrada=mes_passado, saida=ontem)
+        Morador(pessoa=p1, republica=r1, entrada=mes_passado, saida= date.today() - timedelta(days=15))
         Morador(pessoa=p1, republica=r2, entrada=date.today())
         Morador(pessoa=p2, republica=r1, entrada=mes_passado, saida=date.today())
         Morador(pessoa=p2, republica=r2, entrada=date.today(), saida=date.today() + timedelta(days=10))
         Morador(pessoa=p3, republica=r2, entrada=date.today() + timedelta(days=1), saida=date.today() + timedelta(days=30))
         
         Session.commit()
-        
-        r1._preencher_fechamentos()
-        r2._preencher_fechamentos()
-
 
         assert r1 not in p1.morador_em_republicas
         assert r1 in p1.ex_morador_em_republicas
         assert r1 in p2.morador_em_republicas
         assert r2 in p2.morador_em_republicas
         assert len(p3.morador_em_republicas) == 0
-
-
-
-
-

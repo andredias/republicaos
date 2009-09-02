@@ -65,7 +65,7 @@ class TestMoradorLancaDespesa(TestController):
         assert str(response).count('erro_') == 2
         
         
-        # lança despesa inválida: término dentro do intervalo
+        # lança despesa com término dentro do intervalo
         response = self.app.post(
                             url=url,
                             params={
@@ -78,10 +78,9 @@ class TestMoradorLancaDespesa(TestController):
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
-        assert 'erro_termino' in response
-        assert str(response).count('erro_') == 1
-        assert Despesa.get_by(pessoa_id=2) == None
-        assert DespesaAgendada.get_by() == None
+        assert str(response).count('erro_') == 0
+        assert Despesa.get_by(pessoa_id=2) != None
+        assert DespesaAgendada.get_by() != None
         
         
         # lança despesa inválida: quantia negativa
@@ -89,7 +88,7 @@ class TestMoradorLancaDespesa(TestController):
                             url=url,
                             params={
                                     'pessoa_id' : '1',
-                                    'tipo_id' : '1',
+                                    'tipo_id' : '2',
                                     'quantia' : '-2,45',
                                     'lancamento' : format_date(date.today()),
                                     'agendamento' : False,
@@ -100,7 +99,7 @@ class TestMoradorLancaDespesa(TestController):
         assert 'erro_quantia' in response
         assert str(response).count('erro_') == 1
         assert Despesa.get_by(pessoa_id=1) == None
-        assert DespesaAgendada.get_by() == None
+        assert DespesaAgendada.get_by(tipo_id='2') == None
 
 
         # lança despesa válida
@@ -108,7 +107,7 @@ class TestMoradorLancaDespesa(TestController):
                             url=url,
                             params={
                                     'pessoa_id' : '2',
-                                    'tipo_id' : '1',
+                                    'tipo_id' : '2',
                                     'quantia' : '1,23',
                                     'lancamento' : format_date(date.today()),
                                     'agendamento' : False,
@@ -119,7 +118,7 @@ class TestMoradorLancaDespesa(TestController):
         assert 'class="info"' in response
         assert '$ 1,23' in response
         assert Despesa.get_by(lancamento=date.today(), pessoa_id=2, republica_id=1, quantia=1.23)
-        assert DespesaAgendada.get_by() == None
+        assert DespesaAgendada.get_by(tipo_id='2') == None
         
         
         # lança despesa válida com agendamento, sem término
@@ -127,7 +126,7 @@ class TestMoradorLancaDespesa(TestController):
                             url=url,
                             params={
                                     'pessoa_id' : '2',
-                                    'tipo_id' : '2',
+                                    'tipo_id' : '3',
                                     'quantia' : '12,34',
                                     'lancamento' : format_date(date.today()),
                                     'agendamento' : True,
@@ -138,8 +137,8 @@ class TestMoradorLancaDespesa(TestController):
         assert 'class="info"' in response
         assert '$ 12,34' in response
         assert Despesa.get_by(lancamento=date.today(), pessoa_id=2, republica_id=1, quantia=12.34)
-        desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='2')
-        assert len(DespesaAgendada.query.all()) == 1
+        assert DespesaAgendada.query.count() == 2
+        desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='3')
         assert desp.proximo_lancamento == (date.today() + relativedelta(months=1))
         assert desp.termino == None
 
@@ -149,7 +148,7 @@ class TestMoradorLancaDespesa(TestController):
                             url=url,
                             params={
                                     'pessoa_id' : '2',
-                                    'tipo_id' : '3',
+                                    'tipo_id' : '4',
                                     'quantia' : '123,45',
                                     'lancamento' : format_date(date.today() + timedelta(days=1)),
                                     'agendamento' : True,
@@ -159,10 +158,10 @@ class TestMoradorLancaDespesa(TestController):
                             )
         assert 'class="info"' in response
         assert '$ 123,45' in response
-        desp = Despesa.get_by(pessoa_id='2', tipo_id='3')
+        desp = Despesa.get_by(pessoa_id='2', tipo_id='4')
         assert desp.lancamento == date.today() + timedelta(days=1)
-        assert len(DespesaAgendada.query.all()) == 2
+        assert DespesaAgendada.query.count() == 3
         
-        desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='3')
+        desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='4')
         assert desp.proximo_lancamento == (date.today() + relativedelta(months=1, days=1)), desp.proximo_lancamento
         assert desp.termino == date.today() + relativedelta(months=3)

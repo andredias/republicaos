@@ -10,7 +10,7 @@ from republicaos.lib.auth import morador_required, get_republica, get_user
 from republicaos.lib.auth import republica_resource_required
 from republicaos.lib.utils import render, validate, pretty_decimal
 from republicaos.lib.base import BaseController
-from republicaos.lib.validators import DataNoFechamento, Number
+from republicaos.lib.validators import Date, Number
 from republicaos.model import Pessoa, Republica, TipoDespesa, Despesa, DespesaAgendada, Session
 from formencode import Schema, validators, Invalid
 from babel.dates import format_date
@@ -19,23 +19,16 @@ from dateutil.relativedelta import relativedelta
 
 log = logging.getLogger(__name__)
 
-
-class DataTermino(validators.DateConverter):
-    def validate_python(self, value, state):
-        validators.DateConverter.validate_python(self, value, state)
-        data_ref = get_republica().intervalo_valido_lancamento[1]
-        if value <= data_ref:
-            raise Invalid("A data deve ser depois de %s" % format_date(data_ref), value, state)
-
-
 class DespesaSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
-    lancamento = DataNoFechamento(not_empty = True, get_republica=get_republica)
+    lancamento = Date(
+                    not_empty = True,
+                    min = lambda : get_republica().intervalo_valido_lancamento[0],
+                    max = lambda : get_republica().intervalo_valido_lancamento[1]
+                )
     quantia = Number(not_empty = True, min = 0.01)
-    termino = DataTermino(month_style = 'dd/mm/yyyy')
-
-
+    termino = Date(month_style = 'dd/mm/yyyy', min = date.today)
 
 
 

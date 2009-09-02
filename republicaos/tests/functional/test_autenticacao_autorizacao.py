@@ -7,6 +7,7 @@ from republicaos.lib.helpers import flash, url_for
 from republicaos.lib.utils import check_testing
 from urlparse import urlparse
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 import logging
@@ -138,10 +139,16 @@ class TestAutenticacaoAutorizacao(TestController):
                         cidade = 'Sumare',
                         uf = 'SP')
         Morador(pessoa=p1, republica=republica, entrada=date.today())
-        Morador(pessoa=p2, republica=republica, entrada=ano_passado, saida=ano_passado + timedelta(days=100))
+        Morador(
+            pessoa=p2,
+            republica=republica,
+            entrada=ano_passado, 
+            saida=ano_passado + relativedelta(months=2)
+            )
         TipoDespesa(nome='luz', republica=republica)
+        Fechamento(data=date.today() - relativedelta(months=1), republica=republica)
         Fechamento(data=date.today(), republica=republica)
-        Fechamento(data=date.today() + timedelta(days=30), republica=republica)
+        Fechamento(data=date.today() + relativedelta(months=1), republica=republica)
         Session.commit()
         
         p3 = Pessoa(nome='Siclano', email='siclano@republicaos.com.br', senha='1234')

@@ -11,7 +11,7 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.auth import morador_required, get_user, get_republica
-from republicaos.lib.validators import DataNoFechamento
+from republicaos.lib.validators import Date
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, DespesaAgendada, Session
 from sqlalchemy  import and_
 from formencode import Schema, validators
@@ -26,13 +26,21 @@ class MoradorSchema(Schema):
     filter_extra_fields = True
     nome = validators.UnicodeString(not_empty=True)
     email = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
-    entrada = DataNoFechamento(get_republica=get_republica)
+    entrada = Date(
+                    not_empty = True,
+                    min = lambda : get_republica().intervalo_valido_lancamento[0],
+                    max = lambda : get_republica().intervalo_valido_lancamento[1]
+                )
 
 
 class SaidaMoradorSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
-    saida = DataNoFechamento(get_republica=get_republica)
+    saida = Date(
+                    not_empty = True,
+                    min = lambda : get_republica().intervalo_valido_lancamento[0],
+                    max = lambda : get_republica().intervalo_valido_lancamento[1]
+                )
 
 
 class MoradorController(BaseController):

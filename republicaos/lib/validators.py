@@ -52,47 +52,6 @@ class Unique(validators.FancyValidator):
 validators.Unique = Unique
 
 
-class DataNoFechamento(validators.FancyValidator):
-    '''
-    Verifica se a data está no período do último fechamento da república, isto é [ultimo_fechamento, proximo_fechamento[
-    func_get_republica é uma função para obter a república cujos parâmetros serão usados
-
-    '''
-    __unpackargs__ = ('get_republica',)
-    get_republica = None
-
-    messages = {
-        'fora_dos_limites': _("A data deve estar entre %(data_inicial)s e %(data_final)s"),
-        'badFormat': _('Please enter the date in the form %(format)s')
-        }
-
-
-    def validate_python(self, value, state):
-        republica = self.get_republica() if callable(self.get_republica) else self.get_republica
-        data_inicial, data_final = republica.intervalo_valido_lancamento
-        log.debug('validate_python: data_inicial: %s, data_final: %s, value: %s', data_inicial, data_final, value)
-        
-        if not republica.fechamento_atual.data_no_intervalo(value):
-            raise Invalid(
-                    self.message('fora_dos_limites', state,
-                                 data_inicial=format_date(data_inicial),
-                                 data_final=format_date(data_final)), value, state)
-
-
-
-    def to_python(self, value, state):
-        try:
-            # TODO: Se precisar mudar formato, passar outros parâmetros
-            date = parse_date(value)
-        except ValueError as error:
-            raise Invalid(error.message, value, state)
-        except:
-            raise Invalid(self.message('badFormat', state, format=get_date_format().pattern), value, state)
-
-        self.validate_python(date, state)
-        return date
-
-
 
 class Number(validators.FancyValidator):
     '''

@@ -9,7 +9,7 @@ from pylons.controllers.util import abort, redirect_to
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
-from republicaos.lib.validators import DataNoFechamento
+from republicaos.lib.validators import Date
 from republicaos.lib import auth as authentication
 from republicaos.model import CadastroPendente, TrocaSenha, Pessoa, Session, ConviteMorador, Morador
 from formencode import Schema, validators
@@ -30,13 +30,21 @@ class ConviteMoradorSchema(Schema):
     confirmacao_senha = validators.UnicodeString()
     chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
     aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
-    entrada = DataNoFechamento(not_empty=True, get_republica=get_republica_from_convite_morador)
+    entrada = Date(
+                    not_empty = True,
+                    min = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[0],
+                    max = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[1]
+                )
 
 
 class ConviteMoradorSchema2(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
-    entrada = DataNoFechamento(not_empty=True, get_republica=get_republica_from_convite_morador)
+    entrada = Date(
+                    not_empty = True,
+                    min = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[0],
+                    max = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[1]
+                )
 
 
 def check_convidado_is_user():

@@ -72,6 +72,6 @@ class TestMorador(TestModel):
         d1 = Despesa.get_by(tipo = td3, lancamento = hoje, republica = r)
 
         assert d1 != None and d1 in despesas
-        assert len(despesas) == 3
+        assert len(despesas) == 5
         assert dp1 not in Session # foi deletado pois o prazo chegou ao fim
 

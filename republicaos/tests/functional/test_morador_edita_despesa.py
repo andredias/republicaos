@@ -38,6 +38,7 @@ class TestMoradorEditaDespesa(TestController):
                         cidade = 'Campinas',
                         uf = 'SP')
         
+        Fechamento(data=date.today() - relativedelta(weeks=2), republica=republica2)
         Fechamento(data=date.today(), republica=republica2)
         Fechamento(data=date.today() + relativedelta(months=1), republica=republica2)
         
@@ -102,9 +103,9 @@ class TestMoradorEditaDespesa(TestController):
                                 },
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
-        assert str(response).count('erro_') == 2
         assert 'erro_quantia' in response
         assert 'erro_lancamento' in response
+        assert str(response).count('erro_') == 2
         d = Despesa.get_by(id=3)
         assert str(d.quantia) == '1.99'
         
@@ -116,7 +117,7 @@ class TestMoradorEditaDespesa(TestController):
                                 'pessoa_id':'2',
                                 'tipo_id':'7',
                                 'quantia':'9,99',
-                                'lancamento':format_date(date.today() + timedelta(days=1)),
+                                'lancamento':format_date(date.today() - timedelta(days=1)),
                                 'termino':''
                                 },
                             extra_environ={str('REMOTE_USER'):str('2')},
@@ -124,5 +125,5 @@ class TestMoradorEditaDespesa(TestController):
         assert '(info) Despesa alterada' in ''.join(response.session['flash'])
         d = Despesa.get_by(id=3)
         assert str(d.quantia) == '9.99'
-        assert d.lancamento == date.today() + timedelta(days=1)
+        assert d.lancamento == date.today() - timedelta(days=1)
 

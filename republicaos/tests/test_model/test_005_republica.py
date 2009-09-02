@@ -27,8 +27,8 @@ class TestRepublica(TestModel):
         
         inicio, fim = r.fechamento_atual.intervalo
         
-        assert inicio == date.today()
-        assert r.fechamento_atual.data == mes_q_vem
+        assert inicio == mes_retrasado
+        assert r.fechamento_atual.data == date.today()
         assert len(r.fechamentos) == 3
 
         Session.expunge_all()
@@ -49,6 +49,20 @@ class TestRepublica(TestModel):
         
         assert r2.data_criacao == r2.fechamento_atual.intervalo[0] == date.today()
         assert r2.fechamento_atual.data == date.today() + relativedelta(months=1)
+    
+    
+    def test_fechamento_atual(self):
+        r = Republica(nome = 'Teste',
+            data_criacao = date.today() - relativedelta(months=2),
+            logradouro = 'R. dos Bobos, n. 0',
+            cidade = 'Sumare',
+            uf = 'SP')
+        Fechamento(data=date.today() - relativedelta(months=1), republica=r)
+        f = Fechamento(data=date.today(), republica=r)
+        Fechamento(data=date.today() + relativedelta(months=1), republica=r)
+        Session.commit()
+        
+        assert r.fechamento_atual == f
 
 
 
@@ -89,23 +103,23 @@ class TestRepublica(TestModel):
         Casos de apuração:
 
                                 Período de Apuração
-        -------------------[xxxxxxxxxxxxxxxxxxxxxxxxxxxxx[------------------>    Morador     |  Incluído
+        -------------------[xxxxxxxxxxxxxxxxxxxxxxxxxxxxx]------------------>    Morador     |  Incluído
                            |                             |
-        -------[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->    Morador_1   |  X
+        -------[yyyyyyyyyyyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxzzzzzzzzzzzzzzzz-->    Morador_1   |  X
                            |                             |
         ------------------------[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->    Morador_2   |  X
                            |                             |
-        -------[xxxxxxxxxxxxxxxxxxxxxxxxxx]--------------------------------->    Morador_3   |  X
+        -------[yyyyyyyyyyyxxxxxxxxxxxxxxx]--------------------------------->    Morador_3   |  X
                            |                             |
         --------------------------[xxxxxxxxx]------------------------------->    Morador_4   |  X
                            |                             |
-        --------------------------------------------------------[xxxxxxxxx-->    Morador_5   |
+        --------------------------------------------------------[zzzzzzzzz-->    Morador_5   |
                            |                             |
-        -------------------------------------------------[xxxxxxxx]--------->    Morador_6   |
+        -------------------------------------------------[zzzzzzzz]--------->    Morador_6   |  X
                            |                             |
-        -------[xxxxxxxx]--------------------------------------------------->    Morador_7   |
+        -------[yyyyyyyy]--------------------------------------------------->    Morador_7   |
                            |                             |
-        ---------[xxxxxxxxx]------------------------------------------------>    Morador_8   |  X
+        ---------[yyyyyyyyy]------------------------------------------------>    Morador_8   |  X
         '''
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 4, 8),
@@ -128,7 +142,7 @@ class TestRepublica(TestModel):
         Morador(pessoa = p3, republica = r, entrada = date(2007, 2, 1), saida = date(2007, 3, 20))
         Morador(pessoa = p4, republica = r, entrada = date(2007, 3, 20), saida = date(2007, 4, 4))
         Morador(pessoa = p5, republica = r, entrada = date(2007, 4, 20))
-        Morador(pessoa = p6, republica = r, entrada = date(2007, 4, 10), saida = date(2007, 5, 4))
+        Morador(pessoa = p6, republica = r, entrada = date(2007, 4, 9), saida = date(2007, 5, 4))
         Morador(pessoa = p7, republica = r, entrada = date(2007, 2, 1), saida = date(2007, 3, 1))
         Morador(pessoa = p8, republica = r, entrada = date(2007, 2, 1), saida = date(2007, 3, 10))
 
@@ -141,7 +155,7 @@ class TestRepublica(TestModel):
         assert p3 in moradores
         assert p4 in moradores
         assert p5 not in moradores
-        assert p6 not in moradores
+        assert p6 in moradores
         assert p7 not in moradores
         assert p8 in moradores
 
