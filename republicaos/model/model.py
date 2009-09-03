@@ -15,13 +15,14 @@ from decimal     import Decimal
 from dateutil.relativedelta import relativedelta
 from republicaos.model import Session
 from hashlib import sha1
-
+from babel.dates import format_date
+from republicaos.lib.helpers import url_for
+from republicaos.lib.mail import send_email
 
 
 import logging
 
 log = logging.getLogger(__name__)
-
 
 
 
@@ -327,18 +328,13 @@ class Republica(Entity):
 
 
 
-    def get_moradores(self, fechamento = None, data_inicial = None, data_final = None):
+    def get_moradores(self, fechamento = None):
         '''
         Retorna os moradores da república no período de tempo
         '''
-        if not (fechamento or (data_inicial and data_final)):
+        if not fechamento:
             fechamento = self.fechamento_atual
-            data_inicial, data_final = fechamento.intervalo
-        if fechamento:
-            data_inicial, data_final = fechamento.intervalo
-        elif not (data_inicial and data_final):
-            fechamento = self.fechamento_atual
-            data_inicial, data_final = fechamento.intervalo
+        data_inicial, data_final = fechamento.intervalo
         return Morador.get_moradores(self, data_inicial, data_final)
 
 
@@ -500,7 +496,49 @@ class Fechamento(Entity):
             for credor in self.acerto_a_pagar[devedor]:
                 self.acerto_a_receber[credor][devedor] = self.acerto_a_pagar[devedor][credor]
         return
+    
+    
+    @classmethod
+    def momento_informar_fechamentos(cls):
+        mensagem = '''Pessoal da república %(republica)s,
 
+Está na hora de acertar as contas que encerram hoje (%(data)s)!
+
+O relatório detalhado da divisão das despesas se encontra no link: %(link)s
+
+Atenciosamente,
+
+--
+Equipe Republicaos'''
+        fechamentos = Fechamento.query.filter_by(data=date.today()).all()
+        hoje = format_date(date.today())
+        for fechamento in fechamentos:
+            # mandar e-mail pra todos os moradores
+            emails = [morador.email for morador in fechamento.republica.get_moradores(fechamento)]
+            msg = mensagem % {'republica':fechamento.republica.nome,
+                          'data' : hoje,
+                          'link' : url_for(
+                                        controller='republica',
+                                        action='show',
+                                        republica_id=fechamento.republica.id,
+                                        data_fechamento=fechamento.data
+                                        )
+                            }
+            subject = 'Republicaos: informe de fechamento de contas da república %s' % fechamento.republica.nome
+            send_email(to_address=emails, message=msg, subject=subject)
+        
+        # para quais repúblicas um novo fechamento precisa ser criado?
+        q = select(
+                [Fechamento.republica_id],
+                group_by=Fechamento.republica_id,
+                having=func.max(Fechamento.data) == date.today()
+                )
+        republicas = Republica.query.filter(Republica.id == q.c.republica_id).all()
+        mes_q_vem = date.today() + relativedelta(months=1)
+        for r in republicas:
+            Fechamento(data=mes_q_vem, republica=r)
+        Session.commit()
+        return
 
 
 

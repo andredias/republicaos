@@ -148,7 +148,11 @@ class TestRepublica(TestModel):
 
         Session.commit()
 
-        moradores = r.get_moradores(data_inicial = date(2007, 3, 10), data_final = date(2007, 4, 9))
+        moradores = Morador.get_moradores(
+                                        republica=r,
+                                        data_inicial = date(2007, 3, 10),
+                                        data_final = date(2007, 4, 9)
+                                        )
 
         assert p1 in moradores
         assert p2 in moradores

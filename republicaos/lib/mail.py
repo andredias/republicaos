@@ -48,7 +48,7 @@ def send_email(to_address, subject, message, from_address=None):
     msg = MIMEText(encode(message))
     msg.set_charset('utf-8')
     msg['From'] = from_address
-    msg['To'] = to_address
+    msg['To'] = ', '.join(to_address)
     msg['Subject'] = encode(subject)
 
     server = smtplib.SMTP(config['smtp_server'])
