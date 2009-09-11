@@ -10,6 +10,36 @@ body {
 	text-align: center;
 }
 
+div.container {
+    background-color: white;
+    margin: 0 auto;
+    padding: 0;
+    text-align: left;
+    width: 980px;
+}
+
+#teaser h1 {
+    color:#000000;
+    font-size:39px;
+    letter-spacing:-2px;
+    line-height:1em;
+    margin: 0 0 10px;
+    padding:0;
+    text-align:left;
+}
+
+#teaser h2 {
+    color:#222222;
+    font-family:georgia,times;
+    font-size:24px;
+    font-weight:normal;
+    line-height:1.2em;
+    margin:0 0 10px;
+    padding:0;
+    background: none;
+    text-transform: none;
+}
+
 /* hacking \*/
 * html body {
 	font-size: 1.25ex;
@@ -136,9 +166,9 @@ p {
 	margin: 1em 0;
 }
 
-#header h1 a, #home h2, #home #sidebar #create-account a,
+.header h1 a, #home #sidebar #create-account a,
 a.remove, a.add, a.edit-pencil, #operation-list td.status span,
-.first-line, .second-line, #teaser a, .extension a, #nav a,
+.first-line, .second-line, .extension a, #nav a,
 #download .install a,
 #tools .install-firefox a,
 #tools .install-dashboard a,
@@ -153,7 +183,7 @@ body, #footer .footer-nav a {
 	color: #333;
 }
 
-#content:after, .block li:after,
+.content:after, .block li:after,
 #tools-list:after,
 #available-tags:after,
 .date-picker-block:after {
@@ -165,18 +195,16 @@ body, #footer .footer-nav a {
 }
 
 .block li,
-#content,
 #tools-list,
 #available-tags,
 .date-picker-block {display: inline-block;}
 
 /* Hides from IE-mac \*/
-* html #content,
+* html .content,
 * html .block li,
 * html #tools-list,
 * html #available-tags,
 * .date-picker-block {height: 1%;}
-#content,
 #tools-list,
 .block li,
 #available-tags,
@@ -196,14 +224,18 @@ body, #footer .footer-nav a {
 }
 
 /*=#header*/
-#header h1 {
+.header {
+    padding: 1em;
+}
+
+.header h1 {
 
 }
 
-#header h1 a {
-	background: url(../images/spesa.gif) no-repeat;
-	height: 35px;
-    width: 118px;
+.header h1 a {
+	background: url(../images/republicaos_logo.jpg) no-repeat;
+	height: 127px;
+    width: 170px;
 }
 
 /*=nav*/
@@ -296,12 +328,6 @@ body, #footer .footer-nav a {
 	margin: 0 0 0 0;
 }
 
-#home #text h2 {
-	background: url(../images/organizar.gif) no-repeat;
-	height: 40px;
-	margin: 0 0 0 0;
-}
-
 #home #text ul {
 	margin: 0 0 0 1em;
 }
@@ -327,8 +353,19 @@ body, #footer .footer-nav a {
 }
 
 #home #text {
-	float: left;
-	width: 40.7em;
+    padding: 2em;
+}
+
+.coluna-esquerda {
+    float: left;
+    width: 49%;
+    margin-right: 1%
+}
+
+.coluna-direita {
+    float: right;
+    width: 49%;
+    margin-left: 1%;
 }
 
 #home #sidebar {
@@ -494,8 +531,9 @@ body, #footer .footer-nav a {
 }
 
 /*=content*/
-#content {
+.content {
 	position: relative;
+    padding: 1em;
 }
 
 /*=signup*/
@@ -543,8 +581,8 @@ body, #footer .footer-nav a {
 /*=footer*/
 #footer {
 	background: url(../images/dotted.gif) repeat-x;
-	margin-top: 2.5em;
-	padding-top: 1em;
+	margin: 2.5em;
+	padding: 1em 0;
 	position: relative;
 }
 
@@ -713,7 +751,7 @@ dl .amount {
 	margin-top: 1em;
 }
 
-body#operations #content h2 {
+body#operations .content h2 {
 	margin-bottom: .3em;
 }
 
@@ -1223,51 +1261,15 @@ strong.positive {
 
 /*=teaser*/
 #teaser {
-	background: url(../images/bgteaser.png) repeat-x;
-	/*border: 5px solid #7cb0e4;*/
 	border: 5px solid #7faa0b;
-	height: 211px;
 	margin-bottom: 1em;
-	position: relative;
+    padding: 10px;
+/*
+    float: left;
+*/
 }
 
-#teaser .first-line {
-	background: url(../images/teaser-p1.png) no-repeat;
-	height: 74px;
-	margin-bottom: 0;
-	width: 363px;
-}
 
-#teaser .second-line {
-	background: url(../images/teaser-p2.png) no-repeat;
-	height: 71px;
-	margin-top: 0;
-	width: 350px;
-}
-
-#teaser a.cadastre {
-	background: url(../images/cadastre.png) no-repeat;
-	height: 34px;
-	width: 220px;
-}
-
-#teaser a.acesse {
-	background: url(../images/acesse.png) no-repeat;
-	height: 34px;
-	width: 200px;
-}
-
-#teaser a, #teaser .second-line, #teaser .first-line {
-	margin-left: 15px;
-}
-
-#teaser img {
-	/*border: 2px solid #6696c6;*/
-	border: 2px solid #7FAA0B;
-	position: absolute;
-	right: 10px;
-	top: 0;
-}
 
 .adsense-bottom {
 	margin: 1em 0;

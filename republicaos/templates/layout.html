@@ -47,9 +47,9 @@ republica = get_republica()
 ?>
 
 <body py:match="body" py:attrs="select('@*')">
-    <div id="page" class="index">
-        <div id="header">
-            <h1><a href="/" title="Ir para home">spesa</a></h1>
+    <div class="container">
+        <div class="header">
+            <h1><a href="/" title="Republicaos > Página Inicial">Republicaos</a></h1>
             <ul id="nav">
                 <li id="skip"><a href="#content">Ir direto ao conteúdo</a></li>
                 <li class="blog"><span><a href="http://republicaos.com.br/blog/">Blog</a></span></li>
@@ -68,7 +68,7 @@ republica = get_republica()
 
         <hr />
 
-        <div id="content">
+        <div class="content">
             <div py:with="flash_messages = get_flash_messages()">
                 <dl py:for="css_class, messages in flash_messages.items()" id="${css_class}" class="${css_class}" >
                     <dd py:for="message in messages">${message}</dd>
