@@ -48,5 +48,9 @@ class RootController(BaseController):
     def logout(self):
         set_user(None)
         redirect_to(controller='root', action='index')
+    
+    
+    def tour(self):
+        return render('root/tour.html')
 
 

@@ -1,0 +1,8 @@
+    <form action="${h.url_for(controller='root', action='login')}" method="post">
+    <h2>Acesse sua conta</h2>
+    <p><label for="email">E-mail</label><br />
+    <input class="text" id="email" name="email" type="text" /></p>
+    <p><label for="password">Senha</label><br />
+    <input class="text" id="password" name="senha" type="password" /> <a href="/pessoa/esqueceu_senha">Esqueceu sua senha?</a></p>
+    <p><input name="commit" type="submit" value="Acessar" /></p>
+    </form>

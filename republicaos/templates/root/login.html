@@ -11,7 +11,6 @@
 </head>
 <body id="account">
 
-<h2>Acesse sua conta</h2>
 <div id="main">
     <p><span class="want-to-signup">Não é cadastrado? <a href="${h.url_for(controller='pessoa', action='new')}">Crie sua conta agora!</a></span></p>
     <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
@@ -21,16 +20,7 @@
         <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
         </div>
     </py:if>
-    <form action="${h.url_for(controller='root', action='login')}" method="post">
-    <fieldset>
-        <legend>Entre agora!</legend>
-        <p><label for="email">E-mail</label>
-        <input class="text" id="email" name="email" type="text" /></p>
-        <p><label for="password">Senha</label>
-        <input class="text" id="password" name="senha" type="password" /></p>
-        <p><input name="commit" type="submit" value="Entrar" /> <a href="/pessoa/esqueceu_senha">Esqueceu sua senha?</a></p>
-    </fieldset>
-    </form>
+    <xi:include href="form_login.html" />
 </div>
 
 </body>

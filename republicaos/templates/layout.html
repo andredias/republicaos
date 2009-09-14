@@ -50,7 +50,36 @@ republica = get_republica()
     <div class="container">
         <div class="header">
             <h1><a href="/" title="Republicaos > Página Inicial">Republicaos</a></h1>
-            <ul id="nav">
+            <form id="login-form" name="login" method="post" action="/start" py:if="not user">
+                <fieldset>
+                <legend>Acessar sua conta</legend>
+                <div class="input">
+                    <label for="Email">Nome do usuário (E-mail):</label><br />
+                    <input id="Email" class="text" type="text" tabindex="1" name="Email" size="20"/>
+                </div>
+                <div class="input-right">
+                    <label for="Passwd">
+                        Senha: (<a title="Esqueceu a sua senha?" href="http://www.blogger.com/forgot.g">?</a>)
+                    </label><br />
+                    <input id="Passwd" class="text" type="password" name="Passwd" tabindex="2" size="10"/>
+                </div>
+                <br />
+                <div class="input">
+                    <input id="PersistentCookie" type="checkbox" value="yes" tabindex="3" name="PersistentCookie"/>
+                    <label for="PersistentCookie">Lembrar meus dados</label>
+                    (
+                    <a title="O que é “lembrar meus dados”?" target="_top" href="http://help.blogger.com/bin/answer.py?answer=42054">?</a>
+                    )
+                </div>
+                <div class="input-right">
+                    <input type="submit" value="Acessar" />
+                </div>
+
+                <div style="clear:both">
+                </div>
+                </fieldset>
+            </form>
+            <ul id="nav" py:if="user">
                 <li id="skip"><a href="#content">Ir direto ao conteúdo</a></li>
                 <li class="blog"><span><a href="http://republicaos.com.br/blog/">Blog</a></span></li>
                 <li class="tools"><span><a href="/tools">Ferramentas</a></span></li>

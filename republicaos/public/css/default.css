@@ -3,11 +3,10 @@
 ::selection { background: #03c; color: #fff; }
 
 body {
-	background: #e5e5e5 url(../images/bg-degrade.jpg) repeat-x;
-	font-family: arial, trebuchet ms, sans;
-	font-size: x-small;
-	padding: 1em 0;
-	text-align: center;
+    background: #e5e5e5 url(../images/bg-degrade.jpg) repeat-x;
+    font-family: arial, trebuchet ms, sans;
+    font-size: small;
+    text-align: center;
 }
 
 div.container {
@@ -29,7 +28,7 @@ div.container {
 }
 
 #teaser h2 {
-    color:#222222;
+    color: #eee;
     font-family:georgia,times;
     font-size:24px;
     font-weight:normal;
@@ -40,14 +39,15 @@ div.container {
     text-transform: none;
 }
 
+
 /* hacking \*/
 * html body {
-	font-size: 1.25ex;
+    font-size: 1.25ex;
 }
 /* IE/Mac */
 
 .has-js .hide, .has-js .editable {
-	display: none;
+    display: none;
 }
 
 * {
@@ -56,114 +56,114 @@ div.container {
 }
 
 .hidden {
-	display: none;
+    display: none;
 }
 
 span.new {
-	background: url(../images/new2.gif) no-repeat top right;
-	padding-right: 25px;
+    background: url(../images/new2.gif) no-repeat top right;
+    padding-right: 25px;
 }
 
 pre {
-	font-size: 11px;
+    font-size: 11px;
 }
 
 select {
-	background: #fff;
+    background: #fff;
 }
 
 select[name*="1i"] {
-	min-width: 4.2em;
+    min-width: 4.2em;
 }
 
 select[name*="2i"] {
-	min-width: 7.2em;
+    min-width: 7.2em;
 }
 
 select[name*="3i"] {
-	min-width: 3.2em;
+    min-width: 3.2em;
 }
 
 body#operations input.date-picker,
 body#schedules input.date-picker {
-	width: 6em;
+    width: 6em;
 }
 
 a {
-	color: #03c;
+    color: #03c;
 }
 
 a:hover {
-	color: #ee3a42;
+    color: #ee3a42;
 }
 
 ul {
-	margin-left: 2em;
+    margin-left: 2em;
 }
 
 form p {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 #monthly-group select {
-	width: 3.2em;
+    width: 3.2em;
 }
 
 input[type="text"], input[type="password"] {
-	padding: .2em;
+    padding: .2em;
 }
 
 fieldset {
-	border: 1px solid #ccc;
-	padding: 1em;
+    border: 1px solid #ccc;
+    padding: 1em;
 }
 
 fieldset ul {
-	list-style: none;
+    list-style: none;
 }
 
 span.hint {
-	display: block;
-	font-style: italic;
+    display: block;
+    font-style: italic;
 }
 
 hr {
-	display: none;
+    display: none;
 }
 
 img {
-	margin: 1em 0;
+    margin: 1em 0;
 }
 
 .inline {
-	display: inline !important;
+    display: inline !important;
 }
 
 label {
-	color: #333;
+    color: #333;
 }
 
 label .optional {
-	color: #777;
-	font-weight: normal;
+    color: #777;
+    font-weight: normal;
 }
 
 h2 {
-	background: url(../images/dotted.gif) repeat-x bottom;
-	color: #000;
-	font-weight: normal;
-	margin-bottom: 1em;
-	padding-bottom: .2em;
+    background: url(../images/dotted.gif) repeat-x bottom;
+    color: #000;
+    font-weight: normal;
+    margin-bottom: 1em;
+    padding-bottom: .2em;
 }
 
 h3 {
-	color: #333;
-	margin-bottom: -.5em;
+    color: #333;
+    margin-bottom: -.5em;
 }
 
 p {
-	line-height: 1.4;
-	margin: 1em 0;
+    line-height: 1.4;
+    margin: 1em 0;
 }
 
 .header h1 a, #home #sidebar #create-account a,
@@ -174,13 +174,13 @@ a.remove, a.add, a.edit-pencil, #operation-list td.status span,
 #tools .install-dashboard a,
 #tools .install-opera a,
 a.month-picker {
-	display: block;
-	overflow: hidden;
-	text-indent: -9999px;
+    display: block;
+    overflow: hidden;
+    text-indent: -9999px;
 }
 
 body, #footer .footer-nav a {
-	color: #333;
+    color: #333;
 }
 
 .content:after, .block li:after,
@@ -213,143 +213,161 @@ body, #footer .footer-nav a {
 
 /*=page*/
 #page {
-	background: #fff;
-	border: .2em solid #ccc;
-	border-width: .1em .1em .2em .2em;
-	margin: 0 auto;
-	padding: 2em;
-	position: relative;
-	text-align: left;
-	width: 73em;
+    background: #fff;
+    border: .2em solid #ccc;
+    border-width: .1em .1em .2em .2em;
+    margin: 0 auto;
+    padding: 2em;
+    position: relative;
+    text-align: left;
+    width: 73em;
 }
 
 /*=#header*/
 .header {
     padding: 1em;
+    position: relative;
 }
+
 
 .header h1 {
 
 }
 
 .header h1 a {
-	background: url(../images/republicaos_logo.jpg) no-repeat;
-	height: 127px;
+    background: url(../images/republicaos_logo.jpg) no-repeat;
+    height: 127px;
     width: 170px;
 }
 
+
+.header #login-form {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    line-height: 1.2em;
+    font-size: 1em;
+}
+
+.header #login-form .input {
+    float: left;
+    margin: 0.4em 15px 0 0;
+}
+
+.header #login-form .input-right {
+    float: right;
+    margin: 0.4em 0px 0 0;
+}
+
+
 /*=nav*/
 #nav {
-	/*background: #69a5e0 url(../images/nav-bg.gif) no-repeat .9em center;*/
-	background: #9dd20c url(../images/nav-bg.gif) no-repeat .9em center;
-	height: 2.6em;
-	list-style: none;
-	margin: 1em 0;
-	padding: .4em .4em 0 0;
-	position: relative;
+    /*background: #69a5e0 url(../images/nav-bg.gif) no-repeat .9em center;*/
+    background: #9dd20c url(../images/nav-bg.gif) no-repeat .9em center;
+    height: 2.6em;
+    list-style: none;
+    margin: 1em 0;
+    padding: .4em .4em 0 0;
+    position: relative;
 }
 
 #nav li {
-	float: right;
-	margin-left: .5em;
+    float: right;
+    margin-left: .5em;
 }
 
 #nav a {
-	height: 22px;
+    height: 22px;
 }
 
 #nav .overview a {
-	background: url(../images/nav.gif) no-repeat;
-	width: 97px;
+    background: url(../images/nav.gif) no-repeat;
+    width: 97px;
 }
 
 #overview #nav .overview a,
 #nav .overview a:hover {
-	background-position: 0 -22px;
+    background-position: 0 -22px;
 }
 
 #nav .operations a {
-	background: url(../images/nav.gif) no-repeat -97px 0;
-	width: 105px;
+    background: url(../images/nav.gif) no-repeat -97px 0;
+    width: 105px;
 }
 
 #operations #nav .operations a,
 #nav .operations a:hover {
-	background-position: -97px -22px;
+    background-position: -97px -22px;
 }
 
 #nav .signup a {
-	background: url(../images/nav.gif) no-repeat -202px 0;
-	width: 99px;
+    background: url(../images/nav.gif) no-repeat -202px 0;
+    width: 99px;
 }
 
 #account .signup #nav .signup a,
 #nav .signup a:hover {
-	background-position: -202px -22px;
+    background-position: -202px -22px;
 }
 
 #nav .login a {
-	background: url(../images/nav.gif) no-repeat -301px 0;
-	width: 55px;
+    background: url(../images/nav.gif) no-repeat -301px 0;
+    width: 55px;
 }
 
 #account .login #nav .login a,
 #nav .login a:hover {
-	background-position: -301px -22px;
+    background-position: -301px -22px;
 }
 
 #nav .tools a {
-	background: url(../images/nav.gif) no-repeat -356px 0;
-	width: 105px;
+    background: url(../images/nav.gif) no-repeat -356px 0;
+    width: 105px;
 }
 
 #tools .tools #nav .tools a,
 #nav .tools a:hover {
-	background-position: -356px -22px;
+    background-position: -356px -22px;
 }
 
 #nav .blog a {
-	background: url(../images/nav.gif) no-repeat -460px 0;
-	width: 50px;
+    background: url(../images/nav.gif) no-repeat -460px 0;
+    width: 50px;
 }
 
 #nav .blog a:hover {
-	background-position: -460px -22px;
+    background-position: -460px -22px;
 }
 
 #nav #skip {
-	display: none;
+    display: none;
 }
 
 /*=home*/
 #home #sidebar h2 {
-	background: url(../images/features.gif) no-repeat;
-	height: 20px;
-	margin: 0 0 0 0;
+    background: url(../images/features.gif) no-repeat;
+    height: 20px;
+    margin: 0 0 0 0;
 }
 
 #home #text ul {
-	margin: 0 0 0 1em;
+    margin: 0 0 0 1em;
 }
 
 #home #text dt {
-	background: url(../images/bullet2.gif) no-repeat left .3em;
-	font-weight: bold;
-	line-height: 1.5;
-	padding-left: 1.5em;
+    background: url(../images/bullet2.gif) no-repeat left .3em;
+    font-weight: bold;
+    line-height: 1.5;
+    padding-left: 1.5em;
 }
 
 #home #text dd {
-	margin-bottom: 1em;
-	padding-left: 1.5em;
-}
-
-#home form {
-	margin-bottom: 2em;
+    margin-bottom: 1em;
+    padding-left: 1.5em;
 }
 
 #home #text h3 {
-	display: none;
+    display: none;
 }
 
 #home #text {
@@ -358,50 +376,50 @@ body, #footer .footer-nav a {
 
 .coluna-esquerda {
     float: left;
-    width: 49%;
-    margin-right: 1%
+    width: 45%;
+    margin-right: 5%
 }
 
 .coluna-direita {
     float: right;
-    width: 49%;
-    margin-left: 1%;
+    width: 45%;
+    margin-left: 5%;
 }
 
 #home #sidebar {
-	float: right;
-	width: 29.5em;
+    float: right;
+    width: 29.5em;
 }
 
 #home #sidebar #password {
-	width: 13em;
+    width: 13em;
 }
 
 #home #sidebar #email {
-	width: 12.5em;
+    width: 12.5em;
 }
 
 #home #sidebar label {
-	display: block;
+    display: block;
 }
 
 /*=buzz*/
 #buzz dd, #buzz dt {
-	text-align: right;
+    text-align: right;
 }
 
 #buzz dt {
-	margin-bottom: -0.6em;
-	font-size: 1.8em;
+    margin-bottom: -0.6em;
+    font-size: 1.8em;
 }
 
 #buzz dd {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 #buzz cite {
-	color: #999;
-	display: block;
+    color: #999;
+    display: block;
 }
 
 /*=features*/
@@ -410,78 +428,78 @@ body, #footer .footer-nav a {
 }
 
 #features dd {
-	padding-left: 2.5em;
+    padding-left: 2.5em;
 }
 
 #features dt {
-	color: #757575;
-	font-weight: bold;
-	line-height: 1.6em;
-	margin: 1em 0 .3em 0;
+    color: #757575;
+    font-weight: bold;
+    line-height: 1.6em;
+    margin: 1em 0 .3em 0;
 }
 
 #features #tracking, #features #available,
 #features #history, #features #next-bills {
-	padding-left: 2.5em;
+    padding-left: 2.5em;
 }
 
 #features #tracking {
-	background: url(../images/money.png) no-repeat;
+    background: url(../images/money.png) no-repeat;
 }
 
 #features #available {
-	background: url(../images/feed.png) no-repeat;
+    background: url(../images/feed.png) no-repeat;
 }
 
 #features #history {
-	background: url(../images/calendar.png) no-repeat;
+    background: url(../images/calendar.png) no-repeat;
 }
 
 #features #next-bills {
-	background: url(../images/email_open.png) no-repeat;
+    background: url(../images/email_open.png) no-repeat;
 }
 
 /*=sidebar*/
 #home #sidebar #create-account a {
-	background: url(../images/crie-agora.gif) no-repeat;
-	height: 63px;
+    background: url(../images/crie-agora.gif) no-repeat;
+    height: 63px;
 }
 
 #home #sidebar #create-account span {
-	display: none;
+    display: none;
 }
 
 #sidebar h3 {
-	/*color: #a00;*/
+    /*color: #a00;*/
 }
 
 /*=login*/
 #home #login {
-	background: #e3f4cc url(../images/login-bg.gif) repeat-x;
-	border: 1px solid #acdfae;
-	margin: 1em 0;
-	padding: 1em;
+    background: #e3f4cc url(../images/login-bg.gif) repeat-x;
+    border: 1px solid #acdfae;
+    margin: 1em 0;
+    padding: 1em;
 }
 
 #home #login fieldset {
-	border: none;
+    border: none;
 }
 
 #home #login p {
-	margin: .5em 0;
-	text-align: right;
+    margin: .5em 0;
+    text-align: right;
 }
 
 #home #login label {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 #home #login input.text {
-	border: 1px solid #ccc;
-	font-family: verdana, sans-serif;
-	margin: .5em 0 0 1.5em;
-	padding: .4em;
-	width: 18em;
+    border: 1px solid #ccc;
+    font-family: verdana, sans-serif;
+    margin: .5em 0 0 1.5em;
+    padding: .4em;
+    width: 18em;
 }
 
 #home #login input.button {
@@ -489,50 +507,50 @@ body, #footer .footer-nav a {
 }
 
 #home #login .submit-line {
-	padding-left: 7.1em;
-	text-align: left;
+    padding-left: 7.1em;
+    text-align: left;
 }
 
 /*=userinfo*/
 #userinfo {
-	position: absolute;
-	right: 2.4em;
-	top: 2em;
+    position: absolute;
+    right: 2.4em;
+    top: 2em;
 }
 
 #userinfo dt, #userinfo dd {
-	text-align: right;
+    text-align: right;
 }
 
 #userinfo dt {
-	line-height: 0.9;
+    line-height: 0.9;
 }
 
 #userinfo dd {
-	display: inline;
+    display: inline;
 }
 
 /*=already-member*/
 .already-member, .want-to-signup {
-	position: absolute;
-	right: 0;
-	top: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 .already-member a, .want-to-signup a {
-	background: #fd0;
-	color: #000;
-	padding: .3em;
-	text-decoration: none;
+    background: #fd0;
+    color: #000;
+    padding: .3em;
+    text-decoration: none;
 }
 
 .already-member a:hover , .want-to-signup a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 /*=content*/
 .content {
-	position: relative;
+    position: relative;
     padding: 1em;
 }
 
@@ -543,20 +561,20 @@ body, #footer .footer-nav a {
 
 #account .signup input.text,
 #account .login input.text {
-	padding: .2em;
+    padding: .2em;
 }
 
 #account .signup label,
 #account .login label,
 #contact label {
-	display: block;
-	width: 13em;
+    display: block;
+    width: 13em;
 }
 
 #account .signup #user_email,
 #account .login #email,
 #contact #contact_name {
-	width: 15em;
+    width: 15em;
 }
 
 #account #email {
@@ -565,194 +583,194 @@ body, #footer .footer-nav a {
 }
 
 #account .signup label.skip {
-	display: inline;
-	width: auto;
+    display: inline;
+    width: auto;
 }
 
 #contact textarea {
-	height: 10em;
-	width: 28.5em;
+    height: 10em;
+    width: 28.5em;
 }
 
 #contact .challenge input {
-	width: 7em;
+    width: 7em;
 }
 
 /*=footer*/
 #footer {
-	background: url(../images/dotted.gif) repeat-x;
-	margin: 2.5em;
-	padding: 1em 0;
-	position: relative;
+    background: url(../images/dotted.gif) repeat-x;
+    margin: 2.5em;
+    padding: 1em 0;
+    position: relative;
 }
 
 #footer .footer-nav {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	position: absolute;
-	right: 0;
-	top: 1em;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 1em;
 }
 
 #footer .footer-nav li {
-	display: inline;
-	padding-left: .5em;
+    display: inline;
+    padding-left: .5em;
 }
 
 /*=account*/
 #account .index #main {
-	float: left;
-	width: 51em;
+    float: left;
+    width: 51em;
 }
 
 #account .index #sidebar {
-	float: right;
-	width: 19em;
+    float: right;
+    width: 19em;
 }
 
 /*=messages*/
 .notice, .error, .warning, .info {
-	font-weight: bold;
-	margin: -1em 0 1.5em 0;
-	padding: .5em .5em .5em 2.7em;
+    font-weight: bold;
+    margin: -1em 0 1.5em 0;
+    padding: .5em .5em .5em 2.7em;
 }
 
 .has-js .notice, .has-js .error, .has-js .warning, .has-js .note, .has-js .error-list {
-	/*visibility: hidden;*/
+    /*visibility: hidden;*/
 }
 
 .notice {
-	border: 1px solid #9c9;
+    border: 1px solid #9c9;
     background: #e2f9e3 url(../images/tick.png) no-repeat .5em center;
     color: #060;
 }
 
 .error {
-	border: 1px solid #c68484;
+    border: 1px solid #c68484;
     background: #fcc url(../images/cross.png) no-repeat .5em center;
     color: #c00;
 }
 
 .warning {
-	border: 1px solid #dd0;
+    border: 1px solid #dd0;
     background: #ffc url(../images/error.png) no-repeat .5em center;
     color: #000;
 }
 
 .info {
-	border: 1px solid #82c2d4;
+    border: 1px solid #82c2d4;
     background: #ebf5f8 url(../images/information.png) no-repeat .5em center;
     color: #000;
 }
 
 .error-list {
-	background: #ffc url(../images/dialog-warning.png) no-repeat 1.5em 1.5em;
-	border: 1px solid #dd0;
-	color: #333;
-	margin-bottom: 2.5em;
-	min-height: 5.5em;
-	padding: 1em 1em 1em 6em;
-	position: relative;
+    background: #ffc url(../images/dialog-warning.png) no-repeat 1.5em 1.5em;
+    border: 1px solid #dd0;
+    color: #333;
+    margin-bottom: 2.5em;
+    min-height: 5.5em;
+    padding: 1em 1em 1em 6em;
+    position: relative;
 }
 
 .error-list dt {
-	font-weight: bold;
-	padding: .2em 0;
+    font-weight: bold;
+    padding: .2em 0;
 }
 
 .error-list dd {
-	background: url(../images/bullet.gif) no-repeat 1.8em center;
-	padding: .2em 0 .2em 3em;
+    background: url(../images/bullet.gif) no-repeat 1.8em center;
+    padding: .2em 0 .2em 3em;
 }
 
 .error-list .close {
-	color: #ee3a42;
-	position: absolute;
-	right: 1em;
-	top: 1em;
+    color: #ee3a42;
+    position: absolute;
+    right: 1em;
+    top: 1em;
 }
 
 .highlight {
-	background: #ffc;
-	color: #333;
-	padding: .5em;
+    background: #ffc;
+    color: #333;
+    padding: .5em;
 }
 
 /*=overview*/
 .ad {
-	padding-bottom: 1em;
-	text-align: center;
+    padding-bottom: 1em;
+    text-align: center;
 }
 
 dl#overdue, dl#operations {
-	padding: 1em;
+    padding: 1em;
 }
 
 dl#overdue {
-	background: #fcc;
-	color: #CC0039;
+    background: #fcc;
+    color: #CC0039;
 }
 
 dl#operations {
-	background: #f5f5f5;
-	margin: 1.5em 0;
+    background: #f5f5f5;
+    margin: 1.5em 0;
 }
 
 
 dl#operations strong {
-	padding-right: .7em;
+    padding-right: .7em;
 }
 
 dl#overdue dt, dl#operations dt {
-	font-weight: bold;
-	margin-bottom: .5em;
-	padding-bottom: .5em;
+    font-weight: bold;
+    margin-bottom: .5em;
+    padding-bottom: .5em;
 }
 
 dl#overdue dt {
-	border-bottom: 1px solid #cc0039;
+    border-bottom: 1px solid #cc0039;
 }
 
 dl#operations dt {
-	border-bottom: 1px solid #888
+    border-bottom: 1px solid #888
 }
 
 dl#overdue dd, dl#operations dd {
-	padding: .2em 0 .2em 4em;
-	position: relative;
+    padding: .2em 0 .2em 4em;
+    position: relative;
 }
 
 dl#operations dd.skip {
-	padding-left: 0;
+    padding-left: 0;
 }
 
 dd.expense  {
-	background: url(../images/expense.gif) no-repeat .5em center;
+    background: url(../images/expense.gif) no-repeat .5em center;
 }
 
 dd.income {
-	background: url(../images/income.gif) no-repeat left center;
+    background: url(../images/income.gif) no-repeat left center;
 }
 
 dl .amount {
-	position: absolute;
-	right: 1em;
+    position: absolute;
+    right: 1em;
 }
 
 #overview .info {
-	margin-top: 2em;
+    margin-top: 2em;
 }
 
 /*=operations*/
 #operations .notice,
 #operations .warning,
 #operations .error {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 body#operations .content h2 {
-	margin-bottom: .3em;
+    margin-bottom: .3em;
 }
 
 .balance {
@@ -771,7 +789,7 @@ span.negative {
 
 #estimative,
 #expenses {
-	border-bottom: 1px solid #777;
+    border-bottom: 1px solid #777;
 }
 
 #operation-list {
@@ -785,7 +803,7 @@ span.negative {
 }
 
 #operation-list tbody tr.adsense {
-	background: #fff;
+    background: #fff;
 }
 
 #operation-list th,
@@ -795,7 +813,7 @@ span.negative {
 }
 
 #operation-list th.status {
-	text-align: center;
+    text-align: center;
 }
 
 #operation-list tbody td {
@@ -810,11 +828,11 @@ span.negative {
 
 #operation-list tfoot td,
 #operation-list tfoot th {
-	text-align: right;
+    text-align: right;
 }
 
 #operation-list td.title {
-	/*width: 27em;*/
+    /*width: 27em;*/
 }
 
 #operation-list .field {
@@ -831,12 +849,12 @@ span.negative {
 
 #operation-list .amount {
     /*width: 10em;*/
-	white-space: nowrap;
+    white-space: nowrap;
 }
 
 #operation-list .action {
-	white-space: nowrap;
-	width: 6em;
+    white-space: nowrap;
+    width: 6em;
 }
 
 #operation-list .description {
@@ -894,41 +912,41 @@ span.negative {
 }
 
 #operation-list tr.new td.title .title {
-	background: url(../images/new.gif) no-repeat right 0;
-	padding-right: 2.5em;
+    background: url(../images/new.gif) no-repeat right 0;
+    padding-right: 2.5em;
 }
 
 #operation-list tr.overdue td.title .title {
-	background: url(../images/overdue.gif) no-repeat right 0;
-	padding-right: 3.3em;
+    background: url(../images/overdue.gif) no-repeat right 0;
+    padding-right: 3.3em;
 }
 
 #operation-list tr.schedule td.title .title {
-	background: url(../images/schedule.gif) no-repeat right 0;
-	padding-right: 3.8em;
+    background: url(../images/schedule.gif) no-repeat right 0;
+    padding-right: 3.8em;
 }
 
 #operation-list tr.hidden {
-	display: none;
+    display: none;
 }
 
 #operation-list .no-operation {
-	padding: 4em 0;
-	text-align: center;
+    padding: 4em 0;
+    text-align: center;
 }
 
 #operation-list .no-operation:hover {
-	background: #fff;
+    background: #fff;
 }
 
 .selected-only,
 .hide-paid {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .hide-paid,
 .hide-previous-month {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 a.add {
@@ -942,7 +960,7 @@ a.add {
 }
 
 *:first-child+html a.add {
-	top: .2em;
+    top: .2em;
 }
 
 a.add:hover {
@@ -951,12 +969,12 @@ a.add:hover {
 
 a.edit {
     background: none;
-	color: #ee3a42;
+    color: #ee3a42;
     margin-left: .5em;
 }
 
 #operation-list a.edit, #operation-list a.remove {
-	float: left;
+    float: left;
 }
 
 a.remove {
@@ -980,14 +998,14 @@ a.remove:hover {
 }
 
 a.cancel {
-	color: #ee3a42;
-	padding: .5em;
+    color: #ee3a42;
+    padding: .5em;
 }
 
 a.cancel:hover {
-	background: #ee3a42;
-	color: #fff;
-	text-decoration: none;
+    background: #ee3a42;
+    color: #fff;
+    text-decoration: none;
 }
 
 a#add-operation {
@@ -1051,171 +1069,171 @@ noscript p {
 }
 
 form#action-form fieldset {
-	border: none;
-	position: relative;
+    border: none;
+    position: relative;
 }
 
 form#action-form legend {
-	display: none;
+    display: none;
 }
 
 form#action-form p {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 form#filter-form {
-	display: none;
+    display: none;
 }
 
 /*=overview*/
 #overview #main {
-	float: left;
-	width: 53em;
+    float: left;
+    width: 53em;
 }
 
 #overview #sidebar {
-	float: right;
-	width: 20em;
+    float: right;
+    width: 20em;
 }
 
 /*=page-nav*/
 .page-nav {
-	position: absolute;
-	right: 0;
-	top: .5em;
+    position: absolute;
+    right: 0;
+    top: .5em;
 }
 
 .page-nav a {
-	color: #333;
-	font-weight: bold;
-	margin-left: 1em;
-	float:left;
-	text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    margin-left: 1em;
+    float:left;
+    text-decoration: none;
 }
 
 .page-nav a:hover {
-	color: #ee3a42
+    color: #ee3a42
 }
 
 /*=account*/
 .has-js #account .index #edit {
-	display: none;
+    display: none;
 }
 
 /*=block*/
 .block {
-	color: #000;
-	background: #f3f3f3;
-	margin: .3em 0;
-	padding: 1em;
+    color: #000;
+    background: #f3f3f3;
+    margin: .3em 0;
+    padding: 1em;
 }
 
 .block strong {
-	font-weight: normal;
-	text-decoration: underline;
+    font-weight: normal;
+    text-decoration: underline;
 }
 
 ul.block {
-	list-style: none;
-	/*padding-left: 30px;*/
+    list-style: none;
+    /*padding-left: 30px;*/
 }
 
 .block li {
-	background: url(../images/bullet.gif) no-repeat .5em center;
-	margin: .3em 0;
-	padding: .3em .3em .3em 1.5em;
-	position: relative;
+    background: url(../images/bullet.gif) no-repeat .5em center;
+    margin: .3em 0;
+    padding: .3em .3em .3em 1.5em;
+    position: relative;
 }
 
 .block li:hover {
-	background: #ffc url(../images/bullet.gif) no-repeat .5em center;
+    background: #ffc url(../images/bullet.gif) no-repeat .5em center;
 }
 
 .block li span {
-	float: left;
+    float: left;
 }
 
 .block p {
-	margin: 0;
+    margin: 0;
 }
 
 .block label {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .block .edit-pencil {
-	position: absolute;
-	right: 2.5em;
+    position: absolute;
+    right: 2.5em;
 }
 
 .block .remove {
-	position: absolute;
-	right: .5em;
+    position: absolute;
+    right: .5em;
 }
 
 body#account .index #data,
 body#account .index #schedules {
-	margin-top: 3em;
+    margin-top: 3em;
 }
 
 .has-js fieldset.due li {
-	/*display: inline;*/
+    /*display: inline;*/
 }
 
 /*=tag list*/
 #available-tags {
-	margin: 0;
-	width: 70em;
+    margin: 0;
+    width: 70em;
 }
 
 #available-tags li {
-	float: left;
-	list-style: none;
-	padding: 0 .3em;
+    float: left;
+    list-style: none;
+    padding: 0 .3em;
 }
 
 #available-tags a {
-	line-height: 1.5;
-	padding: 0 .1em;
-	text-decoration: none;
-	white-space: nowrap;
+    line-height: 1.5;
+    padding: 0 .1em;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 #available-tags .selected {
-	background: #03c;
-	color: #fff;
+    background: #03c;
+    color: #fff;
 }
 
 #schedule_tag_list {
-	width: 70em;
+    width: 70em;
 }
 
 .flow dd {
-	display: inline;
-	padding-right: 1em;
+    display: inline;
+    padding-right: 1em;
 }
 
 .help-box, .money-box, .star-box, .balloon-box {
-	background: #f0f0f0;
-	border: .1em solid #c9c9c9;
-	margin-bottom: 1.5em;
-	padding: .8em;
+    background: #f0f0f0;
+    border: .1em solid #c9c9c9;
+    margin-bottom: 1.5em;
+    padding: .8em;
 }
 
 .help-box dt, .money-box dt, .star-box dt, .balloon-box dt {
-	font-weight: bold;
-	line-height: 3em;
-	padding-left: 3.5em;
+    font-weight: bold;
+    line-height: 3em;
+    padding-left: 3.5em;
 }
 
 .help-box dd, .money-box dd, .star-box dd, .balloon-box dd {
-	padding: .5em;
+    padding: .5em;
 }
 
 .balloon-box textarea {
-	margin-bottom: 1em;
-	width: 15.5em;
+    margin-bottom: 1em;
+    width: 15.5em;
 }
 
 .help-box dt { background: url(../images/question-mark.png) no-repeat; }
@@ -1224,45 +1242,46 @@ body#account .index #schedules {
 .balloon-box dt { background: url(../images/balloon-mark.png) no-repeat; }
 
 strong.negative {
-	color: #ee3a42;
+    color: #ee3a42;
 }
 
 strong.positive {
-	color: #090;
+    color: #090;
 }
 
 #overview-options {
-	list-style: none;
-	margin: 0;
+    list-style: none;
+    margin: 0;
 }
 
 #overview-options li {
-	padding: .5em 0
+    padding: .5em 0
 }
 
 #overview-options a {
-	background: #f9f9f9;
-	border: .1em solid #ccc;
-	color: #333;
-	display: block;
-	padding: 1.5em;
-	text-decoration: none;
+    background: #f9f9f9;
+    border: .1em solid #ccc;
+    color: #333;
+    display: block;
+    padding: 1.5em;
+    text-decoration: none;
 }
 
 #overview-options a:hover {
-	background: #ee3a42;
-	border: .1em solid #005;
-	color: #fff;
+    background: #ee3a42;
+    border: .1em solid #005;
+    color: #fff;
 }
 
 #overview-options strong {
-	letter-spacing: -.1em;
+    letter-spacing: -.1em;
 }
 
 /*=teaser*/
 #teaser {
-	border: 5px solid #7faa0b;
-	margin-bottom: 1em;
+    border: 5px solid #7faa0b;
+    background: url(../images/bgteaser.png) repeat-x;
+    margin-bottom: 1em;
     padding: 10px;
 /*
     float: left;
@@ -1272,95 +1291,95 @@ strong.positive {
 
 
 .adsense-bottom {
-	margin: 1em 0;
+    margin: 1em 0;
 }
 
 /*=notifications*/
 #notifications a {
-	background: url(../images/file_icon.gif) no-repeat;
-	display: block;
-	font-family: tahoma,arial,sans-serif;
-	line-height: 1.3em;
-	padding-left: 1.8em;
+    background: url(../images/file_icon.gif) no-repeat;
+    display: block;
+    font-family: tahoma,arial,sans-serif;
+    line-height: 1.3em;
+    padding-left: 1.8em;
 }
 
 #notifications dt {
-	background: #e9e9e9;
-	font-size: 1.6em;
-	font-weight: bold;
-	margin-bottom: 0.5em;
-	padding: 0.3em;
+    background: #e9e9e9;
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    padding: 0.3em;
 }
 
 #notifications dd {
-	margin-bottom: .5em;
+    margin-bottom: .5em;
 }
 
 /*=tools*/
 #tools-list {
-	list-style: none;
+    list-style: none;
 }
 
 #tools-list li {
-	float: left;
-	margin-right: 3em;
+    float: left;
+    margin-right: 3em;
 }
 
 .extension a {
-	background: url(../images/extension.png) no-repeat;
-	height: 58px;
-	outline: none;
-	width: 180px;
+    background: url(../images/extension.png) no-repeat;
+    height: 58px;
+    outline: none;
+    width: 180px;
 }
 
 /*=tagcloud*/
 #tagcloud {
-	background: #f5f5f5;
-	list-style: none;
-	margin: 1em 0;
-	padding: 1em;
+    background: #f5f5f5;
+    list-style: none;
+    margin: 1em 0;
+    padding: 1em;
 }
 
 #tagcloud li {
-	display: inline;
+    display: inline;
 }
 
 #tagcloud a {
-	padding: .2em;
-	text-decoration: none;
+    padding: .2em;
+    text-decoration: none;
 }
 
 #tagcloud a:hover {
-	background: #ee3a42;
-	color: #fff;
+    background: #ee3a42;
+    color: #fff;
 }
 
 p.all-tags {
-	margin: -.7em 0 1em 0;
-	text-align: right;
+    margin: -.7em 0 1em 0;
+    text-align: right;
 }
 
 #operations .tags #tagcloud {
-	margin-bottom: 4em;
+    margin-bottom: 4em;
 }
 
 /*=form*/
 #operations input[type="text"], #schedules input[type="text"] {
-	width: 30em;
+    width: 30em;
 }
 
 #page form input#schedule_raw_amount,
 #page form input#operation_raw_amount {
-	width: 13em;
+    width: 13em;
 }
 
 html body #page form #operation_title,
 html body #page form #schedule_title {
-	width: 22.5em;
+    width: 22.5em;
 }
 
 #schedule_description {
-	width: 36em;
+    width: 36em;
 }
 
 #schedule_mode {
@@ -1368,358 +1387,358 @@ html body #page form #schedule_title {
 }
 
 html body #page input#tag_list {
-	width: 45em;
+    width: 45em;
 }
 
 #terms #main ul {
-	margin-bottom: 1.5em;
+    margin-bottom: 1.5em;
 }
 
 /*=download*/
 #download-box {
-	position: relative;
+    position: relative;
 }
 
 #download-box p {
-	margin: 0;
-	position: absolute;
-	right: 0;
-	top: 0;
+    margin: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 #download-box p a {
-	background: url(../images/system.png) no-repeat left center;
-	color: #777;
-	padding-left: 18px;
-	text-decoration: none;
+    background: url(../images/system.png) no-repeat left center;
+    color: #777;
+    padding-left: 18px;
+    text-decoration: none;
 }
 
 #download-box a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 #download {
-	list-style: none;
-	margin: 5px 0 0 0;
-	min-height: 90px;
-	padding: 5px 5px 5px 85px;
-	position: relative;
+    list-style: none;
+    margin: 5px 0 0 0;
+    min-height: 90px;
+    padding: 5px 5px 5px 85px;
+    position: relative;
 }
 
 #download .link {
-	padding-top: 8px;
+    padding-top: 8px;
 }
 
 #download .install {
-	left: .5em;
-	position: absolute;
-	top: .5em;
+    left: .5em;
+    position: absolute;
+    top: .5em;
 }
 
 #download .install a {
-	background: url(../images/download.png) no-repeat -72px top;
-	height: 87px;
-	width: 72px;
+    background: url(../images/download.png) no-repeat -72px top;
+    height: 87px;
+    width: 72px;
 }
 
 #download .install a:hover {
-	background-position: -72px top;
+    background-position: -72px top;
 }
 
 #download dt {
-	padding-top: 5px;
+    padding-top: 5px;
 }
 
 #home #sidebar .adsense {
-	margin-top: .5em;
+    margin-top: .5em;
 }
 
 /*=news*/
 #news {
-	margin-bottom: 2em;
+    margin-bottom: 2em;
 }
 
 #home #sidebar h3 {
-	background: url(../images/dotted.gif) repeat-x bottom;
-	margin: 0;
-	padding-bottom: .2em;
+    background: url(../images/dotted.gif) repeat-x bottom;
+    margin: 0;
+    padding-bottom: .2em;
 }
 
 #news ul {
-	list-style: square;
+    list-style: square;
 }
 
 #news dt {
-	font-weight: bold;
-	margin-top: .7em;
+    font-weight: bold;
+    margin-top: .7em;
 }
 
 #news li {
-	margin-top: .5em;
+    margin-top: .5em;
 }
 
 #news dd {
-	padding-bottom: .3em;
-	padding-left: 1em;
+    padding-bottom: .3em;
+    padding-left: 1em;
 }
 
 /*=tools*/
 #tools #main p {
-	padding-right: 260px;
+    padding-right: 260px;
 }
 
 #tools #main p.image {
-	margin: 0;
-	padding: 0;
-	position: absolute;
-	right: 0;
-	top: -1.5em;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: -1.5em;
 }
 
 #tools #main {
-	position: relative;
+    position: relative;
 }
 
 #tools .install-firefox,
 #tools .install-dashboard,
 #tools .install-opera {
-	margin: -.5em 0 2em 0;
-	width: 165px;
+    margin: -.5em 0 2em 0;
+    width: 165px;
 }
 
 #tools .install-firefox a,
 #tools .install-dashboard a,
 #tools .install-opera a {
-	width: 165px;
-	height: 23px;
+    width: 165px;
+    height: 23px;
 }
 
 #tools .install-firefox a {
-	background: url(../images/install-firefox.png) no-repeat;
+    background: url(../images/install-firefox.png) no-repeat;
 }
 
 #tools .install-dashboard a {
-	background: url(../images/install-dashboard.png) no-repeat;
+    background: url(../images/install-dashboard.png) no-repeat;
 }
 
 #tools .install-opera a {
-	background: url(../images/install-opera.png) no-repeat;
+    background: url(../images/install-opera.png) no-repeat;
 }
 
 #tools #install-widgets {
-	list-style: none;
-	margin: 0;
-	padding-bottom: 6em;
+    list-style: none;
+    margin: 0;
+    padding-bottom: 6em;
 }
 
 #tools #install-widgets li {
-	float: left;
+    float: left;
 }
 
 #tools .install-opera {
-	margin-left: 1.5em;
+    margin-left: 1.5em;
 }
 
 /*=adsense*/
 .adsense-top {
-	margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 /*=calendar*/
 .date-picker-block,
 .month-picker-block {
-	position: relative;
+    position: relative;
 }
 
 .month-picker-block {
-	float: left;
-	padding-left: 1em;
+    float: left;
+    padding-left: 1em;
 }
 
 a.date-picker,
 a.month-picker {
-	width: 16px;
-	height: 16px;
-	border: none;
-	color: #fff;
-	padding: 0;
-	margin: 0;
-	float: left;
-	overflow: hidden;
-	cursor: pointer;
-	background: url(../images/calendar.png) no-repeat;
-	position: absolute;
-	right: .4em;
-	top: 0;
+    width: 16px;
+    height: 16px;
+    border: none;
+    color: #fff;
+    padding: 0;
+    margin: 0;
+    float: left;
+    overflow: hidden;
+    cursor: pointer;
+    background: url(../images/calendar.png) no-repeat;
+    position: absolute;
+    right: .4em;
+    top: 0;
 }
 
 a.month-picker {
-	position: static;
+    position: static;
 }
 
 a.date-picker span {
-	margin: 0 0 0 -2000px;
+    margin: 0 0 0 -2000px;
 }
 
 div.month-picker table a {
-	display: block;
-	width: 25px;
-	height: 25px;
-	line-height: 25px;
+    display: block;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
 }
 
 div.month-picker-block a {
-	color: #03c;
-	text-align: center;
+    color: #03c;
+    text-align: center;
 }
 
 div.date-picker-holder,
 div.date-picker-holder * {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 div.date-picker-holder {
-	position: relative;
-	display: inline;
-	padding-right: 2em;
+    position: relative;
+    display: inline;
+    padding-right: 2em;
 }
 div.date-picker-holder input {
-	/*float: left;*/
+    /*float: left;*/
 }
 
 div.popup-calendar,
 div.month-picker {
-	display: none;
-	position: absolute;
-	z-index: 2;
-	top: 0;
-	right: -1em;
-	padding: 5px;
-	border: 1px solid #aaa;
-	background: #fff;
-	color: #000;
-	overflow:hidden;
-	width: 150px;
+    display: none;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: -1em;
+    padding: 5px;
+    border: 1px solid #aaa;
+    background: #fff;
+    color: #000;
+    overflow:hidden;
+    width: 150px;
 }
 html>body div.popup-calendar {
-	left: 100px; /* value for decent browsers */
+    left: 100px; /* value for decent browsers */
 }
 
 div.month-picker {
-	width: 165px;
-	display: block;
-	top: 17px;
-	left: -150px;
+    width: 165px;
+    display: block;
+    top: 17px;
+    left: -150px;
 }
 
 div.month-picker-block * {
-	font-size: 11px;
-	font-weight: normal;
+    font-size: 11px;
+    font-weight: normal;
 }
 
 div.link-close {
-	float: right;
+    float: right;
 }
 div.link-prev {
-	float: left;
+    float: left;
 }
 div.popup-calendar h3,
 div.month-picker h3 {
-	font-size: 11px;
-	margin: 2px 0 5px 3px;
+    font-size: 11px;
+    margin: 2px 0 5px 3px;
 }
 
 div.month-picker h3 {
-	font-size: 20px;
+    font-size: 20px;
 }
 
 div.link-next {
-	float: right;
+    float: right;
 }
 div.popup-calendar div a {
-	padding: 1px 2px;
-	font-size: 11px;
+    padding: 1px 2px;
+    font-size: 11px;
 }
 div.popup-calendar div a:hover {
-	color: #ee3a42;
+    color: #ee3a42;
 }
 div.popup-calendar table {
-	margin: 0;
+    margin: 0;
 }
 * html div.popup-calendar table {
-	display: inline;
+    display: inline;
 }
 div.popup-calendar table th,
 div.popup-calendar table td {
-	background: #eee;
-	width: 15px;
-	height: 15px;
-	text-align: center;
+    background: #eee;
+    width: 15px;
+    height: 15px;
+    text-align: center;
 }
 div.popup-calendar table td.inactive {
-	color: #aaa;
+    color: #aaa;
 }
 div.popup-calendar table th.weekend,
 div.popup-calendar table td.weekend {
-	background: #f6f6f6;
+    background: #f6f6f6;
 }
 
 div.popup-calendar th {
-	font-size: 11px;
+    font-size: 11px;
 }
 
 div.popup-calendar table td a {
-	display: block;
-	font-size: 11px;
-	/*border: 1px solid #eee;*/
-	padding: 2px;
-	width: 15px;
-	height: 15px;
-	text-decoration: none;
+    display: block;
+    font-size: 11px;
+    /*border: 1px solid #eee;*/
+    padding: 2px;
+    width: 15px;
+    height: 15px;
+    text-decoration: none;
 }
 div.popup-calendar table td.today a {
-	/*border-color: #aaa;*/
+    /*border-color: #aaa;*/
 }
 div.popup-calendar table td a.selected,
 div.popup-calendar table td a:hover,
 div.month-picker table a:hover {
-	background: #ee3a42;
-	color: #fff;
+    background: #ee3a42;
+    color: #fff;
 }
 
 #sidebar h3 {
-	color: #222;
-	font-size: 1.3em;
-	text-transform: none;
+    color: #222;
+    font-size: 1.3em;
+    text-transform: none;
 }
 
 a img {
-	border: 1px solid #ddd;
-	padding: .5em;
+    border: 1px solid #ddd;
+    padding: .5em;
 }
 
 a:hover img {
-	border: 1px solid #888;
+    border: 1px solid #888;
 }
 
 /*=form-containers*/
 #form-containers {
-	position: relative;
+    position: relative;
 }
 
 #period-form {
-	position: absolute;
-	right: 0;
-	top: 1em;
+    position: absolute;
+    right: 0;
+    top: 1em;
 }
 
 #form-containers form,
 #form-containers fieldset,
 #form-containers p {
-	display: inline;
+    display: inline;
 }
 
 /*=donation*/
 #donation-form {
-	margin: 1em 0pt 3em;
+    margin: 1em 0pt 3em;
 }

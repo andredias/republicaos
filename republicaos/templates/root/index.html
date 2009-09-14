@@ -5,7 +5,7 @@
 <xi:include href="../layout.html" />
 
 <head>
-    <title>republicaos.com.br &rsaquo;    Nunca foi tão fácil controlar seus gastos</title>
+    <title> &rsaquo; Organize as contas da sua república!</title>
 </head>
 <body id="home">
 
@@ -13,13 +13,13 @@
         <div class="coluna-esquerda">
             <h1>Organize as contas da sua república!</h1>
             <h2>Saiba quem gastou o que e quanto deu pra cada um no fim do mês.</h2>
-
-            <a href="${h.url_for(controller='pessoa', action='new')}"><img class="button" width="300" height="60" alt="Cadastre-se Já!" src="/images/btn_signup_large.png"/></a>
         </div>
-        <div class="coluna-direita">
-        <p>teste</p> 
+        <div class="coluna-direita" style="text-align:center">
+            <a href="${h.url_for(controller='root', action='tour')}" style="font-size:38px">Veja como funciona</a>
+            <br /><br /><br /><br />
+            <a href="${h.url_for(controller='pessoa', action='new')}" style="font-size:38px">Crie uma conta</a>
         </div>
-        <div style="clear:both">
+        <div style="clear:both;">
         </div>
 
     </div>
@@ -29,38 +29,21 @@
             <h2>Por que usar o Republicaos?</h2>
             <dl>
                 <dt>Resolve o problema da divisão das contas entre os moradores</dt>
-                <dd>Basta registrar as despesas e o Republicaos já produz todo o rateio.</dd>
+                <dd>Basta registrar as despesas e o Republicaos já produz todo o rateio. <a href="${h.url_for(controller='root', action='tour')}">Veja como funciona</a>.</dd>
 
                 <dt>Todos participam</dt>
                 <dd>Ao invés de apenas uma única pessoa controlar tudo, todos os moradores da república acessam e contribuem.</dd>
 
                 <dt>É grátis!</dt>
-                <dd>Experimente.</dd>
+                <dd>Experimente. <a href="${h.url_for(controller='pessoa', action='new')}">Crie uma conta</a></dd>
             </dl>
         </div>
         <div class="coluna-direita">
-        teste
         </div>
         <div style="clear:both">
         </div>
     </div>
 
-    <div id="sidebar" py:if="user">
-        <py:if test="user.morador_em_republicas">
-            <h3>República(s) de que participa:</h3>
-            <ul>
-                <li py:for="rep in user.morador_em_republicas"><a href="${h.url_for(controller='republica', action='show', republica_id=rep.id)}">${rep.nome}</a></li>
-            </ul>
-        </py:if>
-
-        <py:if test="c.convites">
-            <h3>Recados</h3>
-            <ul>
-                <li py:for="convite in c.convites">Você foi convidado a fazer parte da república <strong>${convite.republica.nome}</strong>. <a href="{h.url_for(controller='convite', action='aceitar', id=convite.id)}">Clique aqui para aceitar o convite</a></li>
-            </ul>
-        </py:if>
-        <a href="${h.url_for(controller='republica', action='new')}">Criar uma nova república</a>
-    </div>
 
 </body>
 </html>
