@@ -44,71 +44,29 @@ from republicaos.lib.utils import get_flash_messages
 from republicaos.lib.auth import get_user, get_republica
 user = get_user()
 republica = get_republica()
+flash_messages = get_flash_messages()
 ?>
 
 <body py:match="body" py:attrs="select('@*')">
     <div class="container">
-        <div class="header">
+        <div py:match="div[@class='header']" py:attrs="select('@*')">
             <h1><a href="/" title="Republicaos > Página Inicial">Republicaos</a></h1>
-            <form id="login-form" name="login" method="post" action="/start" py:if="not user">
-                <fieldset>
-                <legend>Acessar sua conta</legend>
-                <div class="input">
-                    <label for="Email">Nome do usuário (E-mail):</label><br />
-                    <input id="Email" class="text" type="text" tabindex="1" name="Email" size="20"/>
-                </div>
-                <div class="input-right">
-                    <label for="Passwd">
-                        Senha: (<a title="Esqueceu a sua senha?" href="http://www.blogger.com/forgot.g">?</a>)
-                    </label><br />
-                    <input id="Passwd" class="text" type="password" name="Passwd" tabindex="2" size="10"/>
-                </div>
-                <br />
-                <div class="input">
-                    <input id="PersistentCookie" type="checkbox" value="yes" tabindex="3" name="PersistentCookie"/>
-                    <label for="PersistentCookie">Lembrar meus dados</label>
-                    (
-                    <a title="O que é “lembrar meus dados”?" target="_top" href="http://help.blogger.com/bin/answer.py?answer=42054">?</a>
-                    )
-                </div>
-                <div class="input-right">
-                    <input type="submit" value="Acessar" />
-                </div>
-
-                <div style="clear:both">
-                </div>
-                </fieldset>
-            </form>
-            <ul id="nav" py:if="user">
-                <li id="skip"><a href="#content">Ir direto ao conteúdo</a></li>
-                <li class="blog"><span><a href="http://republicaos.com.br/blog/">Blog</a></span></li>
-                <li class="tools"><span><a href="/tools">Ferramentas</a></span></li>
-                <li class="login"><a href="/login">Entre</a></li>
-                <li class="signup"><a href="/pessoa/new">Cadastre-se</a></li>
-            </ul>
-            <dl id="userinfo" py:if="user">
-                <dt>Olá, <strong>${user.nome}</strong>.</dt>
-
-                <dd><a href="${h.url_for(controller='pessoa', action='edit', id=user.id)}" class="data">Preferências</a></dd>
-                <dd><a href="${h.url_for(controller='root', action='logout')}" class="exit">Sair</a></dd>
-            </dl>
-
+            ${select('*[local-name()]')}
         </div>
 
-        <hr />
-
-        <div class="content">
-            <div py:with="flash_messages = get_flash_messages()">
+        <div py:match="div[@class='content']" py:attrs="select('@*')">
+            <div py:if="flash_messages">
                 <dl py:for="css_class, messages in flash_messages.items()" id="${css_class}" class="${css_class}" >
                     <dd py:for="message in messages">${message}</dd>
                     <a onclick="Republicaos.utils.close('${css_class}');" class="close" href="javascript:;">Fechar</a>
                 </dl>
             </div>
-            
-            ${select('*|text()')}
+            ${select('*[local-name()]')}
         </div>
+        
 
-        <hr />
+        ${select('*|text()')}
+
 
         <div id="footer">
             <span>&copy; <a href="http://www.pronus.eng.br/">Pronus Engenharia de Software</a> | Todos os direitos reservados. All rights reserved.</span>
