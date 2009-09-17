@@ -6,7 +6,7 @@
 
 <head py:match="head" py:attrs="select('@*')">
     <title py:with="title = list(select('title/text()'))">
-        Republicaos: <py:if test="title">${title}</py:if>
+        Republicaos &gt; <py:if test="title">${title}</py:if>
     </title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="Pronus Engenharia de Software" />
@@ -49,9 +49,18 @@ flash_messages = get_flash_messages()
 
 <body py:match="body" py:attrs="select('@*')">
     <div class="container">
-        <div py:match="div[@class='header']" py:attrs="select('@*')">
+        <div py:match="div[@class='header']" py:attrs="select('@*')" class="header">
             <h1><a href="/" title="Republicaos > Página Inicial">Republicaos</a></h1>
             ${select('*[local-name()]')}
+            <div class="login-info" py:if="user">
+                <strong>${user}</strong>
+                |
+                <a href="${h.url_for(controller='pessoa', action='painel', id=user.id)}">painel de controle</a>
+                |
+                <a href="${h.url_for(controller='root', action='ajuda', id=user.id)}">ajuda</a>
+                |
+                <a href="${h.url_for(controller='root', action='logout')}">Sair</a>
+            </div>
         </div>
 
         <div py:match="div[@class='content']" py:attrs="select('@*')">
@@ -64,9 +73,14 @@ flash_messages = get_flash_messages()
             ${select('*[local-name()]')}
         </div>
         
+        <py:if test="c.errors">
+            <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+            ${select('.')}
+            <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
+            </div>
+        </py:if>
 
         ${select('*|text()')}
-
 
         <div id="footer">
             <span>&copy; <a href="http://www.pronus.eng.br/">Pronus Engenharia de Software</a> | Todos os direitos reservados. All rights reserved.</span>
@@ -76,6 +90,10 @@ flash_messages = get_flash_messages()
                 <li><a href="/termos">Termos de Uso</a></li>
             </ul>
         </div>
+    </div>
+    <div class="powered_by">
+        <a href="http://www.python.org"><img src="/images/python-powered-02.png" /></a>
+        <a href="http://pylonshq.com/"><img src="/images/pylons-powered-02.png" /></a>
     </div>
 </body>
 

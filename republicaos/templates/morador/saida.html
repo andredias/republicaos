@@ -17,18 +17,12 @@ data_inicial, data_final = republica.fechamento_atual.intervalo
 ?>
 
 <body id="account">
+<div class="header">
+</div>
+<div class="content">
     <h2>Registrar desligamento da ${republica.nome}</h2>
 
     <p>Preencha o campo abaixo com a data de desligamento da república. Essa data deve estar entre <strong py:content="format_date(data_inicial)">99/99/9999</strong> e <strong py:content="format_date(data_final)">99/99/9999</strong>.</p>
-
-    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
-    <py:if test="c.errors">
-        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
-        ${select('.')}
-        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
-        </div>
-    </py:if>
-
 
     <form action="${c.action}" method="post" class="signup">
         <p><label>E-mail</label>
@@ -43,6 +37,6 @@ data_inicial, data_final = republica.fechamento_atual.intervalo
 
         <p><input name="commit" type="submit" value="Enviar" /></p>
     </form>
-
+</div>
 </body>
 </html>

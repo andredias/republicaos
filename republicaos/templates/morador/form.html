@@ -5,26 +5,21 @@
 
 <xi:include href="../layout.html" />
 
+<?python
+from datetime import timedelta
+?>
+
 <head>
     <title>${c.title}</title>
 </head>
 
-<body id="account">
+<body>
+<div class="header">
+</div>
+<div class="content">
     <h2>${c.title}</h2>
 
     <p py:if="c.descricao">${c.descricao}</p>
-
-    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
-    <py:if test="c.errors">
-        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
-        ${select('.')}
-        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
-        </div>
-    </py:if>
-
-<?python
-from datetime import timedelta
-?>
 
     <form action="${c.action}" method="post" class="signup">
         <p><label>E-mail</label>
@@ -39,7 +34,7 @@ from datetime import timedelta
 
         <p><input name="commit" type="submit" value="${c.submit}" /></p>
     </form>
-
+</div>
 
 </body>
 </html>

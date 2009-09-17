@@ -20,16 +20,10 @@ moradores  = republica.get_moradores()
 
 
 <body>
-<h1>Cadastrar Despesa</h1>
-
-    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
-    <py:if test="c.errors">
-        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
-        ${select('.')}
-        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
-        </div>
-    </py:if>
-    
+<div class="header">
+</div>
+<div class="content">
+    <h1>Cadastrar Despesa</h1>
     <form action="${c.action}" method="post">
         <p>
             <label for="pessoa_id">Responsável</label><br />
@@ -74,6 +68,6 @@ moradores  = republica.get_moradores()
         </p>
     </form>
 
-
+</div>
 </body>
 </html>

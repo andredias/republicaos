@@ -10,6 +10,9 @@
 </head>
 
 <body>
+<div class="header">
+</div>
+<div class="content">
     <h1>Tipos de Despesas Cadastrados</h1>
     <ul>
         <li py:for="tp in c.tipos_despesa">
@@ -19,6 +22,7 @@
     </ul>
     <p><a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}">
     Criar novo tipo de despesa</a></p>
+</div>
 </body>
 
 </html>

@@ -259,89 +259,12 @@ body, #footer .footer-nav a {
     margin: 0.4em 0px 0 0;
 }
 
-
-/*=nav*/
-#nav {
-    /*background: #69a5e0 url(../images/nav-bg.gif) no-repeat .9em center;*/
-    background: #9dd20c url(../images/nav-bg.gif) no-repeat .9em center;
-    height: 2.6em;
-    list-style: none;
-    margin: 1em 0;
-    padding: .4em .4em 0 0;
-    position: relative;
+.header .login-info {
+    position: absolute;
+    bottom: 0;
+    right: 1.5em;
 }
 
-#nav li {
-    float: right;
-    margin-left: .5em;
-}
-
-#nav a {
-    height: 22px;
-}
-
-#nav .overview a {
-    background: url(../images/nav.gif) no-repeat;
-    width: 97px;
-}
-
-#overview #nav .overview a,
-#nav .overview a:hover {
-    background-position: 0 -22px;
-}
-
-#nav .operations a {
-    background: url(../images/nav.gif) no-repeat -97px 0;
-    width: 105px;
-}
-
-#operations #nav .operations a,
-#nav .operations a:hover {
-    background-position: -97px -22px;
-}
-
-#nav .signup a {
-    background: url(../images/nav.gif) no-repeat -202px 0;
-    width: 99px;
-}
-
-#account .signup #nav .signup a,
-#nav .signup a:hover {
-    background-position: -202px -22px;
-}
-
-#nav .login a {
-    background: url(../images/nav.gif) no-repeat -301px 0;
-    width: 55px;
-}
-
-#account .login #nav .login a,
-#nav .login a:hover {
-    background-position: -301px -22px;
-}
-
-#nav .tools a {
-    background: url(../images/nav.gif) no-repeat -356px 0;
-    width: 105px;
-}
-
-#tools .tools #nav .tools a,
-#nav .tools a:hover {
-    background-position: -356px -22px;
-}
-
-#nav .blog a {
-    background: url(../images/nav.gif) no-repeat -460px 0;
-    width: 50px;
-}
-
-#nav .blog a:hover {
-    background-position: -460px -22px;
-}
-
-#nav #skip {
-    display: none;
-}
 
 /*=home*/
 #home #sidebar h2 {
@@ -384,6 +307,44 @@ body, #footer .footer-nav a {
     float: right;
     width: 45%;
     margin-left: 5%;
+}
+
+#home .content {
+    position: relative;
+    padding: 1em;
+}
+
+.content {
+    position: relative;
+    padding: 3em;
+}
+
+.content h1 {
+    margin-bottom: 1em;
+}
+
+.content a {
+    font-size: 1.2em;
+}
+
+.painel .content .perfil {
+    float: left;
+    width: 47%;
+}
+
+.painel .content .perfil .foto {
+    float: left;
+    width: 120px;
+}
+
+.painel .content .perfil .dados-perfil {
+    float: left;
+}
+
+
+.painel .content .republicas {
+    float: right;
+    width: 47%
 }
 
 #home #sidebar {
@@ -548,11 +509,6 @@ body, #footer .footer-nav a {
     text-decoration: underline;
 }
 
-/*=content*/
-.content {
-    position: relative;
-    padding: 1em;
-}
 
 /*=signup*/
 #account .signup  form p {
@@ -599,7 +555,7 @@ body, #footer .footer-nav a {
 /*=footer*/
 #footer {
     background: url(../images/dotted.gif) repeat-x;
-    margin: 2.5em;
+    margin: 0 2.5em;
     padding: 1em 0;
     position: relative;
 }

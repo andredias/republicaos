@@ -4,22 +4,17 @@
       xmlns:py="http://genshi.edgewall.org/">
 <xi:include href="../layout.html" />
 <head>
-    <title>republicaos.com.br &rsaquo;    Acesse sua conta</title>
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-
+    <title>Acesse sua conta</title>
 </head>
-<body id="account">
 
-<div id="main">
+<body id="account">
+<div class="header">
+</div>
+
+<div class="content">
     <p><span class="want-to-signup">Não é cadastrado? <a href="${h.url_for(controller='pessoa', action='new')}">Crie sua conta agora!</a></span></p>
     <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
-    <py:if test="c.errors">
-        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
-        ${select('.')}
-        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
-        </div>
-    </py:if>
+
     <xi:include href="form_login.html" />
 </div>
 

@@ -42,7 +42,7 @@ class RootController(BaseController):
                 redirect_to(destino)
             else:
                 flash('(warning) O e-mail e/ou a senha fornecidos não conferem')
-        return render('root/login.html')
+        return render('root/login.html', filler_data=request.params)
 
 
     def logout(self):

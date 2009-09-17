@@ -174,3 +174,8 @@ class PessoaController(BaseController):
                 flash('(error) Este endereço de e-mail não está cadastrado no Republicaos!')
         
         return render('pessoa/esqueceu_senha.html')
+    
+    @owner_required
+    def painel(self, id):
+        return render('pessoa/painel.html')
+        

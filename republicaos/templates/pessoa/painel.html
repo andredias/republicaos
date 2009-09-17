@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+<xi:include href="../layout.html" />
+<?python
+title = 'Painel de Controle'
+republicas = user.morador_em_republicas
+?>
+<head>
+    <title>${title}</title>
+</head>
+
+<body class="painel">
+    <div class="header">
+    </div>
+
+    <div class="content">
+        <h1>${title}</h1>
+        <div class="perfil">
+            <h2>Perfil</h2>
+            <div class="foto">
+                <img src="/images/sorriso.png" />
+            </div>
+            <div class="dados-perfil">
+                <p>Nome: <strong>${user.nome}</strong></p>
+                <p>e-mail: <strong>${user.email}</strong></p>
+            </div>
+            <div style="clear: both">
+                <a href="${h.url_for(controller='pessoa', action='edit', id=user.id)}">Editar perfil</a><br />
+            </div>
+        </div>
+        
+        <div class="republicas">
+            <h2>Repúblicas de Que Participa</h2>
+            <ul py:if="republicas">
+                <li py:for="rep in republicas"><a href="${h.url_for(controller='republica', action='show', republica_id=rep.id)}">${rep.nome}</a></li>
+            </ul>
+            <div py:if="not republicas">
+                <p>Você não participa de nenhuma república no momento.</p>
+                <a href="">Criar república</a>
+            </div>
+        </div>
+        
+        <div style="clear: both">
+        </div>
+    </div>
+
+</body>
+</html>

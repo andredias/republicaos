@@ -57,7 +57,7 @@ class Pessoa(Entity):
     senha = property(_get_senha, _set_senha)
 
     def __repr__(self):
-        return "Pessoa <nome:'%s', data_cadastro: %r>" % (self.nome, self.data_cadastro)
+        return "%s <%s>" % (self.nome, self.email)
 
 
 
