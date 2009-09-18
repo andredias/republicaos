@@ -8,39 +8,39 @@
     <title> &rsaquo; Organize as contas da sua república!</title>
 </head>
 <body id="home">
-        <div class="header">
-            <form id="login-form" name="login" method="post" action="${h.url_for(controller='root', action='login')}" py:if="not user">
-                <fieldset>
-                <legend>Acessar sua conta</legend>
-                <div class="input">
-                    <label for="Email">Nome do usuário (E-mail):</label><br />
-                    <input id="Email" class="text" type="text" tabindex="1" name="email" size="20"/>
-                </div>
-                <div class="input-right">
-                    <label for="Passwd">
-                        Senha: (<a title="Esqueceu a sua senha?" href="/pessoa/esqueceu_senha">?</a>)
-                    </label><br />
-                    <input id="password" class="text" type="password" name="senha" tabindex="2" size="10"/>
-                </div>
-                <br />
-                <div class="input">
-                    <input id="PersistentCookie" type="checkbox" value="yes" tabindex="3" name="PersistentCookie"/>
-                    <label for="PersistentCookie">Lembrar meus dados</label>
-                    (
-                    <a title="O que é “lembrar meus dados”?" target="_top" href="http://help.blogger.com/bin/answer.py?answer=42054">?</a>
-                    )
-                </div>
-                <div class="input-right">
-                    <input type="submit" value="Acessar" />
-                </div>
+    <header>
+        <form id="login-form" name="login" method="post" action="${h.url_for(controller='root', action='login')}" py:if="not user">
+            <fieldset>
+            <legend>Acessar sua conta</legend>
+            <div class="input">
+                <label for="Email">Nome do usuário (E-mail):</label><br />
+                <input id="Email" class="text" type="text" tabindex="1" name="email" size="20"/>
+            </div>
+            <div class="input-right">
+                <label for="Passwd">
+                    Senha: (<a title="Esqueceu a sua senha?" href="/pessoa/esqueceu_senha">?</a>)
+                </label><br />
+                <input id="password" class="text" type="password" name="senha" tabindex="2" size="10"/>
+            </div>
+            <br />
+            <div class="input">
+                <input id="PersistentCookie" type="checkbox" value="yes" tabindex="3" name="PersistentCookie"/>
+                <label for="PersistentCookie">Lembrar meus dados</label>
+                (
+                <a title="O que é “lembrar meus dados”?" target="_top" href="http://help.blogger.com/bin/answer.py?answer=42054">?</a>
+                )
+            </div>
+            <div class="input-right">
+                <input type="submit" value="Acessar" />
+            </div>
 
-                <div style="clear:both">
-                </div>
-                </fieldset>
-            </form>
-        </div>
+            <div style="clear:both">
+            </div>
+            </fieldset>
+        </form>
+    </header>
 
-        <div class="content">
+    <section>
             <div id="teaser">
                 <div class="coluna-esquerda">
                     <h1>Organize as contas da sua república!</h1>
@@ -75,7 +75,7 @@
                 <div style="clear:both">
                 </div>
             </div>
-        </div>
+    </section>
 
 </body>
 </html>
