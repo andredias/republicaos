@@ -17,10 +17,35 @@ saldo_neg = {'class' : 'number saldo_neg'}
 ?>
 <head>
     <title>${c.title}</title>
+    <script type="text/javascript" src="${h.url_for('/js/jquery.tablesorter.min.js')}"></script> 
     <script type="text/javascript">
+        $.tablesorter.addParser({
+            id: "numero",
+            is: function(s,table) {
+                var c = table.config;
+                s = s.replace(c.milhar, '');
+                s = s.replace(c.decimal, '.');
+                return !isNaN(parseFloat(s));
+            },
+            format: function(s) {
+                // deveria usar table.config, mas não consigo acessar dessa função
+                s = s.replace('.', '');
+                s = s.replace(',', '.');
+                return $.tablesorter.formatFloat(s);
+            },
+            type: "numeric"
+        });
+
         $(document).ready(function(){
+            // veja: http://tablesorter.com/docs/
+            $(".tablesorter").tablesorter({
+                dateFormat:'uk',
+                milhar:'.',
+                decimal:',',
+                sortList: [[0,0], [1,0]],
+                widgets: ['zebra']
+            });
             $(".rateio tr:even").addClass("zebra");
-            $(".acerto th:last").css("border-right: none");
         });
     </script>
 </head>
@@ -40,7 +65,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
     <p py:with="data_inicial, data_final = c.fechamento.intervalo">Período Contábil: <span py:replace="format_date(data_inicial)">01/01/2000</span> a <span py:replace="format_date(data_final)">01/02/2000</span></p>
     <article>
         <h3>Resumo das Despesas</h3>
-        <table class="rateio">
+        <table class="rateio tablesorter">
             <thead>
                 <tr>
                     <th>Tipo da Despesa</th>
@@ -85,7 +110,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
 
     <article>
         <h3>Rateio das Despesas</h3>
-        <table class="rateio">
+        <table class="rateio tablesorter">
             <thead>
                 <tr>
                     <th>Morador</th>
@@ -121,7 +146,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
 
     <article>
         <h3>Acerto de Contas entre Moradores</h3>
-        <table class="rateio acerto">
+        <table class="rateio acerto tablesorter">
             <thead>
                 <tr>
                     <th><em>pagar para -></em></th>
@@ -153,7 +178,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
     <article>
         <h3>Lista de Despesas do Período</h3>
         <p py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='new', republica_id=republica.id)}">Cadastrar nova despesa</a></p>
-        <table class="rateio">
+        <table class="rateio tablesorter">
             <thead>
                 <tr>
                     <th>Data</th>
@@ -181,6 +206,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
             </tbody>
         </table>
     </article>
+
 </section>
 
 </body>
