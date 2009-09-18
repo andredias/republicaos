@@ -12,148 +12,173 @@ from datetime     import date
 
 tipos_despesa     = sorted(c.fechamento.total_tipo_despesa.keys())
 num_participantes = len(c.fechamento.participantes) if len(c.fechamento.participantes) else 1
+saldo_pos = {'class' : 'number saldo_pos'}
+saldo_neg = {'class' : 'number saldo_neg'}
 ?>
 <head>
     <title>${c.title}</title>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".rateio tr:even").addClass("zebra");
+            $(".acerto th:last").css("border-right: none");
+        });
+    </script>
 </head>
 
 <body>
-<div class="header">
-</div>
-<div class="content">
-<h1>${c.title}</h1>
+<header>
+</header>
+<section>
+    <h1>${c.title}</h1>
 
-<form action="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" method="post">
-    <h2>Fechamento de 
-    <select name="data_fechamento" onchange="javascript:this.form.submit()" >
-        <option py:for="f in republica.fechamentos" py:content="format_date(f.data)"  py:attrs="dict(selected='selected') if f == c.fechamento else dict()" >dd/mm/yyyy</option>
-    </select>
-    </h2>
-</form>
+    <form action="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" method="post">
+        <h2>Fechamento de 
+        <select name="data_fechamento" onchange="javascript:this.form.submit()" >
+            <option py:for="f in republica.fechamentos" py:content="format_date(f.data)"  py:attrs="dict(selected='selected') if f == c.fechamento else dict()" >dd/mm/yyyy</option>
+        </select>
+        </h2>
+    </form>
 
-<p py:with="data_inicial, data_final = c.fechamento.intervalo">Período Contábil: <span py:replace="format_date(data_inicial)">01/01/2000</span> a <span py:replace="format_date(data_final)">01/02/2000</span></p>
+    <p py:with="data_inicial, data_final = c.fechamento.intervalo">Período Contábil: <span py:replace="format_date(data_inicial)">01/01/2000</span> a <span py:replace="format_date(data_final)">01/02/2000</span></p>
+    <article>
+        <h2>Resumo das Despesas</h2>
+        <table class="rateio">
+            <thead>
+                <tr>
+                    <th>Tipo da Despesa</th>
+                    <th>Total ($)</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th py:content="pretty_decimal(c.fechamento.total_despesas)" class="number">999,99</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr py:for="tipo in tipos_despesa">
+                    <td py:content="tipo">Tipo da despesa</td>
+                    <td py:content="pretty_decimal(c.fechamento.total_tipo_despesa[tipo])" class="number">99,99</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- !
+        <br />
+        
+        <table class="rateio">
+            <thead>
+                <tr>
+                    <th>Total Despesas<br />($)</th>
+                    <th>Nº Moradores</th>
+                    <th>Média<br />($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td py:content="pretty_decimal(c.fechamento.total_despesas)" class="number">99,99</td>
+                    <td py:content="len(c.fechamento.participantes)" class="number">9</td>
+                    <td py:content="pretty_decimal(c.fechamento.total_despesas/num_participantes)" class="number">999,99</td>
+                </tr>
+            </tbody>
+        </table>
+        -->
+    </article>
 
-<h2>Resumo das Despesas</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Tipo da Despesa</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tfoot>
-        <tr>
-            <th>Total</th>
-            <th py:content="pretty_decimal(c.fechamento.total_despesas)">999,99</th>
-        </tr>
-        <tr>
-            <th>Nº Moradores</th>
-            <th py:content="len(c.fechamento.participantes)">9</th>
-        </tr>
-        <tr>
-            <th>Média</th>
-            <th py:content="pretty_decimal(c.fechamento.total_despesas/num_participantes)">999,99</th>
-        </tr>
-    </tfoot>
-    <tbody>
-        <tr py:for="tipo in tipos_despesa">
-            <td py:content="tipo">Tipo da despesa</td>
-            <td py:content="pretty_decimal(c.fechamento.total_tipo_despesa[tipo])">99,99</td>
-        </tr>
-    </tbody>
-</table>
+    <article>
+        <h2>Rateio das Despesas</h2>
+        <table class="rateio">
+            <thead>
+                <tr>
+                    <th>Morador</th>
+                    <th>Qtd Dias<br />Morados</th>
+                    <th>Quota (%)</th>
+                    <th>Quota ($)</th>
+                    <th>Despesas ($)</th>
+                    <th>Saldo ($)</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Totais</th>
+                    <th py:content="c.fechamento.total_dias_morados"></th>
+                    <th class="number" py:content="pretty_decimal(sum(c.fechamento.porcentagem[participante] for participante in c.fechamento.participantes))">99</th>
+                    <th class="number" py:content="pretty_decimal(sum(c.fechamento.quota[participante] for participante in c.fechamento.participantes))">99,99</th>
+                    <th class="number" py:content="pretty_decimal(c.fechamento.total_despesas)">999,99</th>
+                    <th class="number" py:content="pretty_decimal(sum(c.fechamento.saldo_final[participante] for participante in c.fechamento.participantes))">99,99</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr py:for="participante in c.fechamento.participantes">
+                    <td py:content="participante.nome">Fulano de tal</td>
+                    <td py:content="c.fechamento.qtd_dias_morados[participante]">30</td>
+                    <td class="number" py:content="pretty_decimal(c.fechamento.porcentagem[participante])">30</td>
+                    <td class="number" py:content="pretty_decimal(c.fechamento.quota[participante])">99,99</td>
+                    <td class="number" py:content="pretty_decimal(c.fechamento.despesas_por_pessoa[participante])">99,99</td>
+                    <td py:content="pretty_decimal(c.fechamento.saldo_final[participante])" py:attrs="saldo_pos if c.fechamento.saldo_final[participante] >= 0 else saldo_neg">999,99</td>
+                </tr>
+            </tbody>
+        </table>
+    </article>
 
-<h2>Rateio das Despesas</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Morador</th>
-            <th>Qtd Dias<br />Morados</th>
-            <th>Participação<br />nas Despesas</th>
-            <th>Quota</th>
-            <th>Gastos</th>
-            <th>Saldo</th>
-        </tr>
-    </thead>
-    <tfoot>
-        <tr>
-            <th>Totais</th>
-            <th py:content="c.fechamento.total_dias_morados"></th>
-            <th><span py:content="pretty_decimal(sum(c.fechamento.porcentagem[participante] for participante in c.fechamento.participantes))"></span>%</th>
-            <th py:content="pretty_decimal(sum(c.fechamento.quota[participante] for participante in c.fechamento.participantes))"></th>
-            <th py:content="pretty_decimal(c.fechamento.total_despesas)"></th>
-            <th py:content="pretty_decimal(sum(c.fechamento.saldo_final[participante] for participante in c.fechamento.participantes))"></th>
-        </tr>
-    </tfoot>
-    <tbody>
-        <tr py:for="participante in c.fechamento.participantes">
-            <td><span py:replace="participante.nome">Fulano de tal</span></td>
-            <td><span py:replace="c.fechamento.qtd_dias_morados[participante]">30</span></td>
-            <td><span py:replace="pretty_decimal(c.fechamento.porcentagem[participante])">30</span>%</td>
-            <td><span py:replace="pretty_decimal(c.fechamento.quota[participante])">99,99</span></td>
-            <td><span py:replace="pretty_decimal(c.fechamento.despesas_por_pessoa[participante])">99,99</span></td>
-            <td><span py:replace="pretty_decimal(c.fechamento.saldo_final[participante])">999,99</span></td>
-        </tr>
-    </tbody>
-</table>
+    <article>
+        <h2>Acerto de Contas entre Moradores</h2>
+        <table class="rateio acerto">
+            <thead>
+                <tr>
+                    <th><em>pagar para -></em></th>
+                    <th py:for="pessoa in c.fechamento.participantes" py:content="pessoa.nome">Morador</th>
+                    <th>Total a Pagar</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Total a Receber</th>
+                    <th py:for="pessoa in c.fechamento.participantes" class="number">
+                        <span py:if="pessoa in c.fechamento.acerto_a_receber" py:replace="pretty_decimal(sum(c.fechamento.acerto_a_receber[pessoa].values()))">99,99</span>
+                    </th>
+                    <th></th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr py:for="pessoa in c.fechamento.participantes">
+                    <td><strong><span py:replace="pessoa.nome">Fulano de tal</span></strong></td>
+                    <td py:for="credor in c.fechamento.participantes" class="number">
+                        <span py:if="pessoa in c.fechamento.acerto_a_pagar and credor in c.fechamento.acerto_a_pagar[pessoa]" py:replace="pretty_decimal(c.fechamento.acerto_a_pagar[pessoa][credor])">99,99</span>
+                    </td>
+                    <th class="number"><span py:if="pessoa in c.fechamento.acerto_a_pagar" py:replace="pretty_decimal(sum(c.fechamento.acerto_a_pagar[pessoa].values()))">999,99</span></th>
+                </tr>
+            </tbody>
+        </table>
+    </article>
 
-
-<h2>Acerto de Contas entre Moradores</h2>
-<table>
-    <thead>
-        <tr>
-            <th><em>pagar para -></em></th>
-            <th py:for="pessoa in c.fechamento.participantes" py:content="pessoa.nome">Morador</th>
-            <th>Total a Pagar</th>
-        </tr>
-    </thead>
-    <tfoot>
-        <tr>
-            <th>Total a Receber</th>
-            <th py:for="pessoa in c.fechamento.participantes">
-                <span py:if="pessoa in c.fechamento.acerto_a_receber" py:replace="pretty_decimal(sum(c.fechamento.acerto_a_receber[pessoa].values()))">99,99</span>
-            </th>
-            <th></th>
-        </tr>
-    </tfoot>
-    <tbody>
-        <tr py:for="pessoa in c.fechamento.participantes">
-            <td><span py:replace="pessoa.nome">Fulano de tal</span></td>
-            <td py:for="credor in c.fechamento.participantes">
-                <span py:if="pessoa in c.fechamento.acerto_a_pagar and credor in c.fechamento.acerto_a_pagar[pessoa]" py:replace="pretty_decimal(c.fechamento.acerto_a_pagar[pessoa][credor])">99,99</span>
-            </td>
-            <td><span py:if="pessoa in c.fechamento.acerto_a_pagar" py:replace="pretty_decimal(sum(c.fechamento.acerto_a_pagar[pessoa].values()))">999,99</span></td>
-        </tr>
-    </tbody>
-</table>
-
-<hr />
-
-<h2>Lista de Despesas do Período</h2>
-<p py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='new', republica_id=republica.id)}">Cadastrar nova despesa</a></p>
-<table>
-    <thead>
-        <tr>
-            <th>Data</th>
-            <th>Valor</th>
-            <th>Tipo</th>
-            <th>Responsável</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr py:for="despesa in c.fechamento.despesas">
-            <td><span py:replace="format_date(despesa.lancamento)">99/99/9999</span></td>
-            <td><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
-            <td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
-            <td><span py:replace="despesa.pessoa.nome">Fulano</span></td>
-            <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=republica.id, id=despesa.id)}">Editar</a></span></td>
-            <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=republica.id, id=despesa.id)}">Excluir</a></span></td>
-        </tr>
-    </tbody>
-</table>
-</div>
+    <article>
+        <h2>Lista de Despesas do Período</h2>
+        <p py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='new', republica_id=republica.id)}">Cadastrar nova despesa</a></p>
+        <table class="rateio">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th>Tipo</th>
+                    <th>Responsável</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr py:for="despesa in c.fechamento.despesas">
+                    <td><span py:replace="format_date(despesa.lancamento)">99/99/9999</span></td>
+                    <td><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
+                    <td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
+                    <td><span py:replace="despesa.pessoa.nome">Fulano</span></td>
+                    <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=republica.id, id=despesa.id)}">Editar</a></span></td>
+                    <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=republica.id, id=despesa.id)}">Excluir</a></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </article>
+</section>
 
 </body>
 </html>
