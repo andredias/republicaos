@@ -29,19 +29,17 @@ saldo_neg = {'class' : 'number saldo_neg'}
 <header>
 </header>
 <section>
-    <h1>${c.title}</h1>
-
     <form action="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" method="post">
-        <h2>Fechamento de 
+        <h1>Fechamento de 
         <select name="data_fechamento" onchange="javascript:this.form.submit()" >
             <option py:for="f in republica.fechamentos" py:content="format_date(f.data)"  py:attrs="dict(selected='selected') if f == c.fechamento else dict()" >dd/mm/yyyy</option>
         </select>
-        </h2>
+        </h1>
     </form>
 
     <p py:with="data_inicial, data_final = c.fechamento.intervalo">Período Contábil: <span py:replace="format_date(data_inicial)">01/01/2000</span> a <span py:replace="format_date(data_final)">01/02/2000</span></p>
     <article>
-        <h2>Resumo das Despesas</h2>
+        <h3>Resumo das Despesas</h3>
         <table class="rateio">
             <thead>
                 <tr>
@@ -86,7 +84,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
     </article>
 
     <article>
-        <h2>Rateio das Despesas</h2>
+        <h3>Rateio das Despesas</h3>
         <table class="rateio">
             <thead>
                 <tr>
@@ -122,7 +120,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
     </article>
 
     <article>
-        <h2>Acerto de Contas entre Moradores</h2>
+        <h3>Acerto de Contas entre Moradores</h3>
         <table class="rateio acerto">
             <thead>
                 <tr>
@@ -153,7 +151,7 @@ saldo_neg = {'class' : 'number saldo_neg'}
     </article>
 
     <article>
-        <h2>Lista de Despesas do Período</h2>
+        <h3>Lista de Despesas do Período</h3>
         <p py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='new', republica_id=republica.id)}">Cadastrar nova despesa</a></p>
         <table class="rateio">
             <thead>
@@ -166,10 +164,15 @@ saldo_neg = {'class' : 'number saldo_neg'}
                     <th></th>
                 </tr>
             </thead>
+            <tfoot>
+                <tr>
+                    <th colspan="6"></th>
+                </tr>
+            </tfoot>
             <tbody>
                 <tr py:for="despesa in c.fechamento.despesas">
                     <td><span py:replace="format_date(despesa.lancamento)">99/99/9999</span></td>
-                    <td><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
+                    <td class="number"><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
                     <td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
                     <td><span py:replace="despesa.pessoa.nome">Fulano</span></td>
                     <td><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=republica.id, id=despesa.id)}">Editar</a></span></td>

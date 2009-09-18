@@ -44,116 +44,43 @@ section, footer {
 }
 
 section {
-    margin: 0 auto 2em;
+    margin: 2em auto 2em;
 }
 
 section article {
     display: block;
-    margin-top: 3em;
-}
-
-#teaser {
-    border: 5px solid #7faa0b;
-    background: url(../images/bgteaser.png) repeat-x;
-    margin:0 0 3em;
-    padding: 10px;
-}
-
-#teaser h1 {
-    color:#000000;
-    font-size:39px;
-    letter-spacing:-2px;
-    line-height:1em;
-    margin: 0 0 10px;
-    padding:0;
-    text-align:left;
-}
-
-#teaser h2 {
-    color: #eee;
-    font-family:georgia,times;
-    font-size:24px;
-    font-weight:normal;
-    line-height:1.2em;
-    margin:0 0 10px;
-    padding:0;
-    background: none;
-    text-transform: none;
+    margin: 3em 0 5em;
 }
 
 
-pre {
-    font-size: 11px;
-}
-
-
-a {
-    color: #03c;
-}
-
-a:hover {
-    color: #ee3a42;
-}
-
-ul {
-    margin-left: 2em;
-}
-
-form p {
-    margin-top: 1em;
-}
-
-
-input[type="text"], input[type="password"] {
-    padding: .2em;
-}
-
-fieldset {
-    border: 1px solid #ccc;
-    padding: 1em;
-}
-
-fieldset ul {
-    list-style: none;
-}
-
-span.hint {
-    display: block;
-    font-style: italic;
-}
-
-hr {
-    display: none;
-}
-
-img {
-    margin: 1em 0;
-}
-
-.inline {
-    display: inline !important;
-}
-
-label {
-    color: #333;
-}
-
-label .optional {
-    color: #777;
-    font-weight: normal;
-}
-
-h2 {
+h1 {
     background: url(../images/dotted.gif) repeat-x bottom;
     color: #000;
     font-weight: normal;
     margin-bottom: 1em;
     padding-bottom: .2em;
+    text-transform: uppercase;
 }
 
+
+h2 {
+    color: white;
+    font-weight: normal;
+    margin-bottom: 1em;
+    padding: .2em;
+    background-color: green;
+    font-family: tahoma, sans-serif;
+    font-size: 1.8em;
+}
+
+
 h3 {
-    color: #333;
-    margin-bottom: -.5em;
+    color: green;
+    font-family: "arial narrow",sans-serif;
+    font-size: 1.6em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 1em;
 }
 
 p {
@@ -176,7 +103,9 @@ header {
 
 
 header h1 {
-
+    background: none;
+    margin: 0;
+    padding: 0;
 }
 
 header h1 a {
@@ -218,6 +147,10 @@ header nav {
 /*=home*/
 
 
+#home section {
+    margin-top: 0;
+}
+
 #home section ul {
     margin: 0 0 0 1em;
 }
@@ -233,6 +166,47 @@ header nav {
     margin-bottom: 1em;
     padding-left: 1.5em;
 }
+
+#home h2 {
+    background: url(../images/dotted.gif) repeat-x bottom;
+    color: #000;
+    font-weight: normal;
+    margin-bottom: 1em;
+    padding-bottom: .2em;
+}
+
+
+#teaser {
+    border: 5px solid #7faa0b;
+    background: url(../images/bgteaser.png) repeat-x;
+    margin:0 0 3em;
+    padding: 20px;
+}
+
+#teaser h1 {
+    color:#000000;
+    font-size:37px;
+    letter-spacing:-2px;
+    line-height:1em;
+    margin: 0 0 0.4em;
+    padding:0;
+    text-align:left;
+    background: none;
+    font-weight: bolder;
+}
+
+#teaser h2 {
+    color: white;
+    font-family:georgia,times;
+    font-size:24px;
+    font-weight:normal;
+    line-height:1.2em;
+    margin:0 0 10px;
+    padding:0;
+    background: none;
+    text-transform: none;
+}
+
 
 .coluna-esquerda {
     float: left;
@@ -444,3 +418,70 @@ table.rateio tbody .zebra {
 }
 
 
+
+
+pre {
+    font-size: 11px;
+}
+
+
+a {
+    color: #03c;
+}
+
+a:hover {
+    color: #ee3a42;
+}
+
+ul {
+    margin-left: 2em;
+}
+
+form p {
+    margin-top: 1em;
+}
+
+
+input[type="text"], input[type="password"] {
+    padding: .2em;
+}
+
+fieldset {
+    border: 1px solid #ccc;
+    padding: 1em;
+}
+
+fieldset ul {
+    list-style: none;
+}
+
+span.hint {
+    display: block;
+    font-style: italic;
+}
+
+
+img {
+    margin: 1em 0;
+}
+
+.inline {
+    display: inline !important;
+}
+
+label {
+    color: #333;
+}
+
+label .optional {
+    color: #777;
+    font-weight: normal;
+}
+
+form h2 {
+    background: url(../images/dotted.gif) repeat-x bottom;
+    color: #000;
+    font-weight: normal;
+    margin-bottom: 1em;
+    padding-bottom: .2em;
+}

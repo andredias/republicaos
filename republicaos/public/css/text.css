@@ -19,29 +19,7 @@ span.hint, #notifications a span {
     font-size: .9em;
 }
 
-h2 span, #email, #user_email, #schedule_title, #operation_title, #initial_balance, #initial-balance-form .button,
-#contact #contact_name {
-    font-size: 1.7em;
-}
 
-#account .index #user_email{
-    font-size: 1.1em;
-}
-
-h2 {
-    font-family: tahoma, sans-serif;
-    font-size: 1.8em;
-    color: #555;
-    text-transform: uppercase;
-}
-
-h3 {
-    color: #777;
-    font-family: "arial narrow",sans-serif;
-    font-size: 1.6em;
-    font-weight: bold;
-    text-transform: uppercase;
-}
 
 h4 {
     color: #333;
@@ -70,16 +48,3 @@ h4 {
     font-size: 1.8em;
 }
 
-.help-box dt span, 
-.money-box dt span, 
-.star-box dt span, 
-.balloon-box dt span {
-    font-size: 1.3em;
-}
-
-#tagcloud .s1 { font-size: 1.0em; }
-#tagcloud .s2 { font-size: 1.2em; }
-#tagcloud .s3 { font-size: 1.4em; }
-#tagcloud .s4 { font-size: 1.8em; }
-#tagcloud .s5 { font-size: 2em; }
-#tagcloud .s6 { font-size: 2.4em; }
