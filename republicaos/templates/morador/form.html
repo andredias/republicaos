@@ -14,9 +14,8 @@ from datetime import timedelta
 </head>
 
 <body>
-<div class="header">
-</div>
-<div class="content">
+<header></header>
+<section>
     <h2>${c.title}</h2>
 
     <p py:if="c.descricao">${c.descricao}</p>
@@ -34,7 +33,7 @@ from datetime import timedelta
 
         <p><input name="commit" type="submit" value="${c.submit}" /></p>
     </form>
-</div>
+</section>
 
 </body>
 </html>

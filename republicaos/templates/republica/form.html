@@ -10,9 +10,8 @@
 </head>
 
 <body>
-<div class="header">
-</div>
-<div class="content">
+<header></header>
+<section>
     <h1>${c.title}</h1>
     <form action="${c.action}" method="post">
         <input py:if="c.method == 'put'" type="hidden" name="_method" value="put" />
@@ -43,15 +42,15 @@
                     <td></td>
                     <td>
                         <div py:if="c.action">
-                            <input type="submit" value="Ok" />
-                            <a href="">Cancelar</a>
+                            <input type="submit" value="${c.submit}" /> ou 
+                            <a href="${h.url_for(controller='pessoa', action='painel', id=user.id)}">Cancelar e voltar ao painel de controle</a>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </form>
-</div>
+</section>
 </body>
 
 </html>

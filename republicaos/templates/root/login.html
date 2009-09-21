@@ -7,16 +7,15 @@
     <title>Acesse sua conta</title>
 </head>
 
-<body id="account">
-<div class="header">
-</div>
+<body>
+<header></header>
 
-<div class="content">
+<section>
     <p><span class="want-to-signup">Não é cadastrado? <a href="${h.url_for(controller='pessoa', action='new')}">Crie sua conta agora!</a></span></p>
     <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
 
     <xi:include href="form_login.html" />
-</div>
+</section>
 
 </body>
 </html>

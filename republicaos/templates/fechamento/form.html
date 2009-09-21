@@ -9,26 +9,29 @@
     <title>${c.title}</title>
 </head>
 
-<body id="account">
-    <h2>${c.title}</h2>
+<body>
+    <header></header>
+    <section>
+        <h2>${c.title}</h2>
 
-    <p>Defina a data desejada para o fechamento.</p>
+        <p>Defina a data desejada para o fechamento.</p>
 
-    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
-    <py:if test="c.errors">
-        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
-        ${select('.')}
-        <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
-        </div>
-    </py:if>
+        <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
+        <py:if test="c.errors">
+            <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+            ${select('.')}
+            <span class="error-message" id="erro_${select('@name')}" py:if="error" py:content="error"></span>
+            </div>
+        </py:if>
 
 
-    <form action="${c.action}" method="post" class="signup">
-        <p><label>Data</label>
-        <input class="text" name="data" size="10" type="text" /></p>
+        <form action="${c.action}" method="post" class="signup">
+            <p><label>Data</label>
+            <input class="text" name="data" size="10" type="text" /></p>
 
-        <p><input name="commit" type="submit" value="${c.submit}" /></p>
-    </form>
+            <p><input name="commit" type="submit" value="${c.submit}" /></p>
+        </form>
+    </section>
 
 
 </body>

@@ -25,11 +25,6 @@ class LoginSchema(Schema):
 class RootController(BaseController):
 
     def index(self):
-        # veja http://localhost/trac/republicaos_hg/wiki/Evento/PessoaVisitaPaginaInicial
-        if c.user: # existe um usuário logado
-            # obter lista de repúblicas das quais faz parte
-            # obter lista de convites pendentes para morar em república
-            pass
         return render('root/index.html')
 
     @validate(LoginSchema)

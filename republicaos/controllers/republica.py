@@ -8,11 +8,10 @@ from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 from pylons.decorators.rest import restrict, dispatch_on
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
-from republicaos.lib.utils import render, validate, extract_attributes
+from republicaos.lib.utils import render, validate, extract_attributes, iso_to_date
 from republicaos.lib.base import BaseController
 from republicaos.lib.auth import get_user, get_republica, login_required, morador_required
 from republicaos.model import Republica, Morador, Fechamento, Session
-from babel.dates import parse_date
 from formencode import Schema, validators
 
 log = logging.getLogger(__name__)
@@ -106,6 +105,7 @@ class RepublicaController(BaseController):
             redirect_to(controller='republica', action='show', republica_id=c.republica.id)
         c.action = url_for(controller='republica', action='new')
         c.title  = 'Criar Nova República'
+        c.submit = 'Criar'
         return render('republica/form.html', filler_data=request.params)
 
 
@@ -127,6 +127,7 @@ class RepublicaController(BaseController):
             filler_data = request.params
         c.action = url_for(controller='republica', action='edit', id=id)
         c.title = 'Editar Dados da República'
+        c.submit = 'Alterar'
         return render('republica/form.html', filler_data = filler_data)
 
     @morador_required
@@ -134,7 +135,7 @@ class RepublicaController(BaseController):
         """GET /republica/id: Show a specific item"""
         data = request.params.get('data_fechamento', None)
         republica = get_republica()
-        c.fechamento = Fechamento.get_by(data=parse_date(data), republica=republica) if data else republica.fechamento_atual
+        c.fechamento = Fechamento.get_by(data=iso_to_date(data), republica=republica) if data else republica.fechamento_atual
         c.fechamento.executar_rateio()
         
         # Só pode editar o fechamento atual

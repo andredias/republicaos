@@ -109,6 +109,7 @@ class TipoDespesaController(BaseController):
             redirect_to(c.destino)
         c.action = url_for(controller='tipo_despesa', action='new', republica_id=request.urlvars['republica_id'])
         c.title  = 'Novo Tipo de Despesa'
+        c.submit = 'Cadastrar'
         return render('tipo_despesa/form.html', filler_data=request.params)
 
 
@@ -132,4 +133,5 @@ class TipoDespesaController(BaseController):
         c.action = url_for(controller='tipo_despesa', action='edit', id=id,
                            republica_id=request.urlvars['republica_id'])
         c.title = 'Editar Tipo de Despesa'
+        c.submit = 'Alterar'
         return render('tipo_despesa/form.html', filler_data = filler_data)

@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 
 def get_republica_from_convite_morador():
     c.convite = ConviteMorador.get_by(hash=request.urlvars['id'])
+    log.debug('c.convite: %s', c.convite)
     return c.convite.republica if c.convite else None
 
 class ConviteMoradorSchema(Schema):

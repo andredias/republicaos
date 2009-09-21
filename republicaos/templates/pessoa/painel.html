@@ -6,6 +6,7 @@
 <?python
 title = 'Painel de Controle'
 republicas = user.morador_em_republicas
+can_create = len(republicas) < 2
 ?>
 <head>
     <title>${title}</title>
@@ -17,7 +18,7 @@ republicas = user.morador_em_republicas
 
     <section>
         <h1>${title}</h1>
-        <div class="perfil">
+        <article class="perfil">
             <h2>Perfil</h2>
             <div class="foto">
                 <img src="/images/sorriso.png" />
@@ -29,21 +30,27 @@ republicas = user.morador_em_republicas
             <div style="clear: both">
                 <a href="${h.url_for(controller='pessoa', action='edit', id=user.id)}">Editar perfil</a><br />
             </div>
-        </div>
+        </article>
         
-        <div class="republicas">
+        <article class="republicas">
             <h2>Repúblicas de Que Participa</h2>
             <ul py:if="republicas">
                 <li py:for="rep in republicas"><a href="${h.url_for(controller='republica', action='show', republica_id=rep.id)}">${rep.nome}</a></li>
             </ul>
-            <div py:if="not republicas">
-                <p>Você não participa de nenhuma república no momento.</p>
-                <a href="">Criar república</a>
+            <p py:if="not republicas">Você não participa de nenhuma república no momento.</p>
+            <div py:if="can_create">
+                <p><a href="${h.url_for(controller='republica', action='new')}">Criar nova república</a></p>
             </div>
-        </div>
+            <py:if test="c.convites">
+                <h3>Recados</h3> 
+                <ul>
+                    <li py:for="convite in c.convites">Você foi convidado a fazer parte da república <strong>${convite.republica.nome}</strong>. <a href="${h.url_for(controller='convite', action='aceitar', id=convite.id)}">Clique aqui para aceitar o convite</a></li>
+                </ul>
+            </py:if>
+        </article>
         
-        <div style="clear: both">
-        </div>
+
+        <div style="clear: both"></div>
     </section>
 
 </body>

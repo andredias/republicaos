@@ -91,7 +91,7 @@ class FechamentoController(BaseController):
                 Session.rollback()
                 flash('(error) Data não foi alterada pois é necessário haver um fechamento futuro')
         
-        filler = request.params or {str('data'):c.fechamento.data}
+        filler = request.params or {str('data'):format_date(c.fechamento.data)}
         c.title = 'Editar Fechamento'
         c.submit = 'Alterar'
         return render('fechamento/form.html', filler_data=filler)

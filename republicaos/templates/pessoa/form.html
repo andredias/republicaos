@@ -9,24 +9,24 @@
     <title>${c.title}</title>
 </head>
 
-<body id="account">
-<div class="header">
-</div>
-<div class="content">
+<body>
+<header>
+</header>
+<section>
     <h2>${c.title}</h2>
 
-    <p>Preencha os campos abaixo. Após o seu cadastro, um código de ativação será enviado ao e-mail informado. Nenhum dado fornecido por você será distribuído. <strong>Nós respeitamos a sua privacidade!</strong></p>
+    <p py:if="'new' in c.action">Preencha os campos abaixo. Após o seu cadastro, um código de ativação será enviado ao e-mail informado. Nenhum dado fornecido por você será distribuído. <strong>Nós respeitamos a sua privacidade!</strong></p>
     <form action="${c.action}" method="post" class="signup">
-        <p><label>E-mail</label>
+        <p><label>E-mail</label><br />
         <input class="text" id="email" name="email" size="80" type="text" /></p>
 
-        <p><label>Nome</label>
+        <p><label>Nome</label><br />
         <input class="text" name="nome" size="30" type="text" /></p>
 
-        <p><label>Senha</label>
+        <p><label>Senha</label><br />
         <input class="text" name="senha" size="30" type="password" /></p>
 
-        <p><label>Confirme sua senha</label>
+        <p><label>Confirme sua senha</label><br />
         <input class="text" name="confirmacao_senha" size="30" type="password" /></p>
 
         <p py:if="'Criar' == c.submit">
@@ -38,7 +38,7 @@
         <p><input name="commit" type="submit" value="${c.submit}" /></p>
     </form>
 
-</div>
+</section>
 </body>
 </html>
 
