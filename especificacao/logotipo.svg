@@ -98,7 +98,7 @@
          y="393.5007" /></text>
     <text
        xml:space="preserve"
-       style="font-size:37.27699661px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Updike;-inkscape-font-specification:Updike"
+       style="font-size:37.00000125px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Updike;-inkscape-font-specification:Updike"
        x="109.50951"
        y="333.65979"
        id="text2408"
@@ -111,7 +111,7 @@
          id="tspan2410"
          x="109.50951"
          y="333.65979">Republi<tspan
-   style="font-size:37.27699661px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#800000;font-family:Updike;-inkscape-font-specification:Updike"
+   style="font-size:37.00000125px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#800000;font-family:Updike;-inkscape-font-specification:Updike"
    id="tspan2446">caos</tspan></tspan></text>
     <text
        sodipodi:linespacing="125%"
@@ -146,7 +146,7 @@
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-weight:normal;fill:#550000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="115.08958"
+       x="154.90677"
        y="338.42798"
        id="text2468"
        inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo.png"
@@ -154,7 +154,7 @@
        inkscape:export-ydpi="132.68178"><tspan
          sodipodi:role="line"
          id="tspan2470"
-         x="115.08958"
-         y="338.42798">Trazendo ordem às contas da república</tspan></text>
+         x="154.90677"
+         y="338.42798">mantendo as contas em ordem</tspan></text>
   </g>
 </svg>
