@@ -120,9 +120,9 @@ header h1 {
 }
 
 header h1 a {
-    background: url(../images/republicaos_logo.jpg) no-repeat;
-    height: 127px;
-    width: 170px;
+    background: url(../images/logotipo.png) no-repeat;
+    height: 65px;
+    width: 289px;
     display: block;
     overflow: hidden;
     text-indent: -9999px;
