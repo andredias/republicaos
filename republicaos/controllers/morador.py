@@ -13,7 +13,7 @@ from republicaos.lib.base import BaseController
 from republicaos.lib.auth import morador_required, get_user, get_republica
 from republicaos.lib.validators import Date
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, DespesaAgendada, Session
-from sqlalchemy  import and_
+from sqlalchemy  import and_, desc
 from formencode import Schema, validators
 from babel.dates import format_date
 from datetime import date
@@ -144,14 +144,29 @@ class MoradorController(BaseController):
                                 ).delete()
             Session.commit()
             flash('(info) Sua saída da república foi registrada!')
-            redirect_to(controller='root', action='index')
+            redirect_to(controller='pessoa', action='painel', id=user.id)
 
         c.action = url_for(controller='morador', action='sair', republica_id=republica.id)
         filler = {}
         filler[str('saida')] = request.params.get('saida') or format_date(morador.saida or date.today())
         return render('morador/saida.html', filler_data = filler)
 
-
+    @morador_required
+    def cancelar_desligamento(self):
+        '''
+        Cancelar saída da república
+        '''
+        republica = get_republica()
+        user = get_user()
+        registro = Morador.query.filter(and_(Morador.republica_id == republica.id, Morador.pessoa_id == user.id)).order_by(desc(Morador.saida)).first()
+        if registro.saida and registro.republica.fechamento_atual.data_no_intervalo(registro.saida):
+            registro.saida = None
+            Session.commit()
+            flash('(info) Desligamento cancelado!')
+        else:
+            flash('(error) Não foi possível cancelar o desligamento!')
+        redirect_to(controller='pessoa', action='painel', id=user.id)
+        
 
     @validate(MoradorSchema)
     def edit(self, id, format='html'):

@@ -3,21 +3,20 @@
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:py="http://genshi.edgewall.org/">
 <xi:include href="../layout.html" />
-<?python
-title = 'Painel de Controle'
-republicas = user.morador_em_republicas
-can_create = len(republicas) < 2
-?>
 <head>
-    <title>${title}</title>
+    <title>${c.title}</title>
 </head>
+
+<?python
+from babel.dates import format_date
+?>
 
 <body class="painel">
     <header>
     </header>
 
     <section>
-        <h1>${title}</h1>
+        <h1>${c.title}</h1>
         <article class="perfil">
             <h2>Perfil</h2>
             <div class="foto">
@@ -34,11 +33,28 @@ can_create = len(republicas) < 2
         
         <article class="republicas">
             <h2>Repúblicas de Que Participa</h2>
-            <ul py:if="republicas">
-                <li py:for="rep in republicas"><a href="${h.url_for(controller='republica', action='show', republica_id=rep.id)}">${rep.nome}</a></li>
-            </ul>
-            <p py:if="not republicas">Você não participa de nenhuma república no momento.</p>
-            <div py:if="can_create">
+            <table py:if="c.registros">
+                <thead>
+                    <tr>
+                        <th>República</th>
+                        <th>Entrada</th>
+                        <th>Desligamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr py:for="reg in c.registros">
+                        <td><a href="${h.url_for(controller='republica', action='show', republica_id=reg.republica.id)}" title="Ir para a página da república">${reg.republica.nome}</a></td>
+                        <td>${format_date(reg.entrada)}</td>
+                        <td py:choose="">
+                            <span py:when="not reg.saida"><a href="${h.url_for(controller='morador', action='sair', republica_id=reg.republica.id)}" title="Desligar-se da república">desligar-se</a></span>
+                            <span py:when="reg.republica.fechamento_atual.data_no_intervalo(reg.saida)"><a href="${h.url_for(controller='morador', action='sair', republica_id=reg.republica.id)}" title="Editar data de desligamento">${format_date(reg.saida)}</a> | <a href="${h.url_for(controller='morador', action='cancelar_desligamento', republica_id=reg.republica.id)}" title="Cancelar desligamento">Cancelar</a></span>
+                            <span py:otherwise="">${format_date(reg.saida)}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p py:if="not c.registros">Você não participa de nenhuma república no momento.</p>
+            <div py:if="c.can_create">
                 <p><a href="${h.url_for(controller='republica', action='new')}">Criar nova república</a></p>
             </div>
             <py:if test="c.convites">

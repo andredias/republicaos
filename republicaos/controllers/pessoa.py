@@ -12,10 +12,11 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.model import Pessoa, CadastroPendente, TrocaSenha, ConviteMorador, Session
+from republicaos.model import Morador
 from republicaos.forms.validators.unique import Unique
 from formencode import Schema, validators
 from republicaos.lib.auth import get_user, owner_required
-
+from sqlalchemy.sql.expression import desc
 
 
 log = logging.getLogger(__name__)
@@ -177,6 +178,10 @@ class PessoaController(BaseController):
     
     @owner_required
     def painel(self, id):
+        c.title = 'Painel de Controle'
+        user = get_user()
+        c.registros = Morador.query.filter(Morador.pessoa_id == user.id).order_by(desc(Morador.entrada)).all()
+        c.can_create = len(user.morador_em_republicas) < 2
         c.convites = ConviteMorador.query.filter(ConviteMorador.email == get_user().email).all()
         return render('pessoa/painel.html')
         
