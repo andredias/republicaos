@@ -18,37 +18,35 @@
         <table>
             <tbody>
                 <tr>
-                    <td><label>Nome</label></td>
+                    <th class="label">Nome</th>
                     <td><input type="text" name="nome" maxlength="90" size="50" /></td>
+                    <td class="help">Identificação da república.</td>
                 </tr>
                 <tr>
-                    <td><label>Logradouro</label></td>
+                    <th class="label">Logradouro</th>
                     <td><input type="text" name="logradouro" maxlength="150" size="50" /></td>
+                    <td class="help" rowspan="4">O endereço não será fornecido a ninguém. Será transformado em coordenadas geográficas para que possamos oferecer publicidade direcionada e assim manter o Republicaos gratuito.</td>
                 </tr>
                 <tr>
-                    <td><label>Complemento</label></td>
+                    <th class="label">Complemento</th>
                     <td><input type="text" name="complemento" maxlength="100" size="50" /></td>
                 </tr>
                 <tr>
-                    <td><label>Cidade</label></td>
+                    <th class="label">Cidade</th>
                     <td><input type="text" name="cidade" maxlength="80" size="50" /></td>
                 </tr>
                 <tr>
-                    <td><label>Estado</label></td>
+                    <th class="label">Estado</th>
                     <td><input type="text" name="uf" maxlength="2" size="2" /></td>
-                </tr>
-
-                 <tr>
-                    <td></td>
-                    <td>
-                        <div py:if="c.action">
-                            <input type="submit" value="${c.submit}" /> ou 
-                            <a href="${h.url_for(controller='pessoa', action='painel', id=user.id)}">Cancelar e voltar ao painel de controle</a>
-                        </div>
-                    </td>
                 </tr>
             </tbody>
         </table>
+        <div py:if="c.action">
+            <p>
+            <input type="submit" value="${c.submit}" /> ou 
+            <a href="${c.voltar_para}">Cancelar e voltar à página da república</a>
+            </p>
+        </div>
     </form>
 </section>
 </body>

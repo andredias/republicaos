@@ -17,25 +17,37 @@
 
     <p py:if="'new' in c.action">Preencha os campos abaixo. Após o seu cadastro, um código de ativação será enviado ao e-mail informado. Nenhum dado fornecido por você será distribuído. <strong>Nós respeitamos a sua privacidade!</strong></p>
     <form action="${c.action}" method="post" class="signup">
-        <p><label>E-mail</label><br />
-        <input class="text" id="email" name="email" size="80" type="text" /></p>
-
-        <p><label>Nome</label><br />
-        <input class="text" name="nome" size="30" type="text" /></p>
-
-        <p><label>Senha</label><br />
-        <input class="text" name="senha" size="30" type="password" /></p>
-
-        <p><label>Confirme sua senha</label><br />
-        <input class="text" name="confirmacao_senha" size="30" type="password" /></p>
-
-        <p py:if="'Criar' == c.submit">
-            <label class="skip">Concordo com os <a href="/termo_uso">Termos de Uso</a> &nbsp;</label>
-            <input name="aceito_termos" type="checkbox" value="1" />
-            <span class="already-member">Já é cadastrado? <a href="/login">Entre aqui!</a></span>
-        </p>
-
-        <p><input name="commit" type="submit" value="${c.submit}" /></p>
+        <table>
+            <tbody>
+                <tr>
+                    <th class="label">E-mail</th>
+                    <td><input class="text" id="email" name="email" size="50" type="text" /></td>
+                    <td class="help">Use um endereço de e-mail que você já possua.<br />Este endereço será usado como identificador para acesso aos serviços do Republicaos.</td>
+                </tr>
+                <tr>
+                    <th class="label">Nome</th>
+                    <td><input class="text" name="nome" size="30" type="text" /></td>
+                    <td class="help">Nome que será usado nas contas da república.</td>
+                </tr>
+                <tr>
+                    <th class="label">Senha</th>
+                    <td><input class="text" name="senha" size="30" type="password" /></td>
+                    <td class="help">Mínimo de 4 caracteres</td>
+                </tr>
+                <tr>
+                    <th class="label">Confirme sua senha</th>
+                    <td><input class="text" name="confirmacao_senha" size="30" type="password" /></td>
+                    <td class="help"></td>
+                </tr>
+                <tr py:if="'Criar' == c.submit">
+                    <th class="label">Concordo com os <a href="/termo_uso">Termos de Uso</a></th>
+                    <td><input name="aceito_termos" type="checkbox" value="1" /></td>
+                    <td class="help"></td>
+                </tr>
+            </tbody>
+        </table>
+        <p py:if="'Criar' == c.submit"><span class="already-member">Já é cadastrado? <a href="/login">Entre aqui!</a></span></p>
+        <p><input name="commit" type="submit" value="${c.submit}" /> ou <a href="${c.voltar_para}">Voltar à página anterior</a></p>
     </form>
 
 </section>

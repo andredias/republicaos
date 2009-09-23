@@ -26,10 +26,17 @@
 
 
         <form action="${c.action}" method="post" class="signup">
-            <p><label>Data</label>
-            <input class="text" name="data" size="10" type="text" /></p>
+            <table>
+                <tbody>
+                    <tr>
+                        <th class="label">Data</th>
+                        <td><input class="text" name="data" size="10" type="text" /></td>
+                        <td class="help">use o formato dia/mês/ano: DD/MM/AAAA</td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <p><input name="commit" type="submit" value="${c.submit}" /></p>
+            <p><input name="commit" type="submit" value="${c.submit}" /> ou <a href="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" class="cancel">Voltar para a página da república</a></p>
         </form>
     </section>
 

@@ -114,13 +114,14 @@ class RepublicaController(BaseController):
     @validate(RepublicaSchema)
     def edit(self, id):
         """GET /republica/edit/id: Edit a specific item"""
+        c.voltar_para = url_for(controller='republica', action='show', republica_id=id)
         if c.valid_data:
             request.method = 'PUT'
             self.update(id)
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(controller='republica', action='show', republica_id=id)
+            redirect_to(c.voltar_para)
         elif not c.errors:
             filler_data = c.republica.to_dict()
         else:

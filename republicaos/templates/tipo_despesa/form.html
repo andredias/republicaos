@@ -19,24 +19,21 @@
         <table>
             <tbody>
                 <tr>
-                    <td><label>Nome</label></td>
+                    <th class="label">Nome</th>
                     <td><input type="text" name="nome" /></td>
+                    <td class="help"></td>
                 </tr>
                 <tr>
-                    <td><label>Descrição</label></td>
+                    <th class="label">Descrição</th>
                     <td><textarea name="descricao" rows="6" cols="50"></textarea></td>
-                </tr>
-                 <tr>
-                    <td></td>
-                    <td>
-                        <div py:if="c.action">
-                            <input type="submit" value="${c.submit}" />
-                            <a href="${c.destino}" class="cancel">Voltar à página anterior</a>
-                        </div>
-                    </td>
+                    <td class="help"></td>
                 </tr>
             </tbody>
         </table>
+        <div py:if="c.action">
+            <p><input type="submit" value="${c.submit}" /> ou 
+            <a href="${c.destino}" class="cancel">Voltar à página anterior</a></p>
+        </div>
     </form>
 </section>
 </body>

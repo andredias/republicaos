@@ -129,6 +129,7 @@ class PessoaController(BaseController):
         c.action = url_for(controller='pessoa', action='new')
         c.submit = 'Criar'
         c.title  = 'Crie sua conta'
+        c.voltar_para = url_for(controller='root', action='index')
         return render('pessoa/form.html', filler_data=request.params)
 
 
@@ -137,6 +138,7 @@ class PessoaController(BaseController):
     @validate(PessoaEdicaoSchema)
     def edit(self, id, format='html'):
         """GET /pessoa/edit/id: Edit a specific item"""
+        c.voltar_para = url_for(controller='pessoa', action='painel', id=id)
         if c.valid_data:
             if not c.valid_data['senha']: # alteração de senha não é obrigatória na edição
                 c.valid_data.pop('senha')
@@ -145,7 +147,7 @@ class PessoaController(BaseController):
             flash('(info) Dados alterados com sucesso!')
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(controller='root', action='index')
+            redirect_to(c.voltar_para)
         elif not c.errors:
             filler_data = c.pessoa.to_dict()
         else:

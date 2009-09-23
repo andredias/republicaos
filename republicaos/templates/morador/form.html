@@ -21,17 +21,26 @@ from datetime import timedelta
     <p py:if="c.descricao">${c.descricao}</p>
 
     <form action="${c.action}" method="post" class="signup">
-        <p><label>E-mail</label>
-        <input class="text" id="email" name="email" maxlength="80" type="text" /></p>
-
-        <p><label>Nome</label>
-        <input class="text" name="nome" maxlength="30" size="30" type="text" /></p>
-
-        <p><label>Data da entrada</label>
-        <input class="text" name="entrada" maxlength="10" type="text" />
-        </p>
-
-        <p><input name="commit" type="submit" value="${c.submit}" /></p>
+        <table>
+            <tbody>
+                <tr>
+                    <th class="label">E-mail</th>
+                    <td><input class="text" id="email" name="email" maxlength="80" type="text" /></td>
+                    <td class="help">Endereço para onde será enviada a mensagem convidando para entrar na república.</td>
+                </tr>
+                <tr>
+                    <th class="label">Nome</th>
+                    <td><input class="text" name="nome" maxlength="30" size="30" type="text" /></td>
+                    <td class="help">Nome que será usado no convite.</td>
+                </tr>
+                <tr>
+                    <th class="label">Data da entrada</th>
+                    <td><input class="text" name="entrada" maxlength="10" type="text" /></td>
+                    <td class="help">Data em que a pessoa passará a fazer parte da república.</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><input name="commit" type="submit" value="${c.submit}" /> ou <a href="${h.url_for(controller='republica', action='show', republica_id=republica.id)}">Cancelar e voltar à página da república</a></p>
     </form>
 </section>
 
