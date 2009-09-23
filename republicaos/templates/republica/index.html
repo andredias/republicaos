@@ -92,7 +92,7 @@ ${republica.complemento} - </span>${republica.cidade} - ${republica.uf}</p>
         <form action="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" method="post">
             <h1>Fechamento de 
             <select name="data_fechamento" onchange="javascript:this.form.submit()" >
-                <option py:for="f in republica.fechamentos" value="${f.data}" py:attrs="dict(selected='selected') if f == c.fechamento else dict()" >${format_date(f.data, 'LLLL/yy')}</option>
+                <option py:for="f in republica.fechamentos" value="${f.data}" py:attrs="dict(selected='selected') if f == c.fechamento else dict()" >${format_date(f.intervalo[0], 'LLLL/yy')}</option>
             </select>
             </h1>
         </form>
@@ -161,7 +161,7 @@ ${republica.complemento} - </span>${republica.cidade} - ${republica.uf}</p>
                 <tfoot>
                     <tr>
                         <th>Totais</th>
-                        <th py:content="c.fechamento.total_dias_morados"></th>
+                        <th class="number" py:content="c.fechamento.total_dias_morados"></th>
                         <th class="number" py:content="pretty_decimal(sum(c.fechamento.porcentagem[participante] for participante in c.fechamento.participantes))">99</th>
                         <th class="number" py:content="pretty_decimal(sum(c.fechamento.quota[participante] for participante in c.fechamento.participantes))">99,99</th>
                         <th class="number" py:content="pretty_decimal(c.fechamento.total_despesas)">999,99</th>
@@ -171,7 +171,7 @@ ${republica.complemento} - </span>${republica.cidade} - ${republica.uf}</p>
                 <tbody>
                     <tr py:for="participante in c.fechamento.participantes">
                         <td py:content="participante.nome">Fulano de tal</td>
-                        <td py:content="c.fechamento.qtd_dias_morados[participante]">30</td>
+                        <td class="number" py:content="c.fechamento.qtd_dias_morados[participante]">30</td>
                         <td class="number" py:content="pretty_decimal(c.fechamento.porcentagem[participante])">30</td>
                         <td class="number" py:content="pretty_decimal(c.fechamento.quota[participante])">99,99</td>
                         <td class="number" py:content="pretty_decimal(c.fechamento.despesas_por_pessoa[participante])">99,99</td>
