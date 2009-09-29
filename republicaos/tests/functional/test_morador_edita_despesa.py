@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals, print_function
+
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, Fechamento, Session
@@ -99,7 +101,7 @@ class TestMoradorEditaDespesa(TestController):
                                 'tipo_id':'7',
                                 'quantia':'abcd',
                                 'lancamento':format_date(date.today() + timedelta(days=100)),
-                                'termino':''
+                                'repeticoes':''
                                 },
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
@@ -118,7 +120,7 @@ class TestMoradorEditaDespesa(TestController):
                                 'tipo_id':'7',
                                 'quantia':'9,99',
                                 'lancamento':format_date(date.today() - timedelta(days=1)),
-                                'termino':''
+                                'repeticoes':''
                                 },
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
@@ -126,4 +128,3 @@ class TestMoradorEditaDespesa(TestController):
         d = Despesa.get_by(id=3)
         assert str(d.quantia) == '9.99'
         assert d.lancamento == date.today() - timedelta(days=1)
-

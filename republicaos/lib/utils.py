@@ -158,6 +158,7 @@ def validate(schema, alternative_schema=None, check_function=None):
                         if callable(check_function) and check_function() else schema.to_python(data)
             except formencode.Invalid, e:
                 c.errors = e.unpack_errors()
+                log.debug('errors: %s', c.errors)
         return func(self, *args, **kwargs)
 
     return decorator(_validate)

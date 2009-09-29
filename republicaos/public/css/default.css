@@ -565,6 +565,10 @@ form table td.help {
 
 }
 
+.sidebar table {
+    font-size: 0.8em;
+}
+
 .fechamentos {
     height: 6em;
     overflow: auto;

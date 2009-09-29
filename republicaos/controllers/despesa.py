@@ -28,7 +28,7 @@ class DespesaSchema(Schema):
                     max = lambda : get_republica().intervalo_valido_lancamento[1]
                 )
     quantia = Number(not_empty = True, min = 0.01)
-    termino = Date(month_style = 'dd/mm/yyyy', min = date.today)
+    repeticoes = validators.Int(min = 1)
 
 
 
@@ -80,7 +80,7 @@ class DespesaController(BaseController):
     @republica_resource_required(Despesa)
     def delete(self, id):
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
-            flash('(error) Despesa com lançamento fora do fechamento corrente não pode ser excluída')
+            flash(u'(error) Despesa com lançamento fora do fechamento corrente não pode ser excluída')
         else:
             c.despesa.delete()
             Session.commit()
@@ -116,7 +116,7 @@ class DespesaController(BaseController):
             c.valid_data['pessoa'] = Pessoa.get_by(id=request.params['pessoa_id'])
             c.valid_data['tipo'] = TipoDespesa.get_by(id=request.params['tipo_id'])
             despesa = Despesa(republica=republica, **c.valid_data)
-            if request.params.get('agendamento') == 'True':
+            if request.params.get('agendamento'):
                 log.debug("\n\nnew: DespesaAgendada")
                 DespesaAgendada(
                         republica=republica,
@@ -124,7 +124,7 @@ class DespesaController(BaseController):
                         **c.valid_data
                         )
             Session.commit()
-            flash('(info) Despesa no valor de $ %s lancada com sucesso' % pretty_decimal(c.valid_data['quantia']))
+            flash('(info) Despesa no valor de $ %s lançada com sucesso' % pretty_decimal(c.valid_data['quantia']))
         else:
             filler.update(request.params)
 
@@ -139,7 +139,7 @@ class DespesaController(BaseController):
     def edit(self, id, format='html'):
         session['came_from'] = request.path_info
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
-            flash('(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
+            flash(u'(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
             redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
         if c.valid_data:
             log.debug('\nc.despesa: %r\n', c.despesa.to_dict())

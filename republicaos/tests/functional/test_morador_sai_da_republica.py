@@ -51,7 +51,7 @@ class TestMoradorSaiDaRepublica(TestController):
                     republica=republica,
                     quantia=123,
                     proximo_lancamento=date.today() + timedelta(days=15),
-                    termino=date.today() + timedelta(days=150),
+                    repeticoes=2,
                     tipo_id='2'
                     )
         

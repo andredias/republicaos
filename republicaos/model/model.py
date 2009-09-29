@@ -403,7 +403,7 @@ class Fechamento(Entity):
 
     @property
     def read_only(self):
-        return date.today() > self.data
+        return not self.data_no_intervalo(date.today())
 
 
     def data_no_intervalo(self, data):
@@ -885,7 +885,7 @@ class Despesa(Entity):
 
 class DespesaAgendada(Entity):
     proximo_lancamento = Field(Date, required = True)
-    termino = Field(Date)
+    repeticoes = Field(Integer)
     quantia = Field(Numeric(10,2), required = True)
     pessoa = ManyToOne('Pessoa', required = True)
     republica = ManyToOne('Republica', required = True)
@@ -894,8 +894,8 @@ class DespesaAgendada(Entity):
     using_options(tablename = 'despesa_agendada')
 
     def __repr__(self):
-        return 'DespesaAgendada <tipo: %r, proximo_lancamento: %r, termino: %r, pessoa: %r, quantia: %r>' % \
-                (self.tipo, self.proximo_lancamento, self.termino, self.pessoa, self.quantia)
+        return 'DespesaAgendada <tipo: %r, proximo_lancamento: %r, repeticoes: %r, pessoa: %r, quantia: %r, republica: %r>' % \
+                (self.tipo_id, self.proximo_lancamento, self.repeticoes, self.pessoa_id, self.quantia, self.republica_id)
 
     @classmethod
     def cadastrar_despesas_agendadas(cls):
@@ -909,12 +909,11 @@ class DespesaAgendada(Entity):
         hoje = date.today()
         despesas_agendadas = DespesaAgendada.query.filter(DespesaAgendada.proximo_lancamento <= hoje).all()
         log.debug('DespesaAgendada.cadastrar_despesas_agendadas(): %r' % despesas_agendadas)
-        if not despesas_agendadas:
-            return
         for despesa in despesas_agendadas:
-            data_ref = hoje if not despesa.termino else min(despesa.termino, hoje)
-            log.debug('DespesaAgendada.cadastrar_despesas_agendadas: Cadastrar %r até %r' % (despesa, data_ref))
-            while despesa.proximo_lancamento <= data_ref:
+            
+            while despesa.proximo_lancamento <= hoje and \
+                    (not despesa.repeticoes or despesa.repeticoes > 0):
+                log.debug('nova Despesa: lancamento: %s' % despesa.proximo_lancamento)
                 nova_despesa = Despesa(
                         lancamento = despesa.proximo_lancamento,
                         quantia = despesa.quantia,
@@ -923,7 +922,9 @@ class DespesaAgendada(Entity):
                         tipo = despesa.tipo
                     )
                 despesa.proximo_lancamento += relativedelta(months = 1)
-            if despesa.termino and despesa.termino < despesa.proximo_lancamento:
+                if despesa.repeticoes:
+                    despesa.repeticoes -= 1
+            if despesa.repeticoes == 0:
                 log.debug('DespesaAgendada.cadastrar_despesas_agendadas: Excluir %r. Fim do prazo' % despesa)
                 despesa.delete()
         # TODO: verficar se dá pra salvar só esse objeto sem comprometer toda a sessão.

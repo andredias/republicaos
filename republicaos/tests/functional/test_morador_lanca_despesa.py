@@ -56,7 +56,7 @@ class TestMoradorLancaDespesa(TestController):
                                     'quantia' : '',
                                     'lancamento' : format_date(date.today() - timedelta(days=10)),
                                     'agendamento' : False,
-                                    'termino' : '',
+                                    'repeticoes' : '',
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
@@ -74,7 +74,7 @@ class TestMoradorLancaDespesa(TestController):
                                     'quantia' : '100,45',
                                     'lancamento' : format_date(date.today()),
                                     'agendamento' : True,
-                                    'termino' : format_date(date.today()),
+                                    'repeticoes' : '2',
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
@@ -83,7 +83,7 @@ class TestMoradorLancaDespesa(TestController):
         assert DespesaAgendada.get_by() != None
         
         
-        # lança despesa inválida: quantia negativa
+        # lança despesa inválida: quantia negativa e repeticoes < 1
         response = self.app.post(
                             url=url,
                             params={
@@ -91,13 +91,14 @@ class TestMoradorLancaDespesa(TestController):
                                     'tipo_id' : '2',
                                     'quantia' : '-2,45',
                                     'lancamento' : format_date(date.today()),
-                                    'agendamento' : False,
-                                    'termino' : '',
+                                    'agendamento' : True,
+                                    'repeticoes' : '0',
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
         assert 'erro_quantia' in response
-        assert str(response).count('erro_') == 1
+        assert 'erro_repeticoes' in response
+        assert str(response).count('erro_') == 2
         assert Despesa.get_by(pessoa_id=1) == None
         assert DespesaAgendada.get_by(tipo_id='2') == None
 
@@ -110,8 +111,8 @@ class TestMoradorLancaDespesa(TestController):
                                     'tipo_id' : '2',
                                     'quantia' : '1,23',
                                     'lancamento' : format_date(date.today()),
-                                    'agendamento' : False,
-                                    'termino' : '',
+                                    'agendamento' : '',
+                                    'repeticoes' : '',
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
@@ -130,7 +131,7 @@ class TestMoradorLancaDespesa(TestController):
                                     'quantia' : '12,34',
                                     'lancamento' : format_date(date.today()),
                                     'agendamento' : True,
-                                    'termino' : '',
+                                    'repeticoes' : '3',
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
@@ -140,7 +141,7 @@ class TestMoradorLancaDespesa(TestController):
         assert DespesaAgendada.query.count() == 2
         desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='3')
         assert desp.proximo_lancamento == (date.today() + relativedelta(months=1))
-        assert desp.termino == None
+        assert desp.repeticoes == 3
 
 
         # lança despesa válida com agendamento
@@ -152,7 +153,7 @@ class TestMoradorLancaDespesa(TestController):
                                     'quantia' : '123,45',
                                     'lancamento' : format_date(date.today() + timedelta(days=1)),
                                     'agendamento' : True,
-                                    'termino' : format_date(date.today() + relativedelta(months=3)),
+                                    'repeticoes' : '3',
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
@@ -164,4 +165,4 @@ class TestMoradorLancaDespesa(TestController):
         
         desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='4')
         assert desp.proximo_lancamento == (date.today() + relativedelta(months=1, days=1)), desp.proximo_lancamento
-        assert desp.termino == date.today() + relativedelta(months=3)
+        assert desp.repeticoes == 3

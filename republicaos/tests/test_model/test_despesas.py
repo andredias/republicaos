@@ -46,7 +46,7 @@ class TestMorador(TestModel):
                     tipo = td3,
                     pessoa = p1,
                     proximo_lancamento = hoje,
-                    termino = hoje,
+                    repeticoes = 1,
                     republica = r
                     )
         dp2 = DespesaAgendada(
@@ -74,4 +74,3 @@ class TestMorador(TestModel):
         assert d1 != None and d1 in despesas
         assert len(despesas) == 5
         assert dp1 not in Session # foi deletado pois o prazo chegou ao fim
-
