@@ -24,8 +24,7 @@ class DespesaSchema(Schema):
     filter_extra_fields = True
     lancamento = Date(
                     not_empty = True,
-                    min = lambda : get_republica().intervalo_valido_lancamento[0],
-                    max = lambda : get_republica().intervalo_valido_lancamento[1]
+                    min = lambda : get_republica().intervalo_valido_lancamento[0]
                 )
     quantia = Number(not_empty = True, min = 0.01)
     repeticoes = validators.Int(min = 1)
@@ -115,16 +114,23 @@ class DespesaController(BaseController):
             log.debug('new: %s', c.valid_data)
             c.valid_data['pessoa'] = Pessoa.get_by(id=request.params['pessoa_id'])
             c.valid_data['tipo'] = TipoDespesa.get_by(id=request.params['tipo_id'])
-            despesa = Despesa(republica=republica, **c.valid_data)
-            if request.params.get('agendamento'):
+            if republica.fechamento_atual.data_no_intervalo(c.valid_data['lancamento']):
+                despesa = Despesa(republica=republica, **c.valid_data)
+                agendamento_forcado = False
+            else:
+                # lancamento > fechamento_atual.data_final_periodo
+                c.valid_data['repeticoes'] = c.valid_data['repeticoes'] if request.params.get('agendamento') else 1
+                agendamento_forcado = True
+            if request.params.get('agendamento') or agendamento_forcado:
                 log.debug("\n\nnew: DespesaAgendada")
                 DespesaAgendada(
                         republica=republica,
-                        proximo_lancamento=c.valid_data['lancamento'] + relativedelta(months=1),
+                        proximo_lancamento = c.valid_data['lancamento'] + \
+                                             relativedelta(months=(0 if agendamento_forcado else 1)),
                         **c.valid_data
                         )
             Session.commit()
-            flash('(info) Despesa no valor de $ %s lançada com sucesso' % pretty_decimal(c.valid_data['quantia']))
+            flash(u'(info) Despesa no valor de $ %s lançada com sucesso' % pretty_decimal(c.valid_data['quantia']))
         else:
             filler.update(request.params)
 
@@ -137,7 +143,7 @@ class DespesaController(BaseController):
     @republica_resource_required(Despesa)
     @validate(DespesaSchema)
     def edit(self, id, format='html'):
-        session['came_from'] = request.path_info
+        republica = get_republica()
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
             flash(u'(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
             redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
@@ -146,7 +152,17 @@ class DespesaController(BaseController):
             # complementa as chaves que faltam na validação para usar em from_dict
             c.valid_data['pessoa_id'] = request.params['pessoa_id']
             c.valid_data['tipo_id'] = request.params['tipo_id']
-            c.despesa.from_dict(c.valid_data)
+            if republica.fechamento_atual.data_no_intervalo(c.valid_data['lancamento']):
+                c.despesa.from_dict(c.valid_data)
+            else:
+                # mudou o lançamento para uma data futura
+                c.despesa.delete()
+                c.valid_data['repeticoes'] = 1
+                DespesaAgendada(
+                        republica=republica,
+                        proximo_lancamento = c.valid_data['lancamento'],
+                        **c.valid_data
+                        )
             Session.commit()
             flash('(info) Despesa alterada com sucesso')
             redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)

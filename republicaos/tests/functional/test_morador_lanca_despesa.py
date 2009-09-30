@@ -83,6 +83,25 @@ class TestMoradorLancaDespesa(TestController):
         assert DespesaAgendada.get_by() != None
         
         
+        # lança despesa com término depois do intervalo
+        response = self.app.post(
+                            url=url,
+                            params={
+                                    'pessoa_id' : '2',
+                                    'tipo_id' : '3',
+                                    'quantia' : '88',
+                                    'lancamento' : format_date(date.today() + relativedelta(months=1, days=1)),
+                                    'agendamento' : '',
+                                    'repeticoes' : '',
+                                    },
+                            extra_environ={str('REMOTE_USER'):str('1')}
+                            )
+        assert str(response).count('erro_') == 0
+        # deve virar despesa agendada e não despesa lançada
+        assert Despesa.get_by(lancamento = date.today() + relativedelta(months=1)) == None
+        assert DespesaAgendada.get_by(repeticoes=1, quantia=88) != None
+        
+        
         # lança despesa inválida: quantia negativa e repeticoes < 1
         response = self.app.post(
                             url=url,
@@ -138,8 +157,8 @@ class TestMoradorLancaDespesa(TestController):
         assert 'class="info"' in response
         assert '$ 12,34' in response
         assert Despesa.get_by(lancamento=date.today(), pessoa_id=2, republica_id=1, quantia=12.34)
-        assert DespesaAgendada.query.count() == 2
-        desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='3')
+        assert DespesaAgendada.query.count() == 3
+        desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='3', repeticoes=3)
         assert desp.proximo_lancamento == (date.today() + relativedelta(months=1))
         assert desp.repeticoes == 3
 
@@ -151,7 +170,7 @@ class TestMoradorLancaDespesa(TestController):
                                     'pessoa_id' : '2',
                                     'tipo_id' : '4',
                                     'quantia' : '123,45',
-                                    'lancamento' : format_date(date.today() + timedelta(days=1)),
+                                    'lancamento' : format_date(date.today()),
                                     'agendamento' : True,
                                     'repeticoes' : '3',
                                     },
@@ -160,9 +179,9 @@ class TestMoradorLancaDespesa(TestController):
         assert 'class="info"' in response
         assert '$ 123,45' in response
         desp = Despesa.get_by(pessoa_id='2', tipo_id='4')
-        assert desp.lancamento == date.today() + timedelta(days=1)
-        assert DespesaAgendada.query.count() == 3
+        assert desp.lancamento == date.today()
+        assert DespesaAgendada.query.count() == 4
         
         desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='4')
-        assert desp.proximo_lancamento == (date.today() + relativedelta(months=1, days=1)), desp.proximo_lancamento
+        assert desp.proximo_lancamento == date.today() + relativedelta(months=1)
         assert desp.repeticoes == 3

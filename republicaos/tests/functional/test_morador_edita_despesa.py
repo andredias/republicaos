@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from urlparse import urlparse
 from babel.dates import format_date
+from sqlalchemy import func, select
 
 import logging
 log = logging.getLogger(__name__)
@@ -106,8 +107,7 @@ class TestMoradorEditaDespesa(TestController):
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
         assert 'erro_quantia' in response
-        assert 'erro_lancamento' in response
-        assert str(response).count('erro_') == 2
+        assert str(response).count('erro_') == 1
         d = Despesa.get_by(id=3)
         assert str(d.quantia) == '1.99'
         
@@ -128,3 +128,26 @@ class TestMoradorEditaDespesa(TestController):
         d = Despesa.get_by(id=3)
         assert str(d.quantia) == '9.99'
         assert d.lancamento == date.today() - timedelta(days=1)
+        
+        
+        
+        # editar uma despesa para uma data futura
+        response = self.app.post(
+                            url=url,
+                            params={
+                                'pessoa_id':'1',
+                                'tipo_id':'7',
+                                'quantia':'1,99',
+                                'lancamento':format_date(date.today() + relativedelta(months=1)),
+                                'repeticoes':''
+                                },
+                            extra_environ={str('REMOTE_USER'):str('2')},
+                        )
+        assert '(info) Despesa alterada' in ''.join(response.session['flash'])
+        assert Despesa.get_by(id=3) == None
+        d = DespesaAgendada.query.filter(DespesaAgendada.id == select([func.max(DespesaAgendada.id)])).one()
+        assert d != None
+        assert str(d.quantia) == '1.99'
+        assert d.pessoa_id == 1
+        assert d.repeticoes == 1
+

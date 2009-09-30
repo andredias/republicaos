@@ -16,17 +16,12 @@ from formencode import Schema, validators
 from babel.dates import format_date
 from republicaos.lib.validators import Date
 
-class LancamentoProgramadoSchema(DespesaSchema):
-    lancamento = Date(
-                    not_empty = True,
-                    min = lambda : get_republica().intervalo_valido_lancamento[0]
-                )
 
 log = logging.getLogger(__name__)
 
 class LancamentoProgramadoController(BaseController):
     @republica_resource_required(DespesaAgendada)
-    @validate(LancamentoProgramadoSchema)
+    @validate(DespesaSchema)
     def edit(self, id):
         if c.valid_data:
             # gambiarra para aproveitar o mesmo Schema e também o mesmo formulário
