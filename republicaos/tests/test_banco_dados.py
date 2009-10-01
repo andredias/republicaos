@@ -19,7 +19,9 @@ class BaseBancoDeDados(BaseTest):
     def popula_dados(self):
         r = Republica(nome = 'Teste',
             data_criacao = date.today(),
-            logradouro = 'R. dos Bobos, nº 0')
+            endereco = 'R. dos Bobos, nº 0',
+            latitude = 0,
+            longitude = 0)
         
         c = ContaTelefone(
                 telefone = 1111,

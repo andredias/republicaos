@@ -19,9 +19,9 @@ class TestUsuarioConfirmaConviteParaMorador(TestController):
         p2 = Pessoa(nome='Beltrano', email='beltrano@republicaos.com.br', senha='1234')
         republica = Republica(nome='Mae Joana', 
                         data_criacao = mes_passado,
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         Morador(pessoa=p1, republica=republica, entrada=date.today())
         convite1 = ConviteMorador(nome=p2.nome, email=p2.email, republica=republica, user=p1)
         convite2 = ConviteMorador(nome='Siclano', email='siclano@republicaos.com.br', republica=republica, user=p1)

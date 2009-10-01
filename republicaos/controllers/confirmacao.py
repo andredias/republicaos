@@ -10,7 +10,7 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.validators import Date
-from republicaos.lib import auth as authentication
+from republicaos.lib.auth import set_user, get_user
 from republicaos.model import CadastroPendente, TrocaSenha, Pessoa, Session, ConviteMorador, Morador
 from formencode import Schema, validators
 from datetime import date, timedelta
@@ -63,12 +63,11 @@ class ConfirmacaoController(BaseController):
         cp = CadastroPendente.get_by(hash = id)
         if cp:
             user = cp.confirma_cadastro()
-            authentication.set_user(user)
+            set_user(user)
             flash('(info) Bem vindo ao Republicaos, %s!' % cp.nome)
             redirect_to(controller='root', action='index')
         else:
             return render('confirmacao/confirmacao_invalida.html')
-
 
 
     @validate(ConviteMoradorSchema, alternative_schema=ConviteMoradorSchema2, check_function=check_convidado_is_user)
@@ -77,22 +76,22 @@ class ConfirmacaoController(BaseController):
         if not c.convite:
             return render('confirmacao/confirmacao_invalida.html')
 
-        user = Pessoa.get_by(email=c.convite.email)
-        authentication.set_user(user)
+        set_user(Pessoa.get_by(email=c.convite.email))
+        c.user = get_user()
         if c.valid_data:
             # cadastrar pessoa
-            if not user:
-                user = Pessoa(
+            if not c.user:
+                c.user = Pessoa(
                                 nome=c.valid_data['nome'],
                                 senha=c.valid_data['senha'],
                                 email=c.convite.email
                             )
-            Morador(pessoa=user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
+            Morador(pessoa=c.user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
             flash('(info) Bem vindo(a) à república %s!' % c.convite.republica.nome)
             destino = url_for(controller='republica', action='show', republica_id=c.convite.republica.id)
             c.convite.delete()
             Session.commit()
-            authentication.set_user(user)
+            set_user(c.user)
             redirect_to(destino)
         # FIXME: problemas com unicode
         c.title = 'Confirmacao do convite para participar da republica %s' % c.convite.republica.nome
@@ -103,11 +102,10 @@ class ConfirmacaoController(BaseController):
         return render('confirmacao/convite_morador.html', filler_data=filler_data)
 
 
-
     def troca_senha(self, id):
         ts = TrocaSenha.get_by(hash=id)
         if ts:
-            authentication.set_user(ts.pessoa)
+            set_user(ts.pessoa)
             flash('(info) Entre com a nova senha')
             ts.delete()
             Session.commit()

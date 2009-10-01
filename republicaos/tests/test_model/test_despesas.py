@@ -16,9 +16,9 @@ class TestMorador(TestModel):
         hoje = date.today()
         r = Republica(nome = 'Teste',
             data_criacao = mes_passado,
-            logradouro = 'R. dos Bobos, n. 0',
-            cidade = 'ABC',
-            uf = 'AA')
+            endereco = 'R. dos Bobos, n. 0, ABC, AA',
+            latitude = 0,
+            longitude = 0)
         Fechamento(data=date.today(), republica=r)
         Fechamento(data=date.today() + relativedelta(months=1), republica=r)
 

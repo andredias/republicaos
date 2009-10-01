@@ -11,7 +11,7 @@ from republicaos.lib.utils import render, validate, check_testing
 from republicaos.lib.auth import login_required, owner_required
 from republicaos.lib.base import BaseController
 from formencode import Schema, validators
-from republicaos.lib.auth import check_user, get_user, set_user, owner_required
+from republicaos.lib.auth import owner_required
 from republicaos.lib.auth import morador_ou_ex_required, morador_required, republica_required
 from republicaos.lib.auth import republica_resource_required
 from republicaos.model import TipoDespesa

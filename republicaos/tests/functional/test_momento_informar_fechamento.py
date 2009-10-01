@@ -19,15 +19,15 @@ class TestMomentoInformarFechamento(TestController):
         
         r1 = Republica(nome='Mae Joana', 
                         data_criacao = mes_retrasado,
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
                         
         r2 = Republica(nome='Jeronimo', 
                         data_criacao = mes_retrasado,
-                        logradouro = 'Av. Ipê Amarelo',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'Av. Ipê Amarelo, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         
         p1 = Pessoa(nome='Fulano', email='abc@xyz.com.br', senha='1234')
         p2 = Pessoa(nome='Beltrano', email='123@xyz.com.br', senha='1234')

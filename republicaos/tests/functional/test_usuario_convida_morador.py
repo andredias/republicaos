@@ -19,14 +19,14 @@ class TestUsuarioConvidaMorador(TestController):
         p2 = Pessoa(nome='Beltrano', email='beltrano@republicaos.com.br', senha='1234')
         republica = Republica(nome='Mae Joana', 
                         data_criacao = ano_passado,
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         republica2 = Republica(nome='Jeronimo', 
                         data_criacao = ano_passado,
-                        logradouro = 'R. Jeronimo Pattaro, 186',
-                        cidade = 'Campinas',
-                        uf = 'SP')
+                        endereco = 'R. Jeronimo Pattaro, 186, Campinas, SP',
+                        latitude = 0,
+                        longitude = 0)
 
         Fechamento(data=ano_passado + timedelta(days=30), republica=republica)
         Fechamento(data=ano_passado + timedelta(days=30), republica=republica2)

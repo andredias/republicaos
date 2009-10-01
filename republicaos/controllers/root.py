@@ -11,7 +11,7 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate
 from republicaos.lib.base import BaseController
 from formencode import Schema, validators
-from republicaos.lib.auth import check_user, get_user, set_user, owner_required
+from republicaos.lib.auth import check_user, set_user, owner_required
 
 
 log = logging.getLogger(__name__)

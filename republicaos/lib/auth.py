@@ -57,7 +57,8 @@ def set_user(user = None):
 @decorator
 def login_required(func, self, *args, **kwargs):
     log.debug('login_required')
-    if not get_user():
+    c.user = get_user()
+    if not c.user:
         session['came_from'] = request.path_info
         flash('(info) Antes de continuar, é necessário entrar no sistema')
         redirect_to(controller='root', action='login')
@@ -68,17 +69,16 @@ def login_required(func, self, *args, **kwargs):
 @login_required
 def owner_required(func, self, *args, **kwargs):
     log.debug('owner_required')
-    user = get_user()
-    log.debug("owner_required: request.urlvars['id']): %s, user.id: %s", request.urlvars['id'], user.id)
-    if int(request.urlvars['id']) != user.id:
+    log.debug("owner_required: request.urlvars['id']): %s, c.user.id: %s", request.urlvars['id'], c.user.id)
+    if int(request.urlvars['id']) != c.user.id:
         raise HTTPForbidden(comment = '(error) Só o proprietário desse recurso pode manipulá-lo.')
     return func(self, *args, **kwargs)
 
 
 @decorator
 def republica_required(func, self, *args, **kwargs):
-    republica = get_republica()
-    if not id or not republica:
+    c.republica = get_republica()
+    if not id or not c.republica:
         erro = '(error) República inexistente ou não referenciada'
         flash(erro)
         abort(404, comment=erro)
@@ -94,11 +94,10 @@ user_status_ex_morador = 2
 def morador_ou_ex_required(func, self, *args, **kwargs):
     log.debug('morador_ou_ex_required')
     # qual o status do usuário em relação à república
-    user = get_user()
-    republica = Republica.get_by(id=request.urlvars.get('republica_id'))
-    if republica in user.morador_em_republicas:
+
+    if c.republica in c.user.morador_em_republicas:
         session['user_status'] = user_status_morador
-    elif republica in user.ex_morador_em_republicas:
+    elif c.republica in c.user.ex_morador_em_republicas:
         session['user_status'] = user_status_ex_morador
     else:
         session.pop('user_status', None)

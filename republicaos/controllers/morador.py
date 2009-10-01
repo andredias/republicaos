@@ -10,7 +10,7 @@ from pylons.decorators.rest import restrict, dispatch_on
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
-from republicaos.lib.auth import morador_required, get_user, get_republica
+from republicaos.lib.auth import morador_required, owner_required, get_republica
 from republicaos.lib.validators import Date
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, DespesaAgendada, Session
 from sqlalchemy  import and_, desc
@@ -104,24 +104,23 @@ class MoradorController(BaseController):
     @morador_required
     @validate(MoradorSchema)
     def new(self):
-        republica = get_republica()
         if c.valid_data:
             ConviteMorador.convidar_moradores(
                         nomes=c.valid_data['nome'],
                         emails=c.valid_data['email'],
-                        user=get_user(),
-                        republica=republica,
+                        user=c.user,
+                        republica=c.republica,
                         entrada=c.valid_data['entrada']
                     )
             Session.commit()
-            redirect_to(controller='republica', action='show', republica_id=republica.id)
+            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
 
 
         c.action = url_for(controller='morador', action='new',
                             republica_id=request.urlvars['republica_id'])
         c.submit = 'Enviar convite'
         #FIXME: problemas com unicode
-        c.title = 'Convidar morador para republica %s' % republica.nome
+        c.title = 'Convidar morador para republica %s' % c.republica.nome
         for key, value in c.errors.items():
             flash('(error) %s: %s' % (key, value))
         return render('morador/form.html', filler_data=request.params)
@@ -130,44 +129,42 @@ class MoradorController(BaseController):
     @morador_required
     @validate(SaidaMoradorSchema)
     def sair(self):
-        republica = get_republica()
-        user = get_user()
-        morador = Morador.registro_mais_recente(pessoa=user, republica=republica)
+        morador = Morador.registro_mais_recente(pessoa=c.user, republica=c.republica)
         if c.valid_data:
             morador.saida = c.valid_data['saida']
             # retira as despesas agendadas para morador
             DespesaAgendada.query.filter(
                                 and_(
-                                     DespesaAgendada.pessoa==user,
-                                     DespesaAgendada.republica==republica
+                                     DespesaAgendada.pessoa==c.user,
+                                     DespesaAgendada.republica==c.republica
                                     )
                                 ).delete()
             Session.commit()
             flash('(info) Sua saída da república foi registrada!')
-            redirect_to(controller='pessoa', action='painel', id=user.id)
+            redirect_to(controller='pessoa', action='painel', id=c.user.id)
 
-        c.action = url_for(controller='morador', action='sair', republica_id=republica.id)
+        c.action = url_for(controller='morador', action='sair', republica_id=c.republica.id)
         filler = {}
         filler[str('saida')] = request.params.get('saida') or format_date(morador.saida or date.today())
         return render('morador/saida.html', filler_data = filler)
+
 
     @morador_required
     def cancelar_desligamento(self):
         '''
         Cancelar saída da república
         '''
-        republica = get_republica()
-        user = get_user()
-        registro = Morador.query.filter(and_(Morador.republica_id == republica.id, Morador.pessoa_id == user.id)).order_by(desc(Morador.saida)).first()
+        registro = Morador.query.filter(and_(Morador.republica_id == c.republica.id, Morador.pessoa_id == c.user.id)).order_by(desc(Morador.saida)).first()
         if registro.saida and registro.republica.fechamento_atual.data_no_intervalo(registro.saida):
             registro.saida = None
             Session.commit()
             flash('(info) Desligamento cancelado!')
         else:
             flash('(error) Não foi possível cancelar o desligamento!')
-        redirect_to(controller='pessoa', action='painel', id=user.id)
+        redirect_to(controller='pessoa', action='painel', id=c.user.id)
         
 
+    @owner_required
     @validate(MoradorSchema)
     def edit(self, id, format='html'):
         """GET /pessoa/edit/id: Edit a specific item"""

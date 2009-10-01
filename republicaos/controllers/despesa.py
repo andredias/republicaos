@@ -6,7 +6,7 @@ from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 from pylons.decorators.rest import restrict, dispatch_on
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
-from republicaos.lib.auth import morador_required, get_republica, get_user
+from republicaos.lib.auth import morador_required, get_republica
 from republicaos.lib.auth import republica_resource_required
 from republicaos.lib.utils import render, validate, pretty_decimal
 from republicaos.lib.base import BaseController
@@ -98,12 +98,11 @@ class DespesaController(BaseController):
     @morador_required
     @validate(DespesaSchema)
     def new(self):
-        republica = get_republica()
         session['came_from'] = request.path_info
         c.title  = 'Novo Tipo de Despesa'
-        c.action = url_for(controller='despesa', action='new', republica_id=republica.id)
+        c.action = url_for(controller='despesa', action='new', republica_id=c.republica.id)
         filler = {
-                'pessoa_id' : get_user().id,
+                'pessoa_id' : c.user.id,
                 'tipo_id' : 0,
                 'lancamento' : format_date(date.today()),
                 'agendamento' : False,
@@ -114,8 +113,8 @@ class DespesaController(BaseController):
             log.debug('new: %s', c.valid_data)
             c.valid_data['pessoa'] = Pessoa.get_by(id=request.params['pessoa_id'])
             c.valid_data['tipo'] = TipoDespesa.get_by(id=request.params['tipo_id'])
-            if republica.fechamento_atual.data_no_intervalo(c.valid_data['lancamento']):
-                despesa = Despesa(republica=republica, **c.valid_data)
+            if c.republica.fechamento_atual.data_no_intervalo(c.valid_data['lancamento']):
+                despesa = Despesa(republica=c.republica, **c.valid_data)
                 agendamento_forcado = False
             else:
                 # lancamento > fechamento_atual.data_final_periodo
@@ -124,7 +123,7 @@ class DespesaController(BaseController):
             if request.params.get('agendamento') or agendamento_forcado:
                 log.debug("\n\nnew: DespesaAgendada")
                 DespesaAgendada(
-                        republica=republica,
+                        republica=c.republica,
                         proximo_lancamento = c.valid_data['lancamento'] + \
                                              relativedelta(months=(0 if agendamento_forcado else 1)),
                         **c.valid_data
@@ -143,7 +142,6 @@ class DespesaController(BaseController):
     @republica_resource_required(Despesa)
     @validate(DespesaSchema)
     def edit(self, id, format='html'):
-        republica = get_republica()
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
             flash(u'(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
             redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
@@ -152,14 +150,14 @@ class DespesaController(BaseController):
             # complementa as chaves que faltam na validação para usar em from_dict
             c.valid_data['pessoa_id'] = request.params['pessoa_id']
             c.valid_data['tipo_id'] = request.params['tipo_id']
-            if republica.fechamento_atual.data_no_intervalo(c.valid_data['lancamento']):
+            if c.republica.fechamento_atual.data_no_intervalo(c.valid_data['lancamento']):
                 c.despesa.from_dict(c.valid_data)
             else:
                 # mudou o lançamento para uma data futura
                 c.despesa.delete()
                 c.valid_data['repeticoes'] = 1
                 DespesaAgendada(
-                        republica=republica,
+                        republica=c.republica,
                         proximo_lancamento = c.valid_data['lancamento'],
                         **c.valid_data
                         )

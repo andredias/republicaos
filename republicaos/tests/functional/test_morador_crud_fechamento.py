@@ -17,9 +17,9 @@ class TestMoradorCRUDFechamento(TestController):
         TestController.setUp(self)
         republica = Republica(nome='Mae Joana', 
                         data_criacao = date.today() - relativedelta(months=2),
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         p1 = Pessoa(nome='Fulano', email='abc@xyz.com.br', senha='1234')
         Morador(pessoa=p1, republica=republica, entrada=date.today())
         Fechamento(republica=republica, data=date.today() - relativedelta(months=1))

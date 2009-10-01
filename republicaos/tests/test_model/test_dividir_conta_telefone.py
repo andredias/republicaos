@@ -66,7 +66,7 @@ class _TestDividirContaTelefone(TestModel):
 
     def setUp(self):
         TestModel.setUp(self)
-        self.r = Republica(nome = 'Teste', data_criacao = date(2007, 3, 6), logradouro = 'R. dos Bobos, nº 0')
+        self.r = Republica(nome = 'Teste', data_criacao = date(2007, 3, 6), endereco = 'R. dos Bobos, nº 0', latitude = 0, longitude = 0)
         Session.commit()
         self.r.criar_fechamento(data = date(2007, 4, 6))
         self.r.criar_fechamento(data = date(2007, 5, 6))

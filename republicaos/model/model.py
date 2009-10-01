@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from elixir      import Unicode, Boolean, Date, DateTime, Time, String, Integer, Numeric
+from elixir      import Unicode, Boolean, Date, DateTime, Time, String, Integer, Numeric, Float
 from elixir      import Entity, using_options, using_table_options, using_mapper_options
 from elixir      import Field, OneToMany, ManyToOne
 from sqlalchemy  import types, and_, or_, select, UniqueConstraint, func
@@ -268,10 +268,9 @@ class TelefoneRegistrado(Entity):
 class Republica(Entity):
     nome         = Field(Unicode(90), required = True)
     data_criacao = Field(Date, default = date.today, required = True)
-    logradouro   = Field(Unicode(150), required = True)
-    complemento  = Field(Unicode(100))
-    cidade       = Field(Unicode(80), required = True)
-    uf           = Field(String(2), required = True)
+    endereco     = Field(Unicode, required = True)
+    latitude     = Field(Float, required = True)
+    longitude    = Field(Float, required = True)
 
     fechamentos           = OneToMany('Fechamento', order_by = '-data')
     tipos_despesa         = OneToMany('TipoDespesa', order_by = 'nome')

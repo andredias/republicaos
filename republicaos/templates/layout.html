@@ -45,11 +45,7 @@
 
 
 <?python
-
 from republicaos.lib.utils import get_flash_messages
-from republicaos.lib.auth import get_user, get_republica
-user = get_user()
-republica = get_republica()
 flash_messages = get_flash_messages()
 ?>
 <py:match path="body" once="true">
@@ -58,12 +54,12 @@ flash_messages = get_flash_messages()
     <header py:attrs="select('@*')">
         <h1><a href="/" title="Republicaos > Página Inicial">Republicaos</a></h1>
         ${select('*[local-name()]')}
-        <nav py:if="user">
-            <strong>${user}</strong>
+        <nav py:if="c.user">
+            <strong>${c.user}</strong>
             |
-            <a href="${h.url_for(controller='pessoa', action='painel', id=user.id)}">painel de controle</a>
+            <a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">painel de controle</a>
             |
-            <a href="${h.url_for(controller='root', action='ajuda', id=user.id)}">ajuda</a>
+            <a href="${h.url_for(controller='root', action='ajuda', id=c.user.id)}">ajuda</a>
             |
             <a href="${h.url_for(controller='root', action='logout')}">Sair</a>
         </nav>

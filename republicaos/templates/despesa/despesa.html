@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from republicaos.lib.utils  import pretty_decimal
 from decimal                import Decimal
 
-moradores  = republica.get_moradores()
+moradores  = c.republica.get_moradores()
 
 ?>
 
@@ -62,12 +62,12 @@ moradores  = republica.get_moradores()
                 <tr>
                     <th class="label">Tipo da Despesa</th>
                     <td><select name="tipo_id">
-                        <option py:for="tipo_despesa in republica.tipos_despesa" value="${tipo_despesa.id}" py:attrs="dict(selected='selected') if tipo_id == tipo_despesa.id else dict()">
+                        <option py:for="tipo_despesa in c.republica.tipos_despesa" value="${tipo_despesa.id}" py:attrs="dict(selected='selected') if tipo_id == tipo_despesa.id else dict()">
                             <span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
                         </option>
                     </select>
                     <!-- !TODO: como fazer para passar o valor do item selecionado para o link a a ser aberto -->
-                    <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=republica.id)}">novo</a> <a href="" id="editar_tipo">editar</a></td>
+                    <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}">novo</a> <a href="" id="editar_tipo">editar</a></td>
                     <td class="help"></td>
                 </tr>
                 <tr>
@@ -95,7 +95,7 @@ moradores  = republica.get_moradores()
 
         <p>
             <input type="submit" value="Salvar" /> ou 
-            <a href="${h.url_for(controller='republica', action='show', republica_id=republica.id)}" class="cancel">Voltar à página da república</a>
+            <a href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}" class="cancel">Voltar à página da república</a>
         </p>
     </form>
 

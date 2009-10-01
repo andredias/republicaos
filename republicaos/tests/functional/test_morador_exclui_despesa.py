@@ -17,9 +17,9 @@ class TestMoradorExcluiDespesa(TestController):
     def test_um(self):
         republica = Republica(nome='Mae Joana', 
                         data_criacao = date.today(),
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         
 
         Fechamento(data=date.today() + timedelta(days=30), republica=republica)
@@ -34,9 +34,9 @@ class TestMoradorExcluiDespesa(TestController):
         
         republica2 = Republica(nome='Jeronimo', 
                         data_criacao = date.today() - relativedelta(months=1),
-                        logradouro = 'Jeronimo Patarro',
-                        cidade = 'Campinas',
-                        uf = 'SP')
+                        endereco = 'R. Jeronimo Pataro, Campinas, SP',
+                        latitude = 0,
+                        longitude = 0)
         
         Fechamento(data=date.today() - relativedelta(weeks=2), republica=republica2)
         Fechamento(data=date.today(), republica=republica2)

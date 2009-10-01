@@ -15,7 +15,7 @@ from republicaos.model import Pessoa, CadastroPendente, TrocaSenha, ConviteMorad
 from republicaos.model import Morador
 from republicaos.forms.validators.unique import Unique
 from formencode import Schema, validators
-from republicaos.lib.auth import get_user, owner_required
+from republicaos.lib.auth import owner_required
 from sqlalchemy.sql.expression import desc
 
 
@@ -181,9 +181,8 @@ class PessoaController(BaseController):
     @owner_required
     def painel(self, id):
         c.title = 'Painel de Controle'
-        user = get_user()
-        c.registros = Morador.query.filter(Morador.pessoa_id == user.id).order_by(desc(Morador.entrada)).all()
-        c.can_create = len(user.morador_em_republicas) < 2
-        c.convites = ConviteMorador.query.filter(ConviteMorador.email == get_user().email).all()
+        c.registros = Morador.query.filter(Morador.pessoa_id == c.user.id).order_by(desc(Morador.entrada)).all()
+        c.can_create = len(c.user.morador_em_republicas) < 2
+        c.convites = ConviteMorador.query.filter(ConviteMorador.email == c.user.email).all()
         return render('pessoa/painel.html')
         

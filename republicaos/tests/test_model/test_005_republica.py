@@ -17,9 +17,9 @@ class TestRepublica(TestModel):
         mes_q_vem = date.today() + relativedelta(months=1)
         r = Republica(nome = 'Teste',
             data_criacao = mes_retrasado,
-            logradouro = 'R. dos Bobos, n. 0',
-            cidade = 'Sumare',
-            uf = 'SP')
+            endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+            latitude = 0,
+            longitude = 0)
         Fechamento(data=date.today(), republica=r)
         Fechamento(data=mes_q_vem, republica=r)
         Fechamento(data=date.today() + relativedelta(months=2), republica=r)
@@ -42,9 +42,9 @@ class TestRepublica(TestModel):
         
         # verificar _check_proximo_fechamento
         r2 = Republica(nome = 'Mae Joana',
-            logradouro = 'R. tralala',
-            cidade = 'Vitoria',
-            uf = 'ES')
+            endereco = 'R. tralala, Vitoria, ES',
+            latitude = 0,
+            longitude = 0)
         Session.commit()
         
         assert r2.data_criacao == r2.fechamento_atual.intervalo[0] == date.today()
@@ -54,42 +54,15 @@ class TestRepublica(TestModel):
     def test_fechamento_atual(self):
         r = Republica(nome = 'Teste',
             data_criacao = date.today() - relativedelta(months=2),
-            logradouro = 'R. dos Bobos, n. 0',
-            cidade = 'Sumare',
-            uf = 'SP')
+            endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+            latitude = 0,
+            longitude = 0)
         Fechamento(data=date.today() - relativedelta(months=1), republica=r)
         f = Fechamento(data=date.today(), republica=r)
         Fechamento(data=date.today() + relativedelta(months=1), republica=r)
         Session.commit()
         
         assert r.fechamento_atual == f
-
-
-
-
-
-
-
-    #def test_contas_telefone(self):
-        #r1 = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
-        #r2 = Republica(nome = 'Teste2', data_criacao = date(2007, 5, 8), logradouro = 'R. dos Bobos, nº 1')
-
-        #c1 = ContaTelefone(telefone = 11, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r1)
-        #c2 = ContaTelefone(telefone = 11, operadora_id = 2, emissao = date(2007, 5, 29), vencimento = date(2007, 5, 10), republica = r1)
-        #c3 = ContaTelefone(telefone = 11, operadora_id = 2, emissao = date(2007, 6, 21), vencimento = date(2007, 5, 10), republica = r1)
-        #c4 = ContaTelefone(telefone = 22, operadora_id = 1, emissao = date(2007, 4, 29), vencimento = date(2007, 5, 10), republica = r2)
-        #c5 = ContaTelefone(telefone = 22, operadora_id = 1, emissao = date(2007, 5, 10), vencimento = date(2007, 5, 10), republica = r2)
-
-        #Session.commit()
-
-        #assert len(r1.contas_telefone(date(2007, 1, 8), date(2007, 4, 28))) == 0
-        #assert len(r1.contas_telefone(date(2007, 4, 29), date(2007, 5, 29))) == 2
-        #assert len(r1.contas_telefone(date(2007, 4, 29), date(2007, 6, 21))) == 3
-        #assert c1 in r1.contas_telefone(date(2007, 4, 29), date(2007, 5, 29))
-        #assert c2 in r1.contas_telefone(date(2007, 4, 29), date(2007, 5, 29))
-        #assert c3 in r1.contas_telefone(date(2007, 4, 29), date(2007, 6, 21))
-
-        #assert len(r2.contas_telefone(date(2007, 4, 29), date(2007, 6, 29))) == 2
 
 
     def test_moradores(self):
@@ -123,9 +96,9 @@ class TestRepublica(TestModel):
         '''
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 4, 8),
-            logradouro = 'R. dos Bobos, n. 0',
-            cidade = 'Sumare',
-            uf = 'SP')
+            endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+            latitude = 0,
+            longitude = 0)
 
         p1 = Pessoa(nome = '1', senha='1234', email='1@xyz.com')
         p2 = Pessoa(nome = '2', senha='1234', email='2@xyz.com')
@@ -168,7 +141,7 @@ class TestRepublica(TestModel):
 
     # desabilitado
     def _test_registrar_responsavel_telefone(self):
-        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), endereco = 'R. dos Bobos, nº 0',latitude = 0, longitude = 0)
 
         p1 = Pessoa(nome = 'André')
         p2 = Pessoa(nome = 'Marcos')
@@ -227,7 +200,7 @@ class TestRepublica(TestModel):
         veja o post publicado no grupo do sqlelixir:
         http://groups.google.com/group/sqlelixir/browse_thread/thread/710e82c3ad586aab/03fc48b416a09fcf#03fc48b416a09fcf
         '''
-        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), endereco = 'R. dos Bobos, nº 0', latitude = 0, longitude = 0)
 
         p1 = Pessoa(nome = 'André')
         p2 = Pessoa(nome = 'Marcos')
@@ -256,7 +229,7 @@ class TestRepublica(TestModel):
         '''
         Segue a mesma linha do teste 2
         '''
-        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), endereco = 'R. dos Bobos, nº 0', latitude = 0, longitude = 0)
 
         p1 = Pessoa(nome = 'André')
         p2 = Pessoa(nome = 'Marcos')
@@ -275,7 +248,7 @@ class TestRepublica(TestModel):
 
     # desabilitado
     def _test_aluguel(self):
-        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), logradouro = 'R. dos Bobos, nº 0')
+        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), endereco = 'R. dos Bobos, nº 0', latitude = 0, longitude = 0)
 
         Aluguel(valor = Decimal(100), data_cadastro = date(2007, 1, 1), republica = r)
         Aluguel(valor = Decimal(200), data_cadastro = date(2007, 2, 1), republica = r)

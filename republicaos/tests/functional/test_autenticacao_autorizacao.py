@@ -135,9 +135,9 @@ class TestAutenticacaoAutorizacao(TestController):
         p2 = Pessoa(nome='Beltrano', email='beltrano@republicaos.com.br', senha='1234')
         republica = Republica(nome='Mae Joana', 
                         data_criacao = ano_passado,
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         Morador(pessoa=p1, republica=republica, entrada=date.today())
         Morador(
             pessoa=p2,
@@ -154,9 +154,9 @@ class TestAutenticacaoAutorizacao(TestController):
         p3 = Pessoa(nome='Siclano', email='siclano@republicaos.com.br', senha='1234')
         republica2 = Republica(nome='Jeronimo', 
                         data_criacao = ontem,
-                        logradouro = 'R. Jeronimo Pattaro, 186',
-                        cidade = 'Campinas',
-                        uf = 'SP')
+                        endereco = 'R. Jeronimo Pattaro, 186 - Campinas -SP',
+                        latitude = 0,
+                        longitude = 0)
         Morador(pessoa=p3, republica=republica2, entrada=ontem)
         Session.commit()
         

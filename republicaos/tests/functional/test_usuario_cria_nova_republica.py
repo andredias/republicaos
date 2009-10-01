@@ -18,9 +18,9 @@ class TestUsuarioCriaRepublica(TestController):
         p2 = Pessoa(nome='Beltrano', email='beltrano@republicaos.com.br', senha='1234')
         republica = Republica(nome='Mae Joana', 
                         data_criacao = mes_passado,
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         Morador(pessoa=p1, republica=republica, entrada=date.today())
         Session.commit()
         
@@ -35,27 +35,35 @@ class TestUsuarioCriaRepublica(TestController):
                             url=url_for(controller='republica', action='new'),
                             params={
                                 'nome':'Jerônimo',
-                                'logradouro':'R. Jerônimo Pattaro, 186',
-#                                'complemento':'Barão Geraldo',
-#                                'cidade':'Campinas',
-                                'uf':'SP',
                             },
                             extra_environ={str('REMOTE_USER'):str('1')}
                         )
         
         # assert urlparse(response.response.location).path == url_for(controller='republica', action='new')
         assert url_for(controller='republica', action='new') in response
-        assert 'erro_cidade' in response
+        assert 'erro_endereco' in response
+        
+        
+        # usuário autenticado tenta cadastrar república com endereço inexistente
+        response = self.app.post(
+                            url=url_for(controller='republica', action='new'),
+                            params={
+                                'nome':'Jerônimo',
+                                'endereco': 'R. Tralálá - XYZ, SP'
+                            },
+                            extra_environ={str('REMOTE_USER'):str('1')}
+                        )
+        
+        # assert urlparse(response.response.location).path == url_for(controller='republica', action='new')
+        assert url_for(controller='republica', action='new') in response
+        assert 'erro_endereco' in response
         
         # usuário autenticado cadastra república
         response = self.app.post(
                             url=url_for(controller='republica', action='new'),
                             params={
                                 'nome':'Jerônimo',
-                                'logradouro':'R. Jerônimo Pattaro, 186',
-                                'complemento':'Barão Geraldo',
-                                'cidade':'Campinas',
-                                'uf':'SP',
+                                'endereco':'R. Jerônimo Pattaro, 186, Barão Geraldo, Campinas, SP',
                             },
                             extra_environ={str('REMOTE_USER'):str('1')}
                         )
@@ -71,10 +79,7 @@ class TestUsuarioCriaRepublica(TestController):
                             url=url_for(controller='republica', action='new'),
                             params={
                                 'nome':'Saudade da Mamãe',
-                                'logradouro':'Av. da Saudade, 2035',
-                                'complemento':'Barão Geraldo',
-                                'cidade':'Campinas',
-                                'uf':'SP',
+                                'endereco':'Av. da Saudade, 2035, Barão Geraldo, Campinas, SP',
                             },
                             extra_environ={str('REMOTE_USER'):str('1')}
                         )
@@ -92,10 +97,7 @@ class TestUsuarioCriaRepublica(TestController):
                             url=url_for(controller='republica', action='new'),
                             params={
                                 'nome':'Saudade da Mamãe',
-                                'logradouro':'Av. da Saudade, 2035',
-                                'complemento':'Barão Geraldo',
-                                'cidade':'Campinas',
-                                'uf':'SP',
+                                'endereco':'Av. da Saudade, 2035, Barão Geraldo, Campinas, SP',
                             },
                             extra_environ={str('REMOTE_USER'):str('2')}
                         )
@@ -106,7 +108,3 @@ class TestUsuarioCriaRepublica(TestController):
         assert list(p2.morador_em_republicas)[0].nome == 'Saudade da Mamãe'
         assert urlparse(response.response.location).path == url_for(
                                             controller='republica', action='show', republica_id='3')
-
-
-
-

@@ -28,9 +28,9 @@ class TestPessoa(TestModel):
         Quantos dias uma pessoa morou na república
         '''
         r = Republica(nome = 'Pronus',
-                logradouro = 'Av. Ipe Amarelo, 320 c. 21',
-                cidade = 'Sumare',
-                uf = 'SP',
+                endereco = 'Av. Ipe Amarelo, 320 c. 21, Sumare, SP',
+                latitude = 0,
+                longitude = 0,
                 data_criacao = date(2007, 1, 1)
             )
         p = Pessoa(nome = 'André', senha='123', email='abc@xyz.com')
@@ -59,9 +59,9 @@ class TestPessoa(TestModel):
         mes_passado = date.today() - timedelta(days=30)
         ontem = date.today() - timedelta(days=1)
         r1 = Republica(nome = 'Pronus',
-                logradouro = 'Av. Ipe Amarelo, 320 c. 21',
-                cidade = 'Sumare',
-                uf = 'SP',
+                endereco = 'Av. Ipe Amarelo, 320 c. 21, Sumare, SP',
+                latitude = 0,
+                longitude = 0,
                 data_criacao = mes_passado
             )
         Fechamento(data=date.today() - timedelta(days=15), republica=r1)
@@ -69,9 +69,9 @@ class TestPessoa(TestModel):
         Fechamento(data=date.today() + timedelta(days=30), republica=r1)
         
         r2 = Republica(nome = 'Mae Joana',
-                logradouro = 'Av. Ipe Amarelo, 320 c. 21',
-                cidade = 'Sumare',
-                uf = 'SP',
+                endereco = 'Av. Ipe Amarelo, 320 c. 21, Sumare, SP',
+                latitude = 0,
+                longitude = 0,
                 data_criacao = date.today()
             )
         Fechamento(data=date.today(), republica=r2)

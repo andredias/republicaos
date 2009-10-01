@@ -22,16 +22,16 @@ class TestMoradorSaiDaRepublica(TestController):
         p3 = Pessoa(nome='Siclano', email='siclano@republicaos.com.br', senha='1234')
         republica = Republica(nome='Mae Joana', 
                         data_criacao = mes_passado,
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
         Session.commit()
         
         republica2 = Republica(nome='Jeronimo', 
                         data_criacao = mes_passado,
-                        logradouro = 'R. Jeronimo Pattaro, 186',
-                        cidade = 'Campinas',
-                        uf = 'SP')
+                        endereco = 'R. Jeronimo Pattaro, 186, Campinas, SP',
+                        latitude = 0,
+                        longitude = 0)
         Morador(pessoa=p1, republica=republica, entrada=mes_passado)
         Morador(pessoa=p2, republica=republica, entrada=mes_passado, saida=ontem)
         Morador(pessoa=p2, republica=republica2, entrada=ontem)

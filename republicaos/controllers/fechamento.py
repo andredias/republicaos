@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import redirect_to
 from republicaos.lib.helpers import url_for, flash
-from republicaos.lib.auth import morador_required, get_republica, get_user
+from republicaos.lib.auth import morador_required, get_republica
 from republicaos.lib.auth import republica_resource_required
 from republicaos.lib.utils import render, validate, pretty_decimal, iso_to_date
 from republicaos.lib.base import BaseController
@@ -73,7 +73,7 @@ class FechamentoController(BaseController):
     def edit(self, data=None):
         if c.valid_data:
             c.fechamento.data = c.valid_data['data']
-            fechamentos = get_republica().fechamentos
+            fechamentos = c.republica.fechamentos
             # a edição da data pode mudar a ordem da lista de fechamentos
             fechamentos.sort(key=lambda obj: obj.data, reverse=True)
             if fechamentos[0].data > date.today():
@@ -100,8 +100,7 @@ class FechamentoController(BaseController):
     @republica_resource_required(Fechamento, id='data', convert=lambda x:iso_to_date(x))
     # data=None para o caso de tentarem acessar diretamente /fechamento/delete/ sem passar republica_id
     def delete(self, data=None):
-        republica = get_republica()
-        fechamentos = republica.fechamentos
+        fechamentos = c.republica.fechamentos
         fechamentos.remove(c.fechamento)
         if len(fechamentos) and fechamentos[0].data > date.today():
             c.fechamento.delete()
@@ -114,7 +113,7 @@ class FechamentoController(BaseController):
                     url_for(
                         controller='republica',
                         action='show',
-                        republica_id=republica.id
+                        republica_id=c.republica.id
                     )
                 )
         redirect_to(destino)

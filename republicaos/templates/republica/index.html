@@ -61,9 +61,10 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == repu
         <article>
             <h3>Cadastro</h3>
             <h4>${republica.nome}</h4>
-            <p>${republica.logradouro}<br /><span py:if="republica.complemento">
-${republica.complemento} - </span>${republica.cidade} - ${republica.uf}</p>
-            <a href="${h.url_for(controller='republica', action='edit', id=republica.id)}">Editar</a>
+            <p>${republica.endereco}<br />
+            Latitude: ${republica.latitude}°<br />
+            Longitude: ${republica.longitude}°</p>
+            <a href="${h.url_for(controller='republica', action='edit', republica_id=republica.id, id=republica.id)}">Editar</a>
         </article>
         <article>
             <h3>Fechamentos</h3>

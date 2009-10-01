@@ -23,11 +23,11 @@ from babel.dates import format_date
                 <img src="/images/sorriso.png" />
             </div>
             <div class="dados-perfil">
-                <p>Nome: <strong>${user.nome}</strong></p>
-                <p>e-mail: <strong>${user.email}</strong></p>
+                <p>Nome: <strong>${c.user.nome}</strong></p>
+                <p>e-mail: <strong>${c.user.email}</strong></p>
             </div>
             <div style="clear: both">
-                <a href="${h.url_for(controller='pessoa', action='edit', id=user.id)}">Editar perfil</a><br />
+                <a href="${h.url_for(controller='pessoa', action='edit', id=c.user.id)}">Editar perfil</a><br />
             </div>
         </article>
         

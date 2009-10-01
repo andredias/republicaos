@@ -6,29 +6,29 @@
 <xi:include href="../layout.html" />
 
 <head>
-    <title>Registrar desligamento da repúbica ${republica.nome}</title>
+    <title>Registrar desligamento da república ${c.republica.nome}</title>
 </head>
 
 <?python
 from datetime import timedelta, date
 from babel.dates import format_date
 
-data_inicial, data_final = republica.fechamento_atual.intervalo
+data_inicial, data_final = c.republica.fechamento_atual.intervalo
 ?>
 
 <body id="account">
 <header></header>
 <section>
-    <h2>Registrar desligamento da ${republica.nome}</h2>
+    <h2>Registrar desligamento da ${c.republica.nome}</h2>
 
     <p>Preencha o campo abaixo com a data de desligamento da república. Essa data deve estar entre <strong py:content="format_date(data_inicial)">99/99/9999</strong> e <strong py:content="format_date(data_final)">99/99/9999</strong>.</p>
 
     <form action="${c.action}" method="post" class="signup">
         <p><label>E-mail</label>
-        <span id="email">${user.email}</span></p>
+        <span id="email">${c.user.email}</span></p>
 
         <p><label>Nome</label>
-        <span class="text">${user.nome}</span>
+        <span class="text">${c.user.nome}</span>
         </p>
 
         <p><label>Data de desligamento</label>

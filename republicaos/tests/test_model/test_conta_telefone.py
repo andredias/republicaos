@@ -13,7 +13,9 @@ class _TestContaTelefone(TestModel):
     def test_fechamento_da_conta(self):
         r = Republica(nome = 'Teste',
             data_criacao   = date(2000, 05, 10),
-            logradouro     = 'R. dos Bobos, n 0')
+            endereco = 'R. dos Bobos, n 0',
+            latitude = 0,
+            longitude = 0)
 
         Fechamento(data = date(2007, 06, 10), republica = r)
         Fechamento(data = date(2007, 07, 10), republica = r)
@@ -50,11 +52,15 @@ class _TestContaTelefone(TestModel):
 
         r = Republica(nome = 'Teste',
             data_criacao = date.today(),
-            logradouro = 'R. dos Bobos, nº 0')
+            endereco = 'R. dos Bobos, nº 0',
+            latitude = 0,
+            longitude = 0)
 
         r2 = Republica(nome = 'Outra República',
             data_criacao = date(2000, 05, 10),
-            logradouro = 'R. dos Bobos, nº 1')
+            endereco = 'R. dos Bobos, nº 1',
+            latitude = 0,
+            longitude = 0)
 
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 02, 01))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2005, 10, 13))
@@ -125,7 +131,9 @@ class _TestContaTelefone(TestModel):
 
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 3, 6),
-            logradouro = 'R. dos Bobos, nº 0')
+            endereco = 'R. dos Bobos, nº 0',
+            latitude = 0,
+            longitude = 0)
 
         m1 = Morador(pessoa = p1, republica = r, data_entrada = date(1998, 2, 1), data_saida = date(2006, 12, 1))
         m2 = Morador(pessoa = p2, republica = r, data_entrada = date(2006, 2, 1))
@@ -197,7 +205,9 @@ class _TestContaTelefone(TestModel):
 
         r = Republica(nome = 'Teste',
             data_criacao = date(2007, 3, 6),
-            logradouro = 'R. dos Bobos, nº 0')
+            endereco = 'R. dos Bobos, nº 0',
+            latitude = 0,
+            longitude = 0)
 
         f = Fechamento(data = date(2007, 6, 6), republica = r)
         p1 = Pessoa(nome = 'André')

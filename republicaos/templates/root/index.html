@@ -9,7 +9,7 @@
 </head>
 <body id="home">
     <header>
-        <form id="login-form" name="login" method="post" action="${h.url_for(controller='root', action='login')}" py:if="not user">
+        <form id="login-form" name="login" method="post" action="${h.url_for(controller='root', action='login')}" py:if="not c.user">
             <fieldset>
             <legend>Acessar sua conta</legend>
             <div class="input">

@@ -20,9 +20,9 @@ class TestLancamentoProgramado(TestController):
     def test_um(self):
         republica = Republica(nome='Mae Joana', 
                         data_criacao = date.today(),
-                        logradouro = 'R. dos Bobos, n. 0',
-                        cidade = 'Sumare',
-                        uf = 'SP')
+                        endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+                        latitude = 0,
+                        longitude = 0)
 
         Fechamento(data=date.today() + timedelta(days=30), republica=republica)
 

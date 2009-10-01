@@ -35,16 +35,16 @@
                 </tr>
                 <tr>
                     <th class="label">Nome</th>
-                    <td><input class="text" name="nome" size="30" type="text" py:if="not user" />
-                    <span class="text" py:if="user">${user.nome}</span></td>
+                    <td><input class="text" name="nome" size="30" type="text" py:if="not c.user" />
+                    <span class="text" py:if="c.user">${c.user.nome}</span></td>
                     <td class="help"></td>
                 </tr>
-                <tr py:if="not user">
+                <tr py:if="not c.user">
                     <th class="label">Senha</th>
                     <td><input class="text" name="senha" size="30" type="password" /></td>
                     <td class="help"></td>
                 </tr>
-                <tr py:if="not user">
+                <tr py:if="not c.user">
                     <th class="label">Confirme sua senha</th>
                     <td><input class="text" name="confirmacao_senha" size="30" type="password" /></td>
                     <td class="help"></td>
@@ -54,7 +54,7 @@
                     <td><input class="text" name="entrada" size="10" type="text" /></td>
                     <td class="help"></td>
                 </tr>
-                <tr py:if="not user">
+                <tr py:if="not c.user">
                     <th class="header">Concordo com os <a href="/termo_uso">Termos de Uso</a> &nbsp;</th>
                     <td><input name="aceito_termos" type="checkbox" value="1" /></td>
                     <td class="help"></td>

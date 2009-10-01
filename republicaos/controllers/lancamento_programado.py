@@ -9,7 +9,7 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate, extract_attributes, iso_to_date
 from republicaos.lib.utils  import pretty_decimal
 from republicaos.lib.base import BaseController
-from republicaos.lib.auth import get_user, get_republica,  morador_required, republica_resource_required
+from republicaos.lib.auth import morador_required, republica_resource_required
 from republicaos.model import Republica, Morador, Fechamento, DespesaAgendada, Session
 from republicaos.controllers.despesa import DespesaSchema
 from formencode import Schema, validators
@@ -29,7 +29,7 @@ class LancamentoProgramadoController(BaseController):
             c.despesa_agendada.from_dict(c.valid_data)
             Session.commit()
             flash(u'(info) Lançamento atualizado!')
-            redirect_to(controller='republica', action='show', republica_id=get_republica().id)
+            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
         filler_data = c.despesa_agendada.to_dict()
         filler_data['lancamento'] = format_date(filler_data['proximo_lancamento'])
         filler_data['quantia'] = pretty_decimal(filler_data['quantia'])
@@ -42,5 +42,5 @@ class LancamentoProgramadoController(BaseController):
         c.despesa_agendada.delete()
         Session.commit()
         flash(u'(info) Lançamento excluído')
-        redirect_to(controller='republica', action='show', republica_id=get_republica().id)
+        redirect_to(controller='republica', action='show', republica_id=c.republica.id)
         

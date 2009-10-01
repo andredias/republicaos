@@ -23,9 +23,9 @@ class TestFechamento(TestModel):
 
         self.r = Republica(nome = 'Teste',
             data_criacao = date(2007, 1, 1),
-            logradouro = 'R. dos Bobos, n. 0',
-            cidade = 'Sumare',
-            uf = 'SP')
+            endereco = 'R. dos Bobos, n. 0, Sumare, SP',
+            latitude = 0,
+            longitude = 0)
         Fechamento(data = date(2007, 4, 6), republica = self.r)
         Fechamento(data = date.today() + relativedelta(days=1), republica = self.r)
         Fechamento(data = date.today() + relativedelta(months=1), republica = self.r)
