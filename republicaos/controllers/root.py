@@ -11,7 +11,7 @@ from republicaos.lib.helpers import get_object_or_404, url_for, flash
 from republicaos.lib.utils import render, validate
 from republicaos.lib.base import BaseController
 from formencode import Schema, validators
-from republicaos.lib.auth import check_user, set_user, owner_required
+from republicaos.lib.auth import check_user, set_user, owner_required, get_user
 
 
 log = logging.getLogger(__name__)
@@ -25,6 +25,7 @@ class LoginSchema(Schema):
 class RootController(BaseController):
 
     def index(self):
+        c.user = get_user()
         return render('root/index.html')
 
     @validate(LoginSchema)
