@@ -24,17 +24,25 @@ data_inicial, data_final = c.republica.fechamento_atual.intervalo
     <p>Preencha o campo abaixo com a data de desligamento da república. Essa data deve estar entre <strong py:content="format_date(data_inicial)">99/99/9999</strong> e <strong py:content="format_date(data_final)">99/99/9999</strong>.</p>
 
     <form action="${c.action}" method="post" class="signup">
-        <p><label>E-mail</label>
-        <span id="email">${c.user.email}</span></p>
+        <table>
+            <tr>
+                <th class="label">E-mail</th>
+                <td>${c.user.email}</td>
+                <td class="help"></td>
+            </tr>
+            <tr>
+                <th class="label">Nome</th>
+                <td>${c.user.nome}</td>
+                <td class="help"></td>
+            </tr>
+            <tr>
+                <th class="label">Data de desligamento</th>
+                <td><input class="text" name="saida" size="10" type="text" /></td>
+                <td class="help"></td>
+            </tr>
+        </table>
 
-        <p><label>Nome</label>
-        <span class="text">${c.user.nome}</span>
-        </p>
-
-        <p><label>Data de desligamento</label>
-        <input class="text" name="saida" size="10" type="text" /></p>
-
-        <p><input name="commit" type="submit" value="Enviar" /></p>
+        <p><input name="commit" type="submit" value="Enviar" /> ou <a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">Voltar o painel de controle</a></p>
     </form>
 </section>
 </body>
