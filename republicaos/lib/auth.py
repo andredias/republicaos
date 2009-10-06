@@ -102,8 +102,8 @@ def morador_ou_ex_required(func, self, *args, **kwargs):
     else:
         session.pop('user_status', None)
         erro = '(error) Recurso acessível apenas por moradores ou ex-moradores da república'
-        flash(erro)
-        abort(403, comment=erro)
+        #flash(erro)
+        abort(403, detail=erro)
     return func(self, *args, **kwargs)
 
 
