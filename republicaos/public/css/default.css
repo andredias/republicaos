@@ -382,6 +382,7 @@ a:hover img {
 
 table.rateio {
     border-collapse: collapse;
+    border: 1px solid #bbb;
 }
 
 table.rateio td, table.rateio th {
@@ -402,22 +403,26 @@ table.rateio thead, table.rateio tfoot {
     font-family: georgia;
 }
 
+table.rateio thead th, table.rateio tfoot th {
+    border: 1px solid #bbb;
+    color: black;
+    background: url(../images/bg_tab_conv.gif) repeat-x bottom !important;
+    background-color: #e6eeee;
+    padding: 0.5em;
+}
+
 table.rateio thead th {
-    border-bottom: 1px solid black;
     text-align: center;
 }
 
-table.rateio tfoot th {
-    border-top: 1px solid black;
-}
 
-table.acerto th, table.acerto td {
-    border-right: 1px solid black;
-    border-left: 1px solid black;
+table.acerto th, table.acerto td, table.rateio td {
+    border-right: 1px solid #bbb;
+    border-left: 1px solid #bbb;
 }
 
 table.rateio tbody .odd {
-    background: #efe;
+    background: #eee;
 }
 
 .saldo_pos {
@@ -539,12 +544,16 @@ table.tablesorter thead tr .header {
     background-position: center right;
     cursor: pointer;
 }
-table.tablesorter thead tr .headerSortUp {
-    background-image: url(../images/asc.gif);
+
+
+table.tablesorter thead tr .headerSortUp:after {
+    content: ' \25bc';
 }
-table.tablesorter thead tr .headerSortDown {
-    background-image: url(../images/desc.gif);
+
+table.tablesorter thead tr .headerSortDown:after {
+    content: ' \25b2';
 }
+
 
 form table {
     border-collapse: collapse;
@@ -576,4 +585,18 @@ form table td.help {
 
 h1 select {
     font-size: 1em;
+}
+
+.imprimir {
+    float: right;
+    top: 0;
+    right: 0;
+}
+
+/* partes da página que não sairão na impressão */
+.edicao {
+}
+
+.screen {
+    display: none;
 }
