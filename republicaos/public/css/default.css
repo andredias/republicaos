@@ -137,8 +137,7 @@ header #login-form {
 }
 
 header #login-form a{
-    color: #a00;
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bolder;
     text-decoration: none;
 }
