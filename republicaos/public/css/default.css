@@ -130,22 +130,20 @@ header h1 a {
 
 
 header #login-form {
-    position: absolute;
     top: 1em;
     right: 1em;
     line-height: 1.2em;
     font-size: 1em;
 }
 
-header #login-form .input {
-    float: left;
-    margin: 0.4em 15px 0 0;
+header #login-form a{
+    color: #a00;
+    font-size: 1.5em;
+    font-weight: bolder;
+    text-decoration: none;
 }
 
-header #login-form .input-right {
-    float: right;
-    margin: 0.4em 0px 0 0;
-}
+
 
 header nav {
     position: absolute;
@@ -596,4 +594,9 @@ h1 select {
 
 .print {
     display: none;
+}
+
+.placeholder {
+    color: #444;
+    font-style: italic;
 }

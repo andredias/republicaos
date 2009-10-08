@@ -5,39 +5,37 @@
 <xi:include href="../layout.html" />
 
 <head>
+    <script src="/js/utils.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            setInputPlaceholders();
+            $("input[name='senha_placeholder']").focus(function(){
+                $(this).hide();
+                $("input[name='senha']").show().focus();
+            });
+            
+            $("input[name='senha']").blur(function(){
+                if ($(this).val() == '') {
+                    $(this).hide();
+                    var placeholder = $("input[name='senha_placeholder']")
+                    $(placeholder).val($(placeholder).attr('defaultValue')).addClass('placeholder').show();
+                }
+            });
+        });
+    </script>
     <title> &rsaquo; Organize as contas da sua república!</title>
 </head>
 <body id="home">
     <header>
-        <form id="login-form" name="login" method="post" action="${h.url_for(controller='root', action='login')}" py:if="not c.user">
-            <fieldset>
-            <legend>Acessar sua conta</legend>
-            <div class="input">
-                <label for="Email">Nome do usuário (E-mail):</label><br />
-                <input id="Email" class="text" type="text" tabindex="1" name="email" size="20"/>
-            </div>
-            <div class="input-right">
-                <label for="Passwd">
-                    Senha: (<a title="Esqueceu a sua senha?" href="/pessoa/esqueceu_senha">?</a>)
-                </label><br />
-                <input id="password" class="text" type="password" name="senha" tabindex="2" size="10"/>
-            </div>
-            <br />
-            <div class="input">
-                <input id="PersistentCookie" type="checkbox" value="yes" tabindex="3" name="PersistentCookie"/>
-                <label for="PersistentCookie">Lembrar meus dados</label>
-                (
-                <a title="O que é “lembrar meus dados”?" target="_top" href="http://help.blogger.com/bin/answer.py?answer=42054">?</a>
-                )
-            </div>
-            <div class="input-right">
+        <nav>
+            <form id="login-form" name="login" method="post" action="${h.url_for(controller='root', action='login')}" py:if="not c.user">
+                <input type="text" class="placeholder" tabindex="1" name="email" size="20" value="e-mail" />
+                <input type="password" name="senha" tabindex="2" size="10" style="display:none" />
+                <input type="text" class="placeholder" name="senha_placeholder" tabindex="2" size="10" value="senha" />
+                <a title="Esqueceu a sua senha?" href="${h.url_for(controller='pessoa', action='esqueceu_senha')}">?</a>
                 <input type="submit" value="Acessar" />
-            </div>
-
-            <div style="clear:both">
-            </div>
-            </fieldset>
-        </form>
+            </form>
+        </nav>
     </header>
 
     <section>
