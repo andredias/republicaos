@@ -435,7 +435,6 @@ table.rateio tbody .odd {
 
 
 
-
 pre {
     font-size: 11px;
 }
@@ -587,16 +586,14 @@ h1 select {
     font-size: 1em;
 }
 
-.imprimir {
+.choose_media {
     float: right;
     top: 0;
     right: 0;
 }
 
 /* partes da página que não sairão na impressão */
-.edicao {
-}
 
-.screen {
+.print {
     display: none;
 }

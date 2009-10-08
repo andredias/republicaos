@@ -45,6 +45,9 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                     this.disabled = this.getAttribute('title') != styleName;
                     }
             );
+            if (styleName == 'print') {
+                window.print();
+            }
         }
 
 
@@ -133,16 +136,16 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             </select>
             </h1>
         </form>
-        <div class="imprimir edicao">
+        <div class="choose_media screen">
             <a title="Versão para impressão"><img src="/images/printer-icon.gif" onclick="javascript:switchStylesheet('print')" /></a>
         </div>
-        <div class="imprimir screen">
+        <div class="choose_media print">
             <a title="Versão para tela"><img src="/images/monitor.jpg" onclick="javascript:switchStylesheet('screen')" /></a>
         </div>
 
 
         <p py:with="data_inicial, data_final = c.fechamento.intervalo">Período Contábil: <span py:replace="format_date(data_inicial)">01/01/2000</span> a <span py:replace="format_date(data_final)">01/02/2000</span></p>
-        <p py:if="not c.read_only" class="edicao"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}" class="edicao">Lançar despesa</a></p>
+        <p py:if="not c.read_only" class="screen"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Lançar despesa</a></p>
 
         <article>
             <h3>Resumo das Despesas</h3>
@@ -258,7 +261,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 
         <article>
             <h3>Lista de Despesas do Período</h3>
-            <p py:if="not c.read_only" class="edicao"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Cadastrar nova despesa</a></p>
+            <p py:if="not c.read_only" class="screen"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Cadastrar nova despesa</a></p>
             <table class="rateio tablesorter">
                 <thead>
                     <tr>
@@ -266,8 +269,8 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                         <th>Valor</th>
                         <th>Tipo</th>
                         <th>Responsável</th>
-                        <th class="edicao"></th>
-                        <th class="edicao"></th>
+                        <th class="screen" py:if="not c.read_only"></th>
+                        <th class="screen" py:if="not c.read_only"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -276,8 +279,8 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                         <td class="number"><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
                         <td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
                         <td><span py:replace="despesa.pessoa.nome">Fulano</span></td>
-                        <td class="edicao"><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=c.republica.id, id=despesa.id)}">Editar</a></span></td>
-                        <td class="edicao"><span py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=c.republica.id, id=despesa.id)}">Excluir</a></span></td>
+                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=c.republica.id, id=despesa.id)}">Editar</a></td>
+                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=c.republica.id, id=despesa.id)}">Excluir</a></td>
                     </tr>
                 </tbody>
             </table>

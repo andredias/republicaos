@@ -14,8 +14,12 @@ h3 {
     color: #444;
 }
 
-.screen {
+.print {
     display: inherit;
+}
+
+.screen {
+    display: none;
 }
 
 a {
