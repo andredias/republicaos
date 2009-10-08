@@ -42,6 +42,9 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             $('link[@rel*=style][title]').each(
                 function(i)
                     {
+                    // linha adicionada para forçar a mudança de estado. Alguns browsers não fazem refresh se
+                    // não tiver mudado de estado.
+                    this.disabled = true;
                     this.disabled = this.getAttribute('title') != styleName;
                     }
             );
