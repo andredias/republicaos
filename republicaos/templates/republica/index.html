@@ -69,10 +69,11 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
     </script>
 </head>
 
-<body>
+<body id="republica">
 <header>
 </header>
 <section>
+    <h1 class="titulo">${c.republica.nome}</h1>
     <article class="sidebar">
         <article>
             <h3>Cadastro</h3>
@@ -132,6 +133,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
         </article>
     </article>
     <article class="principal">
+        <p py:with="data_inicial, data_final = c.fechamento.intervalo" class="periodo">${format_date(data_inicial)} a ${format_date(data_final)}</p>
         <form action="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}" method="post">
             <h1>Fechamento de 
             <select name="data_fechamento" onchange="javascript:this.form.submit()" >
@@ -147,7 +149,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
         </div>
 
 
-        <p py:with="data_inicial, data_final = c.fechamento.intervalo">Período Contábil: <span py:replace="format_date(data_inicial)">01/01/2000</span> a <span py:replace="format_date(data_final)">01/02/2000</span></p>
+
         <p py:if="not c.read_only" class="screen"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Lançar despesa</a></p>
 
         <article>
