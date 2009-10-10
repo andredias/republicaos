@@ -60,7 +60,6 @@ section article.principal {
 
 
 h1 {
-    background: url(../images/dotted.gif) repeat-x bottom;
     color: #000;
     font-weight: normal;
     margin-bottom: 1em;
@@ -74,7 +73,7 @@ h1.titulo {
     border-bottom:1px double #666;
     color:#444;
     margin:0;
-    font-weight: bold;
+    padding:0.5em;
 }
 
 h2 {
@@ -305,69 +304,26 @@ footer .footer-nav li {
 
 
 .error {
-    border: 1px solid #c68484;
-    background: #fcc url(../images/cross.png) no-repeat .5em center;
+    border: 2px solid #a00;
+    background: #fee url(../images/error48x48.png) no-repeat .5em center;
     color: #c00;
 }
 
 .warning {
-    border: 1px solid #dd0;
-    background: #ffc url(../images/error.png) no-repeat .5em center;
-    color: #000;
+    border: 1px solid #777;
+    background: #ffc url(../images/warning.png) no-repeat .5em center;
+    color: #333;
 }
 
 .info {
     border: 1px solid #82c2d4;
-    background: #ebf5f8 url(../images/information.png) no-repeat .5em center;
-    color: #000;
+    background: #ebf5f8 url(../images/info48x48.png) no-repeat .5em center;
+    color: #444;
 }
 
-.error-list {
-    background: #ffc url(../images/dialog-warning.png) no-repeat 1.5em 1.5em;
-    border: 1px solid #dd0;
-    color: #333;
-    margin-bottom: 2.5em;
-    min-height: 5.5em;
-    padding: 1em 1em 1em 6em;
-    position: relative;
-}
-
-.error-list dt {
-    font-weight: bold;
-    padding: .2em 0;
-}
-
-.error-list dd {
-    background: url(../images/bullet.gif) no-repeat 1.8em center;
-    padding: .2em 0 .2em 3em;
-}
-
-.error-list .close {
-    color: #ee3a42;
-    position: absolute;
-    right: 1em;
-    top: 1em;
-}
-
-.highlight {
-    background: #ffc;
-    color: #333;
-    padding: .5em;
-}
-
-.balance.positive,
-span.positive {
-    color: #369;
-}
-
-.balance.negative,
-span.negative {
-    color: #ee3a42;
-}
-
-/*=adsense*/
-.adsense-top {
-    margin-bottom: 1em;
+.flash_msg ul, .flash_msg ol {
+    padding-left: 6em;
+    min-height: 50px;
 }
 
 
@@ -622,4 +578,21 @@ div.logotipo {
 
 div.nome_republica {
     float: left;
+}
+
+div.botao {
+    float: right;
+    bottom: 1em;
+    position:relative;
+}
+
+.flash_msg .close {
+    float: right;
+    top: 1em;
+    right: 1em;
+}
+
+.flash_msg img {
+    margin: 0;
+    padding: 0;
 }

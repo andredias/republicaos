@@ -54,6 +54,11 @@
                     $(placeholder).val($(placeholder).attr('defaultValue')).addClass('placeholder').show();
                 }
             });
+            
+            $(".flash_msg ul").click(function(){
+                $(this).hide();
+                return false;
+            });
         });
     </script>
 
@@ -98,11 +103,11 @@ flash_messages = get_flash_messages()
         <nav>
         </nav>
 
-        <div py:if="flash_messages">
-            <dl py:for="css_class, messages in flash_messages.items()" id="${css_class}" class="${css_class}" >
-                <dd py:for="message in messages">${message}</dd>
-                <a onclick="Republicaos.utils.close('${css_class}');" class="close" href="javascript:;">Fechar</a>
-            </dl>
+        <div py:if="flash_messages" class="flash_msg">
+            <ul py:for="css_class, messages in flash_messages.items()" id="${css_class}" class="${css_class}" >
+                <div class="close"><img src="/images/icon-close.gif" /></div>
+                <li py:for="message in messages">${message}</li>
+            </ul>
         </div>
         <py:if test="c.errors">
             <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">

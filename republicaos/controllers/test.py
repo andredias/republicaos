@@ -76,3 +76,43 @@ class TestController(BaseController):
         O tipo de despesa sendo acessado tem de ser da república
         '''
         return
+        
+    
+    def info(self):
+        '''
+        Retorna mensagem de erro do tipo info
+        '''
+        flash('(info) Teste executado com sucesso')
+        flash('(info) Outra mensagem de teste')
+        flash('(info) e mais outra...')
+        return render('test/test.html')
+        
+    
+    def warning(self):
+        '''
+        Retorna mensagem de erro do tipo warning
+        '''
+        flash('(warning) Se liga!')
+        flash('(warning) Outra mensagem de teste')
+        flash('(warning) e mais outra...')
+        return render('test/test.html')
+        
+    
+    def error(self):
+        '''
+        Retorna mensagem de erro do tipo error
+        '''
+        flash('(error) PERIGO')
+        flash('(error) Outra mensagem de teste')
+        flash('(error) e mais outra...')
+        return render('test/test.html')
+    
+    
+    def mix(self):
+        '''
+        Retorna mensagem de erro do tipo error
+        '''
+        flash('(info) Teste executado com sucesso')
+        flash('(warning) Se liga!')
+        flash('(error) PERIGO')
+        return render('test/test.html')

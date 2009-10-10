@@ -29,7 +29,7 @@ def check_testing():
     Verifica se o estado da execução do sistema está em teste.
     '''
     log.debug('check_testing: config __file__: %s', config['__file__'])
-    return split(config['__file__'])[-1] == 'test.ini'
+    return split(config['__file__'])[-1] in ('test.ini', 'development.ini')
 
 def arredonda_decimal(numero, referencia):
     if type(numero) is not Decimal:
