@@ -150,10 +150,12 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 
 
 
-        <p py:if="not c.read_only" class="screen"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Lançar despesa</a></p>
-
         <article>
             <h3>Resumo das Despesas</h3>
+            <div py:if="not c.read_only" class="screen botao">
+                <a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Lançar despesa</a>
+            </div>
+
             <table class="rateio tablesorter">
                 <thead>
                     <tr>
@@ -266,7 +268,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 
         <article>
             <h3>Lista de Despesas do Período</h3>
-            <p py:if="not c.read_only" class="screen"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Cadastrar nova despesa</a></p>
+            <p py:if="not c.read_only" class="screen"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Lançar nova despesa</a></p>
             <table class="rateio tablesorter">
                 <thead>
                     <tr>
@@ -284,8 +286,8 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                         <td class="number"><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
                         <td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
                         <td><span py:replace="despesa.pessoa.nome">Fulano</span></td>
-                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=c.republica.id, id=despesa.id)}">Editar</a></td>
-                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=c.republica.id, id=despesa.id)}">Excluir</a></td>
+                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=c.republica.id, id=despesa.id)}" class="edit" title="editar">Editar</a></td>
+                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=c.republica.id, id=despesa.id)}" class="delete" title="excluir">Excluir</a></td>
                     </tr>
                 </tbody>
             </table>
