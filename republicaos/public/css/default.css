@@ -40,12 +40,12 @@ section, footer {
 }
 
 section {
-    margin: 2em auto 2em;
+    margin: 2em auto 0em;
 }
 
 section article {
     display: block;
-    margin: 3em 0 5em;
+    margin: 4.5em 0 0;
 }
 
 section article.sidebar {
@@ -53,9 +53,14 @@ section article.sidebar {
     width: 30%;
 }
 
+section article.sidebar article:first-child {
+    margin-top: 0;
+}
+
 section article.principal {
     float: right;
     width: 68%;
+    margin-bottom: 0em;
 }
 
 
@@ -88,7 +93,7 @@ h2 {
 
 
 h3 {
-    color: green;
+    color: #700;
     font-family: "arial narrow",sans-serif;
     font-size: 1.6em;
     font-weight: bold;
@@ -102,7 +107,7 @@ p {
 }
 
 
-body, footer .footer-nav a {
+body {
     color: #333;
 }
 
@@ -270,10 +275,19 @@ header nav {
 
 
 footer {
+/*
     background: url(../images/dotted.gif) repeat-x;
+*/
     padding: 1em 0;
     position: relative;
     clear: both;
+    margin-top: 2.5em;
+    border-top: 1px solid #ccc;
+    color: #777;
+}
+
+footer .footer-nav a {
+    color: #777;
 }
 
 footer .footer-nav {
@@ -611,4 +625,9 @@ a.edit {
 
 a.delete {
     background: url(../images/cross.png) no-repeat;
+}
+
+.highlight {
+    border: 2px red solid !important;
+    background-color: yellow;
 }

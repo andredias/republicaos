@@ -65,6 +65,16 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                 widgets: ['zebra']
             });
             $(".rateio tr:even").addClass("zebra");
+            
+            // destacar grupos para explicar relatório
+            $("[class*='destacar_']").each(function(){
+                $(this).bind("mouseenter mouseleave", function() {
+                    // primeira classe 'destacar_' que aparece
+                    var classe = '.' + $(this).attr('class').match(/destacar_[\w]+/);
+                    $(classe).toggleClass('highlight');
+                });
+            });
+            
         });
     </script>
 </head>
@@ -166,7 +176,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                 <tfoot>
                     <tr>
                         <th>Total</th>
-                        <th py:content="pretty_decimal(c.fechamento.total_despesas)" class="number">999,99</th>
+                        <th py:content="pretty_decimal(c.fechamento.total_despesas)" class="number destacar_total">999,99</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -205,7 +215,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                 <thead>
                     <tr>
                         <th>Morador</th>
-                        <th>Qtd Dias<br />Morados</th>
+                        <th>Dias<br />Morados</th>
                         <th>Quota (%)</th>
                         <th>Quota ($)</th>
                         <th>Despesas ($)</th>
@@ -217,8 +227,8 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                         <th>Totais</th>
                         <th class="number" py:content="c.fechamento.total_dias_morados"></th>
                         <th class="number" py:content="pretty_decimal(sum(c.fechamento.porcentagem[participante] for participante in c.fechamento.participantes))">99</th>
-                        <th class="number" py:content="pretty_decimal(sum(c.fechamento.quota[participante] for participante in c.fechamento.participantes))">99,99</th>
-                        <th class="number" py:content="pretty_decimal(c.fechamento.total_despesas)">999,99</th>
+                        <th class="number destacar_total" py:content="pretty_decimal(sum(c.fechamento.quota[participante] for participante in c.fechamento.participantes))">99,99</th>
+                        <th class="number destacar_total" py:content="pretty_decimal(c.fechamento.total_despesas)">999,99</th>
                         <th class="number" py:content="pretty_decimal(sum(c.fechamento.saldo_final[participante] for participante in c.fechamento.participantes))">99,99</th>
                     </tr>
                 </tfoot>
@@ -236,7 +246,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
         </article>
 
         <article>
-            <h3>Acerto de Contas entre Moradores</h3>
+            <h3>Acerto de Contas</h3>
             <table class="rateio acerto tablesorter">
                 <thead>
                     <tr>
