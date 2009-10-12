@@ -447,7 +447,10 @@ span.hint {
 
 
 img {
+/*
     margin: 1em 0;
+*/
+    vertical-align: middle;
 }
 
 .inline {
@@ -629,5 +632,28 @@ a.delete {
 
 .highlight {
     border: 2px red solid !important;
-    background-color: yellow;
+    background-color: #ffffdc;
 }
+
+.hover_row {
+    border-top: 1px solid red !important;
+    border-bottom: 1px solid red !important;
+}
+
+.hover_col {
+    border-left: 1px solid blue !important;
+    border-right: 1px solid blue !important;
+}
+
+
+#tooltip {
+    position: absolute;
+    z-index: 3000;
+    border: 1px solid black;
+    background-color: #ffffdc;
+    padding: 0.5em;
+    opacity: 0.90;
+}
+
+#tooltip h3, #tooltip div { margin: 0; } 
+

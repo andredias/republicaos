@@ -19,7 +19,11 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 ?>
 <head>
     <title>${c.title}</title>
-    <script type="text/javascript" src="${h.url_for('/js/jquery.tablesorter.min.js')}"></script> 
+    <script type="text/javascript" src="${h.url_for('/js/jquery.tablesorter.min.js')}"></script>
+    <!--
+    <script type="text/javascript" src="${h.url_for('/js/jquery_tablehover/jquery.tablehover.min.js')}"></script>
+    -->
+    <script type="text/javascript" src="${h.url_for('/js/jquery_tooltip/jquery.tooltip.min.js')}"></script>
     <script type="text/javascript">
         $.tablesorter.addParser({
             id: "numero",
@@ -66,15 +70,36 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             });
             $(".rateio tr:even").addClass("zebra");
             
-            // destacar grupos para explicar relatório
-            $("[class*='destacar_']").each(function(){
-                $(this).bind("mouseenter mouseleave", function() {
-                    // primeira classe 'destacar_' que aparece
-                    var classe = '.' + $(this).attr('class').match(/destacar_[\w]+/);
-                    $(classe).toggleClass('highlight');
-                });
-            });
+            /*
+            // veja http://p.sohei.org/jquery-plugins/tablehover/
+            $('#acerto_contas').tableHover(
+                {
+                rowClass: 'hover_row',
+                colClass: 'hover_col',
+                headCols: true,
+                footCols: true,
+                ignoreCols: [1]
+                }
+            );
+            */
             
+            // destacar grupos para explicar relatório
+            $("[class*='destacar_']").bind("mouseenter mouseleave", function() {
+                // primeira classe 'destacar_' que aparece
+                var classe = '.' + $(this).attr('class').match(/destacar_[\w]+/);
+                $(classe).toggleClass('highlight');
+            });
+
+
+            $("img.tip").tooltip({ 
+                bodyHandler: function() {
+                    name = $(this).attr("name")
+                    body = name[0] == '#' ? $(name).html() : name
+                    return body; 
+                }, 
+                showURL: false
+            });
+
         });
     </script>
 </head>
@@ -210,7 +235,16 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
         </article>
 
         <article>
-            <h3>Rateio das Despesas</h3>
+            <h3>Rateio das Despesas <img src="/images/Info-16x16.png" class="tip screen" name="#tip_rateio" /></h3>
+            <div id="tip_rateio" class="hidden">
+                <ul>
+                    <li>A quota é baseada na média ponderada dos dias morados</li>
+                    <li><tt>saldo final = quota - despesas</tt></li>
+                    <li>Saldo final <span style="color:blue">positivo</span> indica que o morador assumiu despesas <strong>abaixo</strong> da quota</li>
+                    <li>Saldo final <span style="color:red">negativo</span> indica que o morador assumiu despesas <strong>acima</strong> da quota</li>
+                </ul>
+            </div>
+            
             <table class="rateio tablesorter">
                 <thead>
                     <tr>
@@ -246,8 +280,16 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
         </article>
 
         <article>
-            <h3>Acerto de Contas</h3>
-            <table class="rateio acerto tablesorter">
+            <h3>Acerto de Contas <img src="/images/Info-16x16.png" class="tip screen" name="#tip_acerto" /></h3>
+            <div id="tip_acerto" class="hidden">
+                <ul>
+                    <li>Reconciliação entre quem gastou a mais e a menos do que a quota.</li>
+                    <li>As <span style="color:red">linhas</span> indicam quantias a serem pagas</li>
+                    <li>As <span style="color:blue">colunas</span> indicam quantias a serem recebidas</li>
+                    <li>O cruzamento de <span style="color:red">linha</span> e <span style="color:blue">coluna</span> mostra quanto uma pessoa vai pagar para/receber de outra</li>
+                </ul>
+            </div>
+            <table id="acerto_contas" class="rateio acerto tablesorter">
                 <thead>
                     <tr>
                         <th><em>pagar para -></em></th>
@@ -268,7 +310,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                     <tr py:for="pessoa in c.fechamento.participantes">
                         <td><strong><span py:replace="pessoa.nome">Fulano de tal</span></strong></td>
                         <td py:for="credor in c.fechamento.participantes" class="number">
-                            <span py:if="pessoa in c.fechamento.acerto_a_pagar and credor in c.fechamento.acerto_a_pagar[pessoa]" py:replace="pretty_decimal(c.fechamento.acerto_a_pagar[pessoa][credor])">99,99</span>
+                            <span py:if="pessoa in c.fechamento.acerto_a_pagar and credor in c.fechamento.acerto_a_pagar[pessoa]" py:with="quantia=pretty_decimal(c.fechamento.acerto_a_pagar[pessoa][credor])">${quantia} <img src="/images/Info-16x16.png" title="${pessoa.nome} deve ${quantia} para ${credor.nome}" class="screen" /></span>
                         </td>
                         <th class="number"><span py:if="pessoa in c.fechamento.acerto_a_pagar" py:replace="pretty_decimal(sum(c.fechamento.acerto_a_pagar[pessoa].values()))">999,99</span></th>
                     </tr>
