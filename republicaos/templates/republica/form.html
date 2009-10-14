@@ -32,7 +32,7 @@
         <div py:if="c.action">
             <p>
             <input type="submit" value="${c.submit}" /> ou 
-            <a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">Cancelar e voltar ao painel de controle</a>.
+            <a href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}">Cancelar e voltar à página da república</a>.
             </p>
         </div>
     </form>
