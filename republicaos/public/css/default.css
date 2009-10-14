@@ -20,10 +20,7 @@
 body {
     font-family: arial, trebuchet ms, sans;
     font-size: small;
-/*
     background: #e5e5e5 url(../images/bg-degrade.jpg) repeat-x;
-    text-align: center;
-*/
 }
 
 
@@ -34,13 +31,14 @@ section, header, footer {
 
 section, footer {
     margin: 0 auto;
-    padding: 0;
     text-align: left;
     width: 980px;
+    background: white;
 }
 
 section {
     margin: 2em auto 0em;
+    padding: 0 1em 2em;
 }
 
 section article {
@@ -117,6 +115,7 @@ header {
     position:relative;
     width:980px;
     margin: 0 auto;
+    background-color: #ffffdc;
 }
 
 
@@ -278,10 +277,9 @@ footer {
 /*
     background: url(../images/dotted.gif) repeat-x;
 */
-    padding: 1em 0;
+    padding: 1em;
     position: relative;
     clear: both;
-    margin-top: 2.5em;
     border-top: 1px solid #ccc;
     color: #777;
 }
@@ -295,7 +293,7 @@ footer .footer-nav {
     margin: 0;
     padding: 0;
     position: absolute;
-    right: 0;
+    right: 1em;
     top: 1em;
 }
 
@@ -415,6 +413,16 @@ a {
 }
 
 a:hover {
+    color: #ee3a42;
+}
+
+header nav a {
+    text-decoration: none;
+    color: #444;
+}
+
+header nav a:hover {
+    text-decoration: underline;
     color: #ee3a42;
 }
 
@@ -578,7 +586,7 @@ h1 select {
 
 #republica header h1 a {
     background: transparent url(../images/logotipo_small.png) no-repeat scroll 0 0;
-    height: auto;
+    height: 39px;
     width: auto;
 }
 
@@ -655,5 +663,7 @@ a.delete {
     opacity: 0.90;
 }
 
-#tooltip h3, #tooltip div { margin: 0; } 
+#tooltip h3, #tooltip div { margin: 0; }
+
+
 

@@ -1,5 +1,9 @@
 @import url("/css/default.css");
 
+body, header, section {
+    background: none;
+}
+
 header nav, .sidebar, .edicao,
 .powered_by, .footer-nav {
     display: none;

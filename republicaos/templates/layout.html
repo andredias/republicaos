@@ -78,9 +78,7 @@ flash_messages = get_flash_messages()
         <h1><a href="/" title="Republicaos > Página Inicial">Republicaos</a></h1>
         ${select('*[local-name()]')}
         <nav py:if="c.user">
-            <strong>${c.user}</strong>
-            |
-            <a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">painel de controle</a>
+            <strong><a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}" title="editar perfil">${c.user}</a></strong>
             |
             <a href="${h.url_for(controller='root', action='ajuda', id=c.user.id)}">ajuda</a>
             |
@@ -100,8 +98,6 @@ flash_messages = get_flash_messages()
     
     <py:match path='./section' once="true">
     <section py:attrs="select('@*')">
-        <nav>
-        </nav>
 
         <div py:if="flash_messages" class="flash_msg">
             <ul py:for="css_class, messages in flash_messages.items()" id="${css_class}" class="${css_class}" >
