@@ -574,8 +574,10 @@ h1 select {
 }
 
 ._placeholder {
-    color: #444;
+    color: #777;
+/*
     font-style: italic;
+*/
 }
 
 #republica header h1 a {
