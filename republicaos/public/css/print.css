@@ -4,7 +4,7 @@ body, header, section {
     background: none;
 }
 
-header nav, .sidebar, .edicao,
+nav, .sidebar, .edicao,
 .powered_by, .footer-nav {
     display: none;
 }
@@ -45,5 +45,13 @@ table.tablesorter thead tr .headerSortDown:after {
 }
 
 .flash_msg {
+    display: none;
+}
+
+table.rateio tbody .odd {
+    background: #eee;
+}
+
+aside {
     display: none;
 }

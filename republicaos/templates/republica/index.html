@@ -107,8 +107,64 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 <body id="republica">
 <header>
 </header>
-<section>
+<nav id="menu_principal">
+    <!--
     <h1 class="titulo">${c.republica.nome}</h1>
+    -->
+    <ul>
+        <li><a href="#" class="active">Fechamento Atual</a></li>
+        <li><a href="#">Cadastro</a></li>
+        <li><a href="#">Moradores</a></li>
+    </ul>
+</nav>
+<section>
+    <aside id="publicidade">
+        <article id="lancamento_despesa">
+            <header>
+            <h1>Lançar Despesa</h1>
+            </header>
+            <form action="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}" method="post">
+                <ul id="form_despesa">
+                    <li>
+                        <label>Responsável</label><br />
+                        <select name="pessoa_id" py:with="moradores=c.republica.get_moradores()">
+                            <option py:for="pessoa in moradores" value="${pessoa.id}" py:attrs="dict(selected='selected') if c.user.id == pessoa.id else dict()">
+                            <span py:replace="pessoa.nome">Nome do Morador</span> &lt;<span py:replace="pessoa.email">email</span>&gt;</option>
+                        </select>
+                    </li>
+                    <li>
+                        <label>Tipo da despesa</label><br />
+                        <select name="tipo_id">
+                            <option py:for="tipo_despesa in c.republica.tipos_despesa" value="${tipo_despesa.id}">
+                            <span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
+                            </option>
+                        </select>
+                        <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}">novo</a> <a href="" id="editar_tipo">editar</a>
+                    </li>
+                    <li>
+                        <label>Quantia</label><br />
+                        <input name="quantia" size="15" type="text" /> <img class="screen" src="/images/Info-16x16.png" alt="" title="Ex.: 295,00 ou 1.024,50" />
+                    </li>
+                    <li>
+                        <label>Data</label><br />
+                        <input maxlength="10" name="lancamento" size="10" value="${format_date(date.today())}" type="text" />
+                    </li>
+                    <li>Repetir? <input name="agendamento" type="checkbox" value="mensal" /></li>
+                    <li>Quantas vezes? <input name="repeticoes" maxlength="2" size="1" type="text" /> <img name="#tip_repeticoes" class="tip screen" src="/images/Info-16x16.png" alt=""/></li>
+                    <li style="text-align:right"><input type="submit" value="Lançar" /></li>
+                </ul>
+            </form>
+            <div id="tip_repeticoes" class="hidden">
+                <ul>
+                    <li>Quantos meses <strong>mais</strong> a despesa deve ser repetida</li>
+                    <li>Se um número <strong>não</strong> for estipulado, o lançamento será repetido indefinidamente</li>
+                </ul>
+            </div>
+        </article>
+        <article>
+            <p>teste</p>
+        </article>
+    </aside>
     <article class="sidebar">
         <article>
             <h3>Cadastro</h3>
@@ -167,8 +223,10 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             </div>
         </article>
     </article>
+    
     <article class="principal">
-        <p py:with="data_inicial, data_final = c.fechamento.intervalo" class="periodo">${format_date(data_inicial)} a ${format_date(data_final)}</p>
+        <header>
+        <div py:with="data_inicial, data_final = c.fechamento.intervalo" class="periodo">[${format_date(data_inicial)}, ${format_date(data_final)}]</div>
         <form action="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}" method="post">
             <h1>Fechamento de 
             <select name="data_fechamento" onchange="javascript:this.form.submit()" >
@@ -176,6 +234,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             </select>
             </h1>
         </form>
+        </header>
         <div class="choose_media screen">
             <a title="Versão para impressão"><img src="/images/printer-icon.gif" onclick="javascript:switchStylesheet('print')" /></a>
         </div>
@@ -187,10 +246,6 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 
         <article>
             <h3>Resumo das Despesas</h3>
-            <div py:if="not c.read_only" class="screen botao">
-                <a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Lançar despesa</a>
-            </div>
-
             <table class="rateio tablesorter">
                 <thead>
                     <tr>

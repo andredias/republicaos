@@ -24,7 +24,7 @@ body {
 }
 
 
-section, header, footer {
+section, header, footer, nav, aside {
     display: block;
     position: relative;
 }
@@ -38,27 +38,21 @@ section, footer {
 
 section {
     margin: 2em auto 0em;
-    padding: 0 1em 2em;
 }
 
 section article {
     display: block;
-    margin: 4.5em 0 0;
 }
 
 section article.sidebar {
     float: left;
     width: 30%;
+    display: none;
 }
 
-section article.sidebar article:first-child {
+section article.sidebar article:first-child,
+section aside article:first-child {
     margin-top: 0;
-}
-
-section article.principal {
-    float: right;
-    width: 68%;
-    margin-bottom: 0em;
 }
 
 
@@ -106,7 +100,7 @@ p {
 
 
 body {
-    color: #333;
+    color: black;
 }
 
 header {
@@ -115,7 +109,7 @@ header {
     position:relative;
     width:980px;
     margin: 0 auto;
-    background-color: #ffffdc;
+    background-color: transparent;
 }
 
 
@@ -161,7 +155,7 @@ header nav {
 /*=home*/
 
 
-#home section, #republica section{
+#home section {
     margin-top: 0;
 }
 
@@ -357,9 +351,9 @@ table.rateio td, table.rateio th {
     padding: 0.3em 1em;
 }
 
-table.rateio td, table .number{
+table.rateio td, table .number {
     font-family: FreeMono, "Courier New", Courier, monospace;
-    font-size: 1.3em;
+    font-size: 1.2em;
 }
 
 table .number {
@@ -368,7 +362,7 @@ table .number {
 
 table.rateio thead, table.rateio tfoot {
     font-weight: bold;
-    font-family: georgia;
+    font-family: 'Trebuchet MS',Trebuchet,'Lucida Sans Unicode','Lucida Grande','Lucida Sans', Arial, sans-serif;
 }
 
 table.rateio thead th, table.rateio tfoot th {
@@ -390,7 +384,7 @@ table.acerto th, table.acerto td, table.rateio td {
 }
 
 table.rateio tbody .odd {
-    background: #eee;
+    background: #EDF5FF;
 }
 
 .saldo_pos {
@@ -579,7 +573,7 @@ h1 select {
     display: none;
 }
 
-.placeholder {
+._placeholder {
     color: #444;
     font-style: italic;
 }
@@ -665,5 +659,128 @@ a.delete {
 
 #tooltip h3, #tooltip div { margin: 0; }
 
+
+
+#menu_principal {
+    width: 980px;
+    margin: 0 auto 2em;
+}
+
+#menu_principal, #republica article {
+    border-radius:5px;
+    -moz-border-radius:5px;
+}
+
+#menu_principal {
+    background:#000305 none repeat scroll 0 0;
+    font-size:1.143em;
+    height:40px;
+    line-height:30px;
+    padding:0;
+    text-align:center;
+}
+
+#menu_principal ul {
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    margin:0 auto;
+    width:980px;
+}
+
+#menu_principal li {
+    display:inline;
+    float:left;
+    margin:0;
+}
+
+#menu_principal a:link, #menu_principal a:visited {
+    color:#FFFFFF;
+    display:inline-block;
+    height:30px;
+    padding:5px 1.5em;
+    text-decoration:none;
+    vertical-align: middle;
+}
+
+#menu_principal a.active {
+    background:#C74451 none repeat scroll 0 0;
+    color:#FFFFFF;
+    text-shadow:none !important;
+}
+
+#menu_principal li:first-child a {
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    -moz-border-radius-bottomleft:5px;
+    -moz-border-radius-topleft:5px;
+}
+
+
+#republica section, #republica aside {
+    background: transparent;
+}
+
+#republica article {
+    background: white;
+}
+
+section article.principal {
+    margin-right: 290px;
+    padding: 1em;
+}
+
+aside article,
+section article.principal {
+    border: 1px solid #bbb;
+}
+
+#republica aside {
+    float: right;
+    width: 280px;
+}
+
+aside#publicidade article {
+    padding: 1em;
+}
+
+#lancamento_despesa select {
+    max-width: 100%;
+}
+
+article header {
+    float: left;
+    top: 0;
+    width: 100%;
+    background: green;
+    margin: -1em -1em 1em;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    -moz-border-radius-topleft:5px;
+    -moz-border-radius-topright:5px;
+    color: white;
+}
+
+article header h1 {
+    color: white;
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+aside article header h1 {
+    font-size: 1em;
+}
+
+
+ul#form_despesa {
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    margin: 0;
+}
+
+ul#form_despesa li {
+    margin-top: 0.5em;
+}
 
 
