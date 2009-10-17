@@ -142,13 +142,13 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                         </select>
                     </li>
                     <li>
-                        <label>Tipo da despesa</label><br />
+                        <label>Tipo da despesa</label> <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}" class="insert" title="Incluir novo tipo de despesa">novo</a><br />
                         <select name="tipo_id">
                             <option py:for="tipo_despesa in c.republica.tipos_despesa" value="${tipo_despesa.id}">
                             <span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
                             </option>
                         </select>
-                        <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}">novo</a> <a href="" id="editar_tipo">editar</a>
+                        <a href="" id="editar_tipo" class="edit" title="Editar tipo de despesa selcionado">editar</a>
                     </li>
                     <li>
                         <label>Quantia</label><br />
