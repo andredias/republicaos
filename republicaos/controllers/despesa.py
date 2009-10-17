@@ -130,6 +130,7 @@ class DespesaController(BaseController):
                         )
             Session.commit()
             flash(u'(info) Despesa no valor de $ %s lançada com sucesso' % pretty_decimal(c.valid_data['quantia']))
+            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
         else:
             filler.update(request.params)
 

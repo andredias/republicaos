@@ -99,6 +99,15 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                 }, 
                 showURL: false
             });
+            
+            $("input[name='agendamento']").click(function(){
+                $("#repeticoes").toggle();
+            });
+            
+            // garante que o tipo selecionado é usado no link para edição
+            $("#editar_tipo").bind("mouseenter",function(){
+               $("#editar_tipo").attr("href", "${h.url_for(controller='tipo_despesa', action='edit', republica_id=c.republica.id, id='')}" + $("select[name='tipo_id']").val())
+            })
 
         });
     </script>
@@ -143,14 +152,14 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                     </li>
                     <li>
                         <label>Quantia</label><br />
-                        <input name="quantia" size="15" type="text" /> <img class="screen" src="/images/Info-16x16.png" alt="" title="Ex.: 295,00 ou 1.024,50" />
+                        <input name="quantia" size="15" type="text" value="Ex: 9.999,99" class="placeholder" /> <img class="screen" src="/images/Info-16x16.png" alt="" title="Ex.: 295,00 ou 1.024,50" />
                     </li>
                     <li>
                         <label>Data</label><br />
                         <input maxlength="10" name="lancamento" size="10" value="${format_date(date.today())}" type="text" />
                     </li>
                     <li>Repetir? <input name="agendamento" type="checkbox" value="mensal" /></li>
-                    <li>Quantas vezes? <input name="repeticoes" maxlength="2" size="1" type="text" /> <img name="#tip_repeticoes" class="tip screen" src="/images/Info-16x16.png" alt=""/></li>
+                    <li id="repeticoes" style="display:none">Quantas vezes? <input name="repeticoes" maxlength="2" size="1" type="text" /> <img name="#tip_repeticoes" class="tip screen" src="/images/Info-16x16.png" alt=""/></li>
                     <li style="text-align:right"><input type="submit" value="Lançar" /></li>
                 </ul>
             </form>
