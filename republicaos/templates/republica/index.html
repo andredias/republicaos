@@ -235,10 +235,10 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
     
     <article class="principal">
         <header>
-        <div py:with="data_inicial, data_final = c.fechamento.intervalo" class="periodo">[${format_date(data_inicial)}, ${format_date(data_final)}]</div>
+        <div py:with="data_inicial, data_final = c.fechamento.intervalo" class="periodo">[${format_date(data_inicial)}, ${format_date(data_final)}] <a href="${h.url_for(controller='fechamento', action='edit', data=c.fechamento.data, republica_id=c.republica.id)}" class="screen edit" title="Editar data do fechamento">Editar</a></div>
         <form action="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}" method="post">
-            <h1>Fechamento de 
-            <select name="data_fechamento" onchange="javascript:this.form.submit()" >
+            <h1>Fechamento de <span class="print">${format_date(c.fechamento.intervalo[0], 'LLLL/yy')}</span>
+            <select name="data_fechamento" onchange="javascript:this.form.submit()" class="screen">
                 <option py:for="f in c.republica.fechamentos" value="${f.data}" py:attrs="dict(selected='selected') if f == c.fechamento else dict()" >${format_date(f.intervalo[0], 'LLLL/yy')}</option>
             </select>
             </h1>

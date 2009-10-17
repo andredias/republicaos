@@ -19,11 +19,11 @@ h3 {
 }
 
 .print {
-    display: inherit;
+    display: inline;
 }
 
 .screen {
-    display: none;
+    display: none !important;
 }
 
 a {
