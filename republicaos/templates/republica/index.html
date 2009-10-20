@@ -170,8 +170,19 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                 </ul>
             </div>
         </article>
-        <article>
-            <p>teste</p>
+
+        <article py:if="agendamentos">
+            <header>
+            <h1>Lançamentos Agendados</h1>
+            </header>
+            <table class="lancamentos_programados">
+                <tr py:for="despesa in agendamentos">
+                    <td>${format_date(despesa.proximo_lancamento)}</td>
+                    <td>${despesa.tipo.nome}</td>
+                    <td class="number">${pretty_decimal(despesa.quantia)}</td>
+                    <td><a href="${h.url_for(controller='lancamento_programado', action='edit', id=despesa.id, republica_id=c.republica.id)}" class="edit" title="Editar lançamento">editar</a> <a href="${h.url_for(controller='lancamento_programado', action='delete', id=despesa.id, republica_id=c.republica.id)}" class="delete" title="Excluir lançamento">excluir</a></td>
+                </tr>
+            </table>
         </article>
     </aside>
     <article class="sidebar">
@@ -205,31 +216,6 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                     <td>${pessoa}</td>
                 </tr>
             </table>
-        </article>
-        <article py:if="agendamentos">
-            <h3>Lançamentos Agendados</h3>
-            <div class="fechamentos">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Quantia</th>
-                            <th>Tipo</th>
-                            <th>Repetições</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr py:for="despesa in agendamentos">
-                            <td>${format_date(despesa.proximo_lancamento)}</td>
-                            <td>${pretty_decimal(despesa.quantia)}</td>
-                            <td>${despesa.tipo.nome}</td>
-                            <td>${despesa.repeticoes}</td>
-                            <td><a href="${h.url_for(controller='lancamento_programado', action='edit', id=despesa.id, republica_id=c.republica.id)}">editar</a> | <a href="${h.url_for(controller='lancamento_programado', action='delete', id=despesa.id, republica_id=c.republica.id)}">excluir</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </article>
     </article>
     
