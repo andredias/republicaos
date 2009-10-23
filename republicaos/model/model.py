@@ -300,6 +300,24 @@ class Republica(Entity):
                                     )
                                 ).one()
     
+    @classmethod
+    def momento_criar_novo_fechamento(self):
+        hoje = date.today()
+        q = select(
+                [
+                Republica.id,
+                Fechamento.data
+                ],
+                whereclause = Fechamento.republica_id == Republica.id,
+                group_by = Republica.id,
+                having = func.max(Fechamento.data) <= hoje
+            ).execute().fetchall()
+        for republica_id, data in q:
+            while data <= hoje:
+                data += relativedelta(months=1)
+                Fechamento(data=data, republica_id=republica_id)
+        Session.commit()
+    
     
     @property
     def intervalo_valido_lancamento(self):
@@ -382,7 +400,7 @@ class Fechamento(Entity):
     republica = ManyToOne('Republica', primary_key = True)
 
     def __repr__(self):
-        return 'Fechamento: <data: %s, republica:%s>' % (self.data, self.republica)
+        return 'Fechamento: <data: %s, republica.id:%s>' % (self.data, self.republica.id)
 
 
     @property
