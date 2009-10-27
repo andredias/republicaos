@@ -20,7 +20,9 @@
 body {
     font-family: arial, trebuchet ms, sans;
     font-size: small;
+/*
     background: #e5e5e5 url(../images/bg-degrade.jpg) repeat-x;
+*/
 }
 
 
@@ -87,10 +89,12 @@ h2 {
 h3 {
     color: #700;
     font-family: "arial narrow",sans-serif;
-    font-size: 1.6em;
+    font-size: 1.2em;
     font-weight: bold;
+/*
     text-transform: uppercase;
-    margin-bottom: 1em;
+*/
+    margin-bottom: 0.5em;
 }
 
 p {
@@ -342,9 +346,11 @@ a:hover img {
     border: 1px solid #888;
 }
 
+
 table.rateio {
     border-collapse: collapse;
     border: 1px solid #bbb;
+    background-color: white;
 }
 
 table.rateio td, table.rateio th {
@@ -592,6 +598,7 @@ h1 select {
     float:right;
     text-transform: none;
     font-family: sans-serif;
+    font-size: 1.1em;
 }
 
 div.logotipo {
@@ -730,7 +737,8 @@ a.delete {
 }
 
 #republica article {
-    background: white;
+    background: #fafafa;
+    margin-top: 3em;
 }
 
 section article.principal {
@@ -751,6 +759,7 @@ section article.principal {
 aside#publicidade article {
     padding: 1em;
     margin-top: 1em;
+    background-color: #FFFEEF;
 }
 
 aside#publicidade article:first-child {
@@ -767,12 +776,13 @@ article header {
     top: 0;
     width: 100%;
     background: green;
-    margin: -1em -1em 1em;
+    margin: -1em -1em 2em;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
     -moz-border-radius-topleft:5px;
     -moz-border-radius-topright:5px;
     color: white;
+    background: transparent url(../images/bg-cinza.png) repeat scroll 0 0;
 }
 
 article header h1 {

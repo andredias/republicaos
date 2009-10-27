@@ -370,7 +370,6 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 
         <article>
             <h3>Lista de Despesas do Período</h3>
-            <p py:if="not c.read_only" class="screen"><a href="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}">Lançar nova despesa</a></p>
             <table class="rateio tablesorter">
                 <thead>
                     <tr>
