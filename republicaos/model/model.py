@@ -336,7 +336,7 @@ class Republica(Entity):
     @after_insert
     def _pos_insert(self):
         # obter os tipos de despesa a partir da configuração
-        tipos_despesa = ('Água', 'Energia Elétrica', 'Aluguel', 'Gás')
+        tipos_despesa = ('Água', 'Luz', 'Aluguel', 'Gás')
         for tipo in tipos_despesa:
             TipoDespesa(nome=tipo, republica=self)
         if len(self.fechamentos) == 0:
@@ -545,16 +545,7 @@ Equipe Republicaos'''
             send_email(to_address=emails, message=msg, subject=subject)
         
         # para quais repúblicas um novo fechamento precisa ser criado?
-        q = select(
-                [Fechamento.republica_id],
-                group_by=Fechamento.republica_id,
-                having=func.max(Fechamento.data) == date.today()
-                )
-        republicas = Republica.query.filter(Republica.id == q.c.republica_id).all()
-        mes_q_vem = date.today() + relativedelta(months=1)
-        for r in republicas:
-            Fechamento(data=mes_q_vem, republica=r)
-        Session.commit()
+        Republica.momento_criar_novo_fechamento()
         return
 
 
