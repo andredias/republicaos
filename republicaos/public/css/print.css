@@ -9,9 +9,16 @@ nav, .sidebar, .edicao,
     display: none;
 }
 
+footer {
+    border: none;
+    margin-top: 1em;
+}
+
 section article.principal {
     float: none;
     width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 h3 {
@@ -40,7 +47,7 @@ table.tablesorter thead tr .headerSortDown:after {
 }
 
 .saldo_pos, .saldo_neg {
-    color: black !important;
+    color: #333 !important;
     font-weight: bolder;
 }
 
@@ -56,9 +63,10 @@ aside {
     display: none;
 }
 
-#republica article {
+#republica article, header#nome_republica {
     background: transparent;
     border: none;
+    color: inherit;
 }
 
 article header{
@@ -69,4 +77,19 @@ article header{
 
 article header h1 {
     color: inherit;
+}
+
+.principal > header {
+    margin: 1em 0;
+    padding: 0.5em 0;
+    border: none;
+    font-size: 1.3em;
+    border-radius: 0px
+    -moz-border-radius: 0px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+}
+
+section#fechamento {
+    margin-top: -4em;
 }

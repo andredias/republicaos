@@ -116,17 +116,20 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 <body id="republica">
 <header>
 </header>
+<!--
 <nav id="menu_principal">
-    <!--
-    <h1 class="titulo">${c.republica.nome}</h1>
-    -->
     <ul>
         <li><a href="#" class="active">Fechamento Atual</a></li>
         <li><a href="#">Cadastro</a></li>
         <li><a href="#">Moradores</a></li>
     </ul>
+
 </nav>
-<section>
+-->
+    <section id="fechamento">
+    <header id="nome_republica">
+    <h1 class="titulo">${c.republica.nome}</h1>
+    </header>
     <aside id="publicidade">
         <article id="lancamento_despesa">
             <header>
@@ -184,10 +187,28 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                 </tr>
             </table>
         </article>
-    </aside>
-    <article class="sidebar">
         <article>
-            <h3>Cadastro</h3>
+            <header>
+            <h1>Fechamentos</h1>
+            </header>
+            <p><a href="${h.url_for(controller='fechamento', action='new', republica_id=c.republica.id)}">Criar fechamento</a></p>
+            <div class="fechamentos">
+                <table>
+                    <tbody>
+                        <tr py:for="fechamento in c.republica.fechamentos">
+                            <td><a href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id, data_fechamento=fechamento.data)}">${format_date(fechamento.intervalo[0], "LLLL/yy")}</a></td>
+                            <td><a href="${h.url_for(controller='fechamento', action='edit', republica_id=c.republica.id, data=fechamento.data)}" class="edit">Editar</a>
+                            </td>
+                            <td><a href="${h.url_for(controller='fechamento', action='delete', republica_id=c.republica.id, data=fechamento.data)}" class="delete">Excluir</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+        <article>
+            <header>
+            <h1>Cadastro</h1>
+            </header>
             <h4>${c.republica.nome}</h4>
             <p>${c.republica.endereco}<br />
             Latitude: ${c.republica.latitude}°<br />
@@ -195,29 +216,18 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             <a href="${h.url_for(controller='republica', action='edit', republica_id=c.republica.id, id=c.republica.id)}">Editar</a>
         </article>
         <article>
-            <h3>Fechamentos</h3>
-            <a href="${h.url_for(controller='fechamento', action='new', republica_id=c.republica.id)}">Criar fechamento</a>
-            <div class="fechamentos">
-                <table>
-                    <tbody>
-                        <tr py:for="fechamento in c.republica.fechamentos">
-                            <td><a href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id, data_fechamento=fechamento.data)}">${format_date(fechamento.intervalo[0], "LLLL/yy")}</a></td>
-                            <td><a href="${h.url_for(controller='fechamento', action='edit', republica_id=c.republica.id, data=fechamento.data)}">Editar</a> | <a href="${h.url_for(controller='fechamento', action='delete', republica_id=c.republica.id, data=fechamento.data)}">Excluir</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </article>
-        <article>
-            <h3>Moradores</h3>
-            <a href="${h.url_for(controller='morador', action='new', republica_id=c.republica.id)}">Adicionar</a>
+            <header>
+            <h1>Moradores</h1>
+            </header>
+            <p><a href="${h.url_for(controller='morador', action='new', republica_id=c.republica.id)}">Adicionar</a></p>
             <table>
                 <tr py:for="pessoa in c.republica.get_moradores()">
-                    <td>${pessoa}</td>
+                    <td py:if="pessoa != c.user">${pessoa}</td>
+                    <td py:if="pessoa == c.user"><a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">${pessoa}</a></td>
                 </tr>
             </table>
         </article>
-    </article>
+    </aside>
     
     <article class="principal">
         <header>
@@ -261,27 +271,6 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                     </tr>
                 </tbody>
             </table>
-            
-            <!-- !
-            <br />
-            
-            <table class="rateio">
-                <thead>
-                    <tr>
-                        <th>Total Despesas<br />($)</th>
-                        <th>Nº Moradores</th>
-                        <th>Média<br />($)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td py:content="pretty_decimal(c.fechamento.total_despesas)" class="number">99,99</td>
-                        <td py:content="len(c.fechamento.participantes)" class="number">9</td>
-                        <td py:content="pretty_decimal(c.fechamento.total_despesas/num_participantes)" class="number">999,99</td>
-                    </tr>
-                </tbody>
-            </table>
-            -->
         </article>
 
         <article>

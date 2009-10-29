@@ -6,6 +6,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="210mm"
@@ -17,6 +18,31 @@
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
+    <linearGradient
+       id="linearGradient3155">
+      <stop
+         style="stop-color:#c1c1c1;stop-opacity:1;"
+         offset="0"
+         id="stop3157" />
+      <stop
+         id="stop3165"
+         offset="0.46489367"
+         style="stop-color:#7f7b7b;stop-opacity:0.74901961;" />
+      <stop
+         id="stop3163"
+         offset="1"
+         style="stop-color:#a49f9f;stop-opacity:0.49803922;" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3155"
+       id="linearGradient3161"
+       x1="157.60715"
+       y1="431.89792"
+       x2="157.39282"
+       y2="310.68362"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(3.734163e-2,0,0,0.4867896,464.34132,242.8524)" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
        inkscape:vp_x="0 : 526.18109 : 1"
@@ -156,5 +182,15 @@
          id="tspan2470"
          x="154.90677"
          y="338.42798">mantendo as contas em ordem</tspan></text>
+    <rect
+       style="opacity:0.85;fill:url(#linearGradient3161);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2383"
+       width="9.5754585"
+       height="58.762459"
+       x="468.76895"
+       y="394.2117"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/bg-cinza.png"
+       inkscape:export-xdpi="82"
+       inkscape:export-ydpi="82" />
   </g>
 </svg>

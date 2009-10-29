@@ -59,21 +59,12 @@ section aside article:first-child {
 
 
 h1 {
-    color: #000;
     font-weight: normal;
     margin-bottom: 1em;
     padding-bottom: .2em;
     text-transform: uppercase;
 }
 
-
-h1.titulo {
-    background:none;
-    border-bottom:1px double #666;
-    color:#444;
-    margin:0;
-    padding:0.5em 0em;
-}
 
 h2 {
     color: white;
@@ -104,13 +95,11 @@ p {
 
 
 body {
-    color: black;
+    color: #333;
 }
 
 header {
-    display: block;
     padding:1em;
-    position:relative;
     width:980px;
     margin: 0 auto;
     background-color: transparent;
@@ -373,10 +362,11 @@ table.rateio thead, table.rateio tfoot {
 
 table.rateio thead th, table.rateio tfoot th {
     border: 1px solid #bbb;
-    color: black;
+    color: #333;
     background: url(../images/bg_tab_conv.gif) repeat-x bottom !important;
     background-color: #e6eeee;
     padding: 0.5em;
+    text-align: center;
 }
 
 table.rateio thead th {
@@ -741,9 +731,25 @@ a.delete {
     margin-top: 3em;
 }
 
-section article.principal {
+section#fechamento {
+    margin-top: 0;
+}
+
+header#nome_republica {
+    width: 100%;
+    padding: 0.75em 0;
+    margin-bottom: 1em;
+    border-radius: 5px;
+    -moz-border-radius:5px;
+    background-color: red;
+    color: white;
+    text-align: center;
+}
+
+article.principal {
     margin-right: 290px;
     padding: 1em;
+    margin-top: 0 !important;
 }
 
 aside article,
@@ -771,18 +777,19 @@ aside#publicidade article:first-child {
     max-width: 100%;
 }
 
+section header {
+    background: transparent url(../images/bg-cinza.png) repeat scroll 0 0;
+}
+
 article header {
-    float: left;
     top: 0;
     width: 100%;
-    background: green;
     margin: -1em -1em 2em;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
     -moz-border-radius-topleft:5px;
     -moz-border-radius-topright:5px;
     color: white;
-    background: transparent url(../images/bg-cinza.png) repeat scroll 0 0;
 }
 
 article header h1 {
