@@ -21,28 +21,18 @@
     <linearGradient
        id="linearGradient3155">
       <stop
-         style="stop-color:#c1c1c1;stop-opacity:1;"
+         style="stop-color:#050505;stop-opacity:0.83651227;"
          offset="0"
          id="stop3157" />
       <stop
          id="stop3165"
-         offset="0.46489367"
-         style="stop-color:#7f7b7b;stop-opacity:0.74901961;" />
+         offset="0.33438486"
+         style="stop-color:#1c1c1c;stop-opacity:0.47683924;" />
       <stop
          id="stop3163"
          offset="1"
-         style="stop-color:#a49f9f;stop-opacity:0.49803922;" />
+         style="stop-color:#fcfcfc;stop-opacity:0;" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3155"
-       id="linearGradient3161"
-       x1="157.60715"
-       y1="431.89792"
-       x2="157.39282"
-       y2="310.68362"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(3.734163e-2,0,0,0.4867896,464.34132,242.8524)" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
        inkscape:vp_x="0 : 526.18109 : 1"
@@ -50,6 +40,26 @@
        inkscape:vp_z="744.09448 : 526.18109 : 1"
        inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
        id="perspective10" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3155"
+       id="linearGradient3192"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(3.734163e-2,0,0,0.4867896,415.24347,149.93604)"
+       x1="157.60715"
+       y1="431.89792"
+       x2="157.39282"
+       y2="310.68362" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3155"
+       id="linearGradient3206"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.4949688,0,0,0.4080681,-35.81058,268.38543)"
+       x1="157.60715"
+       y1="431.89792"
+       x2="157.39282"
+       y2="310.68362" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -183,14 +193,59 @@
          x="154.90677"
          y="338.42798">mantendo as contas em ordem</tspan></text>
     <rect
-       style="opacity:0.85;fill:url(#linearGradient3161);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect2383"
+       style="opacity:0.85;fill:url(#linearGradient3192);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3190"
        width="9.5754585"
        height="58.762459"
-       x="468.76895"
-       y="394.2117"
+       x="419.67111"
+       y="301.29535"
        inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/bg-cinza.png"
        inkscape:export-xdpi="82"
        inkscape:export-ydpi="82" />
+    <rect
+       style="opacity:0.85;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3194"
+       width="75.494545"
+       height="62.296196"
+       x="213.81322"
+       y="385.05374" />
+    <rect
+       style="opacity:0.85;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3196"
+       width="67.0476"
+       height="61.24033"
+       x="290.36365"
+       y="383.99789" />
+    <rect
+       style="opacity:0.85;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3198"
+       width="73.382812"
+       height="61.768265"
+       x="357.41122"
+       y="384.52582" />
+    <rect
+       style="opacity:0.84999999999999998;fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3200"
+       width="51.209587"
+       height="61.24033"
+       x="163.13156"
+       y="385.05377" />
+    <rect
+       style="opacity:0.85;fill:#ff6600;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3202"
+       width="69.687271"
+       height="64.935867"
+       x="430.79407"
+       y="384.52582" />
+    <rect
+       inkscape:export-ydpi="82"
+       inkscape:export-xdpi="82"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/bg-cinza.png"
+       y="395.26758"
+       x="141.44997"
+       height="49.259647"
+       width="383.35263"
+       id="rect3204"
+       style="opacity:0.85;fill:url(#linearGradient3206);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>

@@ -18,7 +18,9 @@ from babel.dates import format_date
     <section>
         <h1>${c.title}</h1>
         <article class="perfil">
-            <h2>Perfil</h2>
+            <header>
+                <h1>Perfil</h1>
+            </header>
             <!-- !
             <div class="foto">
                 <img src="/images/sorriso.png" />
@@ -34,8 +36,10 @@ from babel.dates import format_date
         </article>
         
         <article class="republicas">
-            <h2>Repúblicas de Que Participa</h2>
-            <table py:if="c.registros">
+            <header>
+                <h1>Repúblicas de Que Participa</h1>
+            </header>
+            <table py:if="c.registros" class="rateio">
                 <thead>
                     <tr>
                         <th>República</th>

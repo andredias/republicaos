@@ -128,7 +128,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 -->
     <section id="fechamento">
     <header id="nome_republica">
-    <h1 class="titulo">${c.republica.nome}</h1>
+    <h1 class="titulo">República: ${c.republica.nome}</h1>
     </header>
     <aside id="publicidade">
         <article id="lancamento_despesa">
@@ -193,7 +193,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             </header>
             <p><a href="${h.url_for(controller='fechamento', action='new', republica_id=c.republica.id)}">Criar fechamento</a></p>
             <div class="fechamentos">
-                <table>
+                <table class="fechamentos">
                     <tbody>
                         <tr py:for="fechamento in c.republica.fechamentos">
                             <td><a href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id, data_fechamento=fechamento.data)}">${format_date(fechamento.intervalo[0], "LLLL/yy")}</a></td>
