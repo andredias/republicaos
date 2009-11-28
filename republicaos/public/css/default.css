@@ -350,8 +350,8 @@ table.rateio td, table.rateio th {
 }
 
 table.rateio td, table .number {
-    font-family: FreeMono, "Courier New", Courier, monospace;
-    font-size: 1.2em;
+    font-family: Arial, FreeMono, "Courier New", Courier, monospace;
+    font-size: 1.1em;
 }
 
 table .number {
