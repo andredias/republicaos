@@ -4,6 +4,7 @@ from __future__ import unicode_literals, print_function
 
 from pylons import config
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from os.path import split
 
 import logging
@@ -19,7 +20,7 @@ def encode(text):
     return text.encode('utf-8') if isinstance(text, unicode) else text
 
 
-def send_email(to_address, subject, message, from_address=None):
+def send_email(to_address, subject, message, html_message=None, from_address=None):
     '''
     Envia e-mail de acordo com a configuração do sistema.
     veja http://docs.python.org/library/email-examples.html para mais detalhes
@@ -44,16 +45,29 @@ def send_email(to_address, subject, message, from_address=None):
     
     if not from_address:
         from_address = config['smtp_user']
-
-    msg = MIMEText(encode(message))
+    
+    msg = MIMEMultipart('alternative')
     msg.set_charset('utf-8')
     msg['From'] = from_address
     msg['To'] = to_address if isinstance(to_address, basestring) else ', '.join(to_address)
     msg['Subject'] = encode(subject)
+    
+    # Attach parts into message container.
+    # According to RFC 2046, the last part of a multipart message, in this case
+    # the HTML message, is best and preferred.
+    text = MIMEText(encode(message), 'plain')
+    text.set_charset('utf-8')
+    msg.attach(text)
+    if html_message:
+        html = MIMEText(html_message, 'html')
+        html.set_charset('utf-8')
+        msg.attach(html)
 
     server = smtplib.SMTP(config['smtp_server'])
     server.login(config['smtp_user'], config['smtp_password'])
-    server.sendmail(from_address, to_address, msg.as_string())
-    server.quit()
+    try:
+        server.sendmail(from_address, to_address, msg.as_string())
+    finally:
+        server.quit()
     return
 
