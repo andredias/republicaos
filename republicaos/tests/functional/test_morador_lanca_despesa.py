@@ -133,10 +133,9 @@ class TestMoradorLancaDespesa(TestController):
                                     'agendamento' : '',
                                     'repeticoes' : '',
                                     },
-                            extra_environ={str('REMOTE_USER'):str('1')}
+                            extra_environ={str('REMOTE_USER'):str('1')},
+                            status=302
                             )
-        assert 'class="info"' in response
-        assert '$ 1,23' in response
         assert Despesa.get_by(lancamento=date.today(), pessoa_id=2, republica_id=1, quantia=1.23)
         assert DespesaAgendada.get_by(tipo_id='2') == None
         
@@ -152,10 +151,10 @@ class TestMoradorLancaDespesa(TestController):
                                     'agendamento' : True,
                                     'repeticoes' : '3',
                                     },
-                            extra_environ={str('REMOTE_USER'):str('1')}
+                            extra_environ={str('REMOTE_USER'):str('1')},
+                            status=302
                             )
-        assert 'class="info"' in response
-        assert '$ 12,34' in response
+
         assert Despesa.get_by(lancamento=date.today(), pessoa_id=2, republica_id=1, quantia=12.34)
         assert DespesaAgendada.query.count() == 3
         desp = DespesaAgendada.get_by(pessoa_id='2', tipo_id='3', repeticoes=3)
@@ -174,10 +173,9 @@ class TestMoradorLancaDespesa(TestController):
                                     'agendamento' : True,
                                     'repeticoes' : '3',
                                     },
-                            extra_environ={str('REMOTE_USER'):str('1')}
+                            extra_environ={str('REMOTE_USER'):str('1')},
+                            status=302
                             )
-        assert 'class="info"' in response
-        assert '$ 123,45' in response
         desp = Despesa.get_by(pessoa_id='2', tipo_id='4')
         assert desp.lancamento == date.today()
         assert DespesaAgendada.query.count() == 4

@@ -65,7 +65,7 @@ class ConfirmacaoController(BaseController):
             user = cp.confirma_cadastro()
             set_user(user)
             flash('(info) Bem vindo ao Republicaos, %s!' % cp.nome)
-            redirect_to(controller='root', action='index')
+            redirect_to(controller='pessoa', action='painel', id=user.id)
         else:
             return render('confirmacao/confirmacao_invalida.html')
 

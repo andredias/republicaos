@@ -189,7 +189,7 @@ class TestMoradorCRUDFechamento(TestController):
                         url=url,
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
-        assert '(error) Não foi possível excluir o fechamento' in ''.join(response.session['flash'])
+        assert '(error) Não foi possível excluir o fechamento' in ''.join(response.session.pop('flash'))
         assert Fechamento.get_by(data=date.today() + relativedelta(months=1), republica_id='1')
         
         Fechamento(data=date.today() + relativedelta(weeks=2), republica_id='1')
@@ -200,5 +200,5 @@ class TestMoradorCRUDFechamento(TestController):
                         url=url,
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
-        assert '(info) Fechamento excluído com sucesso' in response.session['flash'][0]
+        assert '(info) Fechamento excluído com sucesso' in ''.join(response.session.pop('flash'))
         assert Fechamento.get_by(data=date.today() + relativedelta(months=1), republica_id='1') == None

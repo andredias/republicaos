@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, TipoDespesa, Fechamento, Session
 from republicaos.lib.helpers import flash, url_for
-from republicaos.lib.utils import check_testing
+from republicaos.lib.utils import testing_app
 from urlparse import urlparse
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
@@ -77,7 +77,7 @@ class TestAutenticacaoAutorizacao(TestController):
                                 }
                         )
         assert response.session['userid'] == pessoa.id
-        assert urlparse(response.response.location).path == url_for(controller='root', action='index')
+        assert urlparse(response.response.location).path == url_for(controller='pessoa', action='painel', id=pessoa.id)
     
     
     def test_login_correto_com_redirecionamento(self, came_from=url_for(controller='test', action='requer_login')):

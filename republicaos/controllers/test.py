@@ -7,7 +7,7 @@ import logging
 from pylons import request, response, session, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 from republicaos.lib.helpers import get_object_or_404, url_for, flash
-from republicaos.lib.utils import render, validate, check_testing
+from republicaos.lib.utils import render, validate, testing_app
 from republicaos.lib.auth import login_required, owner_required
 from republicaos.lib.base import BaseController
 from formencode import Schema, validators
@@ -25,7 +25,7 @@ class TestController(BaseController):
     Só será habilitada durante os testes.
     '''
     def __before__(self):
-        if not check_testing():
+        if not testing_app():
             abort(404)
     
     

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from pylons import request
 from formencode import Invalid, Schema, validators
 from datetime import date, timedelta
 from babel.dates import parse_date, get_date_format, format_date
 from babel.numbers import parse_decimal, NumberFormatError
 from republicaos.lib.utils import pretty_decimal
-import pylons
+from republicaos.lib.auth import get_user
+from hashlib import md5
+
 
 import logging
 
@@ -28,7 +31,7 @@ class Unique(validators.FancyValidator):
     """
     Verifica se o valor é único no banco de dados. Exemplo
 
-    validator = validators.Unique(model = Pessoa, attr = 'email')
+    field = validators.Unique(model = Pessoa, attr = 'email')
 
     Durante a validação, se houver um ou mais registros no banco de dados para o atributo, então
     lança a Exceção.
@@ -50,6 +53,22 @@ class Unique(validators.FancyValidator):
 
 
 validators.Unique = Unique
+
+
+class Captcha(validators.FancyValidator):
+    """
+    Verifica se o usuário forneceu a reposta correta ao CAPCTHA. O validador deve receber o nome do campo do request.params com a resposta md5 do captcha:
+    
+    captcha = validators.Captcha(resposta='captcha_md5')
+    
+    Se há um usuário logado, então é possível aceitar captchas vazios
+    """
+    messages = { 'incorreta' : _('Resposta incorreta'), }
+    
+    def validate_python(self, value, state):
+        log.debug('Captcha.validate_python: value: %s, resposta_md5: %s' % (value, request.params.get(self.resposta)))
+        if md5(value.strip()).hexdigest() != request.params.get(self.resposta):
+            raise Invalid(self.message('incorreta', state), value, state)
 
 
 

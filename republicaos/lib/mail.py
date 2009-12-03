@@ -27,6 +27,8 @@ def send_email(to_address, subject, message, html_message=None, from_address=Non
     sobre o procedimento
     '''
     # se estiver testando, não envia e-mail de verdade
+    # FIXME: não funciona com chamada a republicaos.lib.util.testing_app
+    # foi necessário usar o código direto
     if split(config['__file__'])[-1] != 'test.ini':
         import smtplib
     else:

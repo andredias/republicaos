@@ -24,12 +24,19 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def check_testing():
+def testing_app():
     '''
     Verifica se o estado da execução do sistema está em teste.
     '''
     log.debug('check_testing: config __file__: %s', config['__file__'])
-    return split(config['__file__'])[-1] in ('test.ini', 'development.ini')
+    return split(config['__file__'])[-1] in ('test.ini')
+
+def debugging_app():
+    '''
+    Verifica se o estado da execução do sistema está em teste.
+    '''
+    log.debug('check_testing: config __file__: %s', config['__file__'])
+    return split(config['__file__'])[-1] in ('development.ini')
 
 def arredonda_decimal(numero, referencia):
     if type(numero) is not Decimal:

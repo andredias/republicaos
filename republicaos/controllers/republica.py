@@ -133,6 +133,7 @@ class RepublicaController(BaseController):
     def show(self, republica_id):
         """GET /republica/id: Show a specific item"""
         data = request.params.get('data_fechamento', None)
+        log.debug('republica.show: data: %s' % data)
         c.fechamento = Fechamento.get_by(data=iso_to_date(data), republica=c.republica) if data else c.republica.fechamento_atual
         c.fechamento.executar_rateio()
         

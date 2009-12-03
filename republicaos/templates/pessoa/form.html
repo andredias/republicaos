@@ -39,6 +39,14 @@
                     <td><input class="text" name="confirmacao_senha" size="30" type="password" /></td>
                     <td class="help"></td>
                 </tr>
+                <tr>
+                    <th class="label">${c.captcha}</th>
+                    <td>
+                        <input type="text" name="captcha" size="10" />
+                        <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" />
+                    </td>
+                    <td class="help">Só para confirmar que você é realmente um humano e não um programa. Para evitar SPAM.</td>
+                </tr>
                 <tr py:if="'Criar' == c.submit">
                     <th class="label">Concordo com os <a href="/termo_uso">Termos de Uso</a></th>
                     <td><input name="aceito_termos" type="checkbox" value="1" /></td>

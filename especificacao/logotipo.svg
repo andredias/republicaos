@@ -60,6 +60,16 @@
        y1="431.89792"
        x2="157.39282"
        y2="310.68362" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3155"
+       id="linearGradient4660"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.7908607,0,0,0.469296,18.112557,141.12121)"
+       x1="157.60715"
+       y1="431.89792"
+       x2="157.39282"
+       y2="310.68362" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -139,15 +149,15 @@
        y="333.65979"
        id="text2408"
        sodipodi:linespacing="125%"
-       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo.png"
-       inkscape:export-xdpi="132.68178"
-       inkscape:export-ydpi="132.68178"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"
        transform="scale(1.0354721,0.965743)"><tspan
          sodipodi:role="line"
          id="tspan2410"
          x="109.50951"
          y="333.65979">Republi<tspan
-   style="font-size:37.00000125px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#800000;font-family:Updike;-inkscape-font-specification:Updike"
+   style="font-size:37.00000124999999684px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#d40000;font-family:Updike;-inkscape-font-specification:Updike"
    id="tspan2446">caos</tspan></tspan></text>
     <text
        sodipodi:linespacing="125%"
@@ -181,17 +191,18 @@
        id="path2430" />
     <text
        xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-weight:normal;fill:#550000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
        x="154.90677"
        y="338.42798"
        id="text2468"
-       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo.png"
-       inkscape:export-xdpi="132.68178"
-       inkscape:export-ydpi="132.68178"><tspan
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"><tspan
          sodipodi:role="line"
          id="tspan2470"
          x="154.90677"
-         y="338.42798">mantendo as contas em ordem</tspan></text>
+         y="338.42798"
+         style="fill:#d40000">mantendo as contas em ordem</tspan></text>
     <rect
        style="opacity:0.85;fill:url(#linearGradient3192);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect3190"

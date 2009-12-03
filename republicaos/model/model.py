@@ -400,7 +400,7 @@ class Fechamento(Entity):
     republica = ManyToOne('Republica', primary_key = True)
 
     def __repr__(self):
-        return 'Fechamento: <data: %s, republica.id:%s>' % (self.data, self.republica.id)
+        return 'Fechamento: <data: %s>' % self.data
 
 
     @property

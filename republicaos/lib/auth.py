@@ -77,8 +77,9 @@ def owner_required(func, self, *args, **kwargs):
 
 @decorator
 def republica_required(func, self, *args, **kwargs):
+    log.debug('republica_required')
     c.republica = get_republica()
-    if not id or not c.republica:
+    if not c.republica:
         erro = '(error) República inexistente ou não referenciada'
         flash(erro)
         abort(404, comment=erro)

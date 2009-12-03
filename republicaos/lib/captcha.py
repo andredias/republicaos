@@ -4,6 +4,7 @@ from __future__ import unicode_literals, print_function
 
 from hashlib import md5
 import random
+from republicaos.lib.utils import testing_app
 
 
 def palavra():
@@ -41,9 +42,14 @@ def maior_menor():
     else:
         comparacao = 'menor'
         resposta = md5(str(min(numeros))).hexdigest()
-    pergunta = 'Qual o %s número da lista %s' % (comparacao, numeros)
+    pergunta = 'Qual o %s número da lista %s?' % (comparacao, numeros)
     return (pergunta, resposta)
 
 
 def captcha():
-    return random.choice([palavra, conta, maior_menor])()
+    if not testing_app():
+        return random.choice([palavra, conta, maior_menor])()
+    else:
+        pergunta = 'Quanto é 1 + 1?'
+        resposta = md5('2').hexdigest()
+        return (pergunta, resposta)

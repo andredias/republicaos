@@ -21,15 +21,18 @@ class TestPessoaSeCadastra(TestController):
 #               'nome': 'Nome com Acentuação',
                 'senha': '1234',
                 'confirmacao_senha': '5678',
+                'captcha': '3',
+                'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
 #               'aceito_termos': '1',
             }
         )
 
-        assert str(response).count('class="error-message"') == 4
+        assert str(response).count('class="error-message"') == 5
         assert 'erro_email' in response
         assert 'erro_nome' in response
         assert 'erro_confirmacao_senha' in response
         assert 'erro_aceito_termos' in response
+        assert 'erro_captcha' in response
     
     
     def test_email_ja_cadastrado(self):
@@ -47,6 +50,8 @@ class TestPessoaSeCadastra(TestController):
                 'senha': '1234',
                 'confirmacao_senha': '1234',
                 'aceito_termos': '1',
+                'captcha':'2',
+                'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
             }
         )
         
@@ -69,6 +74,8 @@ class TestPessoaSeCadastra(TestController):
                 'senha': '1234',
                 'confirmacao_senha': '1234',
                 'aceito_termos': '1',
+                'captcha':'2',
+                'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
             }
         )
         messages = ' '.join(response.session['flash'])
@@ -87,6 +94,8 @@ class TestPessoaSeCadastra(TestController):
                 'senha': '1234',
                 'confirmacao_senha': '1234',
                 'aceito_termos': '1',
+                'captcha': '2',
+                'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
             },
             # status esperado. Verifica automaticamente. Veja
             # http://pylonsbook.com/en/1.0/testing.html#functional-testing
