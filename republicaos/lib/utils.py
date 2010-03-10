@@ -15,6 +15,7 @@ from os.path import split
 from decimal import Decimal
 from babel.numbers import format_number, format_decimal, format_percent
 from datetime import date
+from unicodedata import normalize
 
 from republicaos.lib.helpers import flash
 
@@ -196,3 +197,20 @@ def get_flash_messages():
 
 def iso_to_date(text):
     return date(*[int(num) for num in text.split('-')])
+
+
+def rem_acentuacao(str):
+    '''
+    O código retira a acentuação das letras substituindo por caracteres simples. De: ã por a, ç por c e assim por diante.
+    Retirado de http://www.jarbs.com.br/como-remover-a-acentuacao-das-strings-em-python,165.html
+    '''
+    return normalize('NFKD', str.decode('utf-8')).encode('ASCII', 'ignore')
+
+def strtourl(str):
+    '''
+    Retira acentos, substitui espaços e caracteres diferentes de letras por “-” (hífen), e retorna uma string formatada para ser utilizada em URLs.
+    veja http://www.jarbs.com.br/urls-amigaveis-em-python,161.html
+    '''
+    return re.sub('[^a-z0-9]+', '-',
+                  normalize('NFKD', str.decode('utf-8')).encode('ASCII','ignore').lower())
+
