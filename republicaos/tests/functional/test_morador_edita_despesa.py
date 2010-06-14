@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, Fechamento, Session
 from republicaos.model import Despesa, DespesaAgendada, TipoDespesa
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from urlparse import urlparse
@@ -68,7 +68,7 @@ class TestMoradorEditaDespesa(TestController):
         Session.commit()
         
         # Tenta editar uma despesa inexistente
-        url = url_for(controller='despesa', action='edit', republica_id='2', id='100')
+        url = url(controller='despesa', action='edit', republica_id='2', id='100')
         response = self.app.get(
                             url=url,
                             extra_environ={str('REMOTE_USER'):str('2')},
@@ -76,7 +76,7 @@ class TestMoradorEditaDespesa(TestController):
                         )
         
         # Tenta editar despesa de outra república
-        url = url_for(controller='despesa', action='edit', republica_id='2', id='2')
+        url = url(controller='despesa', action='edit', republica_id='2', id='2')
         response = self.app.get(
                             url=url,
                             extra_environ={str('REMOTE_USER'):str('1')},
@@ -94,7 +94,7 @@ class TestMoradorEditaDespesa(TestController):
         
         
         # editar uma despesa válida com dados inválidos
-        url = url_for(controller='despesa', action='edit', republica_id='2', id='3')
+        url = url(controller='despesa', action='edit', republica_id='2', id='3')
         response = self.app.post(
                             url=url,
                             params={
@@ -150,4 +150,3 @@ class TestMoradorEditaDespesa(TestController):
         assert str(d.quantia) == '1.99'
         assert d.pessoa_id == 1
         assert d.repeticoes == 1
-

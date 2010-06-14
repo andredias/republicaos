@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from urlparse import urlparse
 

@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, TrocaSenha, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from republicaos.lib.auth import set_user
 from urlparse import urlparse
 
@@ -19,7 +19,7 @@ class TestUsuarioEsqueceuSenha(TestController):
         
         # email não cadastrado
         response = self.app.post(
-                        url=url_for(controller='pessoa', action='esqueceu_senha'),
+                        url=url(controller='pessoa', action='esqueceu_senha'),
                         params={
                                 'email':'abc@def.com.br'
                             },
@@ -29,7 +29,7 @@ class TestUsuarioEsqueceuSenha(TestController):
         
         # usuário autenticado, email não cadastrado
         response = self.app.post(
-                        url=url_for(controller='pessoa', action='esqueceu_senha'),
+                        url=url(controller='pessoa', action='esqueceu_senha'),
                         params={
                                 'email':'abc@def.com.br'
                             },
@@ -40,7 +40,7 @@ class TestUsuarioEsqueceuSenha(TestController):
         
         # email cadastrado
         response = self.app.post(
-                        url=url_for(controller='pessoa', action='esqueceu_senha'),
+                        url=url(controller='pessoa', action='esqueceu_senha'),
                         params={
                                 'email':email
                             },
@@ -49,5 +49,5 @@ class TestUsuarioEsqueceuSenha(TestController):
         
         log.debug('response.session: %s', response.session)
         assert 'info' in response.session['flash'][0]
-        assert urlparse(response.response.location).path == url_for(controller='root', action='index')
+        assert urlparse(response.response.location).path == url(controller='root', action='index')
         assert Pessoa.get_by(id=TrocaSenha.get_by().pessoa.id).email == email

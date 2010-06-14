@@ -11,14 +11,13 @@ setup-app`) and provides the base testing objects.
 
 from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand
-from pylons import config, url
+from pylons import url
 from routes.util import URLGenerator
 from webtest import TestApp
 
 import pylons.test
 from elixir import *
 from republicaos.model import *
-from republicaos.model import meta
 from republicaos import model as model
 from sqlalchemy import engine_from_config
 
@@ -27,7 +26,8 @@ __all__ = ['environ', 'url', 'TestController', 'TestModel',
 
 
 # Invoke websetup with the current config file
-# SetupCommand('setup-app').run([config['__file__']])
+SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])
+
 
 # additional imports ...
 import os
@@ -41,7 +41,7 @@ conf_dir = os.path.dirname(os.path.dirname(here_dir))
 
 test_file = os.path.join(conf_dir, 'test.ini')
 conf = appconfig('config:' + test_file)
-load_environment(conf.global_conf, conf.local_conf)
+config = load_environment(conf.global_conf, conf.local_conf)
 environ = {}
 
 engine = engine_from_config(config, 'sqlalchemy.')
@@ -99,22 +99,17 @@ class TestController(TestModel):
         self.app.reset()
 
     def __init__(self, *args, **kwargs):
-        if pylons.test.pylonsapp:
-            wsgiapp = pylons.test.pylonsapp
-        else:
-            wsgiapp = loadapp('config:%s' % config['__file__'])
+        wsgiapp = pylons.test.pylonsapp
+        config = wsgiapp.config
         self.app = TestApp(wsgiapp)
         url._push_object(URLGenerator(config['routes.map'], environ))
-        TestModel.__init__(self, *args, **kwargs)
-
+    
 
 class TestAuthenticatedController(TestModel):
 
     def __init__(self, *args, **kwargs):
-        if pylons.test.pylonsapp:
-            wsgiapp = pylons.test.pylonsapp
-        else:
-            wsgiapp = loadapp('config:%s' % config['__file__'])
+        wsgiapp = pylons.test.pylonsapp
+        config = wsgiapp.config
         self.app = TestApp(wsgiapp, extra_environ=dict(REMOTE_USER='admin'))
         url._push_object(URLGenerator(config['routes.map'], environ))
         TestModel.__init__(self, *args, **kwargs)
@@ -125,6 +120,7 @@ class TestProtectedAreasController(TestModel):
     """Enable the skip_authentication facility, allow access"""
     def __init__(self, *args, **kwargs):
         wsgiapp = loadapp('config:%s#main_without_authn' % config['__file__'])
+        config = wsgiapp.config
         self.app = TestApp(wsgiapp)
         url._push_object(URLGenerator(config['routes.map'], environ))
         TestModel.__init__(self, *args, **kwargs)

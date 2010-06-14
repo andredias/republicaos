@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Republica, Fechamento, Pessoa, Morador, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from urlparse import urlparse
@@ -30,26 +30,26 @@ class TestMoradorCRUDFechamento(TestController):
         
     def test_autenticacao_autorizacao(self):
         # acesso direto ao link, sem definir república
-        response = self.app.get(url=url_for(controller='fechamento', action='new'),
+        response = self.app.get(url=url(controller='fechamento', action='new'),
                                 status=404)
         response = self.app.get(
-                url=url_for(controller='fechamento', action='edit', data=date.today()),
+                url=url(controller='fechamento', action='edit', data=date.today()),
                 status=404
                 )
         response = self.app.get(
-                url=url_for(controller='fechamento', action='delete', data=date.today()),
+                url=url(controller='fechamento', action='delete', data=date.today()),
                 status=404
                 )
                     
         # acesso ao link sem morador autenticado
         response = self.app.get(
-                    url=url_for(controller='fechamento', action='new', republica_id='1'),
+                    url=url(controller='fechamento', action='new', republica_id='1'),
                     status=302
                 )
         assert '/login' in response
 
         response = self.app.get(
-                    url=url_for(
+                    url=url(
                             controller='fechamento',
                             action='edit',
                             data=date.today(),
@@ -60,7 +60,7 @@ class TestMoradorCRUDFechamento(TestController):
         assert '/login' in response
         
         response = self.app.get(
-                    url=url_for(
+                    url=url(
                             controller='fechamento',
                             action='delete',
                             data=date.today(),
@@ -72,7 +72,7 @@ class TestMoradorCRUDFechamento(TestController):
 
 
     def test_new_fechamento(self):
-        url = url_for(controller='fechamento', action='new', republica_id='1')
+        url = url(controller='fechamento', action='new', republica_id='1')
         response = self.app.get(
                     url=url,
                     extra_environ={str('REMOTE_USER'):str('1')}
@@ -110,7 +110,7 @@ class TestMoradorCRUDFechamento(TestController):
     
     
     def test_edit_fechamento(self):
-        url = url_for(
+        url = url(
                 controller='fechamento',
                 action='edit',
                 republica_id='1',
@@ -153,7 +153,7 @@ class TestMoradorCRUDFechamento(TestController):
     
     
     def test_delete_fechamento(self):
-        url = url_for(
+        url = url(
                 controller='fechamento',
                 action='delete',
                 republica_id='1',
@@ -178,7 +178,7 @@ class TestMoradorCRUDFechamento(TestController):
                     )
 
         # tenta excluir último fechamento futuro
-        url = url_for(
+        url = url(
                 controller='fechamento',
                 action='delete',
                 republica_id='1',

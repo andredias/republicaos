@@ -7,12 +7,11 @@ available to Controllers. This module is available to both as 'h'.
 # Scaffolding helper imports
 from pylons import url
 from webhelpers.pylonslib import Flash
-from routes import url_for, redirect_to
 import logging
 
 log = logging.getLogger(__name__)
 
-flash = Flash()
+flash = Flash(categories=('info', 'warning', 'error'), default_category='info')
 
 def wrap_helpers(localdict):
     """Wrap the helpers for use in Genshi templates"""
@@ -46,4 +45,3 @@ def get_object_or_404(model, **kw):
     if obj is None:
         abort(404)
     return obj
-

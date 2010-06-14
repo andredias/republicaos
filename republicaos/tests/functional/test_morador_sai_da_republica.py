@@ -5,7 +5,7 @@ from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Session
 from republicaos.model import DespesaAgendada
 from sqlalchemy  import and_
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from babel.dates import format_date
 from urlparse import urlparse
@@ -70,19 +70,19 @@ class TestMoradorSaiDaRepublica(TestController):
 
         # acesso sem especificar a república
         response = self.app.post(
-                        url=url_for(controller='morador', action='sair'),
+                        url=url(controller='morador', action='sair'),
                         status=404,
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
 
-        url = url_for(controller='morador', action='sair', republica_id=republica['id'])
+        url = url(controller='morador', action='sair', republica_id=republica['id'])
                     
         # acesso sem especificar o morador
         response = self.app.post(
                         url=url,
                         status=302
                     )
-        assert url_for(controller='root', action='login') in response
+        assert url(controller='root', action='login') in response
                     
         # acesso morador de outra república
         response = self.app.post(
@@ -134,7 +134,7 @@ class TestMoradorSaiDaRepublica(TestController):
                         extra_environ={str('REMOTE_USER'):str('1')},
                         status = 302
                     )
-        assert url_for(controller='root', action='index') in response
+        assert url(controller='root', action='index') in response
         m = Morador.registro_mais_recente(pessoa=Pessoa.get_by(id=1), republica=Republica.get_by(id=1))
         assert m.saida == ontem
         assert DespesaAgendada.query.filter(
@@ -154,7 +154,7 @@ class TestMoradorSaiDaRepublica(TestController):
                         extra_environ={str('REMOTE_USER'):str('1')},
                         status = 302
                     )
-        assert url_for(controller='root', action='index') in response
+        assert url(controller='root', action='index') in response
         m = Morador.registro_mais_recente(pessoa=Pessoa.get_by(id=1), republica=Republica.get_by(id=1))
         assert m.saida == date.today()
         

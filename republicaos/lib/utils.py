@@ -7,7 +7,7 @@ import re
 import formencode
 from decorator import decorator
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 from pylons import config
 from pylons.templating import pylons_globals, render_genshi
 from genshi.filters import HTMLFormFiller
@@ -29,15 +29,14 @@ def testing_app():
     '''
     Verifica se o estado da execução do sistema está em teste.
     '''
-    log.debug('check_testing: config __file__: %s', config['__file__'])
-    return split(config['__file__'])[-1] in ('test.ini')
+    from pylons.test import pylonsapp
+    return pylonsapp is not None
 
 def debugging_app():
     '''
     Verifica se o estado da execução do sistema está em teste.
     '''
-    log.debug('check_testing: config __file__: %s', config['__file__'])
-    return split(config['__file__'])[-1] in ('development.ini')
+    return not testing_app()
 
 def arredonda_decimal(numero, referencia):
     if type(numero) is not Decimal:
@@ -92,10 +91,6 @@ def dict_to_attributes(attributes, object):
             setattr(object, key, value)
 
 
-
-template_loader = config['pylons.app_globals'].genshi_loader
-
-
 def render(template, filler_data={}, method='xhtml', doctype='xhtml'):
     globs = pylons_globals()
     #log.debug("render | template: '%s', globs: %r, filler_data: %r, doctype: '%s'" %
@@ -105,12 +100,12 @@ def render(template, filler_data={}, method='xhtml', doctype='xhtml'):
     # Atenção: É importante que filler_data não tenha atributos comuns com globs como, por exemplo,
     # 'url' que é uma função no pylons.
     globs.update(filler_data)
+    template_loader = config['pylons.app_globals'].genshi_loader
     tmpl = template_loader.load(template)
     stream = tmpl.generate(**globs)
     if filler_data:
         stream = stream | HTMLFormFiller(data=filler_data)
     return stream.render(method, doctype=doctype)
-
 
 
 
@@ -172,28 +167,16 @@ def validate(schema, alternative_schema=None, check_function=None):
     return decorator(_validate)
 
 
-
-re_flash_message = re.compile('(^\((?P<css>[\w]+)\)\s)?(?P<mensagem>.*)')
-
 def get_flash_messages():
     '''
-    organiza as mensagens enviadas para flash em um dicionário em que as chaves são as classes css
-    que deverão ser usadas nos templates html e os itens são as mensagens a serem apresentadas.
-    
-    As mensagens devem seguir o seguinte padrão:
-    
-    (css) mensagem a ser exibida
-    
-    Por exemplo:
-    
-    (warning) Preencha um endereço válido de e-mail
+    Agrupa as mensagens enviadas para flash em um dicionário de acordo com a categoria das mensagens.
     '''
     messages = flash.pop_messages()
     result = {}
     for message in messages:
-        classificado = re_flash_message.match(message).groupdict()
-        result.setdefault(classificado['css'], []).append(classificado['mensagem'])
+        result.setdefault(message.category, []).append(message.message)
     return result
+
 
 def iso_to_date(text):
     return date(*[int(num) for num in text.split('-')])

@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, TrocaSenha, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from urlparse import urlparse
 
 import logging
@@ -35,7 +35,7 @@ class TestUsuarioConfirmaTrocaSenha(TestController):
         assert response.session.get('userid') == 1
         assert TrocaSenha.get_by(pessoa_id=1) is None
         assert TrocaSenha.get_by(pessoa_id=2)
-        assert urlparse(response.response.location).path == url_for(
+        assert urlparse(response.response.location).path == url(
                                                         controller='pessoa', action='edit', id=1)
         
         

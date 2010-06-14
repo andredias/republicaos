@@ -5,8 +5,8 @@ from __future__ import unicode_literals, print_function
 import logging
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from pylons.controllers.util import abort, redirect
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.validators import Date
@@ -65,7 +65,7 @@ class ConfirmacaoController(BaseController):
             user = cp.confirma_cadastro()
             set_user(user)
             flash('(info) Bem vindo ao Republicaos, %s!' % cp.nome)
-            redirect_to(controller='pessoa', action='painel', id=user.id)
+            redirect(controller='pessoa', action='painel', id=user.id)
         else:
             return render('confirmacao/confirmacao_invalida.html')
 
@@ -88,14 +88,14 @@ class ConfirmacaoController(BaseController):
                             )
             Morador(pessoa=c.user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
             flash('(info) Bem vindo(a) à república %s!' % c.convite.republica.nome)
-            destino = url_for(controller='republica', action='show', republica_id=c.convite.republica.id)
+            destino = url(controller='republica', action='show', republica_id=c.convite.republica.id)
             c.convite.delete()
             Session.commit()
             set_user(c.user)
-            redirect_to(destino)
+            redirect(destino)
         # FIXME: problemas com unicode
         c.title = 'Confirmacao do convite para participar da republica %s' % c.convite.republica.nome
-        c.action = url_for(controller='confirmacao', action='convite_morador', id=id)
+        c.action = url(controller='confirmacao', action='convite_morador', id=id)
         filler_data = request.params or c.convite.to_dict()
         if isinstance(filler_data.get('entrada'), date):
             filler_data['entrada'] = filler_data['entrada'].strftime('%d/%m/%Y')
@@ -109,6 +109,6 @@ class ConfirmacaoController(BaseController):
             flash('(info) Entre com a nova senha')
             ts.delete()
             Session.commit()
-            redirect_to(controller='pessoa', action='edit', id=ts.pessoa.id)
+            redirect(controller='pessoa', action='edit', id=ts.pessoa.id)
         else:
             return render('confirmacao/confirmacao_invalida.html')

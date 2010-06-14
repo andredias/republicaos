@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, Fechamento, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from republicaos.lib.auth import set_user
 from urlparse import urlparse
 from datetime import date, timedelta
@@ -28,7 +28,7 @@ class TestMoradorVisitaPaginaInicialRepublica(TestController):
         Session.commit()
         
         response = self.app.get(
-                            url=url_for(
+                            url=url(
                                         controller='republica',
                                         action='show',
                                         republica_id='1'

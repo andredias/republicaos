@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, CadastroPendente, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from urlparse import urlparse
 
 import logging
@@ -15,7 +15,7 @@ class TestPessoaSeCadastra(TestController):
         Testa se o uso de dados inválidos no cadastro resulta em mensagens de erro
         """
         response = self.app.post(
-            url=url_for(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='new'),
             params={
                 'email': 'abcdefg',
 #               'nome': 'Nome com Acentuação',
@@ -43,7 +43,7 @@ class TestPessoaSeCadastra(TestController):
         Session.commit()
         
         response = self.app.post(
-            url=url_for(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='new'),
             params={
                 'email': 'suporte@pronus.eng.br',
                 'nome': 'Nome com Acentuação',
@@ -67,7 +67,7 @@ class TestPessoaSeCadastra(TestController):
         Session.commit()
         
         response = self.app.post(
-            url=url_for(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='new'),
             params={
                 'email': 'suporte@pronus.eng.br',
                 'nome': 'Nome com Acentuação',
@@ -87,7 +87,7 @@ class TestPessoaSeCadastra(TestController):
         Testa resultado com todos os dados válidos
         '''
         response = self.app.post(
-            url=url_for(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='new'),
             params={
                 'email': 'suporte@pronus.eng.br',
                 'nome': 'Nome com Acentuação',
@@ -106,7 +106,6 @@ class TestPessoaSeCadastra(TestController):
         assert 'Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.' in messages
         assert CadastroPendente.get_by(email='suporte@pronus.eng.br')
         # Verificar se a resposta redireciona para a página inicial
-        assert urlparse(response.response.location).path == url_for(controller='root', action='index')
-
+        assert urlparse(response.response.location).path == url(controller='root', action='index')
 
 

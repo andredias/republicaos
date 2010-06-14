@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, Fechamento, Session
 from republicaos.model import Despesa, DespesaAgendada
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from urlparse import urlparse
@@ -30,10 +30,10 @@ class TestMoradorLancaDespesa(TestController):
         Session.commit()
         
         # acesso direto ao link, sem definir república
-        response = self.app.get(url=url_for(controller='despesa', action='new'),
+        response = self.app.get(url=url(controller='despesa', action='new'),
                                 status=404)
         
-        url=url_for(controller='despesa', action='new', republica_id='1')
+        url=url(controller='despesa', action='new', republica_id='1')
                     
         # acesso ao link sem morador autenticado
         response = self.app.get(url=url, status=302)

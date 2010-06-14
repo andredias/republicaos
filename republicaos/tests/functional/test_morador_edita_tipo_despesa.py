@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, Session
 from republicaos.model import Despesa, TipoDespesa
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from urlparse import urlparse
@@ -25,10 +25,10 @@ class TestMoradorCadastraTipoDespesa(TestController):
         Session.commit()
         
         # acesso direto ao link, sem definir república
-        response = self.app.get(url=url_for(controller='tipo_despesa', action='new'),
+        response = self.app.get(url=url(controller='tipo_despesa', action='new'),
                                 status=404)
         
-        url=url_for(controller='tipo_despesa', action='edit', republica_id='1', id='1')
+        url=url(controller='tipo_despesa', action='edit', republica_id='1', id='1')
                     
         # acesso ao link sem morador autenticado
         response = self.app.get(url=url, status=302)
@@ -77,5 +77,4 @@ class TestMoradorCadastraTipoDespesa(TestController):
 #                            extra_environ={str('REMOTE_USER'):str('1')}
 #                            )
 #        assert '(info) Tipo de Despesa criado: Internet' in ''.join(response.session['flash'])
-
 

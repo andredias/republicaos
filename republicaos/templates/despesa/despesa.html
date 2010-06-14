@@ -36,7 +36,7 @@ moradores  = c.republica.get_moradores()
             );
             check($("input[name='agendamento']").attr('checked'));
             $("#editar_tipo").bind("mouseenter",function(){
-               $("#editar_tipo").attr("href", "${h.url_for(controller='tipo_despesa', action='edit', republica_id=c.republica.id, id='')}" + $("select[name='tipo_id']").val())
+               $("#editar_tipo").attr("href", "${h.url(controller='tipo_despesa', action='edit', republica_id=c.republica.id, id='')}" + $("select[name='tipo_id']").val())
             })
         });
     </script>
@@ -67,7 +67,7 @@ moradores  = c.republica.get_moradores()
                         </option>
                     </select>
                     <!-- !TODO: como fazer para passar o valor do item selecionado para o link a a ser aberto -->
-                    <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}">novo</a> <a href="" id="editar_tipo">editar</a></td>
+                    <a href="${h.url(controller='tipo_despesa', action='new', republica_id=c.republica.id)}">novo</a> <a href="" id="editar_tipo">editar</a></td>
                     <td class="help"></td>
                 </tr>
                 <tr>
@@ -95,7 +95,7 @@ moradores  = c.republica.get_moradores()
 
         <p>
             <input type="submit" value="Salvar" /> ou 
-            <a href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}" class="cancel">Voltar à página da república</a>
+            <a href="${h.url(controller='republica', action='show', republica_id=c.republica.id)}" class="cancel">Voltar à página da república</a>
         </p>
     </form>
 

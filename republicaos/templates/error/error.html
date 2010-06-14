@@ -21,7 +21,7 @@
         </article>
         <article>
             <p>Pode ter havido algum problema de digitação ou pode ter sido usado um link desatualizado.</p>
-            <p>Tente algum outro endereço ou <span py:if="c.user"><a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">vá para o painel de controle</a></span><span py:if="not c.user"><a href="${h.url_for(controller='root', action='index')}">vá para a página principal</a></span>.</p>
+            <p>Tente algum outro endereço ou <span py:if="c.user"><a href="${h.url(controller='pessoa', action='painel', id=c.user.id)}">vá para o painel de controle</a></span><span py:if="not c.user"><a href="${h.url(controller='root', action='index')}">vá para a página principal</a></span>.</p>
         </article>
     </py:when>
     <py:when test="403">
@@ -35,7 +35,7 @@
                 <li>Você está acessando a página de outra pessoa.</li>
                 <li>Você não é morador ou ex-morador da página da república que está tentando acessar.</li>
             </ol>
-            <p><span py:if="c.user"><a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">Voltar para o painel de controle</a></span><span py:if="not c.user"><a href="${h.url_for(controller='root', action='index')}">Voltar para a página principal</a></span>.</p>
+            <p><span py:if="c.user"><a href="${h.url(controller='pessoa', action='painel', id=c.user.id)}">Voltar para o painel de controle</a></span><span py:if="not c.user"><a href="${h.url(controller='root', action='index')}">Voltar para a página principal</a></span>.</p>
         </article>
     </py:when>
     <py:otherwise>
@@ -45,4 +45,3 @@
 </section>
 </body>
 </html>
-

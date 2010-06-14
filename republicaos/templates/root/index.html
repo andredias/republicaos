@@ -18,9 +18,9 @@
                     <h2>Saiba quem gastou o que e quanto deu pra cada um no fim do mês.</h2>
                 </div>
                 <div class="coluna-direita" style="text-align:center">
-                    <a href="${h.url_for(controller='root', action='tour')}" class="botao">Veja como funciona</a>
+                    <a href="${h.url(controller='root', action='tour')}" class="botao">Veja como funciona</a>
                     <br /><br /><br /><br />
-                    <a href="${h.url_for(controller='pessoa', action='new')}" class="botao">Crie uma conta</a>
+                    <a href="${h.url(controller='pessoa', action='new')}" class="botao">Crie uma conta</a>
                 </div>
                 <div style="clear:both;">
                 </div>
@@ -32,13 +32,13 @@
                     <h2>Por que usar o Republicaos?</h2>
                     <dl>
                         <dt>Resolve o problema da divisão das contas entre os moradores</dt>
-                        <dd>Basta registrar as despesas e o Republicaos já produz todo o rateio. <a href="${h.url_for(controller='root', action='tour')}">Veja como funciona</a>.</dd>
+                        <dd>Basta registrar as despesas e o Republicaos já produz todo o rateio. <a href="${h.url(controller='root', action='tour')}">Veja como funciona</a>.</dd>
 
                         <dt>Todos participam</dt>
                         <dd>Ao invés de apenas uma única pessoa controlar tudo, todos os moradores da república acessam e contribuem.</dd>
 
                         <dt>É grátis!</dt>
-                        <dd>Experimente. <a href="${h.url_for(controller='pessoa', action='new')}">Crie uma conta</a></dd>
+                        <dd>Experimente. <a href="${h.url(controller='pessoa', action='new')}">Crie uma conta</a></dd>
                     </dl>
                 </div>
                 <div class="coluna-direita">

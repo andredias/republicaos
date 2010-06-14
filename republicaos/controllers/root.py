@@ -5,8 +5,8 @@ from __future__ import unicode_literals, print_function
 import logging
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from pylons.controllers.util import abort, redirect
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.utils import render, validate
 from republicaos.lib.base import BaseController
 from formencode import Schema, validators
@@ -57,8 +57,8 @@ class RootController(BaseController):
             user = check_user(c.valid_data['email'], c.valid_data['senha'])
             if user:
                 set_user(user)
-                destino = session.pop('came_from', url_for(controller='pessoa', action='painel', id=user.id))
-                redirect_to(destino)
+                destino = session.pop('came_from', url(controller='pessoa', action='painel', id=user.id))
+                redirect(destino)
             else:
                 flash('(warning) O e-mail e/ou a senha fornecidos não conferem')
         return render('root/login.html', filler_data=request.params)
@@ -66,7 +66,7 @@ class RootController(BaseController):
 
     def logout(self):
         set_user(None)
-        redirect_to(controller='root', action='index')
+        redirect(controller='root', action='index')
     
     
     def tour(self):
@@ -95,11 +95,9 @@ class RootController(BaseController):
                      )
             flash('(info) Mensagem enviada!')
             if c.user:
-                redirect_to(controller='pessoa', action='painel', id=c.user.id)
+                redirect(controller='pessoa', action='painel', id=c.user.id)
             else:
-                redirect_to(controller='root', action='index')
+                redirect(controller='root', action='index')
         c.captcha, c.captcha_md5 = captcha()
         log.debug('RootController.faleconosco: captcha: %s, captcha_md5: %s' % (c.captcha, c.captcha_md5))
         return render('faleconosco/faleconosco.html', filler_data=request.params)
-
-

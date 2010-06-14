@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, Fechamento, Session
 from republicaos.model import Despesa, DespesaAgendada, TipoDespesa
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from urlparse import urlparse
@@ -65,7 +65,7 @@ class TestMoradorExcluiDespesa(TestController):
         Session.commit()
         
         # Tenta excluir uma despesa inexistente
-        url = url_for(controller='despesa', action='delete', republica_id='2', id='100')
+        url = url(controller='despesa', action='delete', republica_id='2', id='100')
         response = self.app.post(
                             url=url,
                             extra_environ={str('REMOTE_USER'):str('2')},
@@ -73,7 +73,7 @@ class TestMoradorExcluiDespesa(TestController):
                         )
         
         # Tenta excluir despesa de outra república
-        url = url_for(controller='despesa', action='delete', republica_id='2', id='2')
+        url = url(controller='despesa', action='delete', republica_id='2', id='2')
         response = self.app.post(
                             url=url,
                             extra_environ={str('REMOTE_USER'):str('1')},
@@ -90,7 +90,7 @@ class TestMoradorExcluiDespesa(TestController):
         
         
         # Excluir uma despesa válida
-        url = url_for(controller='despesa', action='delete', republica_id='2', id='3')
+        url = url(controller='despesa', action='delete', republica_id='2', id='3')
         response = self.app.post(
                             url=url,
                             extra_environ={str('REMOTE_USER'):str('2')},

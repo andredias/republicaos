@@ -5,8 +5,8 @@ from __future__ import unicode_literals, print_function
 import logging
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from pylons.controllers.util import abort, redirect
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.utils import render, validate, testing_app
 from republicaos.lib.auth import login_required, owner_required
 from republicaos.lib.base import BaseController
