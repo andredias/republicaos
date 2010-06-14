@@ -6,9 +6,9 @@ import logging
 import formencode
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.model import Pessoa, CadastroPendente, TrocaSenha, ConviteMorador, Session
@@ -127,11 +127,11 @@ class PessoaController(BaseController):
                 pendencia.from_dict(c.valid_data)
                 flash('(info) Já existe um pedido de cadastro pendente para o e-mail fornecido.')
             Session.commit()
-            redirect_to(controller='root', action='index')
-        c.action = url_for(controller='pessoa', action='new')
+            redirect(controller='root', action='index')
+        c.action = url(controller='pessoa', action='new')
         c.submit = 'Criar'
         c.title  = 'Crie sua conta'
-        c.voltar_para = url_for(controller='root', action='index')
+        c.voltar_para = url(controller='root', action='index')
         c.captcha, c.captcha_md5 = captcha()
         return render('pessoa/form.html', filler_data=request.params)
 
@@ -141,7 +141,7 @@ class PessoaController(BaseController):
     @validate(PessoaEdicaoSchema)
     def edit(self, id, format='html'):
         """GET /pessoa/edit/id: Edit a specific item"""
-        c.voltar_para = url_for(controller='pessoa', action='painel', id=id)
+        c.voltar_para = url(controller='pessoa', action='painel', id=id)
         if c.valid_data:
             if not c.valid_data['senha']: # alteração de senha não é obrigatória na edição
                 c.valid_data.pop('senha')
@@ -150,13 +150,13 @@ class PessoaController(BaseController):
             flash('(info) Dados alterados com sucesso!')
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(c.voltar_para)
+            redirect(c.voltar_para)
         elif not c.errors:
             filler_data = c.pessoa.to_dict()
         else:
             log.debug('PessoaController.edit: c.errors: %r' % c.errors)
             filler_data = request.params
-        c.action = url_for(controller='pessoa', action='edit', id=id)
+        c.action = url(controller='pessoa', action='edit', id=id)
         c.submit = 'Atualizar'
         c.title = 'Editar Dados Pessoais'
         return render('pessoa/form.html', filler_data = filler_data)
@@ -175,7 +175,7 @@ class PessoaController(BaseController):
             if pessoa:
                 TrocaSenha(pessoa=pessoa)
                 Session.commit()
-                redirect_to(controller='root', action='index')
+                redirect(controller='root', action='index')
             else:
                 flash('(error) Este endereço de e-mail não está cadastrado no Republicaos!')
         

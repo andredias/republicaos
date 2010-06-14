@@ -19,7 +19,7 @@ from paste.request import construct_url
 from itertools import izip
 
 from pylons import request, response, tmpl_context as c
-from republicaos.lib.helpers import url_for, flash
+from republicaos.lib.helpers import url, flash
 
 import logging
 
@@ -80,12 +80,12 @@ Equipe Republicaos'''
     @property
     def link_confirmacao(self):
         try:
-            url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
+            url = construct_url(request.environ, script_name = url(controller='confirmacao',
                             action='cadastro', id=self.hash), with_path_info=False)
         except TypeError:
             # fora de uma chamada a uma requisição, request não fica registrado
             # acontece em alguns casos de teste
-            url = url_for(controller='confirmacao', action='cadastro', id=self.hash)
+            url = url(controller='confirmacao', action='cadastro', id=self.hash)
         return url
 
 
@@ -131,12 +131,12 @@ Equipe Republicaos'''
     @property
     def link_confirmacao(self):
         try:
-            url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
+            url = construct_url(request.environ, script_name = url(controller='confirmacao',
                             action='troca_senha', id=self.hash), with_path_info=False)
         except TypeError:
             # fora de uma chamada a uma requisição, request não fica registrado
             # acontece em alguns casos de teste
-            url = url_for(controller='confirmacao', action='troca_senha', id=self.hash)
+            url = url(controller='confirmacao', action='troca_senha', id=self.hash)
         return url
 
     @after_insert
@@ -195,12 +195,12 @@ Equipe Republicaos'''
     def link_confirmacao(self):
         action = 'convite_morador'
         try:
-            url = construct_url(request.environ, script_name = url_for(controller='confirmacao',
+            url = construct_url(request.environ, script_name = url(controller='confirmacao',
                             action=action, id=self.hash), with_path_info=False)
         except TypeError:
             # fora de uma chamada a uma requisição, request não fica registrado
             # acontece em alguns casos de teste
-            url = url_for(controller='confirmacao', action=action, id=self.hash)
+            url = url(controller='confirmacao', action=action, id=self.hash)
         return url
 
     @after_insert
@@ -246,5 +246,4 @@ Equipe Republicaos'''
             else:
                 convite.enviar_mensagem()
         return
-
 

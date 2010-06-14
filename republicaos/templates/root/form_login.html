@@ -1,5 +1,5 @@
 <!--
-    <form action="${h.url_for(controller='root', action='login')}" method="post">
+    <form action="${h.url(controller='root', action='login')}" method="post">
     <h2>Acesse sua conta</h2>
     <p><label for="email">E-mail</label><br />
     <input class="text" id="email" name="email" type="text" /></p>
@@ -8,7 +8,7 @@
     <p><input name="commit" type="submit" value="Acessar" /></p>
     </form>
 -->
-<form id="login-form" name="login" method="post" action="${h.url_for(controller='root', action='login')}">
+<form id="login-form" name="login" method="post" action="${h.url(controller='root', action='login')}">
     <fieldset>
     <legend>Acessar sua conta</legend>
     <div class="input">

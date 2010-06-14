@@ -12,7 +12,7 @@
 
 <section>
     <h1>Fale Conosco</h1>
-    <form name="faleconosco" method="post" action="${h.url_for(controller='root', action='faleconosco')}">
+    <form name="faleconosco" method="post" action="${h.url(controller='root', action='faleconosco')}">
         <table>
             <tbody>
                 <tr>
@@ -45,7 +45,7 @@
 
         <p>
             <input type="submit" value="Enviar" /> ou 
-            <a href="${h.url_for(controller='root', action='index')}" class="cancel">Voltar à página inicial</a>
+            <a href="${h.url(controller='root', action='index')}" class="cancel">Voltar à página inicial</a>
         </p>
     </form>
 </section>

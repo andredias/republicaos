@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Republica, Fechamento, Pessoa, Morador, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from republicaos.lib.mail import log
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta

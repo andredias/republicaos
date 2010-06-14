@@ -5,9 +5,9 @@ from __future__ import unicode_literals
 import logging
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.utils import render, validate
 from republicaos.lib.auth import get_republica, morador_required, republica_resource_required
 from republicaos.lib.base import BaseController
@@ -102,12 +102,12 @@ class TipoDespesaController(BaseController):
     @validate(TipoDespesaSchema)
     def new(self):
         c.destino = session.pop('came_from', None) or \
-                    url_for(controller='republica', action='show', republica_id=request.urlvars['republica_id'])
+                    url(controller='republica', action='show', republica_id=request.urlvars['republica_id'])
         if c.valid_data:
             tipo_despesa = self.create()
             flash('(info) Tipo de Despesa criado: %s' % c.valid_data['nome'])
-            redirect_to(c.destino)
-        c.action = url_for(controller='tipo_despesa', action='new', republica_id=request.urlvars['republica_id'])
+            redirect(c.destino)
+        c.action = url(controller='tipo_despesa', action='new', republica_id=request.urlvars['republica_id'])
         c.title  = 'Novo Tipo de Despesa'
         c.submit = 'Cadastrar'
         return render('tipo_despesa/form.html', filler_data=request.params)
@@ -120,17 +120,17 @@ class TipoDespesaController(BaseController):
     @validate(TipoDespesaSchema)
     def edit(self, id, format='html'):
         c.destino = session.pop('came_from', None) or \
-                    url_for(controller='republica', action='show', republica_id=request.urlvars['republica_id'])
+                    url(controller='republica', action='show', republica_id=request.urlvars['republica_id'])
         if c.valid_data:
             request.method = 'PUT'
             self.update(id)
             flash('(info) Tipo de Despesa alterado: %s' % c.valid_data['nome'])
-            redirect_to(c.destino)
+            redirect(c.destino)
         elif not c.errors:
             filler_data = c.tipo_despesa.to_dict()
         else:
             filler_data = request.params
-        c.action = url_for(controller='tipo_despesa', action='edit', id=id,
+        c.action = url(controller='tipo_despesa', action='edit', id=id,
                            republica_id=request.urlvars['republica_id'])
         c.title = 'Editar Tipo de Despesa'
         c.submit = 'Alterar'

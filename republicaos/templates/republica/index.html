@@ -19,11 +19,11 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
 ?>
 <head>
     <title>${c.title}</title>
-    <script type="text/javascript" src="${h.url_for('/js/jquery.tablesorter.min.js')}"></script>
+    <script type="text/javascript" src="${h.url('/js/jquery.tablesorter.min.js')}"></script>
     <!--
-    <script type="text/javascript" src="${h.url_for('/js/jquery_tablehover/jquery.tablehover.min.js')}"></script>
+    <script type="text/javascript" src="${h.url('/js/jquery_tablehover/jquery.tablehover.min.js')}"></script>
     -->
-    <script type="text/javascript" src="${h.url_for('/js/jquery_tooltip/jquery.tooltip.min.js')}"></script>
+    <script type="text/javascript" src="${h.url('/js/jquery_tooltip/jquery.tooltip.min.js')}"></script>
     <script type="text/javascript">
         $.tablesorter.addParser({
             id: "numero",
@@ -106,7 +106,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             
             // garante que o tipo selecionado é usado no link para edição
             $("#editar_tipo").bind("mouseenter",function(){
-               $("#editar_tipo").attr("href", "${h.url_for(controller='tipo_despesa', action='edit', republica_id=c.republica.id, id='')}" + $("select[name='tipo_id']").val())
+               $("#editar_tipo").attr("href", "${h.url(controller='tipo_despesa', action='edit', republica_id=c.republica.id, id='')}" + $("select[name='tipo_id']").val())
             })
 
         });
@@ -135,7 +135,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             <header>
             <h1>Lançar Despesa</h1>
             </header>
-            <form action="${h.url_for(controller='despesa', action='new', republica_id=c.republica.id)}" method="post">
+            <form action="${h.url(controller='despesa', action='new', republica_id=c.republica.id)}" method="post">
                 <ul id="form_despesa">
                     <li>
                         <label>Responsável</label><br />
@@ -145,7 +145,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                         </select>
                     </li>
                     <li>
-                        <label>Tipo da despesa</label> <a href="${h.url_for(controller='tipo_despesa', action='new', republica_id=c.republica.id)}" class="insert" title="Incluir novo tipo de despesa">novo</a><br />
+                        <label>Tipo da despesa</label> <a href="${h.url(controller='tipo_despesa', action='new', republica_id=c.republica.id)}" class="insert" title="Incluir novo tipo de despesa">novo</a><br />
                         <select name="tipo_id">
                             <option py:for="tipo_despesa in c.republica.tipos_despesa" value="${tipo_despesa.id}">
                             <span py:replace="tipo_despesa.nome">nome do tipo da despesa</span>
@@ -183,7 +183,7 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                     <td>${format_date(despesa.proximo_lancamento)}</td>
                     <td>${despesa.tipo.nome}</td>
                     <td class="number">${pretty_decimal(despesa.quantia)}</td>
-                    <td><a href="${h.url_for(controller='lancamento_programado', action='edit', id=despesa.id, republica_id=c.republica.id)}" class="edit" title="Editar lançamento">editar</a> <a href="${h.url_for(controller='lancamento_programado', action='delete', id=despesa.id, republica_id=c.republica.id)}" class="delete" title="Excluir lançamento">excluir</a></td>
+                    <td><a href="${h.url(controller='lancamento_programado', action='edit', id=despesa.id, republica_id=c.republica.id)}" class="edit" title="Editar lançamento">editar</a> <a href="${h.url(controller='lancamento_programado', action='delete', id=despesa.id, republica_id=c.republica.id)}" class="delete" title="Excluir lançamento">excluir</a></td>
                 </tr>
             </table>
         </article>
@@ -191,15 +191,15 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             <header>
             <h1>Fechamentos</h1>
             </header>
-            <p><a href="${h.url_for(controller='fechamento', action='new', republica_id=c.republica.id)}">Criar fechamento</a></p>
+            <p><a href="${h.url(controller='fechamento', action='new', republica_id=c.republica.id)}">Criar fechamento</a></p>
             <div class="fechamentos">
                 <table class="fechamentos">
                     <tbody>
                         <tr py:for="fechamento in c.republica.fechamentos">
-                            <td><a href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id, data_fechamento=fechamento.data)}">${format_date(fechamento.intervalo[0], "LLLL/yy")}</a></td>
-                            <td><a href="${h.url_for(controller='fechamento', action='edit', republica_id=c.republica.id, data=fechamento.data)}" class="edit">Editar</a>
+                            <td><a href="${h.url(controller='republica', action='show', republica_id=c.republica.id, data_fechamento=fechamento.data)}">${format_date(fechamento.intervalo[0], "LLLL/yy")}</a></td>
+                            <td><a href="${h.url(controller='fechamento', action='edit', republica_id=c.republica.id, data=fechamento.data)}" class="edit">Editar</a>
                             </td>
-                            <td><a href="${h.url_for(controller='fechamento', action='delete', republica_id=c.republica.id, data=fechamento.data)}" class="delete">Excluir</a></td>
+                            <td><a href="${h.url(controller='fechamento', action='delete', republica_id=c.republica.id, data=fechamento.data)}" class="delete">Excluir</a></td>
                         </tr>
                     </tbody>
                 </table>
@@ -213,17 +213,17 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
             <p>${c.republica.endereco}<br />
             Latitude: ${c.republica.latitude}°<br />
             Longitude: ${c.republica.longitude}°</p>
-            <a href="${h.url_for(controller='republica', action='edit', republica_id=c.republica.id, id=c.republica.id)}">Editar</a>
+            <a href="${h.url(controller='republica', action='edit', republica_id=c.republica.id, id=c.republica.id)}">Editar</a>
         </article>
         <article>
             <header>
             <h1>Moradores</h1>
             </header>
-            <p><a href="${h.url_for(controller='morador', action='new', republica_id=c.republica.id)}">Adicionar</a></p>
+            <p><a href="${h.url(controller='morador', action='new', republica_id=c.republica.id)}">Adicionar</a></p>
             <table>
                 <tr py:for="pessoa in c.republica.get_moradores()">
                     <td py:if="pessoa != c.user">${pessoa}</td>
-                    <td py:if="pessoa == c.user"><a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">${pessoa}</a></td>
+                    <td py:if="pessoa == c.user"><a href="${h.url(controller='pessoa', action='painel', id=c.user.id)}">${pessoa}</a></td>
                 </tr>
             </table>
         </article>
@@ -231,8 +231,8 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
     
     <article class="principal">
         <header>
-        <div py:with="data_inicial, data_final = c.fechamento.intervalo" class="periodo">[${format_date(data_inicial)}, ${format_date(data_final)}] <a href="${h.url_for(controller='fechamento', action='edit', data=c.fechamento.data, republica_id=c.republica.id)}" class="screen edit" title="Editar data do fechamento">Editar</a></div>
-        <form action="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}" method="post">
+        <div py:with="data_inicial, data_final = c.fechamento.intervalo" class="periodo">[${format_date(data_inicial)}, ${format_date(data_final)}] <a href="${h.url(controller='fechamento', action='edit', data=c.fechamento.data, republica_id=c.republica.id)}" class="screen edit" title="Editar data do fechamento">Editar</a></div>
+        <form action="${h.url(controller='republica', action='show', republica_id=c.republica.id)}" method="post">
             <h1>Fechamento de <span class="print">${format_date(c.fechamento.intervalo[0], 'LLLL/yy')}</span>
             <select name="data_fechamento" onchange="javascript:this.form.submit()" class="screen">
                 <option py:for="f in c.republica.fechamentos" value="${f.data}" py:attrs="dict(selected='selected') if f == c.fechamento else dict()" >${format_date(f.intervalo[0], 'LLLL/yy')}</option>
@@ -376,8 +376,8 @@ agendamentos = DespesaAgendada.query.filter(DespesaAgendada.republica_id == c.re
                         <td class="number"><span py:replace="pretty_decimal(despesa.quantia)">99,99</span></td>
                         <td><span py:replace="despesa.tipo.nome">Tipo da despesa</span></td>
                         <td><span py:replace="despesa.pessoa.nome">Fulano</span></td>
-                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='edit', republica_id=c.republica.id, id=despesa.id)}" class="edit" title="editar">Editar</a></td>
-                        <td class="screen" py:if="not c.read_only"><a href="${h.url_for(controller='despesa', action='delete', republica_id=c.republica.id, id=despesa.id)}" class="delete" title="excluir">Excluir</a></td>
+                        <td class="screen" py:if="not c.read_only"><a href="${h.url(controller='despesa', action='edit', republica_id=c.republica.id, id=despesa.id)}" class="edit" title="editar">Editar</a></td>
+                        <td class="screen" py:if="not c.read_only"><a href="${h.url(controller='despesa', action='delete', republica_id=c.republica.id, id=despesa.id)}" class="delete" title="excluir">Excluir</a></td>
                     </tr>
                 </tbody>
             </table>

@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import redirect_to
-from republicaos.lib.helpers import url_for, flash
+from pylons.controllers.util import redirect
+from republicaos.lib.helpers import url, flash
 from republicaos.lib.auth import morador_required, get_republica
 from republicaos.lib.auth import republica_resource_required
 from republicaos.lib.utils import render, validate, pretty_decimal, iso_to_date
@@ -54,13 +54,13 @@ class FechamentoController(BaseController):
             except SQLAlchemyError as error:
                 trata_erro_bd(error)
             destino = session.pop('came_from', 
-                        url_for(
+                        url(
                             controller='republica',
                             action='show',
                             republica_id=request.urlvars['republica_id']
                         )
                     )
-            redirect_to(destino)
+            redirect(destino)
         
         filler = request.params or {str('data'):format_date(date.today())}
         c.title = 'Criar Fechamento'
@@ -80,13 +80,13 @@ class FechamentoController(BaseController):
                 Session.commit()
                 flash('(info) Data do fechamento alterada com sucesso')
                 destino = session.pop('came_from', 
-                        url_for(
+                        url(
                             controller='republica',
                             action='show',
                             republica_id=request.urlvars['republica_id']
                         )
                     )
-                redirect_to(destino)
+                redirect(destino)
             else:
                 Session.rollback()
                 flash('(error) Data não foi alterada pois é necessário haver um fechamento futuro')
@@ -110,10 +110,10 @@ class FechamentoController(BaseController):
             flash('(error) Não foi possível excluir o fechamento pois é o único fechamento futuro que resta')
 
         destino = session.pop('came_from', 
-                    url_for(
+                    url(
                         controller='republica',
                         action='show',
                         republica_id=c.republica.id
                     )
                 )
-        redirect_to(destino)
+        redirect(destino)

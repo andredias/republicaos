@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, TipoDespesa, Fechamento, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from republicaos.lib.utils import testing_app
 from urlparse import urlparse
 from datetime import date, timedelta
@@ -20,7 +20,7 @@ class TestAutenticacaoAutorizacao(TestController):
         Dados incompletos no formulário de login
         '''
         response = self.app.post(
-                        url = url_for(controller='root', action='login'),
+                        url = url(controller='root', action='login'),
                         params={
                                 'email':'xyz@abc.com.br',
                                 }
@@ -35,7 +35,7 @@ class TestAutenticacaoAutorizacao(TestController):
         Tenta fazer login com e-mail inexistente
         '''
         response = self.app.post(
-                        url = url_for(controller='root', action='login'),
+                        url = url(controller='root', action='login'),
                         params={
                                 'email':'xyz@abc.com.br',
                                 'senha':'1234'
@@ -51,7 +51,7 @@ class TestAutenticacaoAutorizacao(TestController):
         Pessoa(nome='Fulano', email='abc@xyz.com.br', senha='1234')
         Session.commit()
         response = self.app.post(
-                        url = url_for(controller='root', action='login'),
+                        url = url(controller='root', action='login'),
                         params={
                                 'email':'abc@xyz.com.br',
                                 'senha':'12345'
@@ -70,17 +70,17 @@ class TestAutenticacaoAutorizacao(TestController):
         pessoa = Pessoa(nome='Fulano', email=email, senha=senha)
         Session.commit()
         response = self.app.post(
-                        url = url_for(controller='root', action='login'),
+                        url = url(controller='root', action='login'),
                         params={
                                 'email':email,
                                 'senha':senha
                                 }
                         )
         assert response.session['userid'] == pessoa.id
-        assert urlparse(response.response.location).path == url_for(controller='pessoa', action='painel', id=pessoa.id)
+        assert urlparse(response.response.location).path == url(controller='pessoa', action='painel', id=pessoa.id)
     
     
-    def test_login_correto_com_redirecionamento(self, came_from=url_for(controller='test', action='requer_login')):
+    def test_login_correto_com_redirecionamento(self,  came_from = None):
         '''
         Dados corretos, mas redirecionando para uma página que supostamente exigiu login
         '''
@@ -89,14 +89,16 @@ class TestAutenticacaoAutorizacao(TestController):
         user = Pessoa(nome='Fulano', email=email, senha=senha)
         Session.commit()
         
+        if not came_from:
+            came_from = url(controller='test', action='requer_login')
         response = self.app.get(url = came_from, status=302)
         log.debug('response.session: %s', response.session)
         assert response.session['came_from'] == came_from
-        assert urlparse(response.response.location).path == url_for(controller='root', action='login')
+        assert urlparse(response.response.location).path == url(controller='root', action='login')
         
         # não consegui fazer o response = response.follow funcionar
         response = self.app.post(
-                        url = url_for(controller='root', action='login'),
+                        url = url(controller='root', action='login'),
                         params={
                                 'email':email,
                                 'senha':senha
@@ -114,7 +116,7 @@ class TestAutenticacaoAutorizacao(TestController):
         '''
         Recurso exige que o usuário seja o dono do recurso para acessá-lo
         '''
-        destino = url_for(controller='test', action='requer_owner', id='1')
+        destino = url(controller='test', action='requer_owner', id='1')
         self.test_login_correto_com_redirecionamento(destino)
         response = self.app.get(url=destino)
         
@@ -123,7 +125,7 @@ class TestAutenticacaoAutorizacao(TestController):
         '''
         Usuário incorreto tenta acessar recurso
         '''
-        destino = url_for(controller='test', action='requer_owner', id='1000')
+        destino = url(controller='test', action='requer_owner', id='1000')
         self.test_login_correto_com_redirecionamento(destino)
         response = self.app.get(url=destino, status=403)
         
@@ -168,14 +170,14 @@ class TestAutenticacaoAutorizacao(TestController):
         recurso
         '''
         self._cadastra_massa_testes()
-        destino = url_for(
+        destino = url(
                           controller='test',
                           action='requer_morador',
                           republica_id='1',
                           id='1'
                         )
         response = self.app.get(url=destino, status=302) # anônimo
-        assert urlparse(response.response.location).path == url_for(controller='root', action='login')
+        assert urlparse(response.response.location).path == url(controller='root', action='login')
         assert response.session['came_from'] == destino
         
         response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('1')}) # morador
@@ -183,7 +185,7 @@ class TestAutenticacaoAutorizacao(TestController):
         response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('3')}, status=403) # não-morador
 
         # tenta acessar recurso sem especificar a república
-        destino = url_for(
+        destino = url(
                           controller='test',
                           action='requer_morador',
                           id='1'
@@ -200,14 +202,14 @@ class TestAutenticacaoAutorizacao(TestController):
         recurso
         '''
         self._cadastra_massa_testes()
-        destino = url_for(
+        destino = url(
                           controller='test',
                           action='requer_morador_ou_ex',
                           republica_id='1',
                           id='1'
                         )
         response = self.app.get(url=destino, status=302) # anônimo
-        assert urlparse(response.response.location).path == url_for(controller='root', action='login')
+        assert urlparse(response.response.location).path == url(controller='root', action='login')
         assert response.session['came_from'] == destino
         
         response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('1')}) # morador
@@ -215,7 +217,7 @@ class TestAutenticacaoAutorizacao(TestController):
         response = self.app.get(url=destino, extra_environ={str('REMOTE_USER'):str('3')}, status=403) # não-morador
         
         # tenta acessar recurso sem especificar a república
-        destino = url_for(
+        destino = url(
                           controller='test',
                           action='requer_morador_ou_ex',
                           id='1'
@@ -234,7 +236,7 @@ class TestAutenticacaoAutorizacao(TestController):
 
         #ok
         response = self.app.get(
-                        url=url_for(
+                        url=url(
                           controller='test',
                           action='requer_republica',
                           republica_id='1',
@@ -244,7 +246,7 @@ class TestAutenticacaoAutorizacao(TestController):
  
         # acessa url sem republica_id
         response = self.app.get(
-                        url=url_for(
+                        url=url(
                           controller='test',
                           action='requer_republica',
                           id='1'
@@ -254,7 +256,7 @@ class TestAutenticacaoAutorizacao(TestController):
         
         # republica inexistente
         response = self.app.get(
-                        url=url_for(
+                        url=url(
                           controller='test',
                           action='requer_republica',
                           republica_id='1000',
@@ -274,7 +276,7 @@ class TestAutenticacaoAutorizacao(TestController):
         
         # ok
         response = self.app.get(
-                        url=url_for(
+                        url=url(
                                 controller='test',
                                 action='requer_recurso_republica',
                                 republica_id=1,
@@ -285,7 +287,7 @@ class TestAutenticacaoAutorizacao(TestController):
         
         # tenta acesso anônimo
         response = self.app.get(
-                        url=url_for(
+                        url=url(
                                 controller='test',
                                 action='requer_recurso_republica',
                                 republica_id=1,
@@ -296,7 +298,7 @@ class TestAutenticacaoAutorizacao(TestController):
         
         # ex-morador tenta acesso
         response = self.app.get(
-                        url=url_for(
+                        url=url(
                                 controller='test',
                                 action='requer_recurso_republica',
                                 republica_id=1,
@@ -308,7 +310,7 @@ class TestAutenticacaoAutorizacao(TestController):
         
         # acesso sem especificar a república
         response = self.app.get(
-                        url=url_for(
+                        url=url(
                                 controller='test',
                                 action='requer_recurso_republica',
                                 id='1'

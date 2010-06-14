@@ -42,7 +42,7 @@ data_inicial, data_final = c.republica.fechamento_atual.intervalo
             </tr>
         </table>
 
-        <p><input name="commit" type="submit" value="Enviar" /> ou <a href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">Voltar o painel de controle</a></p>
+        <p><input name="commit" type="submit" value="Enviar" /> ou <a href="${h.url(controller='pessoa', action='painel', id=c.user.id)}">Voltar o painel de controle</a></p>
     </form>
 </section>
 </body>

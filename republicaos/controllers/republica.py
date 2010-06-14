@@ -5,9 +5,9 @@ from __future__ import unicode_literals, print_function
 import logging
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.utils import render, validate, extract_attributes, iso_to_date
 from republicaos.lib.base import BaseController
 from republicaos.lib.geolocation import geolocation
@@ -98,8 +98,8 @@ class RepublicaController(BaseController):
                 Session.commit()
                 response.status = 201 # Created
                 flash('(info) República criada com sucesso!')
-                redirect_to(controller='republica', action='show', republica_id=c.republica.id)
-        c.action = url_for(controller='republica', action='new')
+                redirect(controller='republica', action='show', republica_id=c.republica.id)
+        c.action = url(controller='republica', action='new')
         c.title  = 'Criar Nova República'
         c.submit = 'Criar'
         return render('republica/form.html', filler_data=request.params)
@@ -110,7 +110,7 @@ class RepublicaController(BaseController):
     @validate(RepublicaSchema)
     def edit(self, id):
         """GET /republica/edit/id: Edit a specific item"""
-        c.voltar_para = url_for(controller='republica', action='show', republica_id=id)
+        c.voltar_para = url(controller='republica', action='show', republica_id=id)
         if c.valid_data:
             try:
                 c.valid_data[str('latitude')], c.valid_data[str('longitude')] = geolocation(c.valid_data['endereco'])
@@ -121,10 +121,10 @@ class RepublicaController(BaseController):
                 c.republica.from_dict(c.valid_data)
                 Session.commit()
                 flash('(info) Cadastro da república foi alterado com sucesso')
-                redirect_to(c.voltar_para)
+                redirect(c.voltar_para)
 
         filler_data = request.params or c.republica.to_dict()
-        c.action = url_for(controller='republica', action='edit', id=id, republica_id=id)
+        c.action = url(controller='republica', action='edit', id=id, republica_id=id)
         c.title = 'Editar Dados da República'
         c.submit = 'Alterar'
         return render('republica/form.html', filler_data = filler_data)

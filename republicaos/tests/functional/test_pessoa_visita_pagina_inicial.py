@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from republicaos.lib.auth import set_user
 from urlparse import urlparse
 
@@ -15,7 +15,7 @@ class TestPessoaVisitaPaginaInicial(TestController):
         """
         Testa visita de pessoa não autenticada na página inicial
         """
-        response = self.app.get(url=url_for(controller='root', action='index'))
+        response = self.app.get(url=url(controller='root', action='index'))
         assert 'id="userinfo"' not in response
     
     
@@ -26,7 +26,7 @@ class TestPessoaVisitaPaginaInicial(TestController):
         p1 = Pessoa(nome='Fulano', email='abc@xyz.com.br', senha='1234')
         Session.commit()
         response = self.app.get(
-                            url=url_for(controller='root', action='index'), 
+                            url=url(controller='root', action='index'), 
                             extra_environ={str('REMOTE_USER'):str('1')}
                         )
         assert 'Fulano &lt;abc@xyz.com.br&gt;' in response

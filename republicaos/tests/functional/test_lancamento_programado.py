@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, Fechamento, Session
 from republicaos.model import Despesa, DespesaAgendada, TipoDespesa
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from urlparse import urlparse
@@ -50,10 +50,10 @@ class TestLancamentoProgramado(TestController):
         Session.commit()
         
         # acesso direto ao link, sem definir república
-        response = self.app.get(url=url_for(controller='lancamento_programado', action='edit', id=1),
+        response = self.app.get(url=url(controller='lancamento_programado', action='edit', id=1),
                                 status=404)
         
-        url=url_for(controller='lancamento_programado', action='edit', republica_id='1', id = 1)
+        url=url(controller='lancamento_programado', action='edit', republica_id='1', id = 1)
                     
         # acesso ao link sem morador autenticado
         response = self.app.get(url=url, status=302)
@@ -122,7 +122,7 @@ class TestLancamentoProgramado(TestController):
         
         # exclusão de despesa agendada
         response = self.app.post(
-                            url=url_for(
+                            url=url(
                                     controller='lancamento_programado',
                                     action='delete',
                                     republica_id=1,

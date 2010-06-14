@@ -13,10 +13,10 @@
     <h1>Pessoas Cadastradas</h1>
     <ul>
         <li py:for="pessoa in c.pessoas">
-            <a href="${h.url_for(controller='pessoa', action='show', id=pessoa.id)}">${pessoa.nome}: ${pessoa.email}</a>
+            <a href="${h.url(controller='pessoa', action='show', id=pessoa.id)}">${pessoa.nome}: ${pessoa.email}</a>
         </li>
     </ul>
-    <p><a href="${h.url_for(controller='pessoa', action='new')}">Criar nova pessoa</a></p>
+    <p><a href="${h.url(controller='pessoa', action='new')}">Criar nova pessoa</a></p>
 </body>
 
 </html>

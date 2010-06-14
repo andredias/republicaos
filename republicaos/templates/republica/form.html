@@ -32,7 +32,7 @@
         <div>
             <p>
             <input type="submit" value="${c.submit}" /> ou 
-            <a py:if="'new' not in c.action" href="${h.url_for(controller='republica', action='show', republica_id=c.republica.id)}">Cancelar e voltar à página da república</a><a py:if="'new' in c.action" href="${h.url_for(controller='pessoa', action='painel', id=c.user.id)}">Cancelar e voltar ao painel de controle</a>.
+            <a py:if="'new' not in c.action" href="${h.url(controller='republica', action='show', republica_id=c.republica.id)}">Cancelar e voltar à página da república</a><a py:if="'new' in c.action" href="${h.url(controller='pessoa', action='painel', id=c.user.id)}">Cancelar e voltar ao painel de controle</a>.
             </p>
         </div>
     </form>

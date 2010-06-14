@@ -6,9 +6,9 @@ from pylons import request, response, session, tmpl_context as c
 from republicaos.model import Pessoa, Republica
 from republicaos.lib.helpers import flash
 from republicaos.lib.base import BaseController
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 
-from pylons import config
+from pylons import config, url
 
 from decorator import decorator
 from paste.httpexceptions import HTTPUnauthorized, HTTPForbidden
@@ -61,7 +61,7 @@ def login_required(func, self, *args, **kwargs):
     if not c.user:
         session['came_from'] = request.path_info
         flash('(info) Antes de continuar, é necessário entrar no sistema')
-        redirect_to(controller='root', action='login')
+        redirect(url(controller='root', action='login'))
     return func(self, *args, **kwargs)
 
 

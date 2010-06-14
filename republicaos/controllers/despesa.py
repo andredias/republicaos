@@ -3,9 +3,9 @@
 import logging
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.auth import morador_required, get_republica
 from republicaos.lib.auth import republica_resource_required
 from republicaos.lib.utils import render, validate, pretty_decimal
@@ -84,7 +84,7 @@ class DespesaController(BaseController):
             c.despesa.delete()
             Session.commit()
             flash('(info) Despesa removida')
-        redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
+        redirect(controller='republica', action='show', republica_id=c.despesa.republica.id)
 
 
     #
@@ -100,7 +100,7 @@ class DespesaController(BaseController):
     def new(self):
         session['came_from'] = request.path_info
         c.title  = 'Novo Tipo de Despesa'
-        c.action = url_for(controller='despesa', action='new', republica_id=c.republica.id)
+        c.action = url(controller='despesa', action='new', republica_id=c.republica.id)
         filler = {
                 'pessoa_id' : c.user.id,
                 'tipo_id' : 0,
@@ -130,7 +130,7 @@ class DespesaController(BaseController):
                         )
             Session.commit()
             flash(u'(info) Despesa no valor de $ %s lançada com sucesso' % pretty_decimal(c.valid_data['quantia']))
-            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
+            redirect(controller='republica', action='show', republica_id=c.republica.id)
         else:
             filler.update(request.params)
 
@@ -145,7 +145,7 @@ class DespesaController(BaseController):
     def edit(self, id, format='html'):
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
             flash(u'(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
-            redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
+            redirect(controller='republica', action='show', republica_id=c.despesa.republica.id)
         if c.valid_data:
             log.debug('\nc.despesa: %r\n', c.despesa.to_dict())
             # complementa as chaves que faltam na validação para usar em from_dict
@@ -164,14 +164,14 @@ class DespesaController(BaseController):
                         )
             Session.commit()
             flash('(info) Despesa alterada com sucesso')
-            redirect_to(controller='republica', action='show', republica_id=c.despesa.republica.id)
+            redirect(controller='republica', action='show', republica_id=c.despesa.republica.id)
         elif not c.errors:
             filler_data = c.despesa.to_dict()
             filler_data['lancamento'] = format_date(filler_data['lancamento'])
             filler_data['quantia'] = pretty_decimal(filler_data['quantia'])
         else:
             filler_data = request.params
-        c.action = url_for(controller='despesa', action='edit', id=id,
+        c.action = url(controller='despesa', action='edit', id=id,
                            republica_id=c.despesa.republica.id)
         c.title = 'Editar Despesa'
         return render('despesa/despesa.html', filler_data = filler_data)

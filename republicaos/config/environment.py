@@ -2,7 +2,7 @@
 import os
 
 from genshi.template import TemplateLoader
-from pylons import config
+from pylons.configuration import PylonsConfig
 from sqlalchemy import engine_from_config
 
 import republicaos.lib.app_globals as app_globals
@@ -22,11 +22,14 @@ def load_environment(global_conf, app_conf):
                  templates=[os.path.join(root, 'templates')])
 
     # Initialize config with the basic options
+    config = PylonsConfig()
     config.init_app(global_conf, app_conf, package='republicaos', paths=paths)
-
-    config['routes.map'] = make_map()
-    config['pylons.app_globals'] = app_globals.Globals()
+    
+    config['routes.map'] = make_map(config)
+    config['pylons.app_globals'] = app_globals.Globals(config)  
     config['pylons.h'] = republicaos.lib.helpers
+    import pylons
+    pylons.cache._push_object(config['pylons.app_globals'].cache)
 
     # Create the Genshi TemplateLoader
     config['pylons.app_globals'].genshi_loader = TemplateLoader(
@@ -45,3 +48,5 @@ def load_environment(global_conf, app_conf):
     
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
+    config['pylons.strict_tmpl_context'] = False
+    return config

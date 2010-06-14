@@ -16,7 +16,7 @@ from dateutil.relativedelta import relativedelta
 from republicaos.model import Session
 from hashlib import sha1
 from babel.dates import format_date
-from republicaos.lib.helpers import url_for
+from republicaos.lib.helpers import url
 from republicaos.lib.mail import send_email
 
 
@@ -534,7 +534,7 @@ Equipe Republicaos'''
             emails = [morador.email for morador in fechamento.republica.get_moradores(fechamento)]
             msg = mensagem % {'republica':fechamento.republica.nome,
                           'data' : hoje,
-                          'link' : url_for(
+                          'link' : url(
                                         controller='republica',
                                         action='show',
                                         republica_id=fechamento.republica.id,

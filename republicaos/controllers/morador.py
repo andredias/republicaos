@@ -5,9 +5,9 @@ from __future__ import unicode_literals, print_function
 import logging
 
 from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 from pylons.decorators.rest import restrict, dispatch_on
-from republicaos.lib.helpers import get_object_or_404, url_for, flash
+from republicaos.lib.helpers import get_object_or_404, url, flash
 from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.auth import morador_required, owner_required, get_republica
@@ -113,10 +113,10 @@ class MoradorController(BaseController):
                         entrada=c.valid_data['entrada']
                     )
             Session.commit()
-            redirect_to(controller='republica', action='show', republica_id=c.republica.id)
+            redirect(controller='republica', action='show', republica_id=c.republica.id)
 
 
-        c.action = url_for(controller='morador', action='new',
+        c.action = url(controller='morador', action='new',
                             republica_id=request.urlvars['republica_id'])
         c.submit = 'Enviar convite'
         #FIXME: problemas com unicode
@@ -141,9 +141,9 @@ class MoradorController(BaseController):
                                 ).delete()
             Session.commit()
             flash('(info) Sua saída da república foi registrada!')
-            redirect_to(controller='pessoa', action='painel', id=c.user.id)
+            redirect(controller='pessoa', action='painel', id=c.user.id)
 
-        c.action = url_for(controller='morador', action='sair', republica_id=c.republica.id)
+        c.action = url(controller='morador', action='sair', republica_id=c.republica.id)
         filler = {}
         filler[str('saida')] = request.params.get('saida') or format_date(morador.saida or date.today())
         return render('morador/saida.html', filler_data = filler)
@@ -161,7 +161,7 @@ class MoradorController(BaseController):
             flash('(info) Desligamento cancelado!')
         else:
             flash('(error) Não foi possível cancelar o desligamento!')
-        redirect_to(controller='pessoa', action='painel', id=c.user.id)
+        redirect(controller='pessoa', action='painel', id=c.user.id)
         
 
     @owner_required
@@ -174,13 +174,13 @@ class MoradorController(BaseController):
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect_to(controller='pessoa', action='show', id=id)
+            redirect(controller='pessoa', action='show', id=id)
         elif not c.errors:
             filler_data = c.pessoa.to_dict()
         else:
             log.debug('MoradorController.edit: c.errors: %r' % c.errors)
             filler_data = request.params
-        c.action = url_for(controller='pessoa', action='edit', id=id)
+        c.action = url(controller='pessoa', action='edit', id=id)
         c.title = 'Editar Dados da Morador'
         return render('pessoa/form.html', filler_data = filler_data)
 
@@ -189,4 +189,3 @@ class MoradorController(BaseController):
         """GET /pessoa/show/id: Show a specific item"""
         c.title = 'Morador'
         return render('pessoa/form.html', filler_data = c.pessoa.to_dict())
-

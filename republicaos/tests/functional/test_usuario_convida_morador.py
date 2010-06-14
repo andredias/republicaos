@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from republicaos.tests import TestController
 from republicaos.model import Pessoa, Republica, Morador, ConviteMorador, Fechamento, Session
-from republicaos.lib.helpers import flash, url_for
+from republicaos.lib.helpers import flash, url
 from datetime import date, datetime, timedelta
 from urlparse import urlparse
 from babel.dates import format_date
@@ -53,11 +53,11 @@ class TestUsuarioConvidaMorador(TestController):
         
         # acesso sem especificar a república
         response = self.app.post(
-                        url=url_for(controller='morador', action='new'),
+                        url=url(controller='morador', action='new'),
                         status=404
                     )
                 
-        url = url_for(controller='morador', action='new', republica_id=republica['id'])
+        url = url(controller='morador', action='new', republica_id=republica['id'])
         
         # acesso de usuário anônimo
         response = self.app.post(url=url, status=302)
@@ -115,7 +115,7 @@ class TestUsuarioConvidaMorador(TestController):
         
         email = 'siclano@republicaos.com.br'
         response = self.app.post(
-                        url=url_for(controller='morador', action='new', republica_id=republica2['id']),
+                        url=url(controller='morador', action='new', republica_id=republica2['id']),
                         params={
                             'nome':'Siclano',
                             'email':email,
@@ -156,5 +156,4 @@ class TestUsuarioConvidaMorador(TestController):
         assert ConviteMorador.get_by(email=p1['email']) is None
         assert 'não foi convidado(a) pois já é morador(a)' in ' '.join(response.session['flash'])
         
-
 

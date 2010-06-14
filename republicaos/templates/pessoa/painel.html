@@ -31,7 +31,7 @@ from babel.dates import format_date
                 <p>e-mail: <strong>${c.user.email}</strong></p>
             </div>
             <div style="clear: both">
-                <a href="${h.url_for(controller='pessoa', action='edit', id=c.user.id)}">Editar perfil</a><br />
+                <a href="${h.url(controller='pessoa', action='edit', id=c.user.id)}">Editar perfil</a><br />
             </div>
         </article>
         
@@ -49,11 +49,11 @@ from babel.dates import format_date
                 </thead>
                 <tbody>
                     <tr py:for="reg in c.registros">
-                        <td><a href="${h.url_for(controller='republica', action='show', republica_id=reg.republica.id)}" title="Ir para a página da república">${reg.republica.nome}</a></td>
+                        <td><a href="${h.url(controller='republica', action='show', republica_id=reg.republica.id)}" title="Ir para a página da república">${reg.republica.nome}</a></td>
                         <td>${format_date(reg.entrada)}</td>
                         <td py:choose="">
-                            <span py:when="not reg.saida"><a href="${h.url_for(controller='morador', action='sair', republica_id=reg.republica.id)}" title="Desligar-se da república">desligar-se</a></span>
-                            <span py:when="reg.republica.fechamento_atual.data_no_intervalo(reg.saida)"><a href="${h.url_for(controller='morador', action='sair', republica_id=reg.republica.id)}" title="Editar data de desligamento">${format_date(reg.saida)}</a> | <a href="${h.url_for(controller='morador', action='cancelar_desligamento', republica_id=reg.republica.id)}" title="Cancelar desligamento">Cancelar</a></span>
+                            <span py:when="not reg.saida"><a href="${h.url(controller='morador', action='sair', republica_id=reg.republica.id)}" title="Desligar-se da república">desligar-se</a></span>
+                            <span py:when="reg.republica.fechamento_atual.data_no_intervalo(reg.saida)"><a href="${h.url(controller='morador', action='sair', republica_id=reg.republica.id)}" title="Editar data de desligamento">${format_date(reg.saida)}</a> | <a href="${h.url(controller='morador', action='cancelar_desligamento', republica_id=reg.republica.id)}" title="Cancelar desligamento">Cancelar</a></span>
                             <span py:otherwise="">${format_date(reg.saida)}</span>
                         </td>
                     </tr>
@@ -61,12 +61,12 @@ from babel.dates import format_date
             </table>
             <p py:if="not c.registros">Você não participa de nenhuma república no momento.</p>
             <div py:if="c.can_create">
-                <p><a href="${h.url_for(controller='republica', action='new')}">Criar nova república</a></p>
+                <p><a href="${h.url(controller='republica', action='new')}">Criar nova república</a></p>
             </div>
             <py:if test="c.convites">
                 <h3>Recados</h3> 
                 <ul>
-                    <li py:for="convite in c.convites">Você foi convidado a fazer parte da república <strong>${convite.republica.nome}</strong>. <a href="${h.url_for(controller='convite', action='aceitar', id=convite.id)}">Clique aqui para aceitar o convite</a></li>
+                    <li py:for="convite in c.convites">Você foi convidado a fazer parte da república <strong>${convite.republica.nome}</strong>. <a href="${h.url(controller='convite', action='aceitar', id=convite.id)}">Clique aqui para aceitar o convite</a></li>
                 </ul>
             </py:if>
         </article>
