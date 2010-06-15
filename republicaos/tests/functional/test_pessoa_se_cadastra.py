@@ -78,8 +78,7 @@ class TestPessoaSeCadastra(TestController):
                 'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
             }
         )
-        messages = ' '.join(response.session['flash'])
-        assert 'Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido' in messages
+        assert 'mensagem de ativação do cadastro foi enviada' in response.session['flash'][-1][1]
     
     
     def test_dados_validos(self):
@@ -101,9 +100,7 @@ class TestPessoaSeCadastra(TestController):
             # http://pylonsbook.com/en/1.0/testing.html#functional-testing
             status = 302
         )
-         # junta todas as mensagens pra facilitar a busca
-        messages = ' '.join(response.session['flash'])
-        assert 'Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.' in messages
+        assert 'mensagem de ativação do cadastro foi enviada' in response.session['flash'][-1][1]
         assert CadastroPendente.get_by(email='suporte@pronus.eng.br')
         # Verificar se a resposta redireciona para a página inicial
         assert urlparse(response.response.location).path == url(controller='root', action='index')

@@ -49,7 +49,7 @@ class TestUsuarioCriaRepublica(TestController):
                             url=url(controller='republica', action='new'),
                             params={
                                 'nome':'Jerônimo',
-                                'endereco': 'R. Tralálá - XYZ, SP'
+                                'endereco': 'Av. tralala - XYZ, SP'
                             },
                             extra_environ={str('REMOTE_USER'):str('1')}
                         )

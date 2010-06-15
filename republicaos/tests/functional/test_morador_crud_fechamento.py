@@ -72,16 +72,16 @@ class TestMoradorCRUDFechamento(TestController):
 
 
     def test_new_fechamento(self):
-        url = url(controller='fechamento', action='new', republica_id='1')
+        url_ = url(controller='fechamento', action='new', republica_id='1')
         response = self.app.get(
-                    url=url,
+                    url=url_,
                     extra_environ={str('REMOTE_USER'):str('1')}
                     )
         assert 'Criar Fechamento' in response
         
         # data inválida: data = data da criação
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={'data':format_date(date.today() - relativedelta(months=2))},
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -91,26 +91,26 @@ class TestMoradorCRUDFechamento(TestController):
         # data inválida: data de fechamento que já existe
         # TODO: tratamento de BD
 #        response = self.app.post(
-#                        url=url,
+#                        url=url_,
 #                        params={'data':date.today()},
 #                        extra_environ={str('REMOTE_USER'):str('1')}
 #                    )
-#        assert '(erro)' in response.session['flash'][0]
+#        assert 'erro' == response.session['flash'][-1][0]
         
         # data válida: data antes da data da criação
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={'data':format_date(date.today() + relativedelta(weeks=2))},
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
-        assert '(info) Fechamento criado com sucesso' in response.session['flash'][0]
+        assert ('info', 'Fechamento criado com sucesso') == response.session['flash'][-1]
         assert Fechamento.get_by(data=date.today() + relativedelta(weeks=2), republica_id='1')
         
         
     
     
     def test_edit_fechamento(self):
-        url = url(
+        url_ = url(
                 controller='fechamento',
                 action='edit',
                 republica_id='1',
@@ -118,14 +118,14 @@ class TestMoradorCRUDFechamento(TestController):
                 )
         
         response = self.app.get(
-                    url=url,
+                    url=url_,
                     extra_environ={str('REMOTE_USER'):str('1')}
                     )
         assert 'Editar Fechamento' in response
         
         # data inválida: data = data da criação
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={'data':format_date(date.today() - relativedelta(months=2))},
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
@@ -136,7 +136,7 @@ class TestMoradorCRUDFechamento(TestController):
         # data inválida: data de outro fechamento que já existe
         # TODO: teste de tratamento de bd
 #        response = self.app.post(
-#                        url=url,
+#                        url=url_,
 #                        params={'data':format_date(date.today() + relativedelta(months=1))},
 #                        extra_environ={str('REMOTE_USER'):str('1')}
 #                    )
@@ -144,16 +144,16 @@ class TestMoradorCRUDFechamento(TestController):
         
         # data válida: data antes da data da criação
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={'data':format_date(date.today() + relativedelta(weeks=2))},
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
-        assert '(info) Data do fechamento alterada com sucesso' in response.session['flash'][0]
+        assert ('info', 'Data do fechamento alterada com sucesso') == response.session['flash'][-1]
         assert Fechamento.get_by(data=date.today() + relativedelta(weeks=2), republica_id='1') != None
     
     
     def test_delete_fechamento(self):
-        url = url(
+        url_ = url(
                 controller='fechamento',
                 action='delete',
                 republica_id='1',
@@ -163,22 +163,22 @@ class TestMoradorCRUDFechamento(TestController):
         # TODO: acessar a url através de método DELETE
         # exclui fechamento de hoje
         response = self.app.post(
-                    url=url,
+                    url=url_,
                     extra_environ={str('REMOTE_USER'):str('1')}
                     )
-        assert '(info) Fechamento excluído com sucesso' in response.session.pop('flash')[0]
+        assert 'Fechamento excluído com sucesso' in response.session.pop('flash')[0][1]
         assert Fechamento.get_by(data=date.today(), republica_id='1') == None
         
         
         # exclui a mesma data de novo. A data não existe mais!
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         extra_environ={str('REMOTE_USER'):str('1')},
                         status=404
                     )
 
         # tenta excluir último fechamento futuro
-        url = url(
+        url_ = url(
                 controller='fechamento',
                 action='delete',
                 republica_id='1',
@@ -186,19 +186,19 @@ class TestMoradorCRUDFechamento(TestController):
                 )
         
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
-        assert '(error) Não foi possível excluir o fechamento' in ''.join(response.session.pop('flash'))
+        assert 'Não foi possível excluir o fechamento' in response.session.pop('flash')[-1][1]
         assert Fechamento.get_by(data=date.today() + relativedelta(months=1), republica_id='1')
-        
+
         Fechamento(data=date.today() + relativedelta(weeks=2), republica_id='1')
         Session.commit()
 
         # agora deve ser possível excluir último fechamento
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
-        assert '(info) Fechamento excluído com sucesso' in ''.join(response.session.pop('flash'))
+        assert 'Fechamento excluído com sucesso' in response.session.pop('flash')[-1][1]
         assert Fechamento.get_by(data=date.today() + relativedelta(months=1), republica_id='1') == None

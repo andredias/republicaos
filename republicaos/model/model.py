@@ -80,8 +80,8 @@ class Pessoa(Entity):
             data_final = date.today()
         intervalos = select(
                     [
-                        func.max(Morador.entrada, data_inicial),
-                        func.min(func.coalesce(Morador.saida, data_final), data_final)
+                        Morador.entrada,
+                        func.coalesce(Morador.saida, data_final),
                     ],
                     whereclause = and_(
                         Morador.republica == republica,
@@ -94,6 +94,8 @@ class Pessoa(Entity):
 #        log.debug('Pessoa<%s>.qtd_dias_morados(%r, %r, %r): %r' % (self.nome, republica, data_inicial, data_final, intervalos))
         qtd_dias = 0
         for entrada, saida in intervalos:
+            entrada = max(data_inicial, entrada)
+            saida = min(data_final, saida)
             qtd_dias += (saida - entrada).days + 1
 
         return qtd_dias

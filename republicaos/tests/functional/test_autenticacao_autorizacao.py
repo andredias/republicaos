@@ -20,7 +20,7 @@ class TestAutenticacaoAutorizacao(TestController):
         Dados incompletos no formulário de login
         '''
         response = self.app.post(
-                        url = url(controller='root', action='login'),
+                        url=url(controller='root', action='login'),
                         params={
                                 'email':'xyz@abc.com.br',
                                 }
@@ -35,7 +35,7 @@ class TestAutenticacaoAutorizacao(TestController):
         Tenta fazer login com e-mail inexistente
         '''
         response = self.app.post(
-                        url = url(controller='root', action='login'),
+                        url=url(controller='root', action='login'),
                         params={
                                 'email':'xyz@abc.com.br',
                                 'senha':'1234'
@@ -51,7 +51,7 @@ class TestAutenticacaoAutorizacao(TestController):
         Pessoa(nome='Fulano', email='abc@xyz.com.br', senha='1234')
         Session.commit()
         response = self.app.post(
-                        url = url(controller='root', action='login'),
+                        url=url(controller='root', action='login'),
                         params={
                                 'email':'abc@xyz.com.br',
                                 'senha':'12345'
@@ -70,7 +70,7 @@ class TestAutenticacaoAutorizacao(TestController):
         pessoa = Pessoa(nome='Fulano', email=email, senha=senha)
         Session.commit()
         response = self.app.post(
-                        url = url(controller='root', action='login'),
+                        url=url(controller='root', action='login'),
                         params={
                                 'email':email,
                                 'senha':senha
@@ -98,7 +98,7 @@ class TestAutenticacaoAutorizacao(TestController):
         
         # não consegui fazer o response = response.follow funcionar
         response = self.app.post(
-                        url = url(controller='root', action='login'),
+                        url=url(controller='root', action='login'),
                         params={
                                 'email':email,
                                 'senha':senha
@@ -318,10 +318,3 @@ class TestAutenticacaoAutorizacao(TestController):
                         extra_environ={str('REMOTE_USER'):str('1')},
                         status=404
                     )
-    
-    
-
-        
-        
-
-        

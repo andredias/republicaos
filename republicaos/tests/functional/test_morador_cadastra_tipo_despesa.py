@@ -28,21 +28,21 @@ class TestMoradorCadastraTipoDespesa(TestController):
         response = self.app.get(url=url(controller='tipo_despesa', action='new'),
                                 status=404)
         
-        url=url(controller='tipo_despesa', action='new', republica_id='1')
+        url_=url(controller='tipo_despesa', action='new', republica_id='1')
                     
         # acesso ao link sem morador autenticado
-        response = self.app.get(url=url, status=302)
+        response = self.app.get(url=url_, status=302)
         assert '/login' in response
 
         # acesso correto à URL
-        response = self.app.get(url=url, extra_environ={str('REMOTE_USER'):str('1')})
+        response = self.app.get(url=url_, extra_environ={str('REMOTE_USER'):str('1')})
         
         assert 'Novo Tipo de Despesa' in response
         
         
         # lança tipo de despesa inválida:
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'nome' : '',
                                     'descricao' : '',
@@ -55,26 +55,25 @@ class TestMoradorCadastraTipoDespesa(TestController):
         
         # cadastra tipo de despesa válida:
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'nome' : 'Internet',
                                     'descricao' : '',
                                     },
                             extra_environ={str('REMOTE_USER'):str('1')}
                             )
-        assert '(info) Tipo de Despesa criado: Internet' in ''.join(response.session['flash'])
+        assert 'Tipo de Despesa criado: Internet' in response.session['flash'][0][1] # flash [(cat, msg)]
         assert TipoDespesa.get_by(nome='Internet', republica_id='1')
         
                 
-        # TODO: implementar
+        # TODO: implementar 
         # cadastra tipo de despesa com mesmo nome:
 #        response = self.app.post(
-#                            url=url,
+#                            url=url_,
 #                            params={
 #                                    'nome' : 'Internet',
 #                                    'descricao' : '',
 #                                    },
 #                            extra_environ={str('REMOTE_USER'):str('1')}
 #                            )
-#        assert '(info) Tipo de Despesa criado: Internet' in ''.join(response.session['flash'])
-
+#        assert '(info) Tipo de Despesa criado: Internet' in response.session['flash'][0][1]

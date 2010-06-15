@@ -65,35 +65,35 @@ class TestMoradorExcluiDespesa(TestController):
         Session.commit()
         
         # Tenta excluir uma despesa inexistente
-        url = url(controller='despesa', action='delete', republica_id='2', id='100')
+        url_ = url(controller='despesa', action='delete', republica_id='2', id='100')
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             extra_environ={str('REMOTE_USER'):str('2')},
                             status=404
                         )
         
         # Tenta excluir despesa de outra república
-        url = url(controller='despesa', action='delete', republica_id='2', id='2')
+        url_ = url(controller='despesa', action='delete', republica_id='2', id='2')
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             extra_environ={str('REMOTE_USER'):str('1')},
                             status=403
                         )
         
         # Tenta excluir uma despesa fora da data do fechamento corrente
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
-        assert '(error)' in ''.join(response.session['flash'])
+        assert 'error' == response.session['flash'][-1][0]
 
         
         
         # Excluir uma despesa válida
-        url = url(controller='despesa', action='delete', republica_id='2', id='3')
+        url_ = url(controller='despesa', action='delete', republica_id='2', id='3')
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
-        assert '(info) Despesa removida' in ''.join(response.session['flash'])
+        assert 'Despesa removida' in response.session['flash'][-1][1]
         assert Despesa.get_by(id=3) == None

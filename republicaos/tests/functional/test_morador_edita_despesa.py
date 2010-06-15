@@ -68,35 +68,35 @@ class TestMoradorEditaDespesa(TestController):
         Session.commit()
         
         # Tenta editar uma despesa inexistente
-        url = url(controller='despesa', action='edit', republica_id='2', id='100')
+        url_ = url(controller='despesa', action='edit', republica_id='2', id='100')
         response = self.app.get(
-                            url=url,
+                            url=url_,
                             extra_environ={str('REMOTE_USER'):str('2')},
                             status=404
                         )
         
         # Tenta editar despesa de outra república
-        url = url(controller='despesa', action='edit', republica_id='2', id='2')
+        url_ = url(controller='despesa', action='edit', republica_id='2', id='2')
         response = self.app.get(
-                            url=url,
+                            url=url_,
                             extra_environ={str('REMOTE_USER'):str('1')},
                             status=403
                         )
         
         # Tenta editar uma despesa fora da data do fechamento corrente
         response = self.app.get(
-                            url=url,
+                            url=url_,
                             extra_environ={str('REMOTE_USER'):str('2')},
                             status=302
                         )
-        assert '(error)' in ''.join(response.session['flash'])
+        assert 'error' == response.session['flash'][-1][0]
 
         
         
         # editar uma despesa válida com dados inválidos
-        url = url(controller='despesa', action='edit', republica_id='2', id='3')
+        url_ = url(controller='despesa', action='edit', republica_id='2', id='3')
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                 'pessoa_id':'2',
                                 'tipo_id':'7',
@@ -114,7 +114,7 @@ class TestMoradorEditaDespesa(TestController):
         
         # editar uma despesa válida com dados válidos
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                 'pessoa_id':'2',
                                 'tipo_id':'7',
@@ -124,7 +124,7 @@ class TestMoradorEditaDespesa(TestController):
                                 },
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
-        assert '(info) Despesa alterada' in ''.join(response.session['flash'])
+        assert 'Despesa alterada' in response.session['flash'][-1][1]
         d = Despesa.get_by(id=3)
         assert str(d.quantia) == '9.99'
         assert d.lancamento == date.today() - timedelta(days=1)
@@ -133,7 +133,7 @@ class TestMoradorEditaDespesa(TestController):
         
         # editar uma despesa para uma data futura
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                 'pessoa_id':'1',
                                 'tipo_id':'7',
@@ -143,7 +143,7 @@ class TestMoradorEditaDespesa(TestController):
                                 },
                             extra_environ={str('REMOTE_USER'):str('2')},
                         )
-        assert '(info) Despesa alterada' in ''.join(response.session['flash'])
+        assert 'Despesa alterada' in response.session['flash'][-1][1]
         assert Despesa.get_by(id=3) == None
         d = DespesaAgendada.query.filter(DespesaAgendada.id == select([func.max(DespesaAgendada.id)])).one()
         assert d != None

@@ -28,6 +28,12 @@ log = logging.getLogger(__name__)
 dias_expiracao = 7
 
 def hash_calc(*args):
+    #FIXME: excluir a linha abaixo na versão 1.0.1 do Pylons, quando config já virá populado
+    from republicaos.lib.utils import testing_app
+    if testing_app():
+        config['beaker.session.secret'] = '1234'
+    # fim do trecho a se excluído
+    
     palavra = ''.join(args).join(config['beaker.session.secret'])
     return sha1(palavra.encode('utf-8')).hexdigest()
 
@@ -80,13 +86,13 @@ Equipe Republicaos'''
     @property
     def link_confirmacao(self):
         try:
-            url = construct_url(request.environ, script_name = url(controller='confirmacao',
+            url_ = construct_url(request.environ, script_name = url(controller='confirmacao',
                             action='cadastro', id=self.hash), with_path_info=False)
         except TypeError:
             # fora de uma chamada a uma requisição, request não fica registrado
             # acontece em alguns casos de teste
-            url = url(controller='confirmacao', action='cadastro', id=self.hash)
-        return url
+            url_ = url(controller='confirmacao', action='cadastro', id=self.hash)
+        return url_
 
 
     @after_insert
@@ -131,13 +137,13 @@ Equipe Republicaos'''
     @property
     def link_confirmacao(self):
         try:
-            url = construct_url(request.environ, script_name = url(controller='confirmacao',
+            url_ = construct_url(request.environ, script_name = url(controller='confirmacao',
                             action='troca_senha', id=self.hash), with_path_info=False)
         except TypeError:
             # fora de uma chamada a uma requisição, request não fica registrado
             # acontece em alguns casos de teste
-            url = url(controller='confirmacao', action='troca_senha', id=self.hash)
-        return url
+            url_ = url(controller='confirmacao', action='troca_senha', id=self.hash)
+        return url_
 
     @after_insert
     @after_update
@@ -195,13 +201,13 @@ Equipe Republicaos'''
     def link_confirmacao(self):
         action = 'convite_morador'
         try:
-            url = construct_url(request.environ, script_name = url(controller='confirmacao',
+            url_ = construct_url(request.environ, script_name = url(controller='confirmacao',
                             action=action, id=self.hash), with_path_info=False)
         except TypeError:
             # fora de uma chamada a uma requisição, request não fica registrado
             # acontece em alguns casos de teste
-            url = url(controller='confirmacao', action=action, id=self.hash)
-        return url
+            url_ = url(controller='confirmacao', action=action, id=self.hash)
+        return url_
 
     @after_insert
     def enviar_mensagem(self):

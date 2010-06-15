@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from geopy import geocoders
+from geopy.geocoders.google import GQueryError
 
 import logging
 
@@ -15,6 +16,9 @@ def geolocation(endereco):
     log.debug('endereco: %s', endereco)
     if isinstance(endereco, unicode):
         endereco = endereco.encode('utf-8')
-    place, (latitude, longitude) = geocoder.geocode(endereco)
-    log.debug('place: %s, latitude: %s, longitude: %s', place, latitude, longitude)
-    return (latitude, longitude)
+    try:
+        place, (latitude, longitude) = geocoder.geocode(endereco)
+        log.debug('place: %s, latitude: %s, longitude: %s', place, latitude, longitude)
+        return (latitude, longitude)
+    except GQueryError as e:
+        raise ValueError(e.message)

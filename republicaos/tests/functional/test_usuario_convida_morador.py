@@ -57,16 +57,16 @@ class TestUsuarioConvidaMorador(TestController):
                         status=404
                     )
                 
-        url = url(controller='morador', action='new', republica_id=republica['id'])
+        url_ = url(controller='morador', action='new', republica_id=republica['id'])
         
         # acesso de usuário anônimo
-        response = self.app.post(url=url, status=302)
+        response = self.app.post(url=url_, status=302)
         assert ConviteMorador.get_by() is None
         
         # convite com data de entrada < último_fechamento
         email = 'siclano@republicaos.com.br'
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'nome':'Siclano',
                             'email':email,
@@ -81,7 +81,7 @@ class TestUsuarioConvidaMorador(TestController):
         # convite com data de entrada >= próximo_fechamento
         email = 'siclano@republicaos.com.br'
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'nome':'Siclano',
                             'email':email,
@@ -99,7 +99,7 @@ class TestUsuarioConvidaMorador(TestController):
         email = 'siclano@republicaos.com.br'
         assert ConviteMorador.get_by(email=email) == None
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'nome':'Siclano',
                             'email':email,
@@ -109,7 +109,7 @@ class TestUsuarioConvidaMorador(TestController):
                     )
         
         assert ConviteMorador.get_by(email=email)
-        assert 'link com o convite' in ' '.join(response.session['flash'])
+        assert 'link com o convite' in response.session['flash'][-1][1]
         
         # convite ok para morar na outra república
         
@@ -125,11 +125,11 @@ class TestUsuarioConvidaMorador(TestController):
                     )
         
         assert ConviteMorador.get_by(email=email, republica_id=republica2['id'])
-        assert 'link com o convite' in ' '.join(response.session['flash'])
+        assert 'link com o convite' in response.session['flash'][-1][1]
         
         # convite a um ex-morador | pessoa já cadastrada
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'nome':'Beltranix da Silva',
                             'email':p2['email'],
@@ -140,11 +140,11 @@ class TestUsuarioConvidaMorador(TestController):
         
         convite = ConviteMorador.get_by(email=p2['email'])
         assert convite.nome == 'Beltrano'
-        assert 'link com o convite' in ' '.join(response.session['flash'])
+        assert 'link com o convite' in response.session['flash'][-1][1]
         
         # convite a uma pessoa que já é moradora
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'nome':'Fulanix de Tal',
                             'email':p1['email'],
@@ -154,6 +154,5 @@ class TestUsuarioConvidaMorador(TestController):
                     )
         
         assert ConviteMorador.get_by(email=p1['email']) is None
-        assert 'não foi convidado(a) pois já é morador(a)' in ' '.join(response.session['flash'])
+        assert 'não foi convidado(a) pois já é morador(a)' in response.session['flash'][-1][1]
         
-

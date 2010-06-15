@@ -69,7 +69,7 @@ class TestUsuarioConfirmaConviteParaMorador(TestController):
                             )
         assert Morador.get_by(pessoa_id=2, republica_id=1, entrada=mes_passado)
         assert ConviteMorador.get_by(hash=link1[-40:]) is None
-        assert 'Bem vindo' in ''.join(response.session.get('flash'))
+        assert 'Bem vindo' in response.session['flash'][-1][1]
         
         # convite à pessoa não cadastrada
         assert ConviteMorador.get_by(hash=link2[-40:])
@@ -84,7 +84,7 @@ class TestUsuarioConfirmaConviteParaMorador(TestController):
                             )
         assert Pessoa.get_by(email='siclano@republicaos.com.br')
         assert Morador.get_by(pessoa_id=3, republica_id=1, entrada=mes_passado)
-        assert 'Bem vindo' in ''.join(response.session.get('flash'))
+        assert 'Bem vindo' in response.session['flash'][-1][1]
         assert ConviteMorador.get_by(hash=link2[-40:]) is None
         
         

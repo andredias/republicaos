@@ -11,8 +11,7 @@ from pylons.controllers.util import abort, redirect
 from pylons import config, url
 
 from decorator import decorator
-from paste.httpexceptions import HTTPUnauthorized, HTTPForbidden
-
+from pylons.controllers.util import abort
 
 import logging
 
@@ -77,7 +76,7 @@ def owner_required(func, self, *args, **kwargs):
     log.debug('owner_required')
     log.debug("owner_required: request.urlvars['id']): %s, c.user.id: %s", request.urlvars['id'], c.user.id)
     if int(request.urlvars['id']) != c.user.id:
-        raise HTTPForbidden(comment = 'Só o proprietário desse recurso pode manipulá-lo.')
+        abort(403, 'Só o proprietário desse recurso pode manipulá-lo.')
     return func(self, *args, **kwargs)
 
 
@@ -119,7 +118,7 @@ def morador_ou_ex_required(func, self, *args, **kwargs):
 def morador_required(func, self, *args, **kwargs):
     log.debug('morador_required')
     if session.get('user_status') != user_status_morador:
-        raise HTTPForbidden(comment = '(error) Só moradores da república têm acesso a este recurso.')
+        abort(403, 'Só moradores da república têm acesso a este recurso.')
     return func(self, *args, **kwargs)
 
 

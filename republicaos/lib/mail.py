@@ -6,7 +6,7 @@ from pylons import config
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from os.path import split
-
+from republicaos.lib.utils import testing_app
 import logging
 log = logging.getLogger(__name__)
 
@@ -27,9 +27,7 @@ def send_email(to_address, subject, message, html_message=None, from_address=Non
     sobre o procedimento
     '''
     # se estiver testando, não envia e-mail de verdade
-    # FIXME: não funciona com chamada a republicaos.lib.util.testing_app
-    # foi necessário usar o código direto
-    if split(config['__file__'])[-1] != 'test.ini':
+    if not testing_app():
         import smtplib
     else:
         # veja http://pypi.python.org/pypi/MiniMock
@@ -44,9 +42,14 @@ def send_email(to_address, subject, message, html_message=None, from_address=Non
         smtplib = Mock('smtplib', tracker=output)
         smtplib.SMTP = Mock('smtplib.SMTP', tracker=output)
         smtplib.SMTP.mock_returns = Mock('smtp_connection', tracker=output)
+
+        # FIXME: quando chegar a versão 1.0.1 do Pylons, o config será populado
+        # assim que app for carregada e as linhas a seguir não serão necessárias
+        config['smtp_user'] = 'info@republicaos.com.br'
+        config['smtp_password'] = '2345'
+        config['smtp_server'] = 'mail.republicaos.com.br'
     
-    if not from_address:
-        from_address = config['smtp_user']
+    from_address = from_address or config['smtp_user']
     
     msg = MIMEMultipart('alternative')
     msg.set_charset('utf-8')

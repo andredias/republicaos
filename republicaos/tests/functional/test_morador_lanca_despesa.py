@@ -33,23 +33,23 @@ class TestMoradorLancaDespesa(TestController):
         response = self.app.get(url=url(controller='despesa', action='new'),
                                 status=404)
         
-        url=url(controller='despesa', action='new', republica_id='1')
+        url_ = url(controller='despesa', action='new', republica_id='1')
                     
         # acesso ao link sem morador autenticado
-        response = self.app.get(url=url, status=302)
+        response = self.app.get(url=url_, status=302)
         assert '/login' in response
 
         # acesso correto à URL
-        response = self.app.get(url=url, extra_environ={str('REMOTE_USER'):str('1')})
+        response = self.app.get(url=url_, extra_environ={str('REMOTE_USER'):str('1')})
         
         assert 'Fulano &lt;abc@xyz.com.br&gt;' in response
         assert '<input name="agendamento" type="checkbox" value="mensal"' in response
-        assert '<form action="%s" method="post">' % url in response
+        assert '<form action="%s" method="post">' % url_ in response
         
         
         # lança despesa inválida:
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '1',
                                     'tipo_id' : '1',
@@ -67,7 +67,7 @@ class TestMoradorLancaDespesa(TestController):
         
         # lança despesa com término dentro do intervalo
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '2',
                                     'tipo_id' : '1',
@@ -85,7 +85,7 @@ class TestMoradorLancaDespesa(TestController):
         
         # lança despesa com término depois do intervalo
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '2',
                                     'tipo_id' : '3',
@@ -104,7 +104,7 @@ class TestMoradorLancaDespesa(TestController):
         
         # lança despesa inválida: quantia negativa e repeticoes < 1
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '1',
                                     'tipo_id' : '2',
@@ -124,7 +124,7 @@ class TestMoradorLancaDespesa(TestController):
 
         # lança despesa válida
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '2',
                                     'tipo_id' : '2',
@@ -142,7 +142,7 @@ class TestMoradorLancaDespesa(TestController):
         
         # lança despesa válida com agendamento, sem término
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '2',
                                     'tipo_id' : '3',
@@ -164,7 +164,7 @@ class TestMoradorLancaDespesa(TestController):
 
         # lança despesa válida com agendamento
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '2',
                                     'tipo_id' : '4',

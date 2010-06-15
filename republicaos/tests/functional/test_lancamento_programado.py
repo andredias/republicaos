@@ -53,14 +53,14 @@ class TestLancamentoProgramado(TestController):
         response = self.app.get(url=url(controller='lancamento_programado', action='edit', id=1),
                                 status=404)
         
-        url=url(controller='lancamento_programado', action='edit', republica_id='1', id = 1)
+        url_=url(controller='lancamento_programado', action='edit', republica_id='1', id = 1)
                     
         # acesso ao link sem morador autenticado
-        response = self.app.get(url=url, status=302)
+        response = self.app.get(url=url_, status=302)
         assert '/login' in response
 
         # acesso correto à URL
-        response = self.app.get(url=url, extra_environ={str('REMOTE_USER'):str('1')})
+        response = self.app.get(url=url_, extra_environ={str('REMOTE_USER'):str('1')})
         
         assert 'Fulano &lt;abc@xyz.com.br&gt;' in response
         assert '<input name="agendamento"' not in response
@@ -69,7 +69,7 @@ class TestLancamentoProgramado(TestController):
         
         # edita lançamento inválida:
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '1',
                                     'tipo_id' : '1',
@@ -86,7 +86,7 @@ class TestLancamentoProgramado(TestController):
         
         # lança despesa inválida: quantia negativa e repeticoes < 1
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '1',
                                     'tipo_id' : '2',
@@ -103,7 +103,7 @@ class TestLancamentoProgramado(TestController):
 
         # lança despesa com término dentro do intervalo
         response = self.app.post(
-                            url=url,
+                            url=url_,
                             params={
                                     'pessoa_id' : '2',
                                     'tipo_id' : '1',

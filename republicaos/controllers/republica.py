@@ -90,8 +90,8 @@ class RepublicaController(BaseController):
         elif c.valid_data:
             try:
                 c.valid_data[str('latitude')], c.valid_data[str('longitude')] = geolocation(c.valid_data['endereco'])
-            except ValueError:
-                c.errors['endereco'] = 'Forneça um endereço válido'
+            except ValueError as erro:
+                c.errors['endereco'] = erro.message
             else:
                 c.republica = Republica(**c.valid_data)
                 Morador(pessoa=c.user, republica=c.republica)

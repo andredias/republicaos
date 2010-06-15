@@ -75,18 +75,18 @@ class TestMoradorSaiDaRepublica(TestController):
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
 
-        url = url(controller='morador', action='sair', republica_id=republica['id'])
+        url_ = url(controller='morador', action='sair', republica_id=republica['id'])
                     
         # acesso sem especificar o morador
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         status=302
                     )
         assert url(controller='root', action='login') in response
                     
         # acesso morador de outra república
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         status=403,
                         extra_environ={str('REMOTE_USER'):str(p3['id'])}
                     )
@@ -94,7 +94,7 @@ class TestMoradorSaiDaRepublica(TestController):
         
         # acesso correto
         response = self.app.get(
-                        url=url,
+                        url=url_,
                         extra_environ={str('REMOTE_USER'):str('1')}
                     )
         assert 'Registrar desligamento da' in response
@@ -103,7 +103,7 @@ class TestMoradorSaiDaRepublica(TestController):
         
         # data de saída >= próximo_fechamento
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'saida': format_date(date.today() + timedelta(days=100))
                             },
@@ -114,7 +114,7 @@ class TestMoradorSaiDaRepublica(TestController):
         
         # data de saída < próximo_fechamento
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'saida': format_date(mes_passado - timedelta(days=1))
                             },
@@ -127,7 +127,7 @@ class TestMoradorSaiDaRepublica(TestController):
         m = Morador.registro_mais_recente(pessoa=Pessoa.get_by(id=1), republica=Republica.get_by(id=1))
         assert m.saida == None
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'saida': format_date(ontem)
                             },
@@ -147,7 +147,7 @@ class TestMoradorSaiDaRepublica(TestController):
         
         # morador tenta sair mais de uma vez
         response = self.app.post(
-                        url=url,
+                        url=url_,
                         params={
                             'saida': format_date(date.today())
                             },
