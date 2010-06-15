@@ -80,7 +80,7 @@ class TestAutenticacaoAutorizacao(TestController):
         assert urlparse(response.response.location).path == url(controller='pessoa', action='painel', id=pessoa.id)
     
     
-    def test_login_correto_com_redirecionamento(self,  came_from = None):
+    def test_login_correto_com_redirecionamento(self, came_from = None):
         '''
         Dados corretos, mas redirecionando para uma página que supostamente exigiu login
         '''

@@ -96,7 +96,7 @@ Equipe Republicaos'''
         log.debug('CADASTRO_PENDENTE: enviar_pedido_confirmacao: %s' % mensagem)
         send_email(to_address=self.email, message=mensagem, subject=self.subject)
         try:
-            flash('(info) Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.')
+            flash('Uma mensagem de ativação do cadastro foi enviada para o e-mail fornecido.', 'info')
         except TypeError:
             # exceção esperada em um caso de teste fora de uma request
             pass
@@ -145,7 +145,7 @@ Equipe Republicaos'''
         mensagem = self.mensagem_recadastro % {'nome':self.pessoa.nome, 'link':self.link_confirmacao}
         send_email(to_address=self.pessoa.email, message=mensagem, subject=self.subject)
         try:
-            flash('(info) Um link para a página da troca de senha foi enviada para seu e-mail')
+            flash('Um link para a página da troca de senha foi enviada para seu e-mail', 'info')
         except TypeError:
             # exceção esperada em um caso de teste fora de uma request
             pass
@@ -214,7 +214,7 @@ Equipe Republicaos'''
             }
         send_email(to_address=self.email, message=mensagem, subject=assunto)
         try:
-            flash('(info) Um link com o convite foi enviado para o(s) e-mail(s) informado(s)')
+            flash('Um link com o convite foi enviado para o(s) e-mail(s) informado(s)', 'info')
         except TypeError:
             # exceção esperada em um caso de teste fora de uma request
             pass
@@ -231,7 +231,7 @@ Equipe Republicaos'''
             pessoa = Pessoa.get_by(email=email)
             if pessoa and republica in pessoa.morador_em_republicas:
                 try:
-                    flash('(warning) %s não foi convidado(a) pois já é morador(a) da república')
+                    flash('%s não foi convidado(a) pois já é morador(a) da república', 'warning')
                 except TypeError:
                     # exceção esperada em um caso de teste fora de uma request
                     log.debug('(warning) %s não foi convidado(a) pois já é morador(a) da república')

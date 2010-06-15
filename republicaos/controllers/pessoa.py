@@ -125,9 +125,9 @@ class PessoaController(BaseController):
                 pendencia = CadastroPendente(**c.valid_data)
             else:
                 pendencia.from_dict(c.valid_data)
-                flash('(info) Já existe um pedido de cadastro pendente para o e-mail fornecido.')
+                flash('Já existe um pedido de cadastro pendente para o e-mail fornecido.', 'info')
             Session.commit()
-            redirect(controller='root', action='index')
+            redirect(url(controller='root', action='index'))
         c.action = url(controller='pessoa', action='new')
         c.submit = 'Criar'
         c.title  = 'Crie sua conta'
@@ -147,7 +147,7 @@ class PessoaController(BaseController):
                 c.valid_data.pop('senha')
             request.method = 'PUT'
             self.update(id)
-            flash('(info) Dados alterados com sucesso!')
+            flash('Dados alterados com sucesso!', 'info')
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
             redirect(c.voltar_para)
@@ -175,9 +175,9 @@ class PessoaController(BaseController):
             if pessoa:
                 TrocaSenha(pessoa=pessoa)
                 Session.commit()
-                redirect(controller='root', action='index')
+                redirect(url(controller='root', action='index'))
             else:
-                flash('(error) Este endereço de e-mail não está cadastrado no Republicaos!')
+                flash('Este endereço de e-mail não está cadastrado no Republicaos!', 'error')
         
         return render('pessoa/esqueceu_senha.html')
     

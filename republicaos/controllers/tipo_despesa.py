@@ -59,7 +59,7 @@ class TipoDespesaController(BaseController):
             log.error(error)
             # TODO: informar administrador
             # TODO: problema com acentuação
-            flash('(error) Nao foi possivel executar a operacao')
+            flash('Nao foi possivel executar a operacao', 'error')
         return
 
     @restrict("GET")
@@ -78,7 +78,7 @@ class TipoDespesaController(BaseController):
             Session.rollback()
             log.error(error)
             # TODO: informar administrador
-            flash('(error) Nao foi possivel executar a operacao')
+            flash('Nao foi possivel executar a operacao', 'error')
         return
 
 
@@ -105,7 +105,7 @@ class TipoDespesaController(BaseController):
                     url(controller='republica', action='show', republica_id=request.urlvars['republica_id'])
         if c.valid_data:
             tipo_despesa = self.create()
-            flash('(info) Tipo de Despesa criado: %s' % c.valid_data['nome'])
+            flash('Tipo de Despesa criado: %s' % c.valid_data['nome'], 'info')
             redirect(c.destino)
         c.action = url(controller='tipo_despesa', action='new', republica_id=request.urlvars['republica_id'])
         c.title  = 'Novo Tipo de Despesa'
@@ -124,7 +124,7 @@ class TipoDespesaController(BaseController):
         if c.valid_data:
             request.method = 'PUT'
             self.update(id)
-            flash('(info) Tipo de Despesa alterado: %s' % c.valid_data['nome'])
+            flash('Tipo de Despesa alterado: %s' % c.valid_data['nome'], 'info')
             redirect(c.destino)
         elif not c.errors:
             filler_data = c.tipo_despesa.to_dict()

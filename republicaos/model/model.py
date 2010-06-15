@@ -12,12 +12,12 @@ from datetime    import date, datetime, time
 import csv
 from elixir.events import reconstructor, before_insert, before_update, after_insert
 from decimal     import Decimal
-from dateutil.relativedelta import relativedelta
 from republicaos.model import Session
 from hashlib import sha1
 from babel.dates import format_date
 from republicaos.lib.helpers import url
 from republicaos.lib.mail import send_email
+from dateutil.relativedelta import relativedelta
 
 
 import logging

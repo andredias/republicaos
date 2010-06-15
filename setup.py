@@ -18,7 +18,7 @@ setup(
         "SQLAlchemy>=0.6",
         "Genshi>=0.4",
         "Elixir>=0.6.1",
-        "DateUtils>=0.4",
+        "DateUtilsl>=0.4",
         "pytz", 
         "Babel",
         "http://geopy.googlecode.com/svn/trunk/",

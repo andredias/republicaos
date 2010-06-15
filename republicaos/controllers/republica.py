@@ -86,7 +86,7 @@ class RepublicaController(BaseController):
     def new(self):
         """GET /republica/new: Form to create a new item"""
         if len(c.user.morador_em_republicas) >= 2:
-            flash('(warning) Você já está associado a duas repúblicas. Não é possível criar uma nova!')
+            flash('Você já está associado a duas repúblicas. Não é possível criar uma nova!', 'warning')
         elif c.valid_data:
             try:
                 c.valid_data[str('latitude')], c.valid_data[str('longitude')] = geolocation(c.valid_data['endereco'])
@@ -97,8 +97,8 @@ class RepublicaController(BaseController):
                 Morador(pessoa=c.user, republica=c.republica)
                 Session.commit()
                 response.status = 201 # Created
-                flash('(info) República criada com sucesso!')
-                redirect(controller='republica', action='show', republica_id=c.republica.id)
+                flash('República criada com sucesso!', 'info')
+                redirect(url(controller='republica', action='show', republica_id=c.republica.id))
         c.action = url(controller='republica', action='new')
         c.title  = 'Criar Nova República'
         c.submit = 'Criar'
@@ -120,7 +120,7 @@ class RepublicaController(BaseController):
                 request.method = 'PUT'
                 c.republica.from_dict(c.valid_data)
                 Session.commit()
-                flash('(info) Cadastro da república foi alterado com sucesso')
+                flash('Cadastro da república foi alterado com sucesso', 'info')
                 redirect(c.voltar_para)
 
         filler_data = request.params or c.republica.to_dict()

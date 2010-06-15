@@ -28,8 +28,8 @@ class LancamentoProgramadoController(BaseController):
             c.valid_data['proximo_lancamento'] = c.valid_data['lancamento']
             c.despesa_agendada.from_dict(c.valid_data)
             Session.commit()
-            flash(u'(info) Lançamento atualizado!')
-            redirect(controller='republica', action='show', republica_id=c.republica.id)
+            flash(u'Lançamento atualizado!', 'info')
+            redirect(url(controller='republica', action='show', republica_id=c.republica.id))
         filler_data = c.despesa_agendada.to_dict()
         filler_data['lancamento'] = format_date(filler_data['proximo_lancamento'])
         filler_data['quantia'] = pretty_decimal(filler_data['quantia'])
@@ -41,6 +41,6 @@ class LancamentoProgramadoController(BaseController):
     def delete(self, id):
         c.despesa_agendada.delete()
         Session.commit()
-        flash(u'(info) Lançamento excluído')
-        redirect(controller='republica', action='show', republica_id=c.republica.id)
+        flash(u'Lançamento excluído', 'info')
+        redirect(url(controller='republica', action='show', republica_id=c.republica.id))
         

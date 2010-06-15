@@ -79,12 +79,12 @@ class DespesaController(BaseController):
     @republica_resource_required(Despesa)
     def delete(self, id):
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
-            flash(u'(error) Despesa com lançamento fora do fechamento corrente não pode ser excluída')
+            flash(u'Despesa com lançamento fora do fechamento corrente não pode ser excluída', 'error')
         else:
             c.despesa.delete()
             Session.commit()
-            flash('(info) Despesa removida')
-        redirect(controller='republica', action='show', republica_id=c.despesa.republica.id)
+            flash('Despesa removida', 'info')
+        redirect(url(controller='republica', action='show', republica_id=c.despesa.republica.id))
 
 
     #
@@ -129,8 +129,8 @@ class DespesaController(BaseController):
                         **c.valid_data
                         )
             Session.commit()
-            flash(u'(info) Despesa no valor de $ %s lançada com sucesso' % pretty_decimal(c.valid_data['quantia']))
-            redirect(controller='republica', action='show', republica_id=c.republica.id)
+            flash(u'Despesa no valor de $ %s lançada com sucesso' % pretty_decimal(c.valid_data['quantia']), 'info')
+            redirect(url(controller='republica', action='show', republica_id=c.republica.id))
         else:
             filler.update(request.params)
 
@@ -144,8 +144,8 @@ class DespesaController(BaseController):
     @validate(DespesaSchema)
     def edit(self, id, format='html'):
         if not c.despesa.republica.fechamento_atual.data_no_intervalo(c.despesa.lancamento):
-            flash(u'(error) Não é permitido editar despesa com lançamento fora do fechamento corrente')
-            redirect(controller='republica', action='show', republica_id=c.despesa.republica.id)
+            flash(u'Não é permitido editar despesa com lançamento fora do fechamento corrente', 'error')
+            redirect(url(controller='republica', action='show', republica_id=c.despesa.republica.id))
         if c.valid_data:
             log.debug('\nc.despesa: %r\n', c.despesa.to_dict())
             # complementa as chaves que faltam na validação para usar em from_dict
@@ -163,8 +163,8 @@ class DespesaController(BaseController):
                         **c.valid_data
                         )
             Session.commit()
-            flash('(info) Despesa alterada com sucesso')
-            redirect(controller='republica', action='show', republica_id=c.despesa.republica.id)
+            flash('Despesa alterada com sucesso', 'info')
+            redirect(url(controller='republica', action='show', republica_id=c.despesa.republica.id))
         elif not c.errors:
             filler_data = c.despesa.to_dict()
             filler_data['lancamento'] = format_date(filler_data['lancamento'])

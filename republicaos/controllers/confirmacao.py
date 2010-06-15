@@ -64,8 +64,8 @@ class ConfirmacaoController(BaseController):
         if cp:
             user = cp.confirma_cadastro()
             set_user(user)
-            flash('(info) Bem vindo ao Republicaos, %s!' % cp.nome)
-            redirect(controller='pessoa', action='painel', id=user.id)
+            flash('Bem vindo ao Republicaos, %s!' % cp.nome, 'info')
+            redirect(url(controller='pessoa', action='painel', id=user.id))
         else:
             return render('confirmacao/confirmacao_invalida.html')
 
@@ -87,7 +87,7 @@ class ConfirmacaoController(BaseController):
                                 email=c.convite.email
                             )
             Morador(pessoa=c.user, republica=c.convite.republica, entrada=c.valid_data['entrada'])
-            flash('(info) Bem vindo(a) à república %s!' % c.convite.republica.nome)
+            flash('Bem vindo(a) à república %s!' % c.convite.republica.nome, 'info')
             destino = url(controller='republica', action='show', republica_id=c.convite.republica.id)
             c.convite.delete()
             Session.commit()
@@ -106,9 +106,9 @@ class ConfirmacaoController(BaseController):
         ts = TrocaSenha.get_by(hash=id)
         if ts:
             set_user(ts.pessoa)
-            flash('(info) Entre com a nova senha')
+            flash('Entre com a nova senha', 'info')
             ts.delete()
             Session.commit()
-            redirect(controller='pessoa', action='edit', id=ts.pessoa.id)
+            redirect(url(controller='pessoa', action='edit', id=ts.pessoa.id))
         else:
             return render('confirmacao/confirmacao_invalida.html')

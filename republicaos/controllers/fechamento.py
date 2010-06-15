@@ -50,7 +50,7 @@ class FechamentoController(BaseController):
             Fechamento(data=c.valid_data['data'], republica=get_republica())
             try:
                 Session.commit()
-                flash('(info) Fechamento criado com sucesso')
+                flash('Fechamento criado com sucesso', 'info')
             except SQLAlchemyError as error:
                 trata_erro_bd(error)
             destino = session.pop('came_from', 
@@ -78,7 +78,7 @@ class FechamentoController(BaseController):
             fechamentos.sort(key=lambda obj: obj.data, reverse=True)
             if fechamentos[0].data > date.today():
                 Session.commit()
-                flash('(info) Data do fechamento alterada com sucesso')
+                flash('Data do fechamento alterada com sucesso', 'info')
                 destino = session.pop('came_from', 
                         url(
                             controller='republica',
@@ -89,7 +89,7 @@ class FechamentoController(BaseController):
                 redirect(destino)
             else:
                 Session.rollback()
-                flash('(error) Data não foi alterada pois é necessário haver um fechamento futuro')
+                flash('Data não foi alterada pois é necessário haver um fechamento futuro', 'error')
         
         filler = request.params or {str('data'):format_date(c.fechamento.data)}
         c.title = 'Editar Fechamento'
@@ -105,9 +105,9 @@ class FechamentoController(BaseController):
         if len(fechamentos) and fechamentos[0].data > date.today():
             c.fechamento.delete()
             Session.commit()
-            flash('(info) Fechamento excluído com sucesso')
+            flash('Fechamento excluído com sucesso', 'info')
         else:
-            flash('(error) Não foi possível excluir o fechamento pois é o único fechamento futuro que resta')
+            flash('Não foi possível excluir o fechamento pois é o único fechamento futuro que resta', 'error')
 
         destino = session.pop('came_from', 
                     url(

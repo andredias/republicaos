@@ -82,9 +82,9 @@ class TestController(BaseController):
         '''
         Retorna mensagem de erro do tipo info
         '''
-        flash('(info) Teste executado com sucesso')
-        flash('(info) Outra mensagem de teste')
-        flash('(info) e mais outra...')
+        flash('Teste executado com sucesso', 'info')
+        flash('Outra mensagem de teste', 'info')
+        flash('e mais outra...', 'info')
         return render('test/test.html')
         
     
@@ -92,9 +92,9 @@ class TestController(BaseController):
         '''
         Retorna mensagem de erro do tipo warning
         '''
-        flash('(warning) Se liga!')
-        flash('(warning) Outra mensagem de teste')
-        flash('(warning) e mais outra...')
+        flash('Se liga!', 'warning')
+        flash('Outra mensagem de teste', 'warning')
+        flash('e mais outra...', 'warning')
         return render('test/test.html')
         
     
@@ -102,9 +102,9 @@ class TestController(BaseController):
         '''
         Retorna mensagem de erro do tipo error
         '''
-        flash('(error) PERIGO')
-        flash('(error) Outra mensagem de teste')
-        flash('(error) e mais outra...')
+        flash('PERIGO', 'error')
+        flash('Outra mensagem de teste', 'error')
+        flash('e mais outra...', 'error')
         return render('test/test.html')
     
     
@@ -112,7 +112,7 @@ class TestController(BaseController):
         '''
         Retorna mensagem de erro do tipo error
         '''
-        flash('(info) Teste executado com sucesso')
-        flash('(warning) Se liga!')
-        flash('(error) PERIGO')
+        flash('Teste executado com sucesso', 'info')
+        flash('Se liga!', 'warning')
+        flash('PERIGO', 'error')
         return render('test/test.html')

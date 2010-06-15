@@ -14,10 +14,16 @@ from decorator import decorator
 from paste.httpexceptions import HTTPUnauthorized, HTTPForbidden
 
 
-
 import logging
 
 log = logging.getLogger(__name__)
+
+
+# Abordagem mais simples para autenticação
+# http://wiki.pylonshq.com/display/pylonscookbook/Simple+Homegrown+Authentication
+
+# TODO: dar uma olhada na versão mais atual
+# http://wiki.pylonshq.com/display/pylonscookbook/Advanced+Homegrown+Auth
 
 def check_user(email, senha):
     return Pessoa.get_by(email=email, _senha=Pessoa.encrypt_senha(senha))
@@ -60,7 +66,7 @@ def login_required(func, self, *args, **kwargs):
     c.user = get_user()
     if not c.user:
         session['came_from'] = request.path_info
-        flash('(info) Antes de continuar, é necessário entrar no sistema')
+        flash('Antes de continuar, é necessário entrar no sistema', 'info')
         redirect(url(controller='root', action='login'))
     return func(self, *args, **kwargs)
 
@@ -71,7 +77,7 @@ def owner_required(func, self, *args, **kwargs):
     log.debug('owner_required')
     log.debug("owner_required: request.urlvars['id']): %s, c.user.id: %s", request.urlvars['id'], c.user.id)
     if int(request.urlvars['id']) != c.user.id:
-        raise HTTPForbidden(comment = '(error) Só o proprietário desse recurso pode manipulá-lo.')
+        raise HTTPForbidden(comment = 'Só o proprietário desse recurso pode manipulá-lo.')
     return func(self, *args, **kwargs)
 
 
@@ -80,8 +86,8 @@ def republica_required(func, self, *args, **kwargs):
     log.debug('republica_required')
     c.republica = get_republica()
     if not c.republica:
-        erro = '(error) República inexistente ou não referenciada'
-        flash(erro)
+        erro = 'República inexistente ou não referenciada'
+        flash(erro, 'error')
         abort(404, comment=erro)
     return func(self, *args, **kwargs)
 
@@ -102,8 +108,8 @@ def morador_ou_ex_required(func, self, *args, **kwargs):
         session['user_status'] = user_status_ex_morador
     else:
         session.pop('user_status', None)
-        erro = '(error) Recurso acessível apenas por moradores ou ex-moradores da república'
-        #flash(erro)
+        erro = '(Recurso acessível apenas por moradores ou ex-moradores da república'
+        #flash(erro, 'error')
         abort(403, detail=erro)
     return func(self, *args, **kwargs)
 

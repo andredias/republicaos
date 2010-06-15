@@ -60,13 +60,13 @@ class RootController(BaseController):
                 destino = session.pop('came_from', url(controller='pessoa', action='painel', id=user.id))
                 redirect(destino)
             else:
-                flash('(warning) O e-mail e/ou a senha fornecidos não conferem')
+                flash('O e-mail e/ou a senha fornecidos não conferem', 'warning')
         return render('root/login.html', filler_data=request.params)
 
 
     def logout(self):
         set_user(None)
-        redirect(controller='root', action='index')
+        redirect(url(controller='root', action='index'))
     
     
     def tour(self):
@@ -93,11 +93,11 @@ class RootController(BaseController):
                      html_message=html_message,
                      from_address=(c.user and c.user.email) or c.valid_data['email']
                      )
-            flash('(info) Mensagem enviada!')
+            flash('Mensagem enviada!', 'info')
             if c.user:
-                redirect(controller='pessoa', action='painel', id=c.user.id)
+                redirect(url(controller='pessoa', action='painel', id=c.user.id))
             else:
-                redirect(controller='root', action='index')
+                redirect(url(controller='root', action='index'))
         c.captcha, c.captcha_md5 = captcha()
         log.debug('RootController.faleconosco: captcha: %s, captcha_md5: %s' % (c.captcha, c.captcha_md5))
         return render('faleconosco/faleconosco.html', filler_data=request.params)

@@ -113,7 +113,7 @@ class MoradorController(BaseController):
                         entrada=c.valid_data['entrada']
                     )
             Session.commit()
-            redirect(controller='republica', action='show', republica_id=c.republica.id)
+            redirect(url(controller='republica', action='show', republica_id=c.republica.id))
 
 
         c.action = url(controller='morador', action='new',
@@ -122,7 +122,7 @@ class MoradorController(BaseController):
         #FIXME: problemas com unicode
         c.title = 'Convidar morador para republica %s' % c.republica.nome
         for key, value in c.errors.items():
-            flash('(error) %s: %s' % (key, value))
+            flash('%s: %s' % (key, value), 'error')
         return render('morador/form.html', filler_data=request.params)
 
 
@@ -140,8 +140,8 @@ class MoradorController(BaseController):
                                     )
                                 ).delete()
             Session.commit()
-            flash('(info) Sua saída da república foi registrada!')
-            redirect(controller='pessoa', action='painel', id=c.user.id)
+            flash('Sua saída da república foi registrada!', 'info')
+            redirect(url(controller='pessoa', action='painel', id=c.user.id))
 
         c.action = url(controller='morador', action='sair', republica_id=c.republica.id)
         filler = {}
@@ -158,11 +158,11 @@ class MoradorController(BaseController):
         if registro.saida and registro.republica.fechamento_atual.data_no_intervalo(registro.saida):
             registro.saida = None
             Session.commit()
-            flash('(info) Desligamento cancelado!')
+            flash('Desligamento cancelado!', 'info')
         else:
-            flash('(error) Não foi possível cancelar o desligamento!')
-        redirect(controller='pessoa', action='painel', id=c.user.id)
-        
+            flash('Não foi possível cancelar o desligamento!', 'error')
+        redirect(url(controller='pessoa', action='painel', id=c.user.id))
+
 
     @owner_required
     @validate(MoradorSchema)
@@ -174,7 +174,7 @@ class MoradorController(BaseController):
             # TODO: flash indicando que foi adicionado
             # algum outro processamento para determinar a localização da república e agregar
             # serviços próximos
-            redirect(controller='pessoa', action='show', id=id)
+            redirect(url(controller='pessoa', action='show', id=id))
         elif not c.errors:
             filler_data = c.pessoa.to_dict()
         else:
