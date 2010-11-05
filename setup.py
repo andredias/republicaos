@@ -18,7 +18,7 @@ setup(
         'decorator==3.2.0',
         'Elixir==0.7.1',
         'FormEncode==1.2.2',
-        'Genshi==0.6',
+        'Genshi==0.5.1',
         'MiniMock==1.2.5',
         'PasteDeploy==1.3.3',
         'PasteScript==1.7.3',
