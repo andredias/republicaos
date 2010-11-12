@@ -12,6 +12,7 @@ from republicaos.lib.base import BaseController
 from republicaos.lib import validators
 from republicaos.model import Pessoa, Republica, Fechamento, Session
 from formencode import Schema
+from sqlalchemy.exceptions import SQLAlchemyError
 
 from babel.dates import format_date
 from datetime import date
