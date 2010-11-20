@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -9,13 +10,14 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
+   width="1052.3622"
+   height="1488.189"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.47 r22583"
    sodipodi:docname="logotipo.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1">
   <defs
      id="defs4">
     <linearGradient
@@ -45,7 +47,7 @@
        xlink:href="#linearGradient3155"
        id="linearGradient3192"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(3.734163e-2,0,0,0.4867896,415.24347,149.93604)"
+       gradientTransform="matrix(0.03734163,0,0,0.4867896,415.24347,-323.87198)"
        x1="157.60715"
        y1="431.89792"
        x2="157.39282"
@@ -55,7 +57,7 @@
        xlink:href="#linearGradient3155"
        id="linearGradient3206"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.4949688,0,0,0.4080681,-35.81058,268.38543)"
+       gradientTransform="matrix(1.4949688,0,0,0.4080681,-35.81058,-205.42259)"
        x1="157.60715"
        y1="431.89792"
        x2="157.39282"
@@ -70,6 +72,259 @@
        y1="431.89792"
        x2="157.39282"
        y2="310.68362" />
+    <filter
+       id="filter5013"
+       inkscape:label="Neon"
+       inkscape:menu="Bevels"
+       inkscape:menu-tooltip="Neon light effect"
+       x="-0.25"
+       y="-0.25"
+       width="1.5"
+       height="1.5"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur5015"
+         stdDeviation="1"
+         result="result1" />
+      <feComposite
+         id="feComposite5017"
+         in2="result1"
+         in="result1"
+         result="result4"
+         operator="in" />
+      <feGaussianBlur
+         id="feGaussianBlur5019"
+         stdDeviation="7"
+         result="result6"
+         in="result4" />
+      <feComposite
+         id="feComposite5021"
+         in2="result4"
+         operator="over"
+         in="result6"
+         result="result8" />
+      <feComposite
+         id="feComposite5023"
+         in2="result8"
+         operator="in"
+         result="fbSourceGraphic"
+         in="result6" />
+      <feSpecularLighting
+         id="feSpecularLighting5025"
+         specularExponent="45"
+         specularConstant="2"
+         surfaceScale="2.5"
+         lighting-color="#ffffff"
+         result="result1"
+         in="fbSourceGraphic">
+        <fePointLight
+           id="fePointLight5027"
+           z="20000"
+           y="-10000"
+           x="-5000" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite5029"
+         in2="fbSourceGraphic"
+         operator="in"
+         result="result2"
+         in="result1" />
+      <feComposite
+         id="feComposite5031"
+         in2="result2"
+         k3="1.5"
+         k2="1.2"
+         operator="arithmetic"
+         result="result4"
+         in="fbSourceGraphic"
+         k1="0"
+         k4="0" />
+      <feComposite
+         id="feComposite5033"
+         in2="result4"
+         operator="over"
+         result="result9" />
+      <feBlend
+         id="feBlend5035"
+         in2="result9"
+         mode="screen" />
+    </filter>
+    <filter
+       id="filter5079"
+       inkscape:label="Raised border"
+       inkscape:menu="Bevels"
+       inkscape:menu-tooltip="Strongly raised border around a flat surface"
+       height="1.5"
+       width="1.5"
+       y="-0.25"
+       x="-0.25"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur5081"
+         stdDeviation="4"
+         result="result1" />
+      <feComposite
+         id="feComposite5083"
+         in2="result1"
+         in="result1"
+         result="result4"
+         operator="in" />
+      <feGaussianBlur
+         id="feGaussianBlur5085"
+         stdDeviation="2"
+         result="result6"
+         in="result4" />
+      <feComposite
+         id="feComposite5087"
+         in2="result4"
+         operator="xor"
+         in="result6"
+         result="result8" />
+      <feComposite
+         id="feComposite5089"
+         in2="result8"
+         operator="atop"
+         result="fbSourceGraphic"
+         in="result4" />
+      <feSpecularLighting
+         id="feSpecularLighting5091"
+         specularExponent="10"
+         specularConstant="1.29999995"
+         surfaceScale="3"
+         lighting-color="#ffffff"
+         result="result1"
+         in="fbSourceGraphic">
+        <feDistantLight
+           id="feDistantLight5093"
+           azimuth="235"
+           elevation="55" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite5095"
+         in2="fbSourceGraphic"
+         operator="atop"
+         result="result2"
+         in="result1" />
+      <feComposite
+         id="feComposite5097"
+         in2="result2"
+         k3="1"
+         k2="1"
+         operator="arithmetic"
+         result="result4"
+         in="fbSourceGraphic"
+         k1="0"
+         k4="0" />
+      <feComposite
+         id="feComposite5099"
+         in2="SourceGraphic"
+         operator="over"
+         in="result4"
+         result="result9" />
+      <feBlend
+         id="feBlend5101"
+         in2="result2"
+         mode="multiply" />
+    </filter>
+    <filter
+       id="filter3769"
+       inkscape:label="Drop shadow"
+       width="1.5"
+       height="1.5"
+       x="-.25"
+       y="-.25">
+      <feGaussianBlur
+         id="feGaussianBlur3771"
+         in="SourceAlpha"
+         stdDeviation="2,000000"
+         result="blur" />
+      <feColorMatrix
+         id="feColorMatrix3773"
+         result="bluralpha"
+         type="matrix"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0,500000 0 " />
+      <feOffset
+         id="feOffset3775"
+         in="bluralpha"
+         dx="4,000000"
+         dy="4,000000"
+         result="offsetBlur" />
+      <feMerge
+         id="feMerge3777">
+        <feMergeNode
+           id="feMergeNode3779"
+           in="offsetBlur" />
+        <feMergeNode
+           id="feMergeNode3781"
+           in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter
+       id="filter2945"
+       inkscape:label="Drop shadow"
+       width="1.01"
+       height="1"
+       x="-0"
+       y="-0">
+      <feGaussianBlur
+         id="feGaussianBlur2947"
+         in="SourceAlpha"
+         stdDeviation="2,000000"
+         result="blur" />
+      <feColorMatrix
+         id="feColorMatrix2949"
+         result="bluralpha"
+         type="matrix"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0,500000 0 " />
+      <feOffset
+         id="feOffset2951"
+         in="bluralpha"
+         dx="4,000000"
+         dy="4,000000"
+         result="offsetBlur" />
+      <feMerge
+         id="feMerge2953">
+        <feMergeNode
+           id="feMergeNode2955"
+           in="offsetBlur" />
+        <feMergeNode
+           id="feMergeNode2957"
+           in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter
+       id="filter3969"
+       inkscape:label="Drop shadow"
+       width="1.5"
+       height="1.5"
+       x="-.25"
+       y="-.25">
+      <feGaussianBlur
+         id="feGaussianBlur3971"
+         in="SourceAlpha"
+         stdDeviation="2,000000"
+         result="blur" />
+      <feColorMatrix
+         id="feColorMatrix3973"
+         result="bluralpha"
+         type="matrix"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0,550000 0 " />
+      <feOffset
+         id="feOffset3975"
+         in="bluralpha"
+         dx="4,000000"
+         dy="4,000000"
+         result="offsetBlur" />
+      <feMerge
+         id="feMerge3977">
+        <feMergeNode
+           id="feMergeNode3979"
+           in="offsetBlur" />
+        <feMergeNode
+           id="feMergeNode3981"
+           in="SourceGraphic" />
+      </feMerge>
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -78,16 +333,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8941766"
-     inkscape:cx="375.86414"
-     inkscape:cy="752.9296"
+     inkscape:zoom="1.0261739"
+     inkscape:cx="588.7309"
+     inkscape:cy="780.5193"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="962"
-     inkscape:window-x="-5"
-     inkscape:window-y="-3" />
+     inkscape:window-width="1600"
+     inkscape:window-height="840"
+     inkscape:window-x="-4"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -96,33 +352,35 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Camada 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,435.82679)">
     <text
        xml:space="preserve"
-       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Domestic Manners;-inkscape-font-specification:Domestic Manners"
+       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Domestic Manners;-inkscape-font-specification:Domestic Manners"
        x="492.69489"
-       y="233.36763"
+       y="-240.44038"
        id="text2383"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
          id="tspan2385"
          x="492.69489"
-         y="233.36763"
+         y="-240.44038"
          style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:'el&amp;font gohtic!';-inkscape-font-specification:'el&amp;font gohtic!'">caos   </tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text2387"
-       y="239.60526"
+       y="-234.20276"
        x="59.930542"
-       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Penguin Attack;-inkscape-font-specification:Penguin Attack"
+       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Penguin Attack;-inkscape-font-specification:Penguin Attack"
        xml:space="preserve"><tspan
-         y="239.60526"
+         y="-234.20276"
          x="59.930542"
          id="tspan2389"
          sodipodi:role="line">Republi<tspan
@@ -134,7 +392,7 @@
    id="tspan2423">OS</tspan></tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="404.39734"
        y="393.5007"
        id="text2407"><tspan
@@ -144,29 +402,29 @@
          y="393.5007" /></text>
     <text
        xml:space="preserve"
-       style="font-size:37.00000125px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Updike;-inkscape-font-specification:Updike"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
        x="109.50951"
-       y="333.65979"
+       y="-156.95523"
        id="text2408"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
        inkscape:export-xdpi="83.65081"
        inkscape:export-ydpi="83.65081"
-       transform="scale(1.0354721,0.965743)"><tspan
+       transform="scale(1.0354721,0.96574306)"><tspan
          sodipodi:role="line"
          id="tspan2410"
          x="109.50951"
-         y="333.65979">Republi<tspan
-   style="font-size:37.00000124999999684px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#d40000;font-family:Updike;-inkscape-font-specification:Updike"
+         y="-156.95523">Republi<tspan
+   style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Updike;-inkscape-font-specification:Updike"
    id="tspan2446">caos</tspan></tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text2414"
-       y="162.79359"
+       y="-311.01443"
        x="88.16497"
-       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Updike;-inkscape-font-specification:Updike"
+       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
        xml:space="preserve"><tspan
-         y="162.79359"
+         y="-311.01443"
          x="88.16497"
          id="tspan2416"
          sodipodi:role="line">Republi<tspan
@@ -176,24 +434,24 @@
    id="tspan2426" /></tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Updike;-inkscape-font-specification:Updike"
+       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
        x="337.87769"
-       y="231.42499"
+       y="-242.38303"
        id="text2418"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan2420"
          x="337.87769"
-         y="231.42499">Republi</tspan></text>
+         y="-242.38303">Republi</tspan></text>
     <path
-       style="opacity:0.85;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.85;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none"
        d=""
        id="path2430" />
     <text
        xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-weight:normal;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#d40000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="154.90677"
-       y="338.42798"
+       y="-135.38004"
        id="text2468"
        inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
        inkscape:export-xdpi="83.65081"
@@ -201,62 +459,372 @@
          sodipodi:role="line"
          id="tspan2470"
          x="154.90677"
-         y="338.42798"
+         y="-135.38004"
          style="fill:#d40000">mantendo as contas em ordem</tspan></text>
     <rect
-       style="opacity:0.85;fill:url(#linearGradient3192);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.85;fill:url(#linearGradient3192);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3190"
        width="9.5754585"
        height="58.762459"
        x="419.67111"
-       y="301.29535"
+       y="-172.51266"
        inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/bg-cinza.png"
        inkscape:export-xdpi="82"
        inkscape:export-ydpi="82" />
     <rect
-       style="opacity:0.85;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.85;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3194"
        width="75.494545"
        height="62.296196"
        x="213.81322"
-       y="385.05374" />
+       y="-88.754272" />
     <rect
-       style="opacity:0.85;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.85;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3196"
        width="67.0476"
        height="61.24033"
        x="290.36365"
-       y="383.99789" />
+       y="-89.81012" />
     <rect
-       style="opacity:0.85;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.85;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3198"
        width="73.382812"
        height="61.768265"
        x="357.41122"
-       y="384.52582" />
+       y="-89.282196" />
     <rect
-       style="opacity:0.84999999999999998;fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.85;fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3200"
        width="51.209587"
        height="61.24033"
        x="163.13156"
-       y="385.05377" />
+       y="-88.754242" />
     <rect
-       style="opacity:0.85;fill:#ff6600;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.85;fill:#ff6600;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3202"
        width="69.687271"
        height="64.935867"
        x="430.79407"
-       y="384.52582" />
+       y="-89.282196" />
     <rect
        inkscape:export-ydpi="82"
        inkscape:export-xdpi="82"
        inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/bg-cinza.png"
-       y="395.26758"
+       y="-78.540436"
        x="141.44997"
        height="49.259647"
        width="383.35263"
        id="rect3204"
-       style="opacity:0.85;fill:url(#linearGradient3206);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:0.85;fill:url(#linearGradient3206);fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       transform="scale(1.0354721,0.96574303)"
+       inkscape:export-ydpi="83.65081"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       sodipodi:linespacing="125%"
+       id="text3016"
+       y="709.03851"
+       x="162.19455"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
+       xml:space="preserve"><tspan
+         y="709.03851"
+         x="162.19455"
+         id="tspan3018"
+         sodipodi:role="line"><tspan
+           style="font-size:32px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;font-family:Daniel;-inkscape-font-specification:Daniel Bold"
+           id="tspan3046">Republi</tspan><tspan
+           id="tspan3020"
+           style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Daniel;-inkscape-font-specification:Daniel">caos</tspan></tspan></text>
+    <text
+       inkscape:export-ydpi="83.65081"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       id="text3022"
+       y="700.94739"
+       x="231.46066"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#d40000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="fill:#d40000"
+         y="700.94739"
+         x="231.46066"
+         id="tspan3024"
+         sodipodi:role="line">mantendo as contas em ordem</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
+       x="106.59135"
+       y="876.68335"
+       id="text3026"
+       sodipodi:linespacing="113%"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"
+       transform="scale(1.0354721,0.96574306)"><tspan
+         sodipodi:role="line"
+         id="tspan3028"
+         x="106.59135"
+         y="876.68335"
+         style="font-size:64px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;font-family:Fabulous 50s;-inkscape-font-specification:Fabulous 50s"
+         dx="0.75258088 1.5051618 1.5051618 1.5051618 1.5051618 1.5051618 1.5051618">Republi<tspan
+   style="font-size:64px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Fabulous 50s;-inkscape-font-specification:Fabulous 50s"
+   id="tspan3030"
+   dx="1.5051618 1.5051618 1.5051618 1.5051618">caos</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24.30789566px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;fill-opacity:1;stroke:none;font-family:Angelina;-inkscape-font-specification:Angelina"
+       x="385.29276"
+       y="928.73273"
+       id="text3032"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3034"
+         x="385.29276"
+         y="928.73273"
+         style="font-size:24.30789566px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Angelina;-inkscape-font-specification:Angelina">mantendo as contas em ordem</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
+       x="430.71832"
+       y="831.12769"
+       id="text3036"
+       sodipodi:linespacing="113%"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"
+       transform="scale(1.0354721,0.96574305)"><tspan
+         sodipodi:role="line"
+         id="tspan3038"
+         x="430.71832"
+         y="831.12769"
+         style="font-size:48px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;font-family:Desyrel;-inkscape-font-specification:Desyrel Bold">Republi<tspan
+   style="font-size:48px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Desyrel;-inkscape-font-specification:Desyrel Bold"
+   id="tspan3040">caos</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#d40000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="487.50952"
+       y="818.85419"
+       id="text3042"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"><tspan
+         sodipodi:role="line"
+         id="tspan3044"
+         x="487.50952"
+         y="818.85419"
+         style="fill:#d40000">mantendo as contas em ordem</tspan></text>
+    <text
+       transform="scale(1.0354721,0.96574306)"
+       inkscape:export-ydpi="83.65081"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       sodipodi:linespacing="113%"
+       id="text2873"
+       y="940.0238"
+       x="371.84753"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
+       xml:space="preserve"><tspan
+         style="font-size:36px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;font-family:FFF Tusj;-inkscape-font-specification:FFF Tusj Bold"
+         y="940.0238"
+         x="371.84753"
+         id="tspan2875"
+         sodipodi:role="line">Republi<tspan
+   id="tspan2877"
+   style="font-size:36px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:FFF Tusj;-inkscape-font-specification:FFF Tusj Bold"
+   dy="0 -4.5154853 6.7732286 -8.2783909"
+   dx="0 2.2577426 4.5154853 3.0103238">caos</tspan></tspan></text>
+    <text
+       inkscape:export-ydpi="83.65081"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       id="text2879"
+       y="878.6897"
+       x="105.95101"
+       style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri"
+       xml:space="preserve"
+       sodipodi:linespacing="125%"><tspan
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Calibri;-inkscape-font-specification:Calibri"
+         y="878.6897"
+         x="105.95101"
+         id="tspan2881"
+         sodipodi:role="line">mantendo as contas em ordem</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
+       x="445.98111"
+       y="691.63715"
+       id="text2883"
+       sodipodi:linespacing="113%"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"
+       transform="scale(1.0354721,0.96574306)"><tspan
+         sodipodi:role="line"
+         id="tspan2885"
+         x="445.98111"
+         y="691.63715"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;font-family:'3Dumb';-inkscape-font-specification:'3Dumb'">Republi<tspan
+   style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:'3Dumb';-inkscape-font-specification:'3Dumb'"
+   id="tspan2887">caos</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#d40000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="503.31372"
+       y="684.14221"
+       id="text2889"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"><tspan
+         sodipodi:role="line"
+         id="tspan2891"
+         x="503.31372"
+         y="684.14221"
+         style="fill:#d40000">mantendo as contas em ordem</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter5013);font-family:Updike;-inkscape-font-specification:Updike"
+       x="95.328964"
+       y="1010.6185"
+       id="text2896"
+       sodipodi:linespacing="113%"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"
+       transform="scale(1.0354721,0.96574305)"><tspan
+         sodipodi:role="line"
+         id="tspan2898"
+         x="95.328964"
+         y="1010.6185"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;font-family:Vitamin outlined;-inkscape-font-specification:Vitamin outlined"><tspan
+           style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;font-family:Vitamin;-inkscape-font-specification:Vitamin"
+           id="tspan2908">Republi</tspan><tspan
+           style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Vitamin;-inkscape-font-specification:Vitamin"
+           id="tspan2902">caos</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Updike;-inkscape-font-specification:Updike"
+       x="387.11032"
+       y="1031.4017"
+       id="text2910"
+       sodipodi:linespacing="113%"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-ydpi="83.65081"
+       transform="scale(1.0354721,0.96574306)"><tspan
+         sodipodi:role="line"
+         id="tspan2912"
+         x="387.11032"
+         y="1031.4017"
+         style="font-size:36px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;font-family:FFF Tusj;-inkscape-font-specification:FFF Tusj Bold">Republi<tspan
+   style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Vitamin outlined;-inkscape-font-specification:Vitamin outlined"
+   id="tspan2914">caos</tspan></tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       inkscape:export-ydpi="83.65081"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       id="text3913"
+       y="753.70502"
+       x="21.737572"
+       style="font-size:44.00193787px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;fill-opacity:1;stroke:none;font-family:Angelina;-inkscape-font-specification:Angelina"
+       xml:space="preserve"><tspan
+         style="font-size:44.00193787px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Angelina;-inkscape-font-specification:Angelina"
+         y="753.70502"
+         x="21.737572"
+         id="tspan3915"
+         sodipodi:role="line">mantendo as contas em ordem</tspan></text>
+    <text
+       transform="matrix(1.0354721,0,0,0.96574306,-55.690987,3.0103236)"
+       inkscape:export-ydpi="83.65081"
+       inkscape:export-xdpi="83.65081"
+       inkscape:export-filename="/projetos/andref/pylons/republicaos/republicaos/public/images/logotipo_small.png"
+       sodipodi:linespacing="113%"
+       id="text5037"
+       y="1068.807"
+       x="89.849205"
+       style="font-size:37px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter5079);font-family:Updike;-inkscape-font-specification:Updike"
+       xml:space="preserve"><tspan
+         style="font-size:36px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;font-family:FFF Tusj;-inkscape-font-specification:FFF Tusj Bold"
+         y="1068.807"
+         x="89.849205"
+         id="tspan5039"
+         sodipodi:role="line">Republi<tspan
+   id="tspan5041"
+   style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:112.99999952%;writing-mode:lr-tb;text-anchor:start;fill:#d40000;font-family:Vitamin outlined;-inkscape-font-specification:Vitamin outlined"
+   dx="3.7629044 0.75258088 2.2577426 1.5051618"
+   dy="-2.2577426 0 8.2783909 -3.0103238">caos</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:100.99621582px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:GoodDog;-inkscape-font-specification:GoodDog"
+       x="68.449379"
+       y="576.59766"
+       id="text2919"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2921"
+         x="68.449379"
+         y="576.59766"
+         rotate="0 356.12549 5.0370226 0 0 353.02588 345.47058 0 356.12549 0 9.492856 0"
+         dx="0 -1.5996026e-08 -0.68299049 1.7074763 0.68299049 1.7074763 0 -3.7564478 0 -0.34149525 -3.0734575"
+         dy="0 -9.2203703 11.269343 -7.5128932 0 0 0 -2.731962 4.7809329 0 -8.1958838">Republi<tspan
+   style="fill:#ff3300"
+   id="tspan3725">caos</tspan></tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2923"
+       y="567.63971"
+       x="475.00134"
+       style="font-size:100.99621582px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:OliJo;-inkscape-font-specification:OliJo Bold"
+       xml:space="preserve"><tspan
+         dy="3.4453557 14.897115 -5.2683625 -9.5801048 16.537703 -6.8907113 4.8234978 -5.4882464 -11.756772 22.739347 -19.910091"
+         dx="0.68907112 2.7562842 -14.46441 2.3965473 -10.342147 -1.0488083 0.68907112 -8.5799456 -4.1344266 -5.8540645 0.37189835"
+         rotate="11.336349 344.3985 15.591545 354.13651 4.2999911 353.02588 345.47058 0 7.0708423 0 344.86597 0"
+         y="567.63971"
+         x="475.00134"
+         id="tspan2925"
+         sodipodi:role="line">Republi<tspan
+   style="fill:#ff3300"
+   id="tspan2927"
+   rotate="0 359.6091 0 354.9183 0"
+   dy="0 -1.3781422 -0.68907112 0.68907112"
+   dx="-2.0672133 0.68907112">caos</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:100.99621582px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter2945);font-family:OliJo;-inkscape-font-specification:OliJo Bold"
+       x="354.41388"
+       y="168.66751"
+       id="text3727"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/tmp/republicaos.logo.png"
+       inkscape:export-xdpi="47.27029"
+       inkscape:export-ydpi="47.27029"><tspan
+         sodipodi:role="line"
+         id="tspan3729"
+         x="354.41388"
+         y="168.66751"
+         rotate="3.5181837 344.3985 15.591545 355.3092 4.2999911 353.02588 345.47058 0 7.0708423 0 344.86597 0"
+         dx="-104.73885 0.68907076 -15.153481 2.3965473 -9.6530762 0.3293339 2.0672133 -8.5799456 -4.1344266 -5.8540645 0.37189835"
+         dy="8.9579239 6.6282654 3.0004911 -9.5801048 11.261585 -6.8907113 4.8234978 -5.4882464 -11.756772 22.739347 -19.910091">Republi<tspan
+   id="tspan3731"
+   style="fill:#ff3300"
+   dy="-8.6032457 -0.80729729 0.52187473 1.6635648"
+   rotate="0 0.78181672 0 356.091 0"
+   dx="-5.512569 1.3781422 -2.7562847 0.68907112">caos</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="28.251917"
+       y="864.57959"
+       id="text2935"
+       transform="translate(0,-435.82679)"><tspan
+         sodipodi:role="line"
+         id="tspan2937" /></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 213.41412,185.06278 658.75774,0"
+       id="path3113" />
   </g>
 </svg>

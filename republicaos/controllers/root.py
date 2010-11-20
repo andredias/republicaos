@@ -49,7 +49,7 @@ class RootController(BaseController):
 
     def index(self):
         c.user = get_user()
-        return render('root/index.html')
+        return render('root/home.html')
 
     @validate(LoginSchema)
     def login(self):
