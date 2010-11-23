@@ -77,6 +77,33 @@ body#home {
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 
+#home .main h1 {
+    margin-top: 0.5em;
+}
+
+#home .center {
+    text-align: center;
+}
+
+#home .box {
+    -webkit-border-radius: .5em; 
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+    -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    -moz-box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    cursor: pointer;
+    border: 3px solid #f5f7fd;
+    background-color: #d1dfdf;
+}
+
+#home .selected .box{
+    background-color: white;
+    border: 3px solid orange;
+    color: inherited;
+}
+
+
 #home .footer {
     background: #042F32;
     background: -webkit-gradient(linear, left top, left bottom, from(#042F32), to(#181F1F));

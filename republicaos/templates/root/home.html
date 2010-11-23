@@ -17,6 +17,21 @@
     <!--[if lt IE 8]><link rel="stylesheet" href="${h.url('/css/blueprint/ie.css')}" type="text/css" media="screen, projection" /><![endif]-->
 
     <link rel="stylesheet" href="${h.url('/css/republicaos.css')}" type="text/css" media="screen, projection" />
+    <script src="${h.url('/jquery/1.4.4/jquery.min.js')}" type="text/javascript"></script>
+    <script type = "text/javascript">
+        $(document).ready(function()
+        {
+            $("[id^=fase]").mouseenter(
+                function () {
+                    $("[id^=fase]").removeClass("selected");
+                    $(this).addClass("selected");
+                    $("img[id^=img_fase]").hide();
+                    $("#img_" + this.id).show();
+                  }
+            );
+            $("#fase1").mouseenter();
+        });
+    </script>
 </head>
 
 <body id="home">
@@ -59,45 +74,43 @@
             </div>
         </div>
     </div>
+
+
     <div class="main">
         <div class="container">
             <div class="span-24">
                 <h1>Funcionamento</h1>
-                <div class="span-15">
-                    <img src="${h.url('/images/funcionamento_1.png')}" />
-                </div>
-                <div class="span-9 last">
-                    <div class="box">
-                        <h2>1. Cada morador informa quanto gastou</h2>
-                        <p>bla bla bla</p>
+
+                <div class="span-8 fase">
+                    <div id="fase1" class="span-8 last">
+                        <div class="box">
+                            <h5>1. Informe dos Gastos</h5>
+                            <p>Cada pessoa registra seus gastos no Republicaos.</p>
+                        </div>
+                    </div>
+                    <div id="fase2" class="span-8 last">
+                        <div class="box">
+                            <h5>2. Dia de Fechamento</h5>
+                            <p>No dia do fechamento, o Republicaos contabiliza os gastos de cada um e faz a divisão das despesas.</p>
+                        </div>
+                    </div>
+                    <div id="fase3" class="span-8 last">
+                        <div class="box">
+                            <h5>3. Acerto de Contas</h5>
+                            <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
+                        </div>
                     </div>
                 </div>
 
-                <hr />
-
-                <div class="span-15">
-                    <img src="${h.url('/images/funcionamento_2.png')}" />
+                <div class="span-16 center last">
+                    <img id="img_fase1" src="${h.url('/images/funcionamento_1.png')}" />
+                    <img id="img_fase2" src="${h.url('/images/funcionamento_2.png')}" />
+                    <img id="img_fase3" src="${h.url('/images/funcionamento_3.png')}" />
                 </div>
-                <div class="span-9 last">
-                    <div class="box">
-                        <h2>2. No dia do fechamento, o Republicaos informa a divisão das despesas</h2>
-                        <p>bla bla bla</p>
-                    </div>
-                </div>
-
-                <hr />
-
-                <div class="span-15">
-                    <img src="${h.url('/images/funcionamento_3.png')}" />
-                </div>
-                <div class="span-9 last">
-                    <div class="box">
-                        <h2>3. Os moradores acertam as diferenças</h2>
-                        <p>bla bla bla</p>
-                    </div>
-                </div>
-
                 
+                <div class="span-16 prepend-8 center last">
+                    <p><a href="#" class="button">Veja funcionando</a><a href="#" class="button">Crie uma conta</a></p>
+                </div>
             </div>
         </div>
     </div>
@@ -108,5 +121,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>
