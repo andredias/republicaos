@@ -20,17 +20,23 @@
     <script src="${h.url('/jquery/1.4.4/jquery.min.js')}" type="text/javascript"></script>
     <script type = "text/javascript">
         $(document).ready(function()
-        {
+            {
+            var atual = "fase0";
             $("[id^=fase]").mouseenter(
-                function () {
-                    $("[id^=fase]").removeClass("selected");
-                    $(this).addClass("selected");
-                    $("img[id^=img_fase]").hide();
-                    $("#img_" + this.id).show();
-                  }
-            );
+                function ()
+                    {
+                    if (this.id != atual)
+                        {
+                        $("#" + atual).removeClass("selected");
+                        $("#img_" + atual).hide();
+                        atual = this.id;
+                        $("#" + atual).addClass("selected");
+                        $("#img_" + atual).show();
+                        }
+                    }
+                );
             $("#fase1").mouseenter();
-        });
+            });
     </script>
 </head>
 
@@ -100,12 +106,19 @@
                             <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
                         </div>
                     </div>
+                    <div id="fase4" class="span-8 last">
+                        <div class="box">
+                            <h5>4. Acerto de Contas</h5>
+                            <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="span-16 center last">
-                    <img id="img_fase1" src="${h.url('/images/funcionamento_1.png')}" />
-                    <img id="img_fase2" src="${h.url('/images/funcionamento_2.png')}" />
-                    <img id="img_fase3" src="${h.url('/images/funcionamento_3.png')}" />
+                    <img id="img_fase1" src="${h.url('/images/funcionamento_1.png')}" style="display:none" />
+                    <img id="img_fase2" src="${h.url('/images/funcionamento_2.png')}" style="display:none" />
+                    <img id="img_fase3" src="${h.url('/images/funcionamento_3.png')}" style="display:none" />
+                    <img id="img_fase4" src="${h.url('/images/funcionamento_4.png')}" style="display:none" />
                 </div>
                 
                 <div class="span-16 prepend-8 center last">
