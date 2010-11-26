@@ -27,10 +27,10 @@
                     {
                     if (this.id != atual)
                         {
-                        $("#" + atual).removeClass("selected");
+                        $("#" + atual).hide();
                         $("#img_" + atual).hide();
                         atual = this.id;
-                        $("#" + atual).addClass("selected");
+                        $("#" + atual).show();
                         $("#img_" + atual).show();
                         }
                     }
@@ -85,28 +85,43 @@
     <div class="main">
         <div class="container">
             <div class="span-24">
-                <h1>Funcionamento</h1>
-
-                <div class="span-8 fase">
-                    <div id="fase1" class="span-8 last">
+                <div class="span-8">
+                    <h1>Funcionamento</h1>
+                </div>
+                <div class="span-16 last">
+                    <nav>
+                        <ul>
+                            <li>1<div class="sombra_seta"></div><div class="seta"></div></li>
+                            <li>2<div class="sombra_seta"></div><div class="seta"></div></li>
+                            <li>3<div class="sombra_seta"></div><div class="seta"></div></li>
+                            <li>4</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            
+            <div class="span-24">
+                <div class="span-8">
+                    <div id="fase1" class="step span-8 last">
                         <div class="box">
                             <h5>1. Informe dos Gastos</h5>
                             <p>Cada pessoa registra seus gastos no Republicaos.</p>
                         </div>
                     </div>
-                    <div id="fase2" class="span-8 last">
+                    <div id="fase2" class="step span-8 last">
                         <div class="box">
                             <h5>2. Dia de Fechamento</h5>
                             <p>No dia do fechamento, o Republicaos contabiliza os gastos de cada um e faz a divisão das despesas.</p>
                         </div>
                     </div>
-                    <div id="fase3" class="span-8 last">
+                    <div id="fase3" class="step span-8 last">
                         <div class="box">
                             <h5>3. Acerto de Contas</h5>
                             <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
                         </div>
                     </div>
-                    <div id="fase4" class="span-8 last">
+                    <div id="fase4" class="step span-8 last">
                         <div class="box">
                             <h5>4. Acerto de Contas</h5>
                             <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
@@ -114,7 +129,7 @@
                     </div>
                 </div>
 
-                <div class="span-16 center last">
+                <div class="span-16 center figuras last">
                     <img id="img_fase1" src="${h.url('/images/funcionamento_1.png')}" style="display:none" />
                     <img id="img_fase2" src="${h.url('/images/funcionamento_2.png')}" style="display:none" />
                     <img id="img_fase3" src="${h.url('/images/funcionamento_3.png')}" style="display:none" />

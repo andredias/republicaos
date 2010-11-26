@@ -93,14 +93,42 @@ body#home {
     -moz-box-shadow: 1px 1px 2px rgba(0,0,0,.5);
     box-shadow: 1px 1px 2px rgba(0,0,0,.5);
     cursor: pointer;
-    border: 3px solid #f5f7fd;
-    background-color: #d1dfdf;
+    border: 3px solid orange;
+    background-color: white;
 }
 
-#home .selected .box{
-    background-color: white;
-    border: 3px solid orange;
-    color: inherited;
+#home .main nav li {
+    background: yellow;
+    padding: 0 1em 0 0.25em;
+    position: relative;
+}
+
+.seta, .sombra_seta {
+    height: 0;
+    width: 0;
+    border-width: 0.75em;
+    border-style: solid;
+    border-color: transparent;
+    border-left-color: yellow;
+    position: absolute;
+    left: 1.75em;
+    top: 0;
+    display: block;
+}
+
+.sombra_seta {
+    border-color: yellow;
+    border-left-color: rgba(0, 0, 0, 0.5);
+    left: 1.9em;
+}
+
+
+.figuras {
+    min-height: 475px;
+}
+
+.step {
+    display: none;
 }
 
 
