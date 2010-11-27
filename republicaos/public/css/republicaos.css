@@ -103,32 +103,61 @@ body#home {
     position: relative;
 }
 
-.seta, .sombra_seta {
+#home .main nav li.active {
+    background: blue;
+    padding: 0 1em 0 0.25em;
+    position: relative;
+}
+
+.arrow_head, .arrow_tail, .arrow_head_shadow, .arrow_tail_shadow {
     height: 0;
     width: 0;
     border-width: 0.75em;
     border-style: solid;
     border-color: transparent;
-    border-left-color: yellow;
     position: absolute;
-    left: 1.75em;
-    top: 0;
     display: block;
+    top: 0;
+    z-index: -1;
 }
 
-.sombra_seta {
+.arrow_head_shadow, .arrow_tail_shadow {
+     border-left-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.arrow_head {
+    left: 1.75em;
+    border-left-color: yellow;
+}
+
+.arrow_head_shadow {
     border-color: yellow;
-    border-left-color: rgba(0, 0, 0, 0.5);
     left: 1.9em;
+}
+
+.active .arrow_head {
+    left: 1.85em;
+    border-left-color: blue;
+    z-index: 0;
+}
+
+.arrow_tail {
+    left: -1.05em;
+    border-left-color: yellow;
+}
+
+.arrow_tail_shadow {
+    left: -1em;
+}
+
+.active .arrow_tail_shadow {
+    border-color: blue;
+    left: -1em;
 }
 
 
 .figuras {
     min-height: 475px;
-}
-
-.step {
-    display: none;
 }
 
 
