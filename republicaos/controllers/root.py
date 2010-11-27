@@ -69,8 +69,8 @@ class RootController(BaseController):
         redirect(url(controller='root', action='index'))
     
     
-    def tour(self):
-        return render('root/tour.html')
+    def funcionamento(self):
+        return render('root/funcionamento.html')
     
     @validate(FaleconoscoSchema, alternative_schema=FaleconoscoSemCaptchaSchema, check_function=get_user)
     def faleconosco(self):
