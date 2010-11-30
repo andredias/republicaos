@@ -38,19 +38,28 @@
         </div>
         <div class="header2">
             <div class="container">
-                <div class="span-12">
-                    <hr class="space" />
+                <div class="span-11">
+                    <br />
                     <h1>Divide as contas automaticamente <br />entre os moradores!</h1>
                     <hr />
-                    <ul>
-                        <li>É <span class="destaque">Grátis</span></li>
-                        <li>Todos participam</li>
-                        <li>Simples de usar</li>
-                    </ul>
-                     <hr />
-                   <p><a href="#" class="button">É grátis, crie uma conta</a></p>
+
+                    <img src="${h.url('/images/ticado.png')}" class="icone" />
+                    <h6>É fácil</h6>
+                    <p>Só é necessário registrar as despesas e o Republicaos já divide as contas e calcula todo o rateio. <a href="${h.url(controller='root', action='funcionamento')}">Veja como funciona</a>.</p>
+                    <br />
+                    
+                    <img src="${h.url('/images/users.png')}" class="icone" />
+                    <h6>Todos participam</h6>
+                    <p>Não sobra mais para uma pessoa fazer tudo. Cada morador participa registrando sua parte e o Republicaos faz o resto.</p>
+                    <br />
+                    
+                    <img src="${h.url('/images/gratis_64.png')}" class="icone" />
+                    <h6>É grátis!</h6>
+                    <p>Experimente. <a href="${h.url(controller='pessoa', action='new')}">Crie uma conta</a></p>
+                    <br />
+
                 </div>
-                <div class="span-12 last center">
+                <div class="span-12 push-1 last center">
                     <hr class="space" />
                     <img width="470" src="${h.url('/images/screenshot.jpg')}" class="shadow-blur" />
                 </div>
@@ -61,24 +70,61 @@
 
     <div class="main">
         <div class="container">
-            <div class="span-24">
             <br />
-            <br />
+            <div class="span-10">
+                <h2>O que é o Republicaos?</h2>
+                <p>É uma ferramenta web para registrar e dividir as contas comuns entre os moradores de uma república de estudantes.</p>
+                <p>A ideia de desenvolver o Republicaos nasceu de uma necessidade pessoal de acabar de vez com o uso daquelas planilhas chatas e difíceis de manter que sempre sobrava para uma pessoa manter. </p>
             </div>
+            <div class="span-13 push-1 last">
+
+
+                <p><a href="${h.url(controller='root', action='funcionamento')}" class="roteiro_button">
+                    <table class="bottom">
+                        <tr>
+                            <td><h2 class="bottom">1</h2></td>
+                            <td><h6>Funcionamento</h6>
+                                <p class="bottom">Entenda como o Republicaos divide as contas e calcula o rateio</p></td>
+                        </tr>
+                    </table>
+                </a></p>
+
+                <p><a href="${h.url(controller='root', action='funcionamento')}" class="roteiro_button">
+                    <table class="bottom">
+                        <tr>
+                            <td><h2 class="bottom">2</h2></td>
+                            <td><h6>Demonstração</h6>
+                                <p class="bottom">Faça uns testes e veja como é o Republicaos em ação</p></td>
+                        </tr>
+                    </table>
+                </a></p>
+
+                <p><a href="${h.url(controller='root', action='funcionamento')}" class="roteiro_button">
+                    <table class="bottom">
+                        <tr>
+                            <td><h2 class="bottom">3</h2></td>
+                            <td><h6>Crie uma conta</h6>
+                                <p class="bottom">Crie uma conta e cadastre sua república</p></td>
+                        </tr>
+                    </table>
+                </a></p>
+
+            </div>
+            
+
+
         </div>
     </div>
 
 
     <div class="footer">
         <div class="container">
-            <div class="span-24">
-                <br />
-                <div class="span-13">
-                    <p>Desenvolvido pela <a href="http://www.pronus.eng.br">Pronus Engenharia de Software</a></p>
-                </div>
-                <div class="span-11 last links">
-                    <p><a href="#">Política de Privacidade</a> &nbsp; <a href="#">Termos de Uso</a> &nbsp; <a href="#">Anuncie</a> &nbsp; <a href="#">Fale Conosco</a></p>
-                </div>
+            <br />
+            <div class="span-13">
+                <p>Desenvolvido pela <a href="http://www.pronus.eng.br">Pronus Engenharia de Software</a></p>
+            </div>
+            <div class="span-11 last links">
+                <p><a href="#">Política de Privacidade</a> &nbsp; <a href="#">Termos de Uso</a> &nbsp; <a href="#">Anuncie</a> &nbsp; <a href="#">Fale Conosco</a></p>
             </div>
         </div>
     </div>

@@ -51,6 +51,11 @@ class RootController(BaseController):
         c.user = get_user()
         return render('root/home.html')
 
+
+    def home(self):
+        return self.index()
+
+
     @validate(LoginSchema)
     def login(self):
         if c.valid_data:
