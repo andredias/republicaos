@@ -177,14 +177,15 @@ p {
 }
 
 
-.roteiro_button {
-    display: inline-block;
+.roteiro_button, .botao1, .botao2, .botao3 {
+    display: block;
     zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
     *display: inline;
     vertical-align: middle;
     cursor: pointer;
     text-decoration: none;
     padding: 1.5em;
+    margin-bottom: 1em;
     text-shadow: 0 -1px 2px rgba(0,0,0,.5);
     -webkit-border-radius: 1em; 
     -moz-border-radius: 1em;
@@ -195,33 +196,41 @@ p {
     color: #faddde;
     border: solid 0px #980c10;
     background: #d81b21;
+/* Há algum problema no gradiente no Google Chrome quando combinado com tabela. */
 /*
     background: -webkit-gradient(linear, left top, left bottom, from(#ed1c24), to(#aa1317));
-    background: -moz-linear-gradient(top,  #ed1c24,  #aa1317);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ed1c24', endColorstr='#aa1317');
 */
+background: -moz-linear-gradient(top,  #ed1c24,  #aa1317);
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ed1c24', endColorstr='#aa1317');
+
+
+    background: #16848C; /* old browsers */
+    background: -moz-linear-gradient(top, #97D6D8 0%, #5CA2A5 51%, #16848C 54%, #083033 100%); /* firefox */
+/*
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#97D6D8), color-stop(51%,#5CA2A5), color-stop(54%,#16848C), color-stop(100%,#083033)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#97D6D8', endColorstr='#083033',GradientType=0 ); /* ie */
 }
+
+
 .roteiro_button:hover {
     color: white;
     text-decoration: none;
     background: #b61318;
+
+    background: #f6290c; /* old browsers */
+    background: -moz-linear-gradient(top, #f85032 0%, #f16f5c 50%, #f6290c 51%, #f02f17 71%, #e73827 100%); /* firefox */
+
 /*
-    background: -webkit-gradient(linear, left top, left bottom, from(#c9151b), to(#a11115));
-    background: -moz-linear-gradient(top,  #c9151b,  #a11115);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#c9151b', endColorstr='#a11115');
-*/
-    -webkit-box-shadow: inset 0 2px 5px rgba(0,0,0,.75) !important;
-    -moz-box-shadow: inset 0 2px 5px rgba(0,0,0,.75) !important;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,.75) !important;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f85032), color-stop(50%,#f16f5c), color-stop(51%,#f6290c), color-stop(71%,#f02f17), color-stop(100%,#e73827)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f85032', endColorstr='#e73827',GradientType=0 ); /* ie */
+
+    -webkit-box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
+    -moz-box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
 }
-.roteiro_button:active {
-    position: relative;
-    top: 1px;
-    color: #de898c;
-    background: -webkit-gradient(linear, left top, left bottom, from(#aa1317), to(#ed1c24));
-    background: -moz-linear-gradient(top,  #aa1317,  #ed1c24);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#aa1317', endColorstr='#ed1c24');
-}
+
 
 .roteiro_button h2 {
     color: #faddde;
@@ -231,10 +240,3 @@ p {
     color: white;
     text-transform: uppercase;
 }
-
-.meio {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-
