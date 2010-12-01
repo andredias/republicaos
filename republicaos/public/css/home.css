@@ -6,26 +6,24 @@ body {
     font-family: "DejaVu Sans", Arial, Helvetica, serif;
 }
 
-body#home {
-    background: #FAFBFC;
-}
 
 .textura_header {
     background: url("/images/bg_couro.jpg") repeat-x scroll left bottom;
     background: url("http:/images/bg_texture.gif") repeat scroll left top #FEF7E7
 }
 
-#home .header {
-    background: #f78d1d;
-    background: -webkit-gradient(linear, left top, left bottom, from(#0F5C62), to(#042F32));
-    background: -moz-linear-gradient(top,  #0F5C62,  #042F32);
+.header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+    background: #065456; /* old browsers */
+    background: -moz-linear-gradient(top, #065456 0%, #042F32 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#065456), color-stop(100%,#042F32)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#065456', endColorstr='#042F32',GradientType=0 ); /* ie */
 }
 
 #home .header h1 {
     margin-bottom: 0;
     margin-top: 0.35em;
-    font-size: 4.5em;
+    font-size: 3.5em;
 }
 
 .logotipo {
@@ -44,10 +42,11 @@ body#home {
 .slogan {
     color: white;
     font-family: "DesyrelRegular", cursive;
+    font-weight: normal;
     text-shadow: 0px 3px 5px rgba(0, 0, 0, 1);
 }
 
-#home .header2 {
+.header2 {
     border-top: 1px solid rgba(0, 0, 0, 0.85);
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
     background: #F1E9DC;
@@ -55,32 +54,32 @@ body#home {
 }
 
 
-#home .header2 h1 {
+.header2 h1 {
     font-family: "Arial Black", Arial, Helvetica, sans-serif;
     color: #3C3E38;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-#home .header2 ul {
+.header2 ul {
     color: #60605D;
 }
 
-#home .header2 .destaque {
+.header2 .destaque {
     color: #D34E1A;
     font-weight: bold;
 }
 
-#home .main {
+.main {
     background: transparent;
     border-top: 1px solid rgba(0, 0, 0, 0.85);
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 
-#home .main h1 {
+.main h1 {
     margin-top: 0.5em;
 }
 
-#home .center {
+.center {
     text-align: center;
 }
 
@@ -90,25 +89,25 @@ body#home {
 }
 
 
-#home .main nav li {
+.main nav li {
     background: yellow;
     padding: 0 1em 0 0.25em;
     position: relative;
 }
 
-#home .main nav li.active {
+.main nav li.active {
     background: blue;
     padding: 0 1em 0 0.25em;
     position: relative;
 }
 
 
-#home .footer {
+.footer {
     background: #0A2427;
     color: #aaa;
 }
 
-#home .footer .links {
+.footer .links {
     text-align: right;
 }
 
@@ -119,6 +118,17 @@ body#home {
 
 .footer a:hover {
     text-decoration: underline;
+}
+
+.tecnologias {
+    background: #042F32;
+    display: none;
+}
+
+.main h2 {
+    color: #3C3E38;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
 }
 
 nav ul {
@@ -193,7 +203,7 @@ p {
     -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.75);
     -moz-box-shadow: 0 2px 5px rgba(0,0,0,.75);
     box-shadow: 0 2px 5px rgba(0,0,0,.75);
-    color: #faddde;
+    color: #bbbbbb !important;
     border: solid 0px #980c10;
 
     background: #0F5C62; /* old browsers */
@@ -228,7 +238,7 @@ p {
 
 
 .roteiro_button h2 {
-    color: #faddde;
+    color: #E6E6E6;
 }
 
 .roteiro_button h6 {
