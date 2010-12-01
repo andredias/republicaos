@@ -23,7 +23,6 @@
             <div class="container">
                 <div class="span-10">
                     <h1 class="logotipo">Republi<span class="caos">caos</span></h1>
-                    <h2 class="slogan">mantendo as contas em ordem</h2>
                 </div>
                 <div class="span-14 last">
                     <nav>
@@ -37,29 +36,15 @@
         <div class="header2">
             <div class="container">
                 <div class="span-11">
-                    <br />
                     <h1>Controle financeiro de república de estudantes</h1>
-                    <hr />
-
-                    <img src="${h.url('/images/ticado.png')}" class="icone" />
-                    <h6>Fácil</h6>
-                    <p>Basta registrar as despesas e o Republicaos  divide as contas e calcula todo o rateio.</p>
-                    <br />
-                    
-                    <img src="${h.url('/images/users.png')}" class="icone" />
-                    <h6>Todos Participam</h6>
-                    <p>Não sobra para uma pessoa fazer tudo. Cada morador participa registrando sua parte e o Republicaos faz o resto.</p>
-                    <br />
-                    
-                    <img src="${h.url('/images/gratis_64.png')}" class="icone" />
-                    <h6>Grátis !!!</h6>
-                    <p>Experimente.</p>
-                    <br />
+                    <h2 class="slogan">Mantendo as contas em ordem</h2>
+                    <p style="display:none">É uma ferramenta web para registrar e dividir as contas comuns entre os moradores de uma república de estudantes.</p>
+                    <p style="display:none">A ideia nasceu da necessidade de uma república formada por alunos da Unicamp que queriam acabar com o uso daquela planilha chata que sempre sobrava para uma pessoa manter.</p>
 
                 </div>
                 <div class="span-12 push-1 last center">
-                    <hr class="space" />
-                    <img width="470" src="${h.url('/images/screenshot.jpg')}" class="shadow-blur" />
+                    <br />
+                    <img width="470" src="${h.url('/images/screenshot.jpg')}" class="imagem shadow-blur" />
                 </div>
             </div>
         </div>
@@ -70,43 +55,54 @@
         <div class="container">
             <br />
             <div class="span-10">
-                <h2>O que é o Republicaos?</h2>
-                <p>É uma ferramenta web para registrar e dividir as contas comuns entre os moradores de uma república de estudantes.</p>
-                <p>A ideia nasceu da necessidade de uma república formada por alunos da Unicamp que queriam acabar com o uso daquela planilha chata que sempre sobrava para uma pessoa manter.</p>
+                <h2>Por que usar?</h2>
+
+                <img src="${h.url('/images/ticado.png')}" class="icone" />
+                <h6>Fácil</h6>
+                <p>Basta registrar as despesas e o Republicaos  divide as contas e calcula todo o rateio.</p>
+                <br />
+                
+                <img src="${h.url('/images/users.png')}" class="icone" />
+                <h6>Todos Participam</h6>
+                <p>Cada morador registra sua parte e o Republicaos faz o resto.</p>
+                <br />
+                
+                <img src="${h.url('/images/gratis_64.png')}" class="icone" />
+                <h6>Grátis !!!</h6>
+                <p>Experimente.</p>
+                <br />
+
             </div>
             <div class="span-13 push-1 last">
 
 
                 <a href="${h.url(controller='root', action='funcionamento')}" class="roteiro_button">
-                    <table class="bottom">
-                        <tr>
-                            <td><h2 class="bottom">1</h2></td>
-                            <td><h6>Funcionamento</h6>
-                                <p class="bottom">Entenda como o Republicaos divide as contas e calcula o rateio</p></td>
-                        </tr>
-                    </table>
+                    <div>
+                        <h2 class="bottom icone">1</h2>
+                        <h6>Funcionamento</h6>
+                        <p class="bottom">Entenda como o Republicaos divide as contas e calcula o rateio</p>
+                    </div>
+
                 </a>
 
 
+
                 <a href="${h.url(controller='root', action='funcionamento')}" class="roteiro_button">
-                    <table class="bottom">
-                        <tr>
-                            <td><h2 class="bottom">2</h2></td>
-                            <td><h6>Demonstração</h6>
-                                <p class="bottom">Faça uns testes e veja como é o Republicaos em ação</p></td>
-                        </tr>
-                    </table>
+                    <div>
+                        <h2 class="bottom icone">2</h2>
+                        <h6>Demonstração</h6>
+                        <p class="bottom">Experimente o Republicaos em ação</p>
+                    </div>
                 </a>
 
 
+
                 <a href="${h.url(controller='root', action='funcionamento')}" class="roteiro_button">
-                    <table class="bottom">
-                        <tr>
-                            <td><h2 class="bottom">3</h2></td>
-                            <td><h6>Crie uma conta</h6>
-                                <p class="bottom">Cadastre sua república e convide os outros moradores</p></td>
-                        </tr>
-                    </table>
+                    <div>
+                        <h2 class="bottom icone">3</h2>
+                        <h6>Crie uma conta</h6>
+                        <p class="bottom">Cadastre sua república e convide os outros moradores</p>
+                    </div>
                 </a>
 
             </div>
