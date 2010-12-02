@@ -53,18 +53,19 @@
                 
                 
                     <div class="login_panel">
-                        <div id="login_form_panel">
-                            <p>Username:
-                            <input type="text" size="15" name="username" id="username" />
-                            <br />
-                            Password:
-                            <input type="password" size="15" name="password" id="password" />
-                            <br />
-                            <input type="button" accesskey="l" id="login_btn" name="login" value="Login" />
-                            </p>
+                        <div id="login_form_panel" class="shadow">
+                            <form id="login-form" name="login" method="post" action="${h.url(controller='root', action='login')}">
+
+                                <p class="bottom"><span class="login_label">Login</span>
+                                <input id="Email" class="text placeholder" type="text" tabindex="1" name="email" size="25" value="e-mail" />
+                                <input id="password" class="text" type="password" name="senha" tabindex="2" size="8" value="senha" />
+                                <input type="submit" value=">" /></p>
+
+                            </form>
+                            <p class="bottom" style="text-align:right"><input type="checkbox" /> Manter conectado | <a href="#">Crie uma conta</a> | <a href="#">Esqueci a senha</a></p>
                         </div>
-                        <div class="login_button" id="abrir_login">Login</div>
-                        <div class="login_button" id="fechar_login" style="display: none;">Fechar</div>
+                        <div class="login_button shadow login_label" id="abrir_login">Login</div>
+                        <div class="login_button shadow login_label" id="fechar_login" style="display: none;">Fechar</div>
                     </div>
 
                 
