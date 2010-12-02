@@ -1,0 +1,32 @@
+.login_panel {
+    position: absolute;
+    top: 0px;
+    right:0;
+    text-align: right;
+    z-index:1;
+}
+
+#login_form_panel {
+    overflow: hidden;
+    text-align: left;
+    background: white;
+    padding: 1em;
+    -moz-border-radius: 0 0 0 2em;
+    -webkit-border-radius: 0 0 0 2em;
+    border-radius: 0 0 0 2em;
+    display: none;
+}
+
+.login_button {
+    background: yellow;
+    width: 10em;
+    text-align: center;
+    position: absolute;
+    right: 0;
+    -moz-border-radius: 0 0 2em 2em;
+    -webkit-border-radius: 0 0 2em 2em;
+    border-radius: 0 0 2em 2em;
+    padding: 0.5em 0 1em 0;
+    cursor: pointer;
+}
+
