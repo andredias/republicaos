@@ -6,107 +6,14 @@ body {
     font-family: "DejaVu Sans", Arial, Helvetica, serif;
 }
 
-body#home {
-    background: #FAFBFC;
-}
-
-
-
-.logotipo {
-    font-family: EnterSansman1Bold, serif;
-    color: rgba(255, 255, 255, 0.75);
-    text-shadow: 0px 3px 2px rgba(0, 0, 0, 0.5), 0 0 7px black;
-}
-
-.caos {
-    color: orange;
-/*
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.75);
-*/
-}
-
-.slogan {
-    color: white;
-    font-family: "DesyrelRegular", cursive;
-    text-shadow: 0px 3px 5px rgba(0, 0, 0, 1);
-}
 
 a {
     cursor: pointer;
 }
 
 
-nav li a {
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    color: #ffffff;
-    display: inline-block;
-    line-height: 3em;
-    padding: 0 8px;
-    text-decoration: none;
-}
-
-nav li a:focus, nav li a:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.25);
-    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.5);
-    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.5);
-    box-shadow: 0 1px 2px rgba(0,0,0,.5);
-}
 
 center {
     text-align: center;
-}
-
-.shadow-blur {
-    -webkit-box-shadow: 0 0px 5px rgba(0,0,0,.75);
-    -moz-box-shadow: 0 0px 5px rgba(0,0,0,.75);
-    box-shadow: 0 0px 5px rgba(0,0,0,.75);
-}
-
-
-.button {
-    display: inline-block;
-    zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
-    *display: inline;
-    vertical-align: baseline;
-    margin: 0 2px;
-    outline: none;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    font-size: 24px;
-    line-height: 54px;
-    padding: 8px 36px;
-    text-shadow: 0 -1px 2px rgba(0,0,0,.5);
-    -webkit-border-radius: .5em; 
-    -moz-border-radius: .5em;
-    border-radius: .5em;
-    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-    box-shadow: 0 1px 2px rgba(0,0,0,.2);
-    color: #faddde;
-    border: solid 1px #980c10;
-    background: #d81b21;
-    background: -webkit-gradient(linear, left top, left bottom, from(#ed1c24), to(#aa1317));
-    background: -moz-linear-gradient(top,  #ed1c24,  #aa1317);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ed1c24', endColorstr='#aa1317');
-}
-.button:hover {
-    color: white;
-    text-decoration: none;
-    background: #b61318;
-    background: -webkit-gradient(linear, left top, left bottom, from(#c9151b), to(#a11115));
-    background: -moz-linear-gradient(top,  #c9151b,  #a11115);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#c9151b', endColorstr='#a11115');
-}
-.button:active {
-    position: relative;
-    top: 1px;
-    color: #de898c;
-    background: -webkit-gradient(linear, left top, left bottom, from(#aa1317), to(#ed1c24));
-    background: -moz-linear-gradient(top,  #aa1317,  #ed1c24);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#aa1317', endColorstr='#ed1c24');
 }
 

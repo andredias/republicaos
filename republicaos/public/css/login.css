@@ -33,7 +33,6 @@
 }
 
 .login_button {
-    background: yellow;
     width: 10em;
     text-align: center;
     position: absolute;
@@ -48,6 +47,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-top: 1px black;
     
+    background: #363636;
     background: -moz-linear-gradient(top, #363636 0%, #191919 33%, #030303 100%); /* firefox */
 
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#363636), color-stop(33%,#191919), color-stop(100%,#030303)); /* webkit */

@@ -12,60 +12,44 @@ body {
 }
 
 .header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.65);
-    background: #042F32;
+    background: #28343B;
+    text-shadow: 0px 3px 2px rgba(0, 0, 0, 0.75), 0 0 7px black;
 }
 
 .header h1 {
     margin-top: 0.35em;
     font-size: 3.5em;
-}
-
-
-.logotipo {
     font-family: EnterSansman1Bold, serif;
-    color: rgba(255, 255, 255, 0.75);
-    text-shadow: 0px 3px 2px rgba(0, 0, 0, 0.5), 0 0 7px black;
+    color: #aaa;
 }
 
-.caos {
-    color: #orange;
-/*
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.75);
-*/
-}
 
 .slogan {
-    color: green;
+    color: #c0e028;
     font-family: "DesyrelRegular", cursive;
     font-weight: normal;
-    text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
 }
 
 .header2 {
-    border-top: 1px solid rgba(0, 0, 0, 0.85);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-    background: #F1E9DC;
-    background: rgba(255, 255, 255, 0.1);
     overflow: hidden;
     height: 230px;
+    text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.75);
+
+    background: #335F92; /* old browsers */
+    background: -moz-linear-gradient(top, #335F92 0%, #447FC3 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#335F92), color-stop(100%,#447FC3)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#335F92', endColorstr='#447FC3',GradientType=0 ); /* ie */
 }
 
 
 .header2 h1 {
     font-family: "Serifa", "Arial Black", Arial, Helvetica, sans-serif;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     margin-top: 1em;
+    color: white;
 }
 
-.header2 ul {
-    color: #60605D;
-}
-
-.header2 .destaque {
-    color: #D34E1A;
-    font-weight: bold;
-}
 
 .main {
     background: transparent;
@@ -83,22 +67,17 @@ body {
 }
 
 
-.main nav li {
-    background: yellow;
-    padding: 0 1em 0 0.25em;
-    position: relative;
-}
-
-.main nav li.active {
-    background: blue;
-    padding: 0 1em 0 0.25em;
-    position: relative;
-}
-
-
 .footer {
-    background: #0A2427;
     color: #aaa;
+    
+    background: #191919;
+    background: -moz-linear-gradient(top, #363636 0%, #191919 33%, #030303 100%); /* firefox */
+
+    /*
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#363636), color-stop(33%,#191919), color-stop(100%,#030303)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#363636', endColorstr='#030303',GradientType=0 ); /* ie */
+
 }
 
 .footer .links {
@@ -120,55 +99,15 @@ body {
 }
 
 .main h2 {
-    color: #3C3E38;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
     font-weight: bold;
 }
 
-nav ul {
-    list-style: outside;
-    color: white;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-    margin: 0;
-    text-align: right;
-}
-
-nav li {
-    display: inline;
-    list-style: none outside none;
-    margin-left: 1em;
-}
-
-a {
-    cursor: pointer;
-}
 
 a:visited {
     color: white;
 }
 
-nav li a {
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    color: #ffffff;
-    display: inline-block;
-    line-height: 3em;
-    padding: 0 8px;
-    text-decoration: none;
-}
-
-nav li a:focus, nav li a:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.25);
-    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.5);
-    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.5);
-    box-shadow: 0 1px 2px rgba(0,0,0,.5);
-}
-
-center {
-    text-align: center;
-}
 
 p {
     text-align: justify;
@@ -184,64 +123,4 @@ p {
     -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.75);
     -moz-box-shadow: 0 2px 5px rgba(0,0,0,.75);
     box-shadow: 0 2px 5px rgba(0,0,0,.75);
-}
-
-
-.roteiro_button {
-    display: block;
-    zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
-    *display: inline;
-    vertical-align: middle;
-    cursor: pointer;
-    text-decoration: none;
-    padding: 1.5em;
-    margin-bottom: 1.5em;
-    text-shadow: 0 -1px 2px rgba(0,0,0,.5);
-    -webkit-border-radius: 4em; 
-    -moz-border-radius: 4em;
-    border-radius: 4em;
-    -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.75);
-    -moz-box-shadow: 0 2px 5px rgba(0,0,0,.75);
-    box-shadow: 0 2px 5px rgba(0,0,0,.75);
-    color: #bbbbbb !important;
-    border: solid 0px #980c10;
-
-    background: #0F5C62; /* old browsers */
-    background: -moz-linear-gradient(top, #0F5C62 0%, #11676D 50%, #065456 52%, #042F32 100%); /* firefox */
-
-    /* Há algum problema no gradiente no Google Chrome quando combinado com html dentro de <a>. */
-    /*
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0F5C62), color-stop(50%,#11676D), color-stop(52%,#065456), color-stop(100%,#042F32)); /* webkit */
-
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0F5C62', endColorstr='#042F32',GradientType=0 ); /* ie */
-}
-
-
-.roteiro_button:hover {
-    color: white;
-    text-decoration: none;
-
-    background: #f6290c; /* old browsers */
-    background: -moz-linear-gradient(top, #f85032 0%, #f16f5c 50%, #f6290c 51%, #f02f17 71%, #e73827 100%); /* firefox */
-
-/*
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f85032), color-stop(50%,#f16f5c), color-stop(51%,#f6290c), color-stop(71%,#f02f17), color-stop(100%,#e73827)); /* webkit */
-
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f85032', endColorstr='#e73827',GradientType=0 ); /* ie */
-
-/*
-    -webkit-box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
-*/
-    -moz-box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
-    box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
-}
-
-
-.roteiro_button h2 {
-    color: #E6E6E6;
-}
-
-.roteiro_button h6 {
-    color: white;
-    text-transform: uppercase;
 }
