@@ -1,7 +1,7 @@
 
 @import "fonts.css";
 
-body {
+body, button {
     text-rendering:optimizelegibility;
     font-family: "DejaVu Sans", Arial, Helvetica, serif;
 }

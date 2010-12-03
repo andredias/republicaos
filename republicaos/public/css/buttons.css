@@ -1,4 +1,3 @@
-
 button * {
     line-height: 1.5em;
     color: inherit;
@@ -39,9 +38,6 @@ button.thoughtbot:active {
 
 
 
-
-
-
 button.roteiro, button.roteiro h2 {
     text-shadow: 0 -1px 2px rgba(0,0,0,.5);
 }
@@ -63,14 +59,23 @@ button.roteiro {
     border: solid 0px #980c10;
     color: white;
     
-    box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.2), 0 1px 3px #333;
-    -moz-box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.2), 0 1px 3px #333;
-    -webkit-box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.2), 0 1px 3px #333;
+    box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.2), 0 2px 5px rgba(0,0,0,.75);
+    -moz-box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.2), 0 2px 5px rgba(0,0,0,.75);
+    -webkit-box-shadow: /* inset 0px 0px 0px 1px rgba(0, 0, 0, 0.2), */ 0 2px 5px rgba(0,0,0,.75);
 
 
-    
-    
-    background: #9dd53a; /* old browsers */
+    background: #2DAA22; /* old browsers */
+    background: -moz-linear-gradient(top, #2DAA22 0%, #49AD41 49%, #2C992A 50%, #0E7127 100%); /* firefox */
+
+    /*
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2DAA22), color-stop(49%,#49AD41), color-stop(50%,#2C992A), color-stop(100%,#0E7127)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2DAA22', endColorstr='#0E7127',GradientType=0 ); /* ie */
+
+}
+
+button.roteiro:hover {
+    background: green;
     background: -moz-linear-gradient(top, #9dd53a 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* firefox */
     /*
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9dd53a), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* webkit */
@@ -78,8 +83,7 @@ button.roteiro {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9dd53a', endColorstr='#7cbc0a',GradientType=0 ); /* ie */
 }
 
-
-button.roteiro:hover {
+button.roteiro:active {
     color: white;
     text-decoration: none;
 
@@ -103,4 +107,3 @@ button.roteiro:hover {
 button.roteiro h6 {
     text-transform: uppercase;
 }
-
