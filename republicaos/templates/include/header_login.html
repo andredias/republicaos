@@ -1,0 +1,51 @@
+    <div class="header">
+        <script type = "text/javascript">
+            $(document).ready(function()
+                {
+                $("#abrir_login").click(
+                    function ()
+                        {
+                        $("#login_form_panel").slideDown();
+                        $(this).hide();
+                        $("#fechar_login").show();
+                        }
+                );
+                
+                $("#fechar_login").click(
+                    function ()
+                        {
+                        $("#login_form_panel").slideUp();
+                        $(this).hide();
+                        $("#abrir_login").show();
+                        }
+                );
+
+            });
+        </script>
+        <div class="container">
+            <a href="${h.url(controller='root', action='home')}">
+                <div class="span-10">
+                    <h1>Republi<span class="caos">caos</span></h1>
+                </div>
+            </a>
+            
+            <div class="span-14 last" style="position:relative">
+                <div class="login_panel">
+                    <div id="login_form_panel" class="shadow">
+                        <form id="login-form" name="login" method="post" action="${h.url(controller='root', action='login')}">
+
+                            <p class="bottom"><span class="label">Login</span>
+                            <input id="Email" class="text placeholder" type="text" tabindex="1" name="email" size="25" value="e-mail" />
+                            <input id="password" class="text" type="password" name="senha" tabindex="2" size="8" value="senha" />
+                            <button type="submit">ok</button></p>
+
+                        </form>
+                        <p class="bottom" style="text-align:right"><input type="checkbox" /> Manter conectado | <a href="#">Crie uma conta</a> | <a href="#">Esqueci a senha</a></p>
+                    </div>
+                    <button class="login shadow" id="abrir_login">Login</button>
+                    <button class="login shadow" id="fechar_login" style="display: none;">Fechar</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
