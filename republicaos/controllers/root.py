@@ -77,6 +77,13 @@ class RootController(BaseController):
     def funcionamento(self):
         return render('root/funcionamento.html')
     
+    
+    def politica_privacidade(self):
+        return render('root/politica_privacidade.html')
+    
+    def termos_uso(self):
+        return render('root/termos_uso.html')
+    
     @validate(FaleconoscoSchema, alternative_schema=FaleconoscoSemCaptchaSchema, check_function=get_user)
     def faleconosco(self):
         c.user = get_user()
