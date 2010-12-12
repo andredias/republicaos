@@ -1,0 +1,58 @@
+
+.main nav li {
+    background: yellow;
+    padding: 0 1em 0 0.25em;
+    position: relative;
+}
+
+.main nav li.active {
+    background: blue;
+    padding: 0 1em 0 0.25em;
+    position: relative;
+}
+
+.arrow_head, .arrow_tail, .arrow_head_shadow, .arrow_tail_shadow {
+    height: 0;
+    width: 0;
+    border-width: 0.75em;
+    border-style: solid;
+    border-color: transparent;
+    position: absolute;
+    display: block;
+    top: 0;
+    z-index: -1;
+}
+
+.arrow_head_shadow, .arrow_tail_shadow {
+     border-left-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.arrow_head {
+    left: 1.75em;
+    border-left-color: yellow;
+}
+
+.arrow_head_shadow {
+    border-color: yellow;
+    left: 1.9em;
+}
+
+.active .arrow_head {
+    left: 1.85em;
+    border-left-color: blue;
+    z-index: 0;
+}
+
+.arrow_tail {
+    left: -1.05em;
+    border-left-color: yellow;
+}
+
+.arrow_tail_shadow {
+    left: -1em;
+}
+
+.active .arrow_tail_shadow {
+    border-color: blue;
+    left: -1em;
+}

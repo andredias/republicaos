@@ -49,38 +49,6 @@ body {
     padding-right: 1em;
 }
 
-
-.footer {
-    color: #aaa;
-    
-    background: #191919;
-    background: -moz-linear-gradient(top, #363636 0%, #191919 33%, #030303 100%); /* firefox */
-
-    /*
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#363636), color-stop(33%,#191919), color-stop(100%,#030303)); /* webkit */
-
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#363636', endColorstr='#030303',GradientType=0 ); /* ie */
-
-}
-
-.footer .links {
-    text-align: right;
-}
-
-.footer a, .footer a:visited {
-    color: #aaa;
-    text-decoration: none;
-}
-
-.footer a:hover {
-    text-decoration: underline;
-}
-
-.tecnologias {
-    background: #042F32;
-    display: none;
-}
-
 .main h2 {
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
     font-weight: bold;

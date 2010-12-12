@@ -13,27 +13,32 @@
     <link rel="stylesheet" href="${h.url('/css/republicaos.css')}" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="${h.url('/css/login.css')}" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="${h.url('/css/funcionamento.css')}" type="text/css" media="screen, projection" />
+
     <script src="${h.url('/jquery/1.4.4/jquery.min.js')}" type="text/javascript"></script>
-    <script type = "text/javascript">
-        $(document).ready(function()
+
+
+    <script type="text/javascript"> 
+         
+        $(document).ready(function() 
             {
-            var atual = "func0";
-            $(".main nav li").mouseenter(
+            var atual = "0";
+            $("button.func").click(
                 function ()
                     {
                     if (this.id != atual)
                         {
-                        $('#' + atual).removeClass("active");
-                        $('#_' + atual).hide();
-                        $(this).addClass("active");
-                        $('#_' + this.id).show()
+                        $('#' + atual).removeClass("pressed");
+                        $(this).addClass("pressed");
+                        prox = this.id;
+                        $('#func_' + atual).fadeOut("fast", function(){$('#func_' + prox).fadeIn();});
                         atual = this.id;
                         }
                     }
             );
-            $("#func1").mouseenter();
+            $("#1").click();
         });
-    </script>
+
+    </script> 
 </head>
 
 <body>
@@ -42,99 +47,82 @@
 
     <div class="main">
         <div class="container">
-            <div class="span-24">
-                <div class="span-8">
-                    <h1>Funcionamento</h1>
+            <div class="span-24 funcionamento">
+                <br />
+                <h1>Funcionamento</h1>
+                
+                <div class="span-2 navigation">
+                    <div class="box">
+                        <button id="1" class="func">1</button>
+                        <button id="2" class="func">2</button>
+                        <button id="3" class="func">3</button>
+                        <button id="4" class="func">4</button>
+                    </div>
                 </div>
-                <div class="span-16 last">
-                    <nav>
+
+                <div class="span-22 last etapas">
+                    <div class="box">
                         <ul>
-                            <li id="func1" class="active">
-                                1
-                                <div class="arrow_head_shadow"></div><div class="arrow_head"></div>
+
+                            <li id="func_1">
+                                <div class="span-7">
+                                    <h3>1. Informe dos Gastos</h3>
+                                    <hr />
+                                    <p>Cada pessoa registra seus gastos no Republicaos.</p>
+                                </div>
+                                <div class="span-14 last center">
+                                    <img src="${h.url('/images/funcionamento_1.png')}" />
+                                </div>
                             </li>
-                            <li id="func2">
-                                <div class="arrow_tail_shadow"></div><div class="arrow_tail"></div>
-                                2
-                                <div class="arrow_head_shadow"></div><div class="arrow_head"></div>
+
+
+                            <li id="func_2" style="display:none">
+                                <div class="span-7">
+                                    <h3>2. Dia de Fechamento</h3>
+                                    <hr />
+                                    <p>No dia do fechamento, o Republicaos contabiliza os gastos de cada um e faz a divisão das despesas.</p>
+                                </div>
+                                <div class="span-14 figuras last center">
+                                    <img src="${h.url('/images/funcionamento_2.png')}" />
+                                </div>
                             </li>
-                            <li id="func3">
-                                <div class="arrow_tail_shadow"></div><div class="arrow_tail"></div>
-                                3
-                                <div class="arrow_head_shadow"></div><div class="arrow_head"></div>
+
+
+                            <li id="func_3" style="display:none">
+                                <div class="span-7">
+                                    <h3>3. Acerto de Contas</h3>
+                                    <hr />
+                                    <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
+                                </div>
+                                <div class="span-14 last center">
+                                    <img src="${h.url('/images/funcionamento_3.png')}" />
+                                </div>
                             </li>
-                            <li id="func4">
-                                <div class="arrow_tail_shadow"></div><div class="arrow_tail"></div>
-                                4
-                            </li>
+
+
+                            <li id="func_4" style="display:none">
+                                 <div class="span-7">
+                                    <h3>4. Acerto de Contas</h3>
+                                    <hr />
+                                    <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
+                                </div>
+                                <div class="span-14 last center">
+                                    <img src="${h.url('/images/funcionamento_4.png')}" />
+                                </div>
+                           </li>
+
+
                         </ul>
-                    </nav>
+                    </div>
+
                 </div>
             </div>
             
-            
-            <div class="span-24">
-                <div id="_func1" style="display:none">
-                    <div class="span-8">
-                        <div class="box">
-                            <h5>1. Informe dos Gastos</h5>
-                            <p>Cada pessoa registra seus gastos no Republicaos.</p>
-                        </div>
-                    </div>
-                    <div class="span-16 center figuras last">
-                        <img src="${h.url('/images/funcionamento_1.png')}" />
-                    </div>
-                </div>
 
-                <div id="_func2" style="display:none">
-                    <div class="span-8">
-                        <div class="box">
-                            <h5>2. Dia de Fechamento</h5>
-                            <p>No dia do fechamento, o Republicaos contabiliza os gastos de cada um e faz a divisão das despesas.</p>
-                        </div>
-                    </div>
-                    <div class="span-16 center figuras last">
-                        <img src="${h.url('/images/funcionamento_2.png')}" />
-                    </div>
-                </div>
-
-                <div id="_func3" style="display:none">
-                    <div class="span-8">
-                        <div class="box">
-                            <h5>3. Acerto de Contas</h5>
-                            <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
-                        </div>
-                    </div>
-                    <div class="span-16 center figuras last">
-                        <img src="${h.url('/images/funcionamento_3.png')}" />
-                    </div>
-                </div>
-
-                <div id="_func4" style="display:none">
-                    <div class="span-8">
-                        <div class="box">
-                            <h5>4. Acerto de Contas</h5>
-                            <p>Quem pagou a menos do que deveria, acerta com quem pagou a mais. O Republicaos já informa exatamente quanto é o acerto e quem deve pagar pra quem.</p>
-                        </div>
-                    </div>
-                    <div class="span-16 center figuras last">
-                        <img src="${h.url('/images/funcionamento_4.png')}" />
-                    </div>
-                </div>
-
-                <div class="span-16 prepend-8 center last">
-                    <p><a href="#" class="button">Veja funcionando</a><a href="#" class="button">Crie uma conta</a></p>
-                </div>
-            </div>
         </div>
     </div>
-    <div class="footer">
-        <div class="container">
-            <div class="span-24">
-            footer
-            </div>
-        </div>
-    </div>
+
+    <xi:include href="../include/footer.html" />
 
 </body>
 </html>
