@@ -35175,10 +35175,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.0052487"
-     inkscape:cx="916.12906"
-     inkscape:cy="399.63058"
+     inkscape:cx="939.34468"
+     inkscape:cy="778.13026"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1600"
      inkscape:window-height="840"
@@ -35245,7 +35245,7 @@
        sodipodi:cy="1263.4403"
        sodipodi:rx="310.20593"
        sodipodi:ry="277.14542"
-       d="m 1416.6774,1263.4403 a 310.20593,277.14542 0 1 1 -620.4119,0 310.20593,277.14542 0 1 1 620.4119,0 z"
+       d="m 1416.6774,1263.4403 c 0,153.0632 -138.884,277.1454 -310.206,277.1454 -171.32197,0 -310.2059,-124.0822 -310.2059,-277.1454 0,-153.0632 138.88393,-277.14541 310.2059,-277.14541 171.322,0 310.206,124.08221 310.206,277.14541 z"
        transform="matrix(0.76834495,0,0,0.69219154,304.73596,-1256.0309)"
        inkscape:export-filename="/tmp/fase1.png"
        inkscape:export-xdpi="90"
@@ -41382,6 +41382,52 @@
            id="tspan9676"
            x="527.30835"
            y="-40.658508">$</tspan></text>
+    </g>
+    <path
+       style="opacity:0.64516129;fill:#0000cd;stroke:#8b0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 999.65894,196.10143 29.12936,-16.81784"
+       id="path8799"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/andref/projetos/pylons/republicaos/republicaos/public/images/funcionamento_4.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path9775"
+       d="m 1208.0651,118.50347 29.1294,-16.81784"
+       style="opacity:0.64516129;fill:#0000cd;stroke:#8b0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/andref/projetos/pylons/republicaos/republicaos/public/images/funcionamento_4.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:0.64516129;fill:#0000cd;stroke:#8b0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1281.6787,315.46965 29.1294,-16.81784"
+       id="path9781"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/andref/projetos/pylons/republicaos/republicaos/public/images/funcionamento_4.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path9787"
+       d="m 1088.6916,394.55456 29.1294,-16.81784"
+       style="opacity:0.64516129;fill:#0000cd;stroke:#8b0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/andref/projetos/pylons/republicaos/republicaos/public/images/funcionamento_4.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <g
+       transform="translate(8.4399414,32.722496)"
+       id="g9795">
+      <path
+         style="opacity:0.64516129;fill:#0000cd;stroke:#8b0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="M 880.78288,173.22674 909.91225,156.4089"
+         id="path9798"
+         sodipodi:nodetypes="cc" />
+      <path
+         sodipodi:nodetypes="cc"
+         id="path9800"
+         d="m 880.78288,156.4089 29.12937,16.81784"
+         style="opacity:0.64516129;fill:#0000cd;stroke:#8b0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     </g>
   </g>
   <g

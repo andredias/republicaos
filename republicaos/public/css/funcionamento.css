@@ -5,6 +5,14 @@
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#335F92', endColorstr='#447FC3',GradientType=0 ); /* ie */
 }
 
+.main h1, .main h3 {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.main h1 {
+    color: #eee;
+}
+
 .funcionamento .box {
     min-height: 475px;
 }
@@ -19,7 +27,7 @@
     -moz-box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.3);
     padding: 1em;
-    padding-bottom: 2em;
+    padding-bottom: 2.5em;
 }
 
 .etapas .box {
@@ -31,6 +39,8 @@
     border-radius: 0 1em 1em 0;
     margin-left: -10px;
     background: white;
+    padding-top: 2em;
+    padding-left: 2em;
 }
 
 
