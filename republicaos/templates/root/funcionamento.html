@@ -12,6 +12,7 @@
 
     <link rel="stylesheet" href="${h.url('/css/republicaos.css')}" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="${h.url('/css/login.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/buttons.css')}" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="${h.url('/css/funcionamento.css')}" type="text/css" media="screen, projection" />
 
     <script src="${h.url('/jquery/1.4.4/jquery.min.js')}" type="text/javascript"></script>
@@ -30,7 +31,7 @@
                         $('#' + atual).removeClass("pressed");
                         $(this).addClass("pressed");
                         prox = this.id;
-                        $('#func_' + atual).fadeOut("fast", function(){$('#func_' + prox).fadeIn();});
+                        $('#func_' + atual).fadeOut("fast", function(){$('#func_' + prox).fadeIn("fast");});
                         atual = this.id;
                         }
                     }
@@ -53,11 +54,11 @@
                 
                 <div class="span-2 navigation">
                     <div class="box">
-                        <button id="1" class="func">1</button>
-                        <button id="2" class="func">2</button>
-                        <button id="3" class="func">3</button>
-                        <button id="4" class="func">4</button>
-                        <button id="5" class="func">5</button>
+                        <button id="1" class="tridimensional func">1</button>
+                        <button id="2" class="tridimensional func">2</button>
+                        <button id="3" class="tridimensional func">3</button>
+                        <button id="4" class="tridimensional func">4</button>
+                        <button id="5" class="tridimensional func">5</button>
                     </div>
                 </div>
 
@@ -83,7 +84,7 @@
                                     <h3>Cálculo do Rateio</h3>
                                     <hr />
                                     <p>À medida que vão sendo informadas, o Republicaos totaliza as despesas e já calcula a média de gastos por pessoa.</p>
-                                    <p>O cálculo da média considera o número de dias que cada pessoa passou na república. Assim, mesmo que alguém tenha saído ou entrado em uma época diferente, a divisão continua sendo justa para todos.</p>
+                                    <p>O cálculo da média considera o número de dias que cada pessoa passou na república. Assim, mesmo que alguém tenha saído ou entrado em uma época diferente dos demais, a divisão continua sendo justa para todos.</p>
                                 </div>
                                 <div class="span-14 figuras last center">
                                     <img src="${h.url('/images/funcionamento_2.png')}" />
@@ -117,13 +118,19 @@
 
 
                            <li id="func_5" style="display:none">
-                                 <div class="span-7">
-                                    <h3>Veja o Republicaos em Ação!</h3>
+                                 <div class="span-10">
+                                    <h3>Veja o Republicaos em ação!</h3>
                                     <hr />
-                                    <p>Agora que você já sabe como funciona, o próximo passo é experimentar o Republicaos um pouco. Existe uma conta disponível para demonstração que você pode usar!</p>
+                                    <p>Agora que você já sabe como funciona, o próximo passo é experimentar o Republicaos um pouco. Utilize a conta disponível para demonstração para fazer uns testes!</p>
+                                    <br />
+                                    <a href="${h.url(controller='root', action='funcionamento')}"><button class="tridimensional"><h3 class="bottom">Demonstração</h3></button></a>
                                 </div>
-                                <div class="span-14 last center">
-                                    
+                                <div class="push-1 span-10 last">
+                                    <h3>Crie uma conta!</h3>
+                                    <hr />
+                                    <p>Se você já está convencido a usar o Republicaos, crie uma nova conta e depois convoque os outros moradores!</p>
+                                    <br /><br />
+                                    <a href="${h.url(controller='root', action='funcionamento')}"><button class="tridimensional"><h3 class="bottom">Nova Conta</h3></button></a>
                                 </div>
                            </li>
 

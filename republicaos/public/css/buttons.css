@@ -3,6 +3,10 @@ button * {
     color: inherit;
 }
 
+button a, button a:visited {
+    color: white;
+}
+
 
 button.thoughtbot {
   background: #c63929;
@@ -38,11 +42,11 @@ button.thoughtbot:active {
 
 
 
-button.roteiro, button.roteiro h2 {
+button.tridimensional, button.tridimensional h2 {
     text-shadow: 0 -1px 2px rgba(0,0,0,.5);
 }
 
-button.roteiro {
+button.tridimensional {
     width: 100%;
     vertical-align: middle;
     cursor: pointer;
@@ -74,7 +78,7 @@ button.roteiro {
 
 }
 
-button.roteiro:hover {
+button.tridimensional:hover {
     background: green;
     background: -moz-linear-gradient(top, #9dd53a 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* firefox */
     /*
@@ -83,7 +87,7 @@ button.roteiro:hover {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9dd53a', endColorstr='#7cbc0a',GradientType=0 ); /* ie */
 }
 
-button.roteiro:active {
+button.tridimensional:active, button.tridimensional.pressed {
     color: white;
     text-decoration: none;
 
@@ -98,12 +102,12 @@ button.roteiro:active {
 /*
     -webkit-box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
 */
+    -webkit-box-shadow: inset 1px 1px 1px rgba(0,0,0,.75);
     -moz-box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
     box-shadow: inset 0 2px 5px rgba(0,0,0,.75);
 }
 
 
-
-button.roteiro h6 {
+button.tridimensional h6 {
     text-transform: uppercase;
 }
