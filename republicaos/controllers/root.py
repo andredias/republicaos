@@ -49,7 +49,7 @@ class RootController(BaseController):
 
     def index(self):
         c.user = get_user()
-        return render('root/home.html')
+        return render('root/home.html', filler_data=request.params)
 
 
     def home(self):
@@ -65,8 +65,8 @@ class RootController(BaseController):
                 destino = session.pop('came_from', url(controller='pessoa', action='painel', id=user.id))
                 redirect(destino)
             else:
-                flash('O e-mail e/ou a senha fornecidos não conferem', 'warning')
-        return render('root/login.html', filler_data=request.params)
+                flash('O e-mail e/ou a senha fornecidos não conferem', 'error')
+        redirect(url(str('/')))
 
 
     def logout(self):

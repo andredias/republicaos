@@ -1,0 +1,29 @@
+<?python
+from republicaos.lib.utils import get_flash_messages
+flash_messages = get_flash_messages()
+errors = flash_messages.pop('error', [])
+?>
+
+<py:if test="errors" xmlns:py="http://genshi.edgewall.org/">
+        <div py:def="error_messages" class="error"> \
+            <h3>Foram encontrados os seguintes erros:</h3> \
+            <ul> \
+                <li py:for="message in errors">${message}</li> \
+            </ul> \
+        </div>
+        
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $.fancybox(
+                    '${error_messages()}',
+                    {
+                    'autoDimensions': false,
+                    'width'         : 350,
+                    'height'        : 'auto',
+                    'transitionIn'  : 'elastic',
+                    'transitionOut' : 'elastic'
+                    }
+                )
+            });
+        </script>
+</py:if>

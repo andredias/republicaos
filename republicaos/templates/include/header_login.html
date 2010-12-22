@@ -1,27 +1,8 @@
-    <div class="header">
-        <script type = "text/javascript">
-            $(document).ready(function()
-                {
-                $("#abrir_login").click(
-                    function ()
-                        {
-                        $("#login_form_panel").slideDown();
-                        $(this).hide();
-                        $("#fechar_login").show();
-                        }
-                );
-                
-                $("#fechar_login").click(
-                    function ()
-                        {
-                        $("#login_form_panel").slideUp();
-                        $(this).hide();
-                        $("#abrir_login").show();
-                        }
-                );
-
-            });
-        </script>
+<?python
+from republicaos.lib.auth import get_user
+no_logged_user = get_user() == None
+?>
+    <div class="header" xmlns:py="http://genshi.edgewall.org/">
         <div class="container">
             <a href="${h.url('/')}">
                 <div class="span-10">
@@ -30,13 +11,36 @@
             </a>
             
             <div class="span-14 last" style="position:relative">
-                <div class="login_panel">
-                    <div id="login_form_panel" class="shadow">
+                <div class="login_panel" py:if="no_logged_user">
+                    <script type = "text/javascript">
+                        $(document).ready(function()
+                            {
+                            $("#abrir_login").click(
+                                function ()
+                                    {
+                                    $("#login_form_panel").slideDown();
+                                    $(this).hide();
+                                    $("#fechar_login").show();
+                                    }
+                            );
+                            
+                            $("#fechar_login").click(
+                                function ()
+                                    {
+                                    $("#login_form_panel").slideUp();
+                                    $(this).hide();
+                                    $("#abrir_login").show();
+                                    }
+                            );
+
+                        });
+                    </script>
+                   <div id="login_form_panel" class="shadow">
                         <form id="login-form" name="login" method="post" action="${h.url(controller='root', action='login')}">
 
                             <p class="bottom"><span class="label">Login</span>
-                            <input id="Email" class="text placeholder" type="text" tabindex="1" name="email" size="25" value="e-mail" />
-                            <input id="password" class="text" type="password" name="senha" tabindex="2" size="8" value="senha" />
+                            <input type="email" name="email" tabindex="1" size="25" placeholder="e-mail" />
+                            <input type="password" name="senha" tabindex="2" size="8" placeholder="senha" />
                             <button type="submit">ok</button></p>
 
                         </form>
@@ -46,6 +50,5 @@
                     <button class="login shadow" id="fechar_login" style="display: none;">Fechar</button>
                 </div>
             </div>
-            
         </div>
     </div>
