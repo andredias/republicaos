@@ -11,7 +11,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-flash = Flash(categories=('info', 'warning', 'error'), default_category='info')
+flash = Flash(categories=('success', 'info', 'warning', 'error'), default_category='success')
 
 def wrap_helpers(localdict):
     """Wrap the helpers for use in Genshi templates"""

@@ -49,6 +49,14 @@ class RootController(BaseController):
 
     def index(self):
         c.user = get_user()
+        
+        flash('Teste1', 'warning')
+        flash('teste2', 'warning')
+        flash('Teste1', 'info')
+        flash('teste2', 'info')
+        flash('Teste1', 'error')
+        flash('teste2', 'error')
+        
         return render('root/home.html', filler_data=request.params)
 
 
