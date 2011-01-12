@@ -1,43 +1,32 @@
 <?python
 from republicaos.lib.utils import get_flash_messages
 flash_messages = get_flash_messages()
-errors = flash_messages.pop('error', [])
 ?>
-<py:if test="flash_messages or errors" xmlns:py="http://genshi.edgewall.org/">
-    <py:if test="errors">
-        <div py:def="error_messages" class="error"> \
-            <h3>Foram encontrados os seguintes erros:</h3> \
-            <ul> \
-                <li py:for="message in errors">${message}</li> \
-            </ul> \
+<py:if test="flash_messages" xmlns:py="http://genshi.edgewall.org/">
+    <div class="avisos_panel">
+        <div id="avisos">
+            <div py:for="css_class, messages in flash_messages.items()" class="${css_class}">
+                <ul>
+                    <li py:for="message in messages">${message}</li>
+                </ul>
+            </div>
         </div>
-        
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $.fancybox(
-                    '${error_messages()}',
+        <button class="avisos shadow" id="botao_aviso">Avisos</button>
+    </div>
+    <script type = "text/javascript">
+        $(document).ready(function() {
+            $("#botao_aviso").click(
+                function ()
                     {
-                    'autoDimensions': false,
-                    'width'         : 550,
-                    'height'        : 'auto',
-                    'transitionIn'  : 'elastic',
-                    'transitionOut' : 'elastic'
+                    $("#avisos").animate(
+                            {
+                            width: ['toggle', 'swing'],
+                            opacity: 'toggle'
+                            },
+                            'slow'
+                        );
                     }
-                )
-            });
-        </script>
-    </py:if>
-
-    <py:for each="css_class, messages in flash_messages.items()">
-        <div class="${css_class}">
-            <ul>
-                <li py:for="message in messages">${message}</li>
-            </ul>
-        </div>
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $(".${css_class}").delay(5000).fadeOut('slow')
-            });
-        </script>
-    </py:for>
+                );
+        });
+    </script>
 </py:if>

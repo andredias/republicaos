@@ -56,6 +56,8 @@ class RootController(BaseController):
         flash('teste2', 'info')
         flash('Teste1', 'error')
         flash('teste2', 'error')
+        flash('Teste1', 'error')
+        flash('teste2', 'error')
         
         return render('root/home.html', filler_data=request.params)
 
