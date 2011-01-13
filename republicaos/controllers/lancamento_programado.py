@@ -19,6 +19,7 @@ from republicaos.lib.validators import Date
 
 log = logging.getLogger(__name__)
 
+
 class LancamentoProgramadoController(BaseController):
     @republica_resource_required(DespesaAgendada)
     @validate(DespesaSchema)
@@ -43,4 +44,3 @@ class LancamentoProgramadoController(BaseController):
         Session.commit()
         flash(u'Lançamento excluído', 'info')
         redirect(url(controller='republica', action='show', republica_id=c.republica.id))
-        

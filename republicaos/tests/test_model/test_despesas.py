@@ -9,6 +9,7 @@ from republicaos.model import Republica, Fechamento, ContaTelefone, Pessoa, Mora
 from republicaos.model import TipoDespesa, DespesaAgendada, Despesa
 from republicaos.tests import Session, TestModel
 
+
 class TestMorador(TestModel):
 
     def test_despesas(self):
@@ -73,4 +74,4 @@ class TestMorador(TestModel):
 
         assert d1 != None and d1 in despesas
         assert len(despesas) == 5
-        assert dp1 not in Session # foi deletado pois o prazo chegou ao fim
+        assert dp1 not in Session  # foi deletado pois o prazo chegou ao fim

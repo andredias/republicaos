@@ -24,7 +24,7 @@ def load_environment(global_conf, app_conf):
     # Initialize config with the basic options
     config = PylonsConfig()
     config.init_app(global_conf, app_conf, package='republicaos', paths=paths)
-    
+
     config['routes.map'] = make_map(config)
     config['pylons.app_globals'] = app_globals.Globals(config)  
     config['pylons.h'] = republicaos.lib.helpers
@@ -34,7 +34,7 @@ def load_environment(global_conf, app_conf):
     # Create the Genshi TemplateLoader
     config['pylons.app_globals'].genshi_loader = TemplateLoader(
         paths['templates'], auto_reload=True)
-    
+
     # Setup the SQLAlchemy^W Elixir database engine
     engine = engine_from_config(config, 'sqlalchemy.')
     if model.elixir.options_defaults.get('autoload'):
@@ -45,7 +45,7 @@ def load_environment(global_conf, app_conf):
     else:
         # Non-reflected tables
         model.init_model(engine)
-    
+
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
     config['pylons.strict_tmpl_context'] = False

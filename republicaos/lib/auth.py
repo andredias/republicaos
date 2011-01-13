@@ -24,8 +24,10 @@ log = logging.getLogger(__name__)
 # TODO: dar uma olhada na versão mais atual
 # http://wiki.pylonshq.com/display/pylonscookbook/Advanced+Homegrown+Auth
 
+
 def check_user(email, senha):
     return Pessoa.get_by(email=email, _senha=Pessoa.encrypt_senha(senha))
+
 
 def get_user():
     '''
@@ -94,6 +96,7 @@ def republica_required(func, self, *args, **kwargs):
 user_status_morador = 1
 user_status_ex_morador = 2
 
+
 @decorator
 @republica_required
 @login_required
@@ -123,7 +126,7 @@ def morador_required(func, self, *args, **kwargs):
 
 
 
-def republica_resource_required(entity, id='id', convert=lambda x:x):
+def republica_resource_required(entity, id='id', convert=lambda x: x):
     '''
     Recurso deve pertencer à republica sendo acessada.
     Já define o recurso ao objeto.
@@ -131,7 +134,7 @@ def republica_resource_required(entity, id='id', convert=lambda x:x):
     @morador_required
     def _republica_resource_required(func, self, *args, **kwargs):
         # gambiarra pra ficar "genérica"
-        resource = entity.get_by(**{str(id):convert(request.urlvars.get(id))})
+        resource = entity.get_by(**{str(id): convert(request.urlvars.get(id))})
         if not resource:
             abort(404)
         if not hasattr(resource, 'republica'):

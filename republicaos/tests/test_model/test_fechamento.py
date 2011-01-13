@@ -198,85 +198,85 @@ class TestFechamento(TestModel):
 
     # desabilitado
     def _test_fechamento_1(self):
-       from test_dividir_conta_telefone import TestDividirContaTelefone
-       from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
-       # utiliza o test_dividir_conta_telefone
-       testa_conta = TestDividirContaTelefone()
-       testa_conta.r = self.r
-       testa_conta.c = self.c
-       testa_conta.p1 = self.p1
-       testa_conta.p2 = self.p2
-       testa_conta.p3 = self.p3
-       testa_conta.p4 = self.p4
-       testa_conta.p5 = self.p5 = Pessoa(nome = 'Alexandre')
-       self.p5.commit()
+        from test_dividir_conta_telefone import TestDividirContaTelefone
+        from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
+        # utiliza o test_dividir_conta_telefone
+        testa_conta = TestDividirContaTelefone()
+        testa_conta.r = self.r
+        testa_conta.c = self.c
+        testa_conta.p1 = self.p1
+        testa_conta.p2 = self.p2
+        testa_conta.p3 = self.p3
+        testa_conta.p4 = self.p4
+        testa_conta.p5 = self.p5 = Pessoa(nome = 'Alexandre')
+        self.p5.commit()
 
-       f = Fechamento(data = date(2007, 5, 6), republica=self.r)
+        f = Fechamento(data = date(2007, 5, 6), republica=self.r)
 
-       testa_conta.test_dividir_conta_caso_15()
+        testa_conta.test_dividir_conta_caso_15()
 
-       self.m1 = testa_conta.m1
-       self.m2 = testa_conta.m2
-       self.m3 = testa_conta.m3
-       self.m4 = testa_conta.m4
+        self.m1 = testa_conta.m1
+        self.m2 = testa_conta.m2
+        self.m3 = testa_conta.m3
+        self.m4 = testa_conta.m4
 
-       Despesa(lancamento = date(2007, 4, 21), quantia = 20, tipo = self.td1, pessoa = self.m1, republica = self.r)
-       Despesa(lancamento = date(2007, 4, 12), quantia = 50, tipo = self.td3, pessoa = self.m2, republica = self.r)
-       Despesa(lancamento = date(2007, 4, 21), quantia = 150, tipo = self.td2, pessoa = self.m2, republica = self.r)
-       Despesa(lancamento = date(2007, 5, 1), quantia = 150, tipo = self.td2, pessoa = self.m3, republica = self.r)
-       Despesa(lancamento = date(2007, 5, 5), quantia = self.c.total, tipo = self.td5, pessoa = self.m1, republica = self.r)
+        Despesa(lancamento = date(2007, 4, 21), quantia = 20, tipo = self.td1, pessoa = self.m1, republica = self.r)
+        Despesa(lancamento = date(2007, 4, 12), quantia = 50, tipo = self.td3, pessoa = self.m2, republica = self.r)
+        Despesa(lancamento = date(2007, 4, 21), quantia = 150, tipo = self.td2, pessoa = self.m2, republica = self.r)
+        Despesa(lancamento = date(2007, 5, 1), quantia = 150, tipo = self.td2, pessoa = self.m3, republica = self.r)
+        Despesa(lancamento = date(2007, 5, 5), quantia = self.c.total, tipo = self.td5, pessoa = self.m1, republica = self.r)
 
-       DespesaAgendada(quantia = 50, tipo = self.td4, pessoa = self.m1, proximo_lancamento = date(2007, 4, 19), republica = self.r)
-       DespesaAgendada(quantia = 45, tipo = self.td1, pessoa = self.m1, proximo_lancamento = date(2007, 6, 1), republica = self.r)
+        DespesaAgendada(quantia = 50, tipo = self.td4, pessoa = self.m1, proximo_lancamento = date(2007, 4, 19), republica = self.r)
+        DespesaAgendada(quantia = 45, tipo = self.td1, pessoa = self.m1, proximo_lancamento = date(2007, 6, 1), republica = self.r)
 
-       Session.commit()
+        Session.commit()
 
-       print_fechamento(f)
+        print_fechamento(f)
 
-       assert len(f.participantes) == 5
-       self.assert_geral_fechamento(f)
+        assert len(f.participantes) == 5
+        self.assert_geral_fechamento(f)
 
 
     # Desabilitado
     def _test_fechamento_2(self):
-       '''
-       Fechamento sem nenhum ex-morador
-       '''
-       from test_dividir_conta_telefone import TestDividirContaTelefone
-       from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
-       # utiliza o test_dividir_conta_telefone
-       testa_conta = TestDividirContaTelefone()
-       testa_conta.r = self.r
-       testa_conta.c = self.c
-       testa_conta.p1 = self.p1
-       testa_conta.p2 = self.p2
-       testa_conta.p3 = self.p3
+        '''
+        Fechamento sem nenhum ex-morador
+        '''
+        from test_dividir_conta_telefone import TestDividirContaTelefone
+        from exibicao_resultados         import print_rateio_conta_telefone, print_fechamento
+        # utiliza o test_dividir_conta_telefone
+        testa_conta = TestDividirContaTelefone()
+        testa_conta.r = self.r
+        testa_conta.c = self.c
+        testa_conta.p1 = self.p1
+        testa_conta.p2 = self.p2
+        testa_conta.p3 = self.p3
 
-       f = Fechamento(data=self.r.proximo_fechamento, republica=self.r)
+        f = Fechamento(data=self.r.proximo_fechamento, republica=self.r)
 
-       testa_conta.test_dividir_conta_caso_07()
+        testa_conta.test_dividir_conta_caso_07()
 
-       self.m1 = testa_conta.m1
-       self.m2 = testa_conta.m2
-       self.m3 = testa_conta.m3
+        self.m1 = testa_conta.m1
+        self.m2 = testa_conta.m2
+        self.m3 = testa_conta.m3
 
-       Despesa(lancamento = date(2007, 4, 21), quantia = Decimal(20), tipo = self.td1, pessoa = self.m1, republica = self.r)
-       Despesa(lancamento = date(2007, 4, 12), quantia = Decimal(50), tipo = self.td3, pessoa = self.m2, republica = self.r)
-       Despesa(lancamento = date(2007, 4, 21), quantia = Decimal(150), tipo = self.td2, pessoa = self.m2, republica = self.r)
-       Despesa(lancamento = date(2007, 5, 1),  quantia = Decimal(150), tipo = self.td2, pessoa = self.m3, republica = self.r)
-       Despesa(lancamento = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, pessoa = self.m1, republica = self.r)
-       Despesa(lancamento = date(2007, 5, 5),  quantia = (self.c.total / Decimal(2)), tipo = self.td5, pessoa = self.m2, republica = self.r)
+        Despesa(lancamento = date(2007, 4, 21), quantia = Decimal(20), tipo = self.td1, pessoa = self.m1, republica = self.r)
+        Despesa(lancamento = date(2007, 4, 12), quantia = Decimal(50), tipo = self.td3, pessoa = self.m2, republica = self.r)
+        Despesa(lancamento = date(2007, 4, 21), quantia = Decimal(150), tipo = self.td2, pessoa = self.m2, republica = self.r)
+        Despesa(lancamento = date(2007, 5, 1), quantia = Decimal(150), tipo = self.td2, pessoa = self.m3, republica = self.r)
+        Despesa(lancamento = date(2007, 5, 5), quantia = (self.c.total / Decimal(2)), tipo = self.td5, pessoa = self.m1, republica = self.r)
+        Despesa(lancamento = date(2007, 5, 5), quantia = (self.c.total / Decimal(2)), tipo = self.td5, pessoa = self.m2, republica = self.r)
 
-       DespesaAgendada(quantia = 150, tipo = self.td4, pessoa = self.m1, proximo_lancamento = date(2007, 4, 19), republica = self.r)
-       DespesaAgendada(quantia = 45, tipo = self.td1, pessoa = self.m1, proximo_lancamento = date(2007, 6, 1), republica = self.r)
+        DespesaAgendada(quantia = 150, tipo = self.td4, pessoa = self.m1, proximo_lancamento = date(2007, 4, 19), republica = self.r)
+        DespesaAgendada(quantia = 45, tipo = self.td1, pessoa = self.m1, proximo_lancamento = date(2007, 6, 1), republica = self.r)
 
-       Session.commit()
+        Session.commit()
 
-       print_fechamento(f)
+        print_fechamento(f)
 
-       assert f.total_telefone() == self.c.total
-       assert len(f.participantes) == 3
-       self.assert_geral_fechamento(f)
+        assert f.total_telefone() == self.c.total
+        assert len(f.participantes) == 3
+        self.assert_geral_fechamento(f)
 
 
     def test_fechamento_3(self):
@@ -309,7 +309,7 @@ class TestFechamento(TestModel):
 
         assert len(f.intervalos) == 1
         assert f.intervalos[0].data_inicial == date(2007, 4, 6)
-        assert f.intervalos[0].data_final   == date(2007, 5, 6)
+        assert f.intervalos[0].data_final == date(2007, 5, 6)
         assert len(f.participantes) == 4
         assert float_equal(sum(f.quota(morador) for morador in f.participantes), 100.0)
         assert float_equal(sum(f.quota_peso(morador) for morador in f.participantes), 100.0)

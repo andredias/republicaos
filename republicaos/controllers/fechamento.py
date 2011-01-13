@@ -23,6 +23,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 def min_date():
     '''
     data mínima que pode ser aceita para criação/edição da data de fechamento.
@@ -34,12 +35,12 @@ def min_date():
 class FechamentoSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
-    
+
     data = validators.Date(not_empty=True, min=min_date)
 
 
 class FechamentoController(BaseController):
-    
+
     @morador_required
     @validate(FechamentoSchema)
     def new(self):
@@ -54,7 +55,7 @@ class FechamentoController(BaseController):
                 flash('Fechamento criado com sucesso', 'info')
             except SQLAlchemyError as error:
                 trata_erro_bd(error)
-            destino = session.pop('came_from', 
+            destino = session.pop('came_from',
                         url(
                             controller='republica',
                             action='show',
@@ -62,14 +63,14 @@ class FechamentoController(BaseController):
                         )
                     )
             redirect(destino)
-        
-        filler = request.params or {str('data'):format_date(date.today())}
+
+        filler = request.params or {str('data'): format_date(date.today())}
         c.title = 'Criar Fechamento'
         c.submit = 'Criar'
         return render('fechamento/form.html', filler_data=filler)
-    
-    
-    @republica_resource_required(Fechamento, id='data', convert=lambda x:iso_to_date(x))
+
+
+    @republica_resource_required(Fechamento, id='data', convert=lambda x: iso_to_date(x))
     @validate(FechamentoSchema)
     def edit(self, data=None):
         if c.valid_data:
@@ -80,7 +81,7 @@ class FechamentoController(BaseController):
             if fechamentos[0].data > date.today():
                 Session.commit()
                 flash('Data do fechamento alterada com sucesso', 'info')
-                destino = session.pop('came_from', 
+                destino = session.pop('came_from',
                         url(
                             controller='republica',
                             action='show',
@@ -91,14 +92,14 @@ class FechamentoController(BaseController):
             else:
                 Session.rollback()
                 flash('Data não foi alterada pois é necessário haver um fechamento futuro', 'error')
-        
-        filler = request.params or {str('data'):format_date(c.fechamento.data)}
+
+        filler = request.params or {str('data'): format_date(c.fechamento.data)}
         c.title = 'Editar Fechamento'
         c.submit = 'Alterar'
         return render('fechamento/form.html', filler_data=filler)
-    
-    
-    @republica_resource_required(Fechamento, id='data', convert=lambda x:iso_to_date(x))
+
+
+    @republica_resource_required(Fechamento, id='data', convert=lambda x: iso_to_date(x))
     # data=None para o caso de tentarem acessar diretamente /fechamento/delete/ sem passar republica_id
     def delete(self, data=None):
         fechamentos = c.republica.fechamentos
@@ -110,7 +111,7 @@ class FechamentoController(BaseController):
         else:
             flash('Não foi possível excluir o fechamento pois é o único fechamento futuro que resta', 'error')
 
-        destino = session.pop('came_from', 
+        destino = session.pop('came_from',
                     url(
                         controller='republica',
                         action='show',

@@ -8,6 +8,7 @@ from republicaos.model import Pessoa, Republica, Fechamento, Morador
 from datetime   import date, time, timedelta
 from decimal import Decimal
 
+
 class TestPessoa(TestModel):
     def test_criacao(self):
         p = Pessoa(nome = 'Andre', senha='1234', email='abc@xyz.com')

@@ -25,11 +25,11 @@ class MoradorSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
     nome = validators.UnicodeString(not_empty=True)
-    email = validators.Email(not_empty=True) # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
+    email = validators.Email(not_empty=True)  # TODO:problemas com unicode. Não dá pra usar resolve_domain=True ainda
     entrada = Date(
                     not_empty = True,
-                    min = lambda : get_republica().intervalo_valido_lancamento[0],
-                    max = lambda : get_republica().intervalo_valido_lancamento[1]
+                    min = lambda: get_republica().intervalo_valido_lancamento[0],
+                    max = lambda: get_republica().intervalo_valido_lancamento[1]
                 )
 
 
@@ -38,8 +38,8 @@ class SaidaMoradorSchema(Schema):
     filter_extra_fields = True
     saida = Date(
                     not_empty = True,
-                    min = lambda : get_republica().intervalo_valido_lancamento[0],
-                    max = lambda : get_republica().intervalo_valido_lancamento[1]
+                    min = lambda: get_republica().intervalo_valido_lancamento[0],
+                    max = lambda: get_republica().intervalo_valido_lancamento[1]
                 )
 
 
@@ -62,7 +62,7 @@ class MoradorController(BaseController):
         pass
 
     @restrict("POST")
-    @validate(MoradorSchema) # pra garantir
+    @validate(MoradorSchema)  # pra garantir
     def create(self):
         """POST /pessoa: Create a new item"""
         if not c.valid_data:
@@ -70,7 +70,7 @@ class MoradorController(BaseController):
         c.pessoa = Morador(**c.valid_data)
         Session.commit()
         # TODO: precisa retornar código 201 - Created
-        response.status = 201 # Created
+        response.status = 201  # Created
         return
 
     @restrict("GET")
@@ -78,11 +78,11 @@ class MoradorController(BaseController):
         return c.pessoa.to_dict()
 
     @restrict("PUT")
-    @validate(MoradorSchema) # pra garantir
+    @validate(MoradorSchema)  # pra garantir
     def update(self, id):
         """PUT /pessoa/id: Update an existing item"""
         if not c.valid_data:
-           abort(406)
+            abort(406)
         c.pessoa.from_dict(c.valid_data)
         Session.commit()
         return
@@ -135,8 +135,8 @@ class MoradorController(BaseController):
             # retira as despesas agendadas para morador
             DespesaAgendada.query.filter(
                                 and_(
-                                     DespesaAgendada.pessoa==c.user,
-                                     DespesaAgendada.republica==c.republica
+                                     DespesaAgendada.pessoa == c.user,
+                                     DespesaAgendada.republica == c.republica
                                     )
                                 ).delete()
             Session.commit()

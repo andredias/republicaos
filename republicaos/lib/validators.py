@@ -14,9 +14,10 @@ import logging
 
 log = logging.getLogger(__name__)
 
-_ = validators._ # dummy translation string
+_ = validators._  # dummy translation string
 
 # Custom schemas
+
 
 class FilteringSchema(Schema):
     "Schema with extra fields filtered by default"
@@ -40,16 +41,16 @@ class Unique(validators.FancyValidator):
     __unpackargs__ = ('model', 'field')
     messages = {
         #FIXME: acentuação na mensagem
-        'notUnique' : _("Valor ja registrado no banco de dados"),
+        'notUnique': _("Valor ja registrado no banco de dados"),
     }
 
 
     def validate_python(self, value, state):
         if isinstance(self.attr, unicode):
             self.attr = str(self.attr)
-        instance = self.model.get_by(**{self.attr : value})
+        instance = self.model.get_by(**{self.attr: value})
         if instance:
-           raise Invalid(self.message('notUnique', state), value, state)
+            raise Invalid(self.message('notUnique', state), value, state)
 
 
 validators.Unique = Unique
@@ -63,7 +64,7 @@ class Captcha(validators.FancyValidator):
     
     Se há um usuário logado, então é possível aceitar captchas vazios
     """
-    messages = { 'incorreta' : _('Resposta incorreta'), }
+    messages = {'incorreta': _('Resposta incorreta'), }
     
     def validate_python(self, value, state):
         log.debug('Captcha.validate_python: value: %s, resposta_md5: %s' % (value, request.params.get(self.resposta)))

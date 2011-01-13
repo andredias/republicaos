@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 #FIXME: essa rotina deveria estar em utils.py, mas por algum motivo
 # gera um erro na iniciação do pylons quando fica lá
 
+
 def encode(text):
     '''
     Tenta evitar problemas com o unicode na hora de enviar para fora do sistema.
@@ -75,4 +76,3 @@ def send_email(to_address, subject, message, html_message=None, from_address=Non
     finally:
         server.quit()
     return
-

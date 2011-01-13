@@ -44,7 +44,7 @@ class TipoDespesaController(BaseController):
         pass
 
     @restrict("POST")
-    @validate(TipoDespesaSchema) # pra garantir
+    @validate(TipoDespesaSchema)  # pra garantir
     def create(self):
         """POST /tipos_despesa: Create a new item"""
         if not c.valid_data:
@@ -53,7 +53,7 @@ class TipoDespesaController(BaseController):
         c.tipo_despesa.republica_id = request.urlvars['republica_id']
         try:
             Session.commit()
-            response.status = 201 # Created
+            response.status = 201  # Created
         except SQLAlchemyError as error:
             Session.rollback()
             log.error(error)
@@ -67,10 +67,10 @@ class TipoDespesaController(BaseController):
         return c.tipo_despesa.to_dict()
 
     @restrict("PUT")
-    @validate(TipoDespesaSchema) # pra garantir
+    @validate(TipoDespesaSchema)  # pra garantir
     def update(self, id):
         if not c.valid_data:
-           abort(406)
+            abort(406)
         c.tipo_despesa.from_dict(c.valid_data)
         try:
             Session.commit()
@@ -108,7 +108,7 @@ class TipoDespesaController(BaseController):
             flash('Tipo de Despesa criado: %s' % c.valid_data['nome'], 'info')
             redirect(c.destino)
         c.action = url(controller='tipo_despesa', action='new', republica_id=request.urlvars['republica_id'])
-        c.title  = 'Novo Tipo de Despesa'
+        c.title = 'Novo Tipo de Despesa'
         c.submit = 'Cadastrar'
         return render('tipo_despesa/form.html', filler_data=request.params)
 

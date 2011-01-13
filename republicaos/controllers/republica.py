@@ -22,7 +22,7 @@ class RepublicaSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
     # TODO: definir tamanhos máximos
-    nome     = validators.UnicodeString(not_empty=True, max=90)
+    nome = validators.UnicodeString(not_empty=True, max=90)
     endereco = validators.UnicodeString(not_empty=True)
 
 
@@ -51,7 +51,7 @@ class RepublicaController(BaseController):
         pass
 
     @restrict("POST")
-    @validate(RepublicaSchema) # pra garantir
+    @validate(RepublicaSchema)  # pra garantir
     def create(self):
         """POST /republica: Create a new item"""
         if not c.valid_data:
@@ -60,7 +60,7 @@ class RepublicaController(BaseController):
         Morador(pessoa=c.user, republica=c.republica)
         Session.commit()
         # TODO: precisa retornar código 201 - Created
-        response.status = 201 # Created
+        response.status = 201  # Created
         return
 
     @restrict("GET")
@@ -96,11 +96,11 @@ class RepublicaController(BaseController):
                 c.republica = Republica(**c.valid_data)
                 Morador(pessoa=c.user, republica=c.republica)
                 Session.commit()
-                response.status = 201 # Created
+                response.status = 201  # Created
                 flash('República criada com sucesso!', 'info')
                 redirect(url(controller='republica', action='show', republica_id=c.republica.id))
         c.action = url(controller='republica', action='new')
-        c.title  = 'Criar Nova República'
+        c.title = 'Criar Nova República'
         c.submit = 'Criar'
         return render('republica/form.html', filler_data=request.params)
 

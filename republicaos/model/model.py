@@ -165,7 +165,7 @@ class Morador(Entity):
             clausula_data = and_(Morador.entrada <= data_final,
                         or_(Morador.saida >= data_inicial, Morador.saida == None))
 
-        moradores =  Pessoa.query.filter(
+        moradores = Pessoa.query.filter(
                         and_(
                             Morador.republica == republica,
                             clausula_data,

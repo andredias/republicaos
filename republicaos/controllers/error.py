@@ -13,7 +13,9 @@ from republicaos.lib.utils import render
 from republicaos.lib.base import BaseController
 
 import logging
+
 log = logging.getLogger(__name__)
+
 
 class ErrorController(BaseController):
 

@@ -8,9 +8,10 @@ from republicaos.lib.utils import pretty_decimal
 import sys
 import codecs
 
-(e,d,sr,sw) = codecs.lookup('utf-8')
+(e, d, sr, sw) = codecs.lookup('utf-8')
 unicode_to_utf8 = sw(sys.stdout)
 write = unicode_to_utf8.write
+
 
 def print_rateio_conta_telefone(conta):
     write('\n\nRATEIO CONTA DE TELEFONE\n------------------------')
@@ -29,7 +30,7 @@ def print_rateio_conta_telefone(conta):
     for morador in moradores:
         write('\n%10s' % morador.pessoa.nome)
         for i in range(len(funcoes)):
-            resultado  = funcoes[i](morador)
+            resultado = funcoes[i](morador)
             totais[i] += resultado
             write('|%9.2f' % resultado)
 
@@ -85,7 +86,7 @@ def print_rateio(fechamento):
         )
 
     total_porcentagem = sum(fechamento.porcentagem[participante] for participante in fechamento.participantes)
-    total_quotas      = sum(fechamento.quota[participante] for participante in fechamento.participantes)
+    total_quotas = sum(fechamento.quota[participante] for participante in fechamento.participantes)
     total_saldo_final = sum(fechamento.saldo_final[participante] for participante in fechamento.participantes)
     write('\n %*s| %*s%%| %*s|'
 #        ' %*s|'
@@ -117,8 +118,8 @@ def print_acerto_final(fechamento):
         else:
             for credor in fechamento.participantes:
                 if credor in fechamento.acerto_a_pagar[devedor]:
-                    a_pagar           = fechamento.acerto_a_pagar[devedor][credor]
-                    total_a_pagar    += a_pagar
+                    a_pagar = fechamento.acerto_a_pagar[devedor][credor]
+                    total_a_pagar += a_pagar
                     write('|%10s' % pretty_decimal(a_pagar))
                 else:
                     write('|%10s' % ' ')
@@ -149,15 +150,15 @@ def print_calculo_quotas_participantes(fechamento):
     write('\nData Inicial: %s | Data Final: %s' % (fechamento.data_inicial.strftime('%d/%m/%Y'), fechamento.data_final.strftime('%d/%m/%Y')))
     write('\nTotal de dias: %d' % fechamento.total_dias_morados)
     write('\nParticipantes | Peso(%) | Quota(%) | Quota_Peso(%)')
-    total_peso       = 0
-    total_quota      = 0
+    total_peso = 0
+    total_quota = 0
     total_quota_peso = 0
     for participante in fechamento.participantes:
-        peso       = participante.peso_quota(fechamento.data_inicial)
-        quota      = fechamento.quota[participante]
+        peso = participante.peso_quota(fechamento.data_inicial)
+        quota = fechamento.quota[participante]
         quota_peso = fechamento.quota_peso[participante]
-        total_peso       += peso
-        total_quota      += quota
+        total_peso += peso
+        total_quota += quota
         total_quota_peso += quota_peso
         write('\n%14s|%9.2f|%9.2f |%9.2f' % (participante.pessoa.nome, participante.peso_quota(fechamento.data_inicial), quota, quota_peso))
     write('\n%14s|%9.2f|%9.2f |%9.2f\n\n' % (' TOTAL', total_peso, total_quota, total_quota_peso))
@@ -167,15 +168,13 @@ def print_calculo_quotas_participantes(fechamento):
         write('\n\tData Inicial: %s | Data Final: %s' % (intervalo.data_inicial.strftime('%d/%m/%Y'), intervalo.data_final.strftime('%d/%m/%Y')))
         write('\n\tNúm Dias: %d' % intervalo.num_dias)
         write('\n\tParticipantes | Quota(%) | Quota_Peso(%)')
-        total_quota      = 0
+        total_quota = 0
         total_quota_peso = 0
         for participante in intervalo.participantes:
-            quota      = intervalo.quota[participante]
+            quota = intervalo.quota[participante]
             quota_peso = intervalo.quota_peso[participante]
-            total_quota      += quota
+            total_quota += quota
             total_quota_peso += quota_peso
             write('\n\t%14s|%9.2f |%9.2f' % (participante.pessoa.nome, quota, quota_peso))
         write('\n\t%14s|%9.2f |%9.2f\n\n' % (' TOTAL', total_quota, total_quota_peso))
     sys.stdout.flush()
-
-

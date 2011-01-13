@@ -18,7 +18,9 @@ from republicaos.model import TipoDespesa
 
 
 import logging
+
 log = logging.getLogger(__name__)
+
 
 class TestController(BaseController):
     '''

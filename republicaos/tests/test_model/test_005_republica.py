@@ -141,7 +141,7 @@ class TestRepublica(TestModel):
 
     # desabilitado
     def _test_registrar_responsavel_telefone(self):
-        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), endereco = 'R. dos Bobos, nº 0',latitude = 0, longitude = 0)
+        r = Republica(nome = 'Teste1', data_criacao = date(2007, 4, 8), endereco = 'R. dos Bobos, nº 0', latitude = 0, longitude = 0)
 
         p1 = Pessoa(nome = 'André')
         p2 = Pessoa(nome = 'Marcos')
@@ -156,7 +156,7 @@ class TestRepublica(TestModel):
         Session.commit()
         Session.expunge_all()
 
-        r  = Republica.get_by(id = 1)
+        r = Republica.get_by(id = 1)
         m1 = Morador.get_by(pessoa_id = 1)
         m2 = Morador.get_by(pessoa_id = 2)
         t1 = TelefoneRegistrado.get_by(numero = 111, republica = r)
@@ -176,7 +176,7 @@ class TestRepublica(TestModel):
         Session.commit()
         Session.expunge_all()
 
-        r  = Republica.get_by(id = 1)
+        r = Republica.get_by(id = 1)
         m1 = Morador.get_by(pessoa_id = 1)
         m2 = Morador.get_by(pessoa_id = 2)
         t1 = TelefoneRegistrado.get_by(numero = 111, republica = r)
@@ -259,8 +259,7 @@ class TestRepublica(TestModel):
         r = Republica.get_by()
 
         assert r.aluguel(date(2006, 12, 1)) == None
-        assert r.aluguel(date(2007, 1, 1))  == Decimal(100)
+        assert r.aluguel(date(2007, 1, 1)) == Decimal(100)
         assert r.aluguel(date(2007, 1, 15)) == Decimal(100)
-        assert r.aluguel(date(2007, 2, 1))  == Decimal(200)
-        assert r.aluguel(date(2007, 3, 1))  == Decimal(200)
-
+        assert r.aluguel(date(2007, 2, 1)) == Decimal(200)
+        assert r.aluguel(date(2007, 3, 1)) == Decimal(200)

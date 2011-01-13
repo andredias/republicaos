@@ -11,16 +11,19 @@ from republicaos.lib.utils import render, validate, extract_attributes
 from republicaos.lib.base import BaseController
 from republicaos.lib.validators import Date
 from republicaos.lib.auth import set_user, get_user
-from republicaos.model import CadastroPendente, TrocaSenha, Pessoa, Session, ConviteMorador, Morador
+from republicaos.model import CadastroPendente, TrocaSenha, Pessoa, Session
+from republicaos.model import ConviteMorador, Morador
 from formencode import Schema, validators
 from datetime import date, timedelta
 
 log = logging.getLogger(__name__)
 
+
 def get_republica_from_convite_morador():
     c.convite = ConviteMorador.get_by(hash=request.urlvars['id'])
     log.debug('c.convite: %s', c.convite)
     return c.convite.republica if c.convite else None
+
 
 class ConviteMoradorSchema(Schema):
     allow_extra_fields = True
@@ -32,9 +35,9 @@ class ConviteMoradorSchema(Schema):
     chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
     aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
     entrada = Date(
-                    not_empty = True,
-                    min = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[0],
-                    max = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[1]
+                    not_empty=True,
+                    min=lambda: get_republica_from_convite_morador().intervalo_valido_lancamento[0],
+                    max=lambda: get_republica_from_convite_morador().intervalo_valido_lancamento[1]
                 )
 
 
@@ -42,9 +45,9 @@ class ConviteMoradorSchema2(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
     entrada = Date(
-                    not_empty = True,
-                    min = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[0],
-                    max = lambda : get_republica_from_convite_morador().intervalo_valido_lancamento[1]
+                    not_empty=True,
+                    min=lambda: get_republica_from_convite_morador().intervalo_valido_lancamento[0],
+                    max=lambda: get_republica_from_convite_morador().intervalo_valido_lancamento[1]
                 )
 
 
@@ -59,8 +62,9 @@ def check_convidado_is_user():
 
 
 class ConfirmacaoController(BaseController):
+
     def cadastro(self, id):
-        cp = CadastroPendente.get_by(hash = id)
+        cp = CadastroPendente.get_by(hash=id)
         if cp:
             user = cp.confirma_cadastro()
             set_user(user)
@@ -70,7 +74,8 @@ class ConfirmacaoController(BaseController):
             return render('confirmacao/confirmacao_invalida.html')
 
 
-    @validate(ConviteMoradorSchema, alternative_schema=ConviteMoradorSchema2, check_function=check_convidado_is_user)
+    @validate(ConviteMoradorSchema, alternative_schema=ConviteMoradorSchema2,
+              check_function=check_convidado_is_user)
     def convite_morador(self, id):
         c.convite = ConviteMorador.get_by(hash=id)
         if not c.convite:

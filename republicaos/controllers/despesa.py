@@ -19,12 +19,13 @@ from dateutil.relativedelta import relativedelta
 
 log = logging.getLogger(__name__)
 
+
 class DespesaSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
     lancamento = Date(
                     not_empty = True,
-                    min = lambda : get_republica().intervalo_valido_lancamento[0]
+                    min = lambda: get_republica().intervalo_valido_lancamento[0]
                 )
     quantia = Number(not_empty = True, min = 0.01)
     repeticoes = validators.Int(min = 1)
@@ -51,7 +52,7 @@ class DespesaController(BaseController):
         pass
 
     @restrict("POST")
-    @validate(DespesaSchema) # pra garantir
+    @validate(DespesaSchema)  # pra garantir
     def create(self):
         """POST /tipos_despesa: Create a new item"""
         if not c.valid_data:
@@ -67,10 +68,10 @@ class DespesaController(BaseController):
         return c.despesa.to_dict()
 
     @restrict("PUT")
-    @validate(DespesaSchema) # pra garantir
+    @validate(DespesaSchema)  # pra garantir
     def update(self, id):
         if not c.valid_data:
-           abort(406)
+            abort(406)
         c.despesa.from_dict(c.valid_data)
         Session.commit()
         return
@@ -99,13 +100,13 @@ class DespesaController(BaseController):
     @validate(DespesaSchema)
     def new(self):
         session['came_from'] = request.path_info
-        c.title  = 'Novo Tipo de Despesa'
+        c.title = 'Novo Tipo de Despesa'
         c.action = url(controller='despesa', action='new', republica_id=c.republica.id)
         filler = {
-                'pessoa_id' : c.user.id,
-                'tipo_id' : 0,
-                'lancamento' : format_date(date.today()),
-                'agendamento' : False,
+                'pessoa_id': c.user.id,
+                'tipo_id': 0,
+                'lancamento': format_date(date.today()),
+                'agendamento': False,
                 }
         log.debug('\n\nnew: request.params: %s\n\n', request.params)
         log.debug('\n\nnew: c.errors: %s\n\n', c.errors)
@@ -175,6 +176,3 @@ class DespesaController(BaseController):
                            republica_id=c.despesa.republica.id)
         c.title = 'Editar Despesa'
         return render('despesa/despesa.html', filler_data = filler_data)
-
-
-    

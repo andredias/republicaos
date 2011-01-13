@@ -12,7 +12,7 @@ def palavra():
                 'uvxwz', 'python', 'design']
     palavra = random.choice(palavras)
     posicao = random.randint(1, len(palavra))
-    resposta = md5(palavra[posicao-1]).hexdigest()
+    resposta = md5(palavra[posicao - 1]).hexdigest()
     pergunta = 'Qual a %sª letra da palavra "%s"?' % (posicao, palavra)
     return (pergunta, resposta)
 

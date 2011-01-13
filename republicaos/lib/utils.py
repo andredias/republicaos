@@ -32,11 +32,13 @@ def testing_app():
     from pylons.test import pylonsapp
     return pylonsapp is not None
 
+
 def debugging_app():
     '''
     Verifica se o estado da execução do sistema está em teste.
     '''
     return not testing_app()
+
 
 def arredonda_decimal(numero, referencia):
     if type(numero) is not Decimal:
@@ -45,6 +47,7 @@ def arredonda_decimal(numero, referencia):
             referencia = Decimal(str(referencia))
     result = (numero / referencia).to_integral() * referencia
     return result.quantize(referencia)
+
 
 def arredonda(numero, referencia=1):
     if isinstance(numero, Decimal) or isinstance(referencia, Decimal):
@@ -62,6 +65,8 @@ def arredonda_cima(numero, referencia=1):
 
 
 formato = "#,##0.00"
+
+
 def pretty_decimal(numero, arredondamento=0.01):
 #    numero = arredonda(numero, arredondamento)
     return format_decimal(numero, formato)
@@ -83,6 +88,7 @@ def extract_attributes(obj):
         if not name.startswith('_') and not inspect.isroutine(value):
             attrs[name] = value
     return attrs
+
 
 # deprecated pois elixir.Entity já possui um método from_dict
 def dict_to_attributes(attributes, object):
@@ -189,11 +195,11 @@ def rem_acentuacao(str):
     '''
     return normalize('NFKD', str.decode('utf-8')).encode('ASCII', 'ignore')
 
+
 def strtourl(str):
     '''
     Retira acentos, substitui espaços e caracteres diferentes de letras por “-” (hífen), e retorna uma string formatada para ser utilizada em URLs.
     veja http://www.jarbs.com.br/urls-amigaveis-em-python,161.html
     '''
     return re.sub('[^a-z0-9]+', '-',
-                  normalize('NFKD', str.decode('utf-8')).encode('ASCII','ignore').lower())
-
+                  normalize('NFKD', str.decode('utf-8')).encode('ASCII', 'ignore').lower())

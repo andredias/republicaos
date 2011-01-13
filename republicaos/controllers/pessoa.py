@@ -77,7 +77,7 @@ class PessoaController(BaseController):
         pass
 
     @restrict("POST")
-    @validate(PessoaSchema) # pra garantir
+    @validate(PessoaSchema)  # pra garantir
     def create(self):
         """POST /pessoa: Create a new item"""
         if not c.valid_data:
@@ -85,7 +85,7 @@ class PessoaController(BaseController):
         c.pessoa = Pessoa(**c.valid_data)
         Session.commit()
         # TODO: precisa retornar código 201 - Created
-        response.status = 201 # Created
+        response.status = 201  # Created
         return
 
     @restrict("GET")
@@ -93,11 +93,11 @@ class PessoaController(BaseController):
         return c.pessoa.to_dict()
 
     @restrict("PUT")
-    @validate(PessoaSchema) # pra garantir
+    @validate(PessoaSchema)  # pra garantir
     def update(self, id):
         """PUT /pessoa/id: Update an existing item"""
         if not c.valid_data:
-           abort(406)
+            abort(406)
         c.pessoa.from_dict(c.valid_data)
         Session.commit()
         return
@@ -130,7 +130,7 @@ class PessoaController(BaseController):
             redirect(url(controller='root', action='index'))
         c.action = url(controller='pessoa', action='new')
         c.submit = 'Criar'
-        c.title  = 'Crie sua conta'
+        c.title = 'Crie sua conta'
         c.voltar_para = url(controller='root', action='index')
         c.captcha, c.captcha_md5 = captcha()
         return render('pessoa/form.html', filler_data=request.params)
@@ -143,7 +143,7 @@ class PessoaController(BaseController):
         """GET /pessoa/edit/id: Edit a specific item"""
         c.voltar_para = url(controller='pessoa', action='painel', id=id)
         if c.valid_data:
-            if not c.valid_data['senha']: # alteração de senha não é obrigatória na edição
+            if not c.valid_data['senha']:  # alteração de senha não é obrigatória na edição
                 c.valid_data.pop('senha')
             request.method = 'PUT'
             self.update(id)
@@ -188,4 +188,3 @@ class PessoaController(BaseController):
         c.can_create = len(c.user.morador_em_republicas) < 2
         c.convites = ConviteMorador.query.filter(ConviteMorador.email == c.user.email).all()
         return render('pessoa/painel.html')
-        
