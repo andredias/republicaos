@@ -68,7 +68,7 @@ class RootController(BaseController):
                 redirect(destino)
             else:
                 flash('O e-mail e/ou a senha fornecidos não conferem', 'error')
-        redirect(url(str('/')))
+        return render('root/login.html')
 
 
     def logout(self):

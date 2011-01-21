@@ -2,20 +2,75 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:py="http://genshi.edgewall.org/">
-<xi:include href="../layout.html" />
+
 <head>
-    <title>Acesse sua conta</title>
+    <title>Republicaos - Login/Criação de Conta</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+    <link rel="stylesheet" href="${h.url('/css/blueprint/screen.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/blueprint/print.css')}" type="text/css" media="print" />
+    <!--[if lt IE 8]><link rel="stylesheet" href="${h.url('/css/blueprint/ie.css')}" type="text/css" media="screen, projection" /><![endif]-->
+
+    <link rel="stylesheet" href="${h.url('/css/republicaos.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/buttons.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/avisos.css')}" type="text/css" media="screen, projection" />
+    
+    <xi:include href="../include/scripts.html"/>
+
 </head>
 
 <body>
-<header></header>
-
-<section>
-    <p><span class="want-to-signup">Não é cadastrado? <a href="${h.url(controller='pessoa', action='new')}">Crie sua conta agora!</a></span></p>
-    <!-- ! veja http://groups.google.com/group/genshi/browse_thread/thread/5979759760e24427/# -->
-
-    <xi:include href="form_login.html" />
-</section>
-
+    <xi:include href="../include/header.html" />
+    
+    <div class="main">
+        <div class="container">
+            <div class="span-24">
+                <!--
+                <h1 class="titulo">Login</h1>
+                -->
+                <br />
+                <div class="span-24 box shadow">
+                    <div class="span-11 colborder">
+                        <h2>Login</h2>
+                        <hr />
+                        <form name="login" method="post" action="${h.url(controller='root', action='login')}">
+                            <p>
+                                <label for="Email">E-mail</label><br />
+                                <input id="Email" class="text placeholder" type="text" tabindex="1" name="email" size="20" value="e-mail" />
+                            </p>
+                            <p>
+                                <label for="Passwd">
+                                    Senha: (<a title="Esqueceu a sua senha?" href="/pessoa/esqueceu_senha">?</a>)
+                                </label><br />
+                                <input id="password" class="text" type="password" name="senha" tabindex="2" size="10" />
+                            </p>
+                            <p><input type="submit" value="Acessar" /></p>
+                        </form>
+                    </div>
+                    <div class="span-12 last">
+                        <h2>Nova Conta</h2>
+                        <hr />
+                        <form name="registro" method="post" action="${h.url(controller='root', action='registro')}">
+                            <p>
+                                <label for="Email">E-mail</label><br />
+                                <input id="Email" class="text placeholder" type="text" tabindex="1" name="email" size="20" value="e-mail" />
+                            </p>
+                            <p>
+                                <label for="Passwd">Senha:</label><br />
+                                <input id="password" class="text" type="password" name="senha" tabindex="2" size="10" />
+                            </p>
+                            <p>
+                                <label for="Passwd">Confirme sua Senha:</label><br />
+                                <input id="password" class="text" type="password" name="confirmacao_senha" tabindex="2" size="10" />
+                            </p>
+                            <p><input type="submit" value="Acessar" /></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <xi:include href="../include/footer.html" />
 </body>
 </html>

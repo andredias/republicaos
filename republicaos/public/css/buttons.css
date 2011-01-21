@@ -111,3 +111,36 @@ button.tridimensional:active, button.tridimensional.pressed {
 button.tridimensional h6 {
     text-transform: uppercase;
 }
+
+
+button.login {
+    font-weight: bold;
+    text-shadow: -1px -1px 1px rgba(255, 255, 255, 0.4);
+    text-align: center;
+    -moz-border-radius: 0 0 1.5em 1.5em;
+    -webkit-border-radius: 0 0 1.5em 1.5em;
+    border-radius: 0 0 1.5em 1.5em;
+    padding: 0.5em 2em 1em;
+    cursor: pointer;
+    background: black;
+    color: #bbb;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px black;
+    
+
+    background: #363636; /* old browsers */
+    background: -moz-linear-gradient(top, #363636 0%, #191919 33%, #030303 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#363636), color-stop(33%,#191919), color-stop(100%,#030303)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#363636', endColorstr='#030303',GradientType=0 ); /* ie */
+}
+
+button.login:hover {
+    background: #565656;
+    background: -moz-linear-gradient(top, #464646 0%, #292929 33%, #232323 100%); /* firefox */
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#464646), color-stop(33%,#292929), color-stop(100%,#232323)); /* webkit */
+
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#464646', endColorstr='#232323',GradientType=0 ); /* ie */
+}

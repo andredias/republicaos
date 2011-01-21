@@ -1,0 +1,17 @@
+<?python
+from republicaos.lib.auth import get_user
+no_logged_user = get_user() == None
+?>
+    <div class="header" xmlns:py="http://genshi.edgewall.org/">
+        <div class="container">
+            <a href="${h.url('/')}">
+                <div class="span-10">
+                    <h1>Republi<span class="caos">caos</span></h1>
+                </div>
+            </a>
+            
+            <div class="span-14 last" style="text-align: right">
+                <a href="${h.url(controller='root', action='login')}"><button class="login shadow">Login &nbsp;·&nbsp; Nova Conta</button></a>
+            </div>
+        </div>
+    </div>

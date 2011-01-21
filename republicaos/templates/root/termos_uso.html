@@ -13,8 +13,8 @@
     <![endif]-->
 
     <link rel="stylesheet" href="${h.url('/css/republicaos.css')}" type="text/css" media="screen, projection"/>
-    <link rel="stylesheet" href="${h.url('/css/login.css')}" type="text/css" media="screen, projection"/>
-
+    <link rel="stylesheet" href="${h.url('/css/buttons.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/avisos.css')}" type="text/css" media="screen, projection" />
     <script src="${h.url('/jquery/1.4.4/jquery.min.js')}" type="text/javascript"></script>
 
     <style type="text/css">
@@ -25,190 +25,191 @@
 </head>
 
 <body>
-<xi:include href="../include/header_login.html"/>
+<xi:include href="../include/header.html"/>
 
 <div class="main">
     <div class="container">
         <div class="span-24 funcionamento">
-            <br/>
 
-            <h1>Termos de Uso </h1>
-            <p>Os termos e condições abaixo são aplicáveis ao uso do serviço Republicaos. Caso você não concorde com qualquer dos termos e condições aplicáveis não finalize seu cadastro e não utilize os serviços. A finalização do cadastro e o início do uso dos serviços significará a sujeição e a aceitação de todos os termos e condições aqui previstos.</p>
-                <p>Os presentes termos e condições regem a forma de prestação dos serviços denominados Republicaos, pela Pronus Tecnologia da informação Ltda., empresa com sede na Av. Ipê Amarelo, 320 c. 21, Sumaré - SP, inscrita no CNP sob nº 07.651.689/0001-63, em favor da pessoa física ou jurídica definida na página de cadastro acima identificado. A contratação dos serviços se dará com a simples finalização do cadastro e a ação de clicar no botão "Li e aceito os termos de uso" no formulário de cadastro do serviço.</p>
+            <h1 class="titulo">Termos de Uso </h1>
+            <div class="box">
+                <p>Os termos e condições abaixo são aplicáveis ao uso do serviço Republicaos. Caso você não concorde com qualquer dos termos e condições aplicáveis não finalize seu cadastro e não utilize os serviços. A finalização do cadastro e o início do uso dos serviços significará a sujeição e a aceitação de todos os termos e condições aqui previstos.</p>
+                    <p>Os presentes termos e condições regem a forma de prestação dos serviços denominados Republicaos, pela Pronus Tecnologia da informação Ltda., empresa com sede na Av. Ipê Amarelo, 320 c. 21, Sumaré - SP, inscrita no CNP sob nº 07.651.689/0001-63, em favor da pessoa física ou jurídica definida na página de cadastro acima identificado. A contratação dos serviços se dará com a simples finalização do cadastro e a ação de clicar no botão "Li e aceito os termos de uso" no formulário de cadastro do serviço.</p>
 
-            <h2>Versão Resumida </h2>
-            <ol>
-                <li>O serviço do Republicaos é fornecido na forma como está disponibilizado, sem garantias de qualquer tipo. Em nenhum caso, os autores ou titulares dos direitos autorais do serviço serão responsáveis por qualquer reclamação, danos ou outro tipo de responsabilidade decorrentes do uso ou falha dos serviços.</li>
-                <li>O Usuário expressamente declara e compromete-se a não levar a cabo qualquer atividade que interfira com, interrompa ou danifique o Serviço (ou os servidores, equipamentos e as redes que estejam relacionados com o Serviço, sejam da Pronus ou de terceiros), assim como os documentos, arquivos e toda classe de conteúdos armazenados nos seus equipamentos ("hacking").</li>
-                <li>O Usuário compromete-se a utilizar os Serviços em conformidade com a lei, a moral e os bons costumes, observando, ainda, os termos e condições contidos no presente Termo de Uso e na <a href="${h.url(controller='root', action='politica_privacidade')}">Política de Privacidade</a> da Pronus. O Usuário compromete-se, ainda, a abster-se de utilizá-lo com objetivos ou efeitos ilícitos, lesivos aos direitos e interesses de terceiros.</li>
-            </ol>
+                <h2>Versão Resumida </h2>
+                <ol>
+                    <li>O serviço do Republicaos é fornecido na forma como está disponibilizado, sem garantias de qualquer tipo. Em nenhum caso, os autores ou titulares dos direitos autorais do serviço serão responsáveis por qualquer reclamação, danos ou outro tipo de responsabilidade decorrentes do uso ou falha dos serviços.</li>
+                    <li>O Usuário expressamente declara e compromete-se a não levar a cabo qualquer atividade que interfira com, interrompa ou danifique o Serviço (ou os servidores, equipamentos e as redes que estejam relacionados com o Serviço, sejam da Pronus ou de terceiros), assim como os documentos, arquivos e toda classe de conteúdos armazenados nos seus equipamentos ("hacking").</li>
+                    <li>O Usuário compromete-se a utilizar os Serviços em conformidade com a lei, a moral e os bons costumes, observando, ainda, os termos e condições contidos no presente Termo de Uso e na <a href="${h.url(controller='root', action='politica_privacidade')}">Política de Privacidade</a> da Pronus. O Usuário compromete-se, ainda, a abster-se de utilizá-lo com objetivos ou efeitos ilícitos, lesivos aos direitos e interesses de terceiros.</li>
+                </ol>
 
-            <h2>Versão Extendida </h2>
-            <ol>
-                <li><strong>Aceitação dos Termos de Serviço</strong>
-                    <ol>
-                        <li>A Pronus Tecnologia da Informação Ltda (doravante denominada Pronus) fornece a você (doravante denominado "Usuário"), sujeito aos Termos do Serviço abaixo, o serviço Republicaos (doravante denominado o "Serviço") disponibilizado através do site <a href="http://www.republicaos.com.br">www.republicaos.com.br</a> (doravante denominado o "Site").</li>
-                        <li>Ao utilizar o Serviço, o Usuário está ciente de que estará sujeito a quaisquer manuais, regras ou políticas vigentes que possam ser publicadas de tempos em tempos aplicáveis a tal serviço, estejam eles disponíveis ou não no momento. Todos os manuais, regras ou políticas, incluindo a <a href="${h.url(controller='root', action='politica_privacidade')}">Política de Privacidade</a> passam, neste ato, a fazer parte integrante destes Termos de Uso como se nele estivessem transcritos.</li>
-                    </ol>
-                </li>
-                <li><strong>Definição dos Serviços e Prestação do Serviço pela Pronus</strong>
-                    <ol>
-                        <li>Os Serviços ora prestados consistem na disponibilização em favor do usuário de acesso a site voltado à organização financeira de república de estudantes.</li>
-                        <li>atualmente os Serviços não determinam um limite máximo de transmissões de dados enviadas ou recebidas através do Serviço, acesso aos Serviços, realizações de simulações e/ou de espaço para armazenagem de conteúdo pessoal do Usuário relacionado à prestação do Serviço. Não obstante, a Pronus reserva-se o direito, e o Usuário concorda expressamente com isso, de, a qualquer momento, passar a definir limites, condições ou detalhamentos para a utilização dos Serviços, realização de simulações, quantidade ou qualidade de acessos, aos Serviços e/ou de armazenagem de conteúdo do Usuário nos equipamentos da Pronus.</li>
-                        <li>Será de integral responsabilidade do Usuário efetuar e manter cópias de back-up dos dados inseridos no sistema por ele. A Pronus não terá qualquer obrigação de manter tais dados acessíveis, disponíveis ou de qualquer forma íntegros em seus equipamentos, ou ainda qualquer responsabilidade de sequer manter tais conteúdos em seus equipamentos.</li>
-                        <li>Os Serviços ora contratados não incluem o acesso à Internet. É de integral e exclusiva responsabilidade do Usuário obter, de forma independente e às suas custas, o equipamento, softwares e os serviços necessários para garantir sua conexão à Internet e ao site da Pronus que proporciona acesso aos Serviços.</li>
-                        <li>Os Serviços poderão incluir links que remetam a páginas de Internet, conteúdos ou recursos de terceiros, os quais não estão sob controle da Pronus. Em razão disto, o Usuário reconhece e concorda expressamente que a Pronus não terá qualquer responsabilidade sobre referidas páginas, conteúdos ou recursos.</li>
-                    </ol>
-                </li>
-                <li><strong>Suporte Técnico referente ao Serviço</strong>
-                    <ol>
-                        <li>O Usuário entende e concorda que os Serviços objeto deste Contrato não dão ao Usuário qualquer direito a receber qualquer suporte, assistência, atendimento ou qualquer forma de subsídio técnico com relação ao Serviço. A utilização do Serviço será de inteiro risco do Usuário, sendo que a Pronus apenas concordou em fornecer o Serviço de acordo com as condições estabelecidas nos Termos de Uso. Os únicos subsídios a que o Usuário terá acesso serão as instruções sobre como utilizar os serviços contidas no site, sem que isso gere qualquer ônus à Pronus e com o que o Usuário desde já expressamente concorda.</li>
-                    </ol>
-                </li>
-                <li><strong>Cadastro, login e senha do Usuário</strong>
-                    <ol>
-                        <li>Para o regular uso dos Serviços, o Usuário deverá acessar a página de oferta dos Serviços localizada no endereço eletrônico www.republicaos.com.br e efetuar o seu cadastro, concedendo à Pronus todos os dados e informações que esta solicitar, com absoluta e rigorosa precisão, e criando uma senha pessoal (senha).</li>
-                        <li>O Usuário será integralmente responsável por manter suas informações atualizadas, comprometendo-se, ainda, a manter a Pronus livre e isenta de qualquer ônus, dever ou responsabilidade decorrentes ou de qualquer forma relacionados a qualquer imprecisão, inveracidade, ausência, incompleição ou desatualização destas informações e/ou dados.</li>
-                        <li>Caso, a qualquer momento, a Pronus identifique, a seu critério, que os dados informados pelo Usuário estão incompletos, imprecisos, desatualizados ou são inverídicos, a Pronus poderá, independente de qualquer aviso ao Usuário, cancelar o acesso deste aos Serviços, independente de qualquer aviso ao Usuário, sem que isso gere qualquer direito ao Usuário ou ônus à Pronus.</li>
-                        <li>O Usuário declara-se ciente de que toda vez que desejar acessar os Serviços deverá efetuar login no site <a href="http://www.republicaos.com.br">www.republicaos.com.br</a>, informando seu login e senha pessoais. Referidos login e senha são para uso pessoal e intransferível do Usuário, sendo de sua total responsabilidade manter sigilo absoluto sobre estes dados e não os compartilhando com quaisquer terceiros.</li>
-                        <li>O Usuário expressamente concorda que o cadastro mencionado nesta cláusula seja mantido pela Pronus e que suas informações sejam fornecidas a autoridades competentes em casos judiciais.</li>
-                        <li>Todo e qualquer uso dos Serviços ou de qualquer outro serviço ou produto, na Internet ou fora dela, com menção a login e senha pessoais do Usuário serão de total, integral, única e exclusiva responsabilidade do Usuário, razão pela qual o Usuário manterá a Pronus livre e isenta de qualquer ônus, dever ou responsabilidade decorrentes ou de qualquer forma relacionados com o uso do login e senha pessoais do Usuário </li>
-                        <li>O Usuário aceita não acessar (ou sequer tentar acessar) o Serviço por quaisquer meios que não através da interface que é fornecida pela Pronus, exceto se para tal for especificamente autorizado num acordo separado celebrado entre si e a Pronus.</li>
-                        <li>O Usuário sairá de sua conta de Usuário ao final de cada sessão, efetuando a finalização da sessão através das ferramentas de logout disponibilizadas pela Pronus na página de prestação dos Serviços. A Pronus não será responsável por qualquer perda ou dano decorrente do descumprimento do disposto nesta cláusula por parte do Usuário.</li>
-                    </ol>
-                </li>
-                <li><strong>Prazo e Cancelamento dos Serviços</strong>
-                    <ol>
-                        <li>O presente Contrato é celebrado por prazo indeterminado, a partir da opção do Usuário em aceitar eletronicamente o presente Contrato, ficando, desta forma, os Serviços disponíveis ao Usuário por prazo indeterminado, até o término do presente Contrato por qualquer motivo.</li>
-                        <li>O Usuário reconhece expressamente que, caso deseje cancelar os Serviços, a qualquer momento, basta deixar de utilizá-lo e não efetuar login nos Serviços pelo prazo mínimo de 90 (noventa) dias.</li>
-                        <li>O Usuário declara-se ciente, ainda, que independente de sua vontade de cancelar a sua conta de serviços ou não, caso deixe de efetuar logins no serviço por um prazo superior a 90 (noventa) dias, sua conta será automaticamente cancelada por inatividade, independentemente de qualquer aviso prévio ao Usuário, sem que isso gere qualquer direito ao Usuário ou ônus à Pronus.</li>
-                        <li>Independente do acima disposto, a Pronus reserva-se o direito de rescindir o presente Contrato, a seu exclusivo critério, cancelando imediatamente a conta do Usuário, nos seguintes casos:
-                            <ol style="list-style-type: lower-alpha">
-                                <li>caso a Pronus acreditar que o Usuário esteja violando ou agindo de forma contrária a qualquer das disposições dos Termos de Uso, a qualquer legislação ou norma vigente, ou ainda à política de privacidade definida;</li>
-                                <li>caso o Usuário, por qualquer razão, e sob o entendimento da Pronus, utilizar os Serviços indevidamente ou de forma que venha a degradar a imagem da Pronus;</li>
-                            </ol>
-                        </li>
-                        <li>O Usuário reconhece e aceita que, caso o presente contrato seja terminado e sua conta de serviços cancelada a qualquer tempo, por qualquer motivo, o Usuário ficará automaticamente impossibilitado de acessar sua conta de serviços e utilizar os Serviços, bem como qualquer arquivo ou outros conteúdos relacionados ou de qualquer forma vinculados à sua conta. Ademais, a Pronus não terá qualquer obrigação, mediante o término do presente Contrato, a qualquer tempo e por qualquer motivo, de armazenar qualquer conteúdo. Desta forma, a Pronus poderá, a qualquer momento, apagar de seus servidores, de forma definitiva, automática e independente de qualquer notificação ao Usuário, qualquer conteúdo de propriedade deste último que esteja de qualquer forma armazenada em seus equipamentos, sem que isto gere qualquer direito ao Usuário ou ônus à Pronus.</li>
-                    </ol>
-                </li>
-                <li><strong>Política de Privacidade</strong>
-                    <ol>
-                        <li>O Usuário expressamente declara-se ciente e de acordo que a prestação dos Serviços, bem como o presente Contrato, sujeita-se, ainda, aos termos e condições da <a href="${h.url(controller='root', action='politica_privacidade')}">política de privacidade</a> da Pronus.</li>
-                        <li>Tal documento constitui parte integrante dos Termos do Serviço tanto quanto qualquer outro conjunto de regras ou normativos indicados pela Pronus como aplicáveis aos Serviços, e deverá ser lido atentamente por todos os Usuários antes da aceitação e utilização do Serviço. O Usuário concorda com a finalização do seu cadastro e a aceitação do presente Contrato, declara-se de acordo também com a política de privacidade da Pronus.</li>
-                    </ol>
-                </li>
-                <li><strong>Declarações do Usuário</strong>
-                    <ol>
-                        <li>O Usuário reconhece que o Serviço é fornecido na forma como está disponibilizado e que a Pronus não é e nem será responsável por exclusão, não entrega ou falha no arquivamento de qualquer dado ou informação cadastrado pelo Usuário.</li>
-                        <li>Ademais, o Usuário reconhece que o Serviço é fornecido da forma em que estiver disponível, sem qualquer garantia de desempenho ou alcance de resultados específicos. A Pronus envidará os melhores esforços para que o Serviço funcione da melhor maneira possível. No entanto, considerando a própria natureza do Serviço, as garantias fornecidas pela Pronus são limitadas.</li>
-                        <li>O Usuário expressamente declara e compromete-se a não levar a cabo qualquer atividade que interfira com, interrompa ou danifique o Serviço (ou os servidores, equipamentos e as redes que estejam relacionados com o Serviço, sejam da Pronus ou de terceiros), assim como os documentos, arquivos e toda classe de conteúdos armazenados nos seus equipamentos informáticos ("hacking").</li>
-                        <li>A contratação dos Serviços não tem qualquer caráter comercial, razão pela qual o Usuário reconhece e aceita que não poderá reproduzir, duplicar, copiar, vender, comercializar ou revender o Serviço para qualquer efeito.</li>
-                        <li>O Usuário compromete-se a utilizar os Serviços em conformidade com a lei, a moral e os bons costumes, observando, ainda, os termos e condições contidos no presente Termo de Uso e na <a href="${h.url(controller='root', action='politica_privacidade')}">política de privacidade</a> da Pronus. O Usuário compromete-se, ainda, a abster-se de utilizá-lo com objetivos ou efeitos ilícitos, lesivos aos direitos e interesses de terceiros.</li>
-                        <li>O Usuário expressamente declara e garante que:
-                            <ol style="list-style-type: lower-alpha">
-                                <li>não utilizará os Serviços para fins ilegais;</li>
-                                <li>não utilizará os Serviços para se engajar em atividade comercial, o que inclui, mas não se limita a, oferecer qualquer tipo de produto para venda, procurar anunciantes e patrocinadores, e inserir banners de qualquer tipo;</li>
-                                <li>não veiculará informação sobre atividades ilegais e incitação ao crime ou ainda sobre atividades que ponham em risco a saúde ou integridade física do Usuário ou de qualquer terceiro;</li>
-                                <li>não divulgará material pornográfico ou atividades ilegais incluindo menores de 18 anos;</li>
-                                <li>não divulgará mensagens ou páginas criptografadas ou protegidas por senhas;</li>
-                                <li>não divulgará material protegido por direitos autorais ou por confidencialidade sem a autorização dos seus titulares, incluindo, mas não se limitando a, fotos, textos, programas de computador;</li>
-                                <li>não se fará passar por outra pessoa, empresa ou instituição;</li>
-                                <li>não coletará ou divulgará dados pessoais de usuários;</li>
-                                <li>não veiculará páginas ocultas ou imagens ocultas;</li>
-                                <li>não modificará, adaptará, traduzirá ou fará engenharia reversa, no todo ou em parte, de qualquer Software utilizado pela Pronus ou por qualquer parceiro na prestação dos Serviços;</li>
-                                <li>não utilizará os Serviços para transmitir material ilegal, difamatório, que viole a privacidade de terceiros, ou que seja abusivo, ameaçador, discriminatório, obsceno, prejudicial, vulgar obsceno, injurioso, ou de qualquer outra forma censurável;</li>
-                                <li>não transmitirá qualquer material que viole direitos de terceiro, incluindo, mas sem limitação, direitos de propriedade intelectual de terceiros;</li>
-                                <li>não enviará mensagens não solicitadas, reconhecidas como "spam", "junk mail" ou correntes de correspondência ("chain letters");</li>
-                                <li>não utilizará tais Serviços para enviar quaisquer tipos de vírus ou arquivos contendo quaisquer tipos de vírus ("Cavalos de Tróia") ou que possam causar danos ao seu destinatário ou a terceiros;</li>
-                                <li>não obterá ou tentará obter acesso não autorizado a outros sistemas ou redes de computadores conectados ao Serviço;</li>
-                                <li>será o único responsável pelo conteúdo que vier a transmitir ou retransmitir, bem como pelo conteúdo e informações que vier a disponibilizar no site relacionado aos Serviços;</li>
-                                <li>cumprirá todos os requerimentos, procedimentos, políticas, e regulamentos de redes conectadas aos Serviços;</li>
-                                <li>possui capacidade jurídica para celebrar este contrato e utilizar os produtos e Serviços objeto deste contrato, ou é menor devidamente assistido ou representado por seus representantes legais;</li>
-                                <li>reconhece que o presente contrato se formaliza, vinculando as partes, através da assinatura eletrônica do mesmo pelas partes, que se dará através do clique no checkbox com o texto "Li e estou de acordo com os termos de uso do republicaos.com.br", disponível na página de cadastro dos Serviços;</li>
-                                <li>leu e está ciente e de pleno acordo com todos os termos e condições deste instrumento;</li>
-                            </ol>
-                        </li>
-                        <li>O Usuário reconhece e concorda que a Pronus não endossa o conteúdo de quaisquer comunicações veiculadas pelos seus usuários, constantes nos servidores ou equipamentos da Pronus e/ou de seus parceiros e, conforme disposto acima, não é responsável por qualquer material ilegal, difamatório, que viole direitos de privacidade, ou que seja abusivo, ameaçador, discriminatório, obsceno, injurioso ou censurável de qualquer forma ou que infrinja ou possa infringir direitos de propriedade intelectual ou outros direitos de terceiros.</li>
-                        <li>O uso de quaisquer dos Serviços em condições contrárias ao disposto nesta cláusula conferirá à Pronus o direito de terminar o presente instrumento, cancelar a conta de acesso aos Serviços do Usuário, nos termos da cláusula 5, bem como de rescindir quaisquer outros acordos e cancelar quaisquer outros Serviços que tenham sido contratados pelo Usuário da Pronus. Adicionalmente, a Pronus terá o direito de excluir, no todo ou em parte, qualquer conteúdo eventualmente inserido pelo Usuário em páginas ou equipamentos da Pronus que esta última venha a entender contrários às disposições deste instrumento ou a quaisquer outras regras da Pronus, ressalvado ainda o direito da Pronus de pleitear indenização do Usuário.</li>
-                    </ol>
-                </li>
-                <li><strong>Softwares utilizados no Serviço</strong>
-                    <ol>
-                        <li>O Usuário reconhece e concorda que o Serviço, bem como qualquer software necessário na utilização dos Serviços (doravante denominado "Software"), são e serão, a qualquer tempo, de propriedade da Pronus ou de seus parceiros comerciais.</li>
-                        <li>O uso do Software pelo Usuário, para acesso aos Serviços, não significa ou significará, a qualquer tempo, que o Usuário adquiriu ou adquirirá qualquer direito não expressamente previsto no presente instrumento, em especial, mas sem se limitar, a direito de comercializar ou explorar comercialmente o Software, efetuar qualquer tipo de descompilação, descompressão, engenharia reversa ou acesso ao código fonte do Software. Qualquer uso não autorizado dos Softwares dará à Pronus o direito de cancelar imediatamente a conta de serviços do Usuário e o seu acesso aos Softwares, independente de aviso prévio.</li>
-                        <li>O Usuário declara-se ciente, ainda, de que referido Software contém informações confidenciais de acordo com a Lei sobre Proteção à Propriedade Intelectual e normas correlatas, as quais devem ser respeitadas e mantidas em sigilo de forma integral e absoluta pelo Usuário.</li>
-                        <li>A Pronus garante ao Usuário uma licença simples de acesso e uso do Software, a qual será pessoal, intransferível e não exclusiva para acessar os Serviços na forma prevista neste instrumento. A licença ora garantida não permite que o Usuário, ou que este permita que terceiros copiem, modifiquem, criem obras derivadas, efetuem engenharia reversa ou desmontagem do Software ou qualquer ato para descobrir seu código fonte, bem como vender, consignar, sublicenciar, conceder em garantia ou de qualquer outra forma transferir qualquer direito com relação ao Software.</li>
-                        <li>O Usuário também não poderá modificar o Software de qualquer maneira ou utilizar versões modificadas do Software inclusive, sem limitação, com a finalidade de obter acesso não autorizado ao Serviço.</li>
-                    </ol>
-                </li>
-                <li><strong>Conteúdos do Usuário decorrentes do uso dos Serviços</strong>
-                    <ul>
-                        <li>Em razão do uso dos Serviços, nos termos do presente instrumento, o Usuário:
-                            <ol>
-                                <li>concorda que ao acessar, utilizar, visualizar o conteúdo referente ao Serviço, ou ainda armazenar conteúdo pessoal nos equipamentos da Pronus, dá à Pronus uma licença perpétua, irrevogável, mundial, isenta de direitos, e não exclusiva para de forma conjunta e coletiva com informações submetidas por outros usuários, reproduzir, adaptar, modificar, traduzir, publicar, utilizar publicamente, visualizar publicamente e distribuir qualquer conteúdo por si submetido, endereçado ou visualizado no ou através do Serviço ou ainda qualquer resultado obtido com a utilização dos Serviços, através da realização de uma ou mais simulações. A Pronus poderá, inclusive, mas sem se limitar, utilizar as informações mencionadas neste item de forma segmentada, aplicando quaisquer filtros, seleções ou divisões que deseje. Não obstante, a Pronus compromete-se a manter as informações pessoais e o conteúdo individual do Usuário em absoluto sigilo e confidencialidade, salvo pelas hipóteses juridicas previstas;</li>
-                                <li>concorda que a licença acima mencionada inclui o direito da Pronus tornar esse Conteúdo disponível a outras sociedades, organizações ou indivíduos com quem a Pronus tem relações para o fornecimento de serviços consorciados, e para o uso desse Conteúdo em conexão com o fornecimento desses Serviços;</li>
-                                <li>concorda que esta licença permitirá à Pronus desempenhar todas as ações aqui previstas;</li>
-                                <li>confirma e garante à Pronus que tem todos os direitos, poderes e autoridade necessária para outorgar a licença supra, bem como para celebrar o presente instrumento e executar todas as obrigações aqui previstas.</li>
-                            </ol>
-                        </li>
-                    </ul>
-                </li>
-                <li><strong>Garantias</strong>
-                    <ol>
-                        <li>Os serviços são proporcionados "como estão" e a Pronus não dará qualquer garantia em respeito a eles. Em particular, a Pronus não garantirá que:
-                            <ol>
-                                <li>o uso do Serviço vá ao encontro às suas exigências;</li>
-                                <li>o uso do Serviço será ininterrupto, seguro ou isento da verificação de erros;</li>
-                                <li>o uso do Serviço proporcione qualquer desempenho ou atenda a qualquer expectativa do Usuário;</li>
-                                <li>qualquer informação obtida em resultado do seu uso do Serviço será precisa ou confiável, e quaisquer defeitos na operação ou na funcionalidade de qualquer Software que lhe seja fornecido, como parte do Serviço, sejam corrigidos.</li>
-                            </ol>
-                        </li>
-                        <li>Nenhuma condição, garantia ou outros termos (incluindo quaisquer termos implícitos relativos à qualidade satisfatória, adequação para o fim ou conformidade com a descrição) é aplicável ao Serviço.</li>
-                        <li>A UTILIZAÇÃO DOS SERVIÇOS É FEITA SOB INTEIRA RESPONSABILIDADE DO USUÁRIO. A PRESTAÇÃO DOS SERVIÇOS DEPENDE DA FUNCIONALIDADE DE VÁRIOS FATORES, COMO A DISPONIBILIDADE DE ACESSO À INTERNET, INTERAÇÃO DE SERVIDORES E SERVIÇOS DE TELECOMUNICAÇÕES DE TERCEIROS, ADEQUAÇÃO DOS EQUIPAMENTOS DO CONTRATANTE E DO DESTINATÁRIO DA MENSAGEM, DENTRE OUTROS. ASSIM, A PRONUS NÃO CONFERE QUALQUER GARANTIA QUE OS SERVIÇOS FUNCIONARÃO CORRETAMENTE E SEM ERROS E FALHAS.</li>
-                        <li>A PRONUS NÃO OFERECE GARANTIAS DE QUALQUER NATUREZA COM RELAÇÃO AOS SEUS SERVIÇOS, SEJAM EXPRESSAS, SEJAM IMPLÍCITAS. A PRONUS NÃO GARANTE QUE OS SERVIÇOS SERÃO ADEQUADOS ÀS NECESSIDADES DO CONTRATANTE OU QUE OS SERVIÇOS SERÃO PRESTADOS DE MANEIRA ININTERRUPTA, SEGURA, OU LIVRE DE ERROS.</li>
-                        <li>O CONTRATANTE RECONHECE E CONCORDA QUE QUALQUER MATERIAL E/OU INFORMAÇÃO OBTIDO ATRAVÉS DOS SERVIÇOS OU DE SUA UTILIZAÇÃO SERÁ DE SUA EXCLUSIVA RESPONSABILIDADE, ESPECIALMENTE NO TOCANTE A QUAISQUER DANOS QUE LHE VENHAM A SER CAUSADOS.</li>
-                        <li>A PRONUS NÃO SE RESPONSABILIZA POR EVENTUAIS FALHAS NOS SERVIÇOS, FICANDO ESTABELECIDO QUE TAIS SERVIÇOS SERÃO FORNECIDOS TAL COMO ESTIVEREM DISPONÍVEIS.</li>
-                        <li>A PRONUS NÃO É E NEM SERÁ RESPONSÁVEL:
-                            <ol>
-                                <li>PELA IMPOSSIBILIDADE DE UTILIZAÇÃO DE QUAISQUER DOS SERVIÇOS ACIMA MENCIONADOS EM RAZÃO DA INCOMPATIBILIDADE DOS SERVIÇOS COM A CONFIGURAÇÃO DO COMPUTADOR DO CONTRATANTE;</li>
-                                <li>PELA DESOBEDIÊNCIA, POR PARTE DO CONTRATANTE, DAS REGRAS E CONDIÇÕES DE USO ESTABELECIDAS POR CADA UM DOS PROVEDORES DE ACESSO AOS QUAIS O CONTRATANTE VENHA A SE CONECTAR;</li>
-                                <li>POR QUAISQUER DANOS SOFRIDOS PELO CONTRATANTE EM RAZÃO DA INCORRETA UTILIZAÇÃO DOS SERVIÇOS;</li>
-                                <li>PELA REPARAÇÃO DE DANOS DE QUALQUER NATUREZA CAUSADOS PELA QUEBRA DE PRIVACIDADE OU SEGURANÇA DE DADOS DO CONTRATANTE DURANTE A CONEXÃO DE SEU COMPUTADOR À INTERNET ATRAVÉS DE TERCEIROS;</li>
-                                <li>QUALQUER CONTEÚDO, PROPAGANDA, ANÚNCIO, PROMOÇÃO, CHAMADA OU PROMESSA FEITA E/OU RECEBIDA ATRAVÉS DOS SERVIÇOS;</li>
-                                <li>QUALQUER FALHA NO SISTEMA DE E-MAIL, AINDA QUE POR MOTIVO QUE LHE SEJA ATRIBUÍVEL, FICANDO ESTABELECIDO QUE O ACESSO AO SERVIÇO DE E-MAIL, QUANDO DISPONÍVEL, SERÁ FORNECIDO DA FORMA COMO SE ENCONTRA;</li>
-                                <li>ATOS DE QUALQUER NATUREZA PRATICADOS PELO CONTRATANTE NA INTERNET;</li>
-                                <li>PREJUÍZOS, PERDAS E DANOS CAUSADOS AO CONTRATANTE OU A QUALQUER TERCEIRO, INCLUINDO, MAS SEM SE LIMITAR, A PERDA DE RECEITAS, LUCROS CESSANTES, INTERRUPÇÃO OU NÃO REALIZAÇÃO DE NEGÓCIOS, PERDA DE INFORMAÇÃO E SEGREDOS COMERCIAIS E DE INDÚSTRIA, EM DECORRÊNCIA DE QUALQUER FALHA NOS SERVIÇOS;</li>
-                                <li>PREJUÍZOS CAUSADOS POR PROGRAMAS NOCIVOS AO EQUIPAMENTO DO CONTRATANTE (TAIS COMO, MAS SEM SE LIMITAR A VÍRUS E TROJANS), AINDA QUE TAIS ARQUIVOS E PROGRAMAS TENHAM SIDO RECEBIDOS POR UMA CONTA DE E-MAIL DO CONTRATANTE CADASTRADA NOS TERMOS DESTE INSTRUMENTO.</li>
-                            </ol>
-                        </li>
-                    </ol>
-                </li>
-                <li><strong>Propriedade Intelectual</strong>
-                    <ol>
-                        <li>O Usuário reconhece e concorda que todo e qualquer conteúdo relacionado aos Serviços, incluindo, mas sem se limitar, a conteúdo publicitário, informações editoriais contidas nos Serviço ou ainda qualquer conteúdo ou código fonte do Software, bem como quaisquer marcas, nomes comerciais e logotipos a eles relacionados, são protegidos por direitos autorais, outros direitos de propriedade intelectual ou ainda outra eventual legislação aplicável. Salvo expressamente autorizado pela Pronus ou anunciantes, o Usuário concorda em não modificar, alugar, vender, distribuir ou criar obras derivadas a partir do Serviço ou do Software, no todo ou em parte.</li>
-                    </ol>
-                </li>
-                <li><strong>Anúncios Publicitários</strong>
-                    <ol>
-                        <li>O Usuário expressamente declara-se ciente e de acordo que alguns dos Serviços são suportados por rendimentos resultantes de veiculação de publicidade no site que suporta e oferece os Serviços ou ainda a realização de anúncios, parcerias, promoções publicitárias ou qualquer outra forma de exploração comercial do site que suporta o Serviço ou dos Serviços em si, sem que o Usuário tenha direito a qualquer participação sobre a receita advinda destes recursos.</li>
-                        <li>A forma, o modo e a extensão dos conteúdos comerciais incluídos nos Serviços podem estar sujeitos a alterações, modificações ou adaptações por parte da Pronus e seus parceiros, independentemente de qualquer notificação ao Usuário a qualquer tempo.</li>
-                    </ol>
-                </li>
-                <li><strong>Disposições Gerais</strong>
-                    <ol>
-                        <li>O Usuário declara-se ciente e desde já concorda que a Pronus poderá encaminhar ao correio eletrônico ("email") informado no cadastro do Usuário mensagens de caráter comercial, informativo ou publicitário, com finalidade de comunicação e/ou divulgação de qualquer assunto que se refira aos serviços objeto deste Contrato ou a conteúdos, comerciais ou não, de parceiros da Pronus.</li>
-                        <li>O presente instrumento não poderá ser, de nenhuma forma e em nenhuma hipótese, cedido pelo Usuário a qualquer terceiro sem a prévia e expressa anuência da Pronus. Por outro lado, a Pronus poderá, a qualquer momento, ceder os direitos e obrigações previstos no presente contrato a qualquer de seus parceiros, bem como a qualquer empresa afiliada, independentemente de qualquer notificação ao Usuário.</li>
-                        <li>Os termos e condições constantes dos presentes Termos de Uso do Serviço poderão ser atualizados ou modificados, a qualquer tempo, a critério da Pronus, independente de qualquer notificação prévia ao Usuário. Caberá a este manter-se constantemente atualizado dos presentes Termos de Uso dos Serviços a qualquer tempo acessando esta página. Não obstante, sempre que as alterações nas condições dos presentes Termos de Uso indicarem limitações do uso dos Serviços pelo Usuário, a Pronus se compromete a informar, via e-mail, ao Usuário, a respeito de tais modificações. Caso o Usuário não concorde com tais alterações, basta cancelar sua conta de serviços, deixando de efetuar login nos Serviços nos termos da cláusula 5.2. acima.</li>
-                        <li>O Usuário reconhece e aceita que a forma e natureza dos Serviços que a Pronus presta podem mudar, no todo ou em parte, a qualquer tempo, a qualquer título, a critério da Pronus, independente de aviso prévio ao Usuário. Não obstante, sempre que tais alterações significarem restrições do uso dos Serviços por parte do Usuário, a Pronus se compromete a informar, via e-mail, ao Usuário, a respeito de tais modificações.</li>
-                        <li>O Usuário reconhece e aceita que Pronus poderá, a seu exclusivo critério, parar (permanente ou temporariamente) de prestar o Serviço (ou qualquer parte do Serviço) a si ou à generalidade dos utilizadores, sem o/a avisar previamente.</li>
-                    </ol>
-                </li>
-                <li><strong>Foro</strong>
-                    <ul>
-                        <li>As partes elegem o Foro da Comarca de Sumaré - SP para dirimir eventuais e não esperadas demandas emergentes do presente termo, com renúncia a qualquer outro, por mais privilegiado que seja.</li>
-                    </ul>
-                </li>
-            </ol>
+                <h2>Versão Extendida </h2>
+                <ol>
+                    <li><strong>Aceitação dos Termos de Serviço</strong>
+                        <ol>
+                            <li>A Pronus Tecnologia da Informação Ltda (doravante denominada Pronus) fornece a você (doravante denominado "Usuário"), sujeito aos Termos do Serviço abaixo, o serviço Republicaos (doravante denominado o "Serviço") disponibilizado através do site <a href="http://www.republicaos.com.br">www.republicaos.com.br</a> (doravante denominado o "Site").</li>
+                            <li>Ao utilizar o Serviço, o Usuário está ciente de que estará sujeito a quaisquer manuais, regras ou políticas vigentes que possam ser publicadas de tempos em tempos aplicáveis a tal serviço, estejam eles disponíveis ou não no momento. Todos os manuais, regras ou políticas, incluindo a <a href="${h.url(controller='root', action='politica_privacidade')}">Política de Privacidade</a> passam, neste ato, a fazer parte integrante destes Termos de Uso como se nele estivessem transcritos.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Definição dos Serviços e Prestação do Serviço pela Pronus</strong>
+                        <ol>
+                            <li>Os Serviços ora prestados consistem na disponibilização em favor do usuário de acesso a site voltado à organização financeira de república de estudantes.</li>
+                            <li>atualmente os Serviços não determinam um limite máximo de transmissões de dados enviadas ou recebidas através do Serviço, acesso aos Serviços, realizações de simulações e/ou de espaço para armazenagem de conteúdo pessoal do Usuário relacionado à prestação do Serviço. Não obstante, a Pronus reserva-se o direito, e o Usuário concorda expressamente com isso, de, a qualquer momento, passar a definir limites, condições ou detalhamentos para a utilização dos Serviços, realização de simulações, quantidade ou qualidade de acessos, aos Serviços e/ou de armazenagem de conteúdo do Usuário nos equipamentos da Pronus.</li>
+                            <li>Será de integral responsabilidade do Usuário efetuar e manter cópias de back-up dos dados inseridos no sistema por ele. A Pronus não terá qualquer obrigação de manter tais dados acessíveis, disponíveis ou de qualquer forma íntegros em seus equipamentos, ou ainda qualquer responsabilidade de sequer manter tais conteúdos em seus equipamentos.</li>
+                            <li>Os Serviços ora contratados não incluem o acesso à Internet. É de integral e exclusiva responsabilidade do Usuário obter, de forma independente e às suas custas, o equipamento, softwares e os serviços necessários para garantir sua conexão à Internet e ao site da Pronus que proporciona acesso aos Serviços.</li>
+                            <li>Os Serviços poderão incluir links que remetam a páginas de Internet, conteúdos ou recursos de terceiros, os quais não estão sob controle da Pronus. Em razão disto, o Usuário reconhece e concorda expressamente que a Pronus não terá qualquer responsabilidade sobre referidas páginas, conteúdos ou recursos.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Suporte Técnico referente ao Serviço</strong>
+                        <ol>
+                            <li>O Usuário entende e concorda que os Serviços objeto deste Contrato não dão ao Usuário qualquer direito a receber qualquer suporte, assistência, atendimento ou qualquer forma de subsídio técnico com relação ao Serviço. A utilização do Serviço será de inteiro risco do Usuário, sendo que a Pronus apenas concordou em fornecer o Serviço de acordo com as condições estabelecidas nos Termos de Uso. Os únicos subsídios a que o Usuário terá acesso serão as instruções sobre como utilizar os serviços contidas no site, sem que isso gere qualquer ônus à Pronus e com o que o Usuário desde já expressamente concorda.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Cadastro, login e senha do Usuário</strong>
+                        <ol>
+                            <li>Para o regular uso dos Serviços, o Usuário deverá acessar a página de oferta dos Serviços localizada no endereço eletrônico www.republicaos.com.br e efetuar o seu cadastro, concedendo à Pronus todos os dados e informações que esta solicitar, com absoluta e rigorosa precisão, e criando uma senha pessoal (senha).</li>
+                            <li>O Usuário será integralmente responsável por manter suas informações atualizadas, comprometendo-se, ainda, a manter a Pronus livre e isenta de qualquer ônus, dever ou responsabilidade decorrentes ou de qualquer forma relacionados a qualquer imprecisão, inveracidade, ausência, incompleição ou desatualização destas informações e/ou dados.</li>
+                            <li>Caso, a qualquer momento, a Pronus identifique, a seu critério, que os dados informados pelo Usuário estão incompletos, imprecisos, desatualizados ou são inverídicos, a Pronus poderá, independente de qualquer aviso ao Usuário, cancelar o acesso deste aos Serviços, independente de qualquer aviso ao Usuário, sem que isso gere qualquer direito ao Usuário ou ônus à Pronus.</li>
+                            <li>O Usuário declara-se ciente de que toda vez que desejar acessar os Serviços deverá efetuar login no site <a href="http://www.republicaos.com.br">www.republicaos.com.br</a>, informando seu login e senha pessoais. Referidos login e senha são para uso pessoal e intransferível do Usuário, sendo de sua total responsabilidade manter sigilo absoluto sobre estes dados e não os compartilhando com quaisquer terceiros.</li>
+                            <li>O Usuário expressamente concorda que o cadastro mencionado nesta cláusula seja mantido pela Pronus e que suas informações sejam fornecidas a autoridades competentes em casos judiciais.</li>
+                            <li>Todo e qualquer uso dos Serviços ou de qualquer outro serviço ou produto, na Internet ou fora dela, com menção a login e senha pessoais do Usuário serão de total, integral, única e exclusiva responsabilidade do Usuário, razão pela qual o Usuário manterá a Pronus livre e isenta de qualquer ônus, dever ou responsabilidade decorrentes ou de qualquer forma relacionados com o uso do login e senha pessoais do Usuário </li>
+                            <li>O Usuário aceita não acessar (ou sequer tentar acessar) o Serviço por quaisquer meios que não através da interface que é fornecida pela Pronus, exceto se para tal for especificamente autorizado num acordo separado celebrado entre si e a Pronus.</li>
+                            <li>O Usuário sairá de sua conta de Usuário ao final de cada sessão, efetuando a finalização da sessão através das ferramentas de logout disponibilizadas pela Pronus na página de prestação dos Serviços. A Pronus não será responsável por qualquer perda ou dano decorrente do descumprimento do disposto nesta cláusula por parte do Usuário.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Prazo e Cancelamento dos Serviços</strong>
+                        <ol>
+                            <li>O presente Contrato é celebrado por prazo indeterminado, a partir da opção do Usuário em aceitar eletronicamente o presente Contrato, ficando, desta forma, os Serviços disponíveis ao Usuário por prazo indeterminado, até o término do presente Contrato por qualquer motivo.</li>
+                            <li>O Usuário reconhece expressamente que, caso deseje cancelar os Serviços, a qualquer momento, basta deixar de utilizá-lo e não efetuar login nos Serviços pelo prazo mínimo de 90 (noventa) dias.</li>
+                            <li>O Usuário declara-se ciente, ainda, que independente de sua vontade de cancelar a sua conta de serviços ou não, caso deixe de efetuar logins no serviço por um prazo superior a 90 (noventa) dias, sua conta será automaticamente cancelada por inatividade, independentemente de qualquer aviso prévio ao Usuário, sem que isso gere qualquer direito ao Usuário ou ônus à Pronus.</li>
+                            <li>Independente do acima disposto, a Pronus reserva-se o direito de rescindir o presente Contrato, a seu exclusivo critério, cancelando imediatamente a conta do Usuário, nos seguintes casos:
+                                <ol style="list-style-type: lower-alpha">
+                                    <li>caso a Pronus acreditar que o Usuário esteja violando ou agindo de forma contrária a qualquer das disposições dos Termos de Uso, a qualquer legislação ou norma vigente, ou ainda à política de privacidade definida;</li>
+                                    <li>caso o Usuário, por qualquer razão, e sob o entendimento da Pronus, utilizar os Serviços indevidamente ou de forma que venha a degradar a imagem da Pronus;</li>
+                                </ol>
+                            </li>
+                            <li>O Usuário reconhece e aceita que, caso o presente contrato seja terminado e sua conta de serviços cancelada a qualquer tempo, por qualquer motivo, o Usuário ficará automaticamente impossibilitado de acessar sua conta de serviços e utilizar os Serviços, bem como qualquer arquivo ou outros conteúdos relacionados ou de qualquer forma vinculados à sua conta. Ademais, a Pronus não terá qualquer obrigação, mediante o término do presente Contrato, a qualquer tempo e por qualquer motivo, de armazenar qualquer conteúdo. Desta forma, a Pronus poderá, a qualquer momento, apagar de seus servidores, de forma definitiva, automática e independente de qualquer notificação ao Usuário, qualquer conteúdo de propriedade deste último que esteja de qualquer forma armazenada em seus equipamentos, sem que isto gere qualquer direito ao Usuário ou ônus à Pronus.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Política de Privacidade</strong>
+                        <ol>
+                            <li>O Usuário expressamente declara-se ciente e de acordo que a prestação dos Serviços, bem como o presente Contrato, sujeita-se, ainda, aos termos e condições da <a href="${h.url(controller='root', action='politica_privacidade')}">política de privacidade</a> da Pronus.</li>
+                            <li>Tal documento constitui parte integrante dos Termos do Serviço tanto quanto qualquer outro conjunto de regras ou normativos indicados pela Pronus como aplicáveis aos Serviços, e deverá ser lido atentamente por todos os Usuários antes da aceitação e utilização do Serviço. O Usuário concorda com a finalização do seu cadastro e a aceitação do presente Contrato, declara-se de acordo também com a política de privacidade da Pronus.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Declarações do Usuário</strong>
+                        <ol>
+                            <li>O Usuário reconhece que o Serviço é fornecido na forma como está disponibilizado e que a Pronus não é e nem será responsável por exclusão, não entrega ou falha no arquivamento de qualquer dado ou informação cadastrado pelo Usuário.</li>
+                            <li>Ademais, o Usuário reconhece que o Serviço é fornecido da forma em que estiver disponível, sem qualquer garantia de desempenho ou alcance de resultados específicos. A Pronus envidará os melhores esforços para que o Serviço funcione da melhor maneira possível. No entanto, considerando a própria natureza do Serviço, as garantias fornecidas pela Pronus são limitadas.</li>
+                            <li>O Usuário expressamente declara e compromete-se a não levar a cabo qualquer atividade que interfira com, interrompa ou danifique o Serviço (ou os servidores, equipamentos e as redes que estejam relacionados com o Serviço, sejam da Pronus ou de terceiros), assim como os documentos, arquivos e toda classe de conteúdos armazenados nos seus equipamentos informáticos ("hacking").</li>
+                            <li>A contratação dos Serviços não tem qualquer caráter comercial, razão pela qual o Usuário reconhece e aceita que não poderá reproduzir, duplicar, copiar, vender, comercializar ou revender o Serviço para qualquer efeito.</li>
+                            <li>O Usuário compromete-se a utilizar os Serviços em conformidade com a lei, a moral e os bons costumes, observando, ainda, os termos e condições contidos no presente Termo de Uso e na <a href="${h.url(controller='root', action='politica_privacidade')}">política de privacidade</a> da Pronus. O Usuário compromete-se, ainda, a abster-se de utilizá-lo com objetivos ou efeitos ilícitos, lesivos aos direitos e interesses de terceiros.</li>
+                            <li>O Usuário expressamente declara e garante que:
+                                <ol style="list-style-type: lower-alpha">
+                                    <li>não utilizará os Serviços para fins ilegais;</li>
+                                    <li>não utilizará os Serviços para se engajar em atividade comercial, o que inclui, mas não se limita a, oferecer qualquer tipo de produto para venda, procurar anunciantes e patrocinadores, e inserir banners de qualquer tipo;</li>
+                                    <li>não veiculará informação sobre atividades ilegais e incitação ao crime ou ainda sobre atividades que ponham em risco a saúde ou integridade física do Usuário ou de qualquer terceiro;</li>
+                                    <li>não divulgará material pornográfico ou atividades ilegais incluindo menores de 18 anos;</li>
+                                    <li>não divulgará mensagens ou páginas criptografadas ou protegidas por senhas;</li>
+                                    <li>não divulgará material protegido por direitos autorais ou por confidencialidade sem a autorização dos seus titulares, incluindo, mas não se limitando a, fotos, textos, programas de computador;</li>
+                                    <li>não se fará passar por outra pessoa, empresa ou instituição;</li>
+                                    <li>não coletará ou divulgará dados pessoais de usuários;</li>
+                                    <li>não veiculará páginas ocultas ou imagens ocultas;</li>
+                                    <li>não modificará, adaptará, traduzirá ou fará engenharia reversa, no todo ou em parte, de qualquer Software utilizado pela Pronus ou por qualquer parceiro na prestação dos Serviços;</li>
+                                    <li>não utilizará os Serviços para transmitir material ilegal, difamatório, que viole a privacidade de terceiros, ou que seja abusivo, ameaçador, discriminatório, obsceno, prejudicial, vulgar obsceno, injurioso, ou de qualquer outra forma censurável;</li>
+                                    <li>não transmitirá qualquer material que viole direitos de terceiro, incluindo, mas sem limitação, direitos de propriedade intelectual de terceiros;</li>
+                                    <li>não enviará mensagens não solicitadas, reconhecidas como "spam", "junk mail" ou correntes de correspondência ("chain letters");</li>
+                                    <li>não utilizará tais Serviços para enviar quaisquer tipos de vírus ou arquivos contendo quaisquer tipos de vírus ("Cavalos de Tróia") ou que possam causar danos ao seu destinatário ou a terceiros;</li>
+                                    <li>não obterá ou tentará obter acesso não autorizado a outros sistemas ou redes de computadores conectados ao Serviço;</li>
+                                    <li>será o único responsável pelo conteúdo que vier a transmitir ou retransmitir, bem como pelo conteúdo e informações que vier a disponibilizar no site relacionado aos Serviços;</li>
+                                    <li>cumprirá todos os requerimentos, procedimentos, políticas, e regulamentos de redes conectadas aos Serviços;</li>
+                                    <li>possui capacidade jurídica para celebrar este contrato e utilizar os produtos e Serviços objeto deste contrato, ou é menor devidamente assistido ou representado por seus representantes legais;</li>
+                                    <li>reconhece que o presente contrato se formaliza, vinculando as partes, através da assinatura eletrônica do mesmo pelas partes, que se dará através do clique no checkbox com o texto "Li e estou de acordo com os termos de uso do republicaos.com.br", disponível na página de cadastro dos Serviços;</li>
+                                    <li>leu e está ciente e de pleno acordo com todos os termos e condições deste instrumento;</li>
+                                </ol>
+                            </li>
+                            <li>O Usuário reconhece e concorda que a Pronus não endossa o conteúdo de quaisquer comunicações veiculadas pelos seus usuários, constantes nos servidores ou equipamentos da Pronus e/ou de seus parceiros e, conforme disposto acima, não é responsável por qualquer material ilegal, difamatório, que viole direitos de privacidade, ou que seja abusivo, ameaçador, discriminatório, obsceno, injurioso ou censurável de qualquer forma ou que infrinja ou possa infringir direitos de propriedade intelectual ou outros direitos de terceiros.</li>
+                            <li>O uso de quaisquer dos Serviços em condições contrárias ao disposto nesta cláusula conferirá à Pronus o direito de terminar o presente instrumento, cancelar a conta de acesso aos Serviços do Usuário, nos termos da cláusula 5, bem como de rescindir quaisquer outros acordos e cancelar quaisquer outros Serviços que tenham sido contratados pelo Usuário da Pronus. Adicionalmente, a Pronus terá o direito de excluir, no todo ou em parte, qualquer conteúdo eventualmente inserido pelo Usuário em páginas ou equipamentos da Pronus que esta última venha a entender contrários às disposições deste instrumento ou a quaisquer outras regras da Pronus, ressalvado ainda o direito da Pronus de pleitear indenização do Usuário.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Softwares utilizados no Serviço</strong>
+                        <ol>
+                            <li>O Usuário reconhece e concorda que o Serviço, bem como qualquer software necessário na utilização dos Serviços (doravante denominado "Software"), são e serão, a qualquer tempo, de propriedade da Pronus ou de seus parceiros comerciais.</li>
+                            <li>O uso do Software pelo Usuário, para acesso aos Serviços, não significa ou significará, a qualquer tempo, que o Usuário adquiriu ou adquirirá qualquer direito não expressamente previsto no presente instrumento, em especial, mas sem se limitar, a direito de comercializar ou explorar comercialmente o Software, efetuar qualquer tipo de descompilação, descompressão, engenharia reversa ou acesso ao código fonte do Software. Qualquer uso não autorizado dos Softwares dará à Pronus o direito de cancelar imediatamente a conta de serviços do Usuário e o seu acesso aos Softwares, independente de aviso prévio.</li>
+                            <li>O Usuário declara-se ciente, ainda, de que referido Software contém informações confidenciais de acordo com a Lei sobre Proteção à Propriedade Intelectual e normas correlatas, as quais devem ser respeitadas e mantidas em sigilo de forma integral e absoluta pelo Usuário.</li>
+                            <li>A Pronus garante ao Usuário uma licença simples de acesso e uso do Software, a qual será pessoal, intransferível e não exclusiva para acessar os Serviços na forma prevista neste instrumento. A licença ora garantida não permite que o Usuário, ou que este permita que terceiros copiem, modifiquem, criem obras derivadas, efetuem engenharia reversa ou desmontagem do Software ou qualquer ato para descobrir seu código fonte, bem como vender, consignar, sublicenciar, conceder em garantia ou de qualquer outra forma transferir qualquer direito com relação ao Software.</li>
+                            <li>O Usuário também não poderá modificar o Software de qualquer maneira ou utilizar versões modificadas do Software inclusive, sem limitação, com a finalidade de obter acesso não autorizado ao Serviço.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Conteúdos do Usuário decorrentes do uso dos Serviços</strong>
+                        <ul>
+                            <li>Em razão do uso dos Serviços, nos termos do presente instrumento, o Usuário:
+                                <ol>
+                                    <li>concorda que ao acessar, utilizar, visualizar o conteúdo referente ao Serviço, ou ainda armazenar conteúdo pessoal nos equipamentos da Pronus, dá à Pronus uma licença perpétua, irrevogável, mundial, isenta de direitos, e não exclusiva para de forma conjunta e coletiva com informações submetidas por outros usuários, reproduzir, adaptar, modificar, traduzir, publicar, utilizar publicamente, visualizar publicamente e distribuir qualquer conteúdo por si submetido, endereçado ou visualizado no ou através do Serviço ou ainda qualquer resultado obtido com a utilização dos Serviços, através da realização de uma ou mais simulações. A Pronus poderá, inclusive, mas sem se limitar, utilizar as informações mencionadas neste item de forma segmentada, aplicando quaisquer filtros, seleções ou divisões que deseje. Não obstante, a Pronus compromete-se a manter as informações pessoais e o conteúdo individual do Usuário em absoluto sigilo e confidencialidade, salvo pelas hipóteses juridicas previstas;</li>
+                                    <li>concorda que a licença acima mencionada inclui o direito da Pronus tornar esse Conteúdo disponível a outras sociedades, organizações ou indivíduos com quem a Pronus tem relações para o fornecimento de serviços consorciados, e para o uso desse Conteúdo em conexão com o fornecimento desses Serviços;</li>
+                                    <li>concorda que esta licença permitirá à Pronus desempenhar todas as ações aqui previstas;</li>
+                                    <li>confirma e garante à Pronus que tem todos os direitos, poderes e autoridade necessária para outorgar a licença supra, bem como para celebrar o presente instrumento e executar todas as obrigações aqui previstas.</li>
+                                </ol>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>Garantias</strong>
+                        <ol>
+                            <li>Os serviços são proporcionados "como estão" e a Pronus não dará qualquer garantia em respeito a eles. Em particular, a Pronus não garantirá que:
+                                <ol>
+                                    <li>o uso do Serviço vá ao encontro às suas exigências;</li>
+                                    <li>o uso do Serviço será ininterrupto, seguro ou isento da verificação de erros;</li>
+                                    <li>o uso do Serviço proporcione qualquer desempenho ou atenda a qualquer expectativa do Usuário;</li>
+                                    <li>qualquer informação obtida em resultado do seu uso do Serviço será precisa ou confiável, e quaisquer defeitos na operação ou na funcionalidade de qualquer Software que lhe seja fornecido, como parte do Serviço, sejam corrigidos.</li>
+                                </ol>
+                            </li>
+                            <li>Nenhuma condição, garantia ou outros termos (incluindo quaisquer termos implícitos relativos à qualidade satisfatória, adequação para o fim ou conformidade com a descrição) é aplicável ao Serviço.</li>
+                            <li>A UTILIZAÇÃO DOS SERVIÇOS É FEITA SOB INTEIRA RESPONSABILIDADE DO USUÁRIO. A PRESTAÇÃO DOS SERVIÇOS DEPENDE DA FUNCIONALIDADE DE VÁRIOS FATORES, COMO A DISPONIBILIDADE DE ACESSO À INTERNET, INTERAÇÃO DE SERVIDORES E SERVIÇOS DE TELECOMUNICAÇÕES DE TERCEIROS, ADEQUAÇÃO DOS EQUIPAMENTOS DO CONTRATANTE E DO DESTINATÁRIO DA MENSAGEM, DENTRE OUTROS. ASSIM, A PRONUS NÃO CONFERE QUALQUER GARANTIA QUE OS SERVIÇOS FUNCIONARÃO CORRETAMENTE E SEM ERROS E FALHAS.</li>
+                            <li>A PRONUS NÃO OFERECE GARANTIAS DE QUALQUER NATUREZA COM RELAÇÃO AOS SEUS SERVIÇOS, SEJAM EXPRESSAS, SEJAM IMPLÍCITAS. A PRONUS NÃO GARANTE QUE OS SERVIÇOS SERÃO ADEQUADOS ÀS NECESSIDADES DO CONTRATANTE OU QUE OS SERVIÇOS SERÃO PRESTADOS DE MANEIRA ININTERRUPTA, SEGURA, OU LIVRE DE ERROS.</li>
+                            <li>O CONTRATANTE RECONHECE E CONCORDA QUE QUALQUER MATERIAL E/OU INFORMAÇÃO OBTIDO ATRAVÉS DOS SERVIÇOS OU DE SUA UTILIZAÇÃO SERÁ DE SUA EXCLUSIVA RESPONSABILIDADE, ESPECIALMENTE NO TOCANTE A QUAISQUER DANOS QUE LHE VENHAM A SER CAUSADOS.</li>
+                            <li>A PRONUS NÃO SE RESPONSABILIZA POR EVENTUAIS FALHAS NOS SERVIÇOS, FICANDO ESTABELECIDO QUE TAIS SERVIÇOS SERÃO FORNECIDOS TAL COMO ESTIVEREM DISPONÍVEIS.</li>
+                            <li>A PRONUS NÃO É E NEM SERÁ RESPONSÁVEL:
+                                <ol>
+                                    <li>PELA IMPOSSIBILIDADE DE UTILIZAÇÃO DE QUAISQUER DOS SERVIÇOS ACIMA MENCIONADOS EM RAZÃO DA INCOMPATIBILIDADE DOS SERVIÇOS COM A CONFIGURAÇÃO DO COMPUTADOR DO CONTRATANTE;</li>
+                                    <li>PELA DESOBEDIÊNCIA, POR PARTE DO CONTRATANTE, DAS REGRAS E CONDIÇÕES DE USO ESTABELECIDAS POR CADA UM DOS PROVEDORES DE ACESSO AOS QUAIS O CONTRATANTE VENHA A SE CONECTAR;</li>
+                                    <li>POR QUAISQUER DANOS SOFRIDOS PELO CONTRATANTE EM RAZÃO DA INCORRETA UTILIZAÇÃO DOS SERVIÇOS;</li>
+                                    <li>PELA REPARAÇÃO DE DANOS DE QUALQUER NATUREZA CAUSADOS PELA QUEBRA DE PRIVACIDADE OU SEGURANÇA DE DADOS DO CONTRATANTE DURANTE A CONEXÃO DE SEU COMPUTADOR À INTERNET ATRAVÉS DE TERCEIROS;</li>
+                                    <li>QUALQUER CONTEÚDO, PROPAGANDA, ANÚNCIO, PROMOÇÃO, CHAMADA OU PROMESSA FEITA E/OU RECEBIDA ATRAVÉS DOS SERVIÇOS;</li>
+                                    <li>QUALQUER FALHA NO SISTEMA DE E-MAIL, AINDA QUE POR MOTIVO QUE LHE SEJA ATRIBUÍVEL, FICANDO ESTABELECIDO QUE O ACESSO AO SERVIÇO DE E-MAIL, QUANDO DISPONÍVEL, SERÁ FORNECIDO DA FORMA COMO SE ENCONTRA;</li>
+                                    <li>ATOS DE QUALQUER NATUREZA PRATICADOS PELO CONTRATANTE NA INTERNET;</li>
+                                    <li>PREJUÍZOS, PERDAS E DANOS CAUSADOS AO CONTRATANTE OU A QUALQUER TERCEIRO, INCLUINDO, MAS SEM SE LIMITAR, A PERDA DE RECEITAS, LUCROS CESSANTES, INTERRUPÇÃO OU NÃO REALIZAÇÃO DE NEGÓCIOS, PERDA DE INFORMAÇÃO E SEGREDOS COMERCIAIS E DE INDÚSTRIA, EM DECORRÊNCIA DE QUALQUER FALHA NOS SERVIÇOS;</li>
+                                    <li>PREJUÍZOS CAUSADOS POR PROGRAMAS NOCIVOS AO EQUIPAMENTO DO CONTRATANTE (TAIS COMO, MAS SEM SE LIMITAR A VÍRUS E TROJANS), AINDA QUE TAIS ARQUIVOS E PROGRAMAS TENHAM SIDO RECEBIDOS POR UMA CONTA DE E-MAIL DO CONTRATANTE CADASTRADA NOS TERMOS DESTE INSTRUMENTO.</li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </li>
+                    <li><strong>Propriedade Intelectual</strong>
+                        <ol>
+                            <li>O Usuário reconhece e concorda que todo e qualquer conteúdo relacionado aos Serviços, incluindo, mas sem se limitar, a conteúdo publicitário, informações editoriais contidas nos Serviço ou ainda qualquer conteúdo ou código fonte do Software, bem como quaisquer marcas, nomes comerciais e logotipos a eles relacionados, são protegidos por direitos autorais, outros direitos de propriedade intelectual ou ainda outra eventual legislação aplicável. Salvo expressamente autorizado pela Pronus ou anunciantes, o Usuário concorda em não modificar, alugar, vender, distribuir ou criar obras derivadas a partir do Serviço ou do Software, no todo ou em parte.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Anúncios Publicitários</strong>
+                        <ol>
+                            <li>O Usuário expressamente declara-se ciente e de acordo que alguns dos Serviços são suportados por rendimentos resultantes de veiculação de publicidade no site que suporta e oferece os Serviços ou ainda a realização de anúncios, parcerias, promoções publicitárias ou qualquer outra forma de exploração comercial do site que suporta o Serviço ou dos Serviços em si, sem que o Usuário tenha direito a qualquer participação sobre a receita advinda destes recursos.</li>
+                            <li>A forma, o modo e a extensão dos conteúdos comerciais incluídos nos Serviços podem estar sujeitos a alterações, modificações ou adaptações por parte da Pronus e seus parceiros, independentemente de qualquer notificação ao Usuário a qualquer tempo.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Disposições Gerais</strong>
+                        <ol>
+                            <li>O Usuário declara-se ciente e desde já concorda que a Pronus poderá encaminhar ao correio eletrônico ("email") informado no cadastro do Usuário mensagens de caráter comercial, informativo ou publicitário, com finalidade de comunicação e/ou divulgação de qualquer assunto que se refira aos serviços objeto deste Contrato ou a conteúdos, comerciais ou não, de parceiros da Pronus.</li>
+                            <li>O presente instrumento não poderá ser, de nenhuma forma e em nenhuma hipótese, cedido pelo Usuário a qualquer terceiro sem a prévia e expressa anuência da Pronus. Por outro lado, a Pronus poderá, a qualquer momento, ceder os direitos e obrigações previstos no presente contrato a qualquer de seus parceiros, bem como a qualquer empresa afiliada, independentemente de qualquer notificação ao Usuário.</li>
+                            <li>Os termos e condições constantes dos presentes Termos de Uso do Serviço poderão ser atualizados ou modificados, a qualquer tempo, a critério da Pronus, independente de qualquer notificação prévia ao Usuário. Caberá a este manter-se constantemente atualizado dos presentes Termos de Uso dos Serviços a qualquer tempo acessando esta página. Não obstante, sempre que as alterações nas condições dos presentes Termos de Uso indicarem limitações do uso dos Serviços pelo Usuário, a Pronus se compromete a informar, via e-mail, ao Usuário, a respeito de tais modificações. Caso o Usuário não concorde com tais alterações, basta cancelar sua conta de serviços, deixando de efetuar login nos Serviços nos termos da cláusula 5.2. acima.</li>
+                            <li>O Usuário reconhece e aceita que a forma e natureza dos Serviços que a Pronus presta podem mudar, no todo ou em parte, a qualquer tempo, a qualquer título, a critério da Pronus, independente de aviso prévio ao Usuário. Não obstante, sempre que tais alterações significarem restrições do uso dos Serviços por parte do Usuário, a Pronus se compromete a informar, via e-mail, ao Usuário, a respeito de tais modificações.</li>
+                            <li>O Usuário reconhece e aceita que Pronus poderá, a seu exclusivo critério, parar (permanente ou temporariamente) de prestar o Serviço (ou qualquer parte do Serviço) a si ou à generalidade dos utilizadores, sem o/a avisar previamente.</li>
+                        </ol>
+                    </li>
+                    <li><strong>Foro</strong>
+                        <ul>
+                            <li>As partes elegem o Foro da Comarca de Sumaré - SP para dirimir eventuais e não esperadas demandas emergentes do presente termo, com renúncia a qualquer outro, por mais privilegiado que seja.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
 
        </div>
    </div>
