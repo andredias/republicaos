@@ -6,8 +6,8 @@
         $(document).ready(function(){
             $(".tip").tooltip({ 
                 bodyHandler: function() {
-                    tip = $(this).attr("tip")
-                    return tip ? $(tip).html() : $(this).attr('title')
+                    tip_ref = $(this).attr("tip_ref")
+                    return tip_ref ? $(tip_ref).html() : $(this).attr('title')
                     // parece que se bodyHandler está definido, a propriedade title é retirada do objeto!
                     // sendo assim, $(this).attr('title') sempre está voltando ""
                 }, 
