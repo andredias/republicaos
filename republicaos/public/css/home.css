@@ -59,3 +59,8 @@ a:visited {
 p {
     text-align: justify;
 }
+
+button.tridimensional {
+    width: 100%;
+    margin-bottom: 1.5em;
+}

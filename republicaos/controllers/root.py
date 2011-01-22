@@ -12,10 +12,10 @@ from republicaos.lib.base import BaseController
 from formencode import Schema, validators
 from republicaos.lib.auth import check_user, set_user, owner_required, get_user
 from genshi.core import Markup
-from republicaos.lib.captcha import captcha
 from republicaos.lib.mail import send_email
 from StringIO import StringIO
 from republicaos.lib.validators import Captcha
+from republicaos.lib.captcha import captcha
 
 
 log = logging.getLogger(__name__)
@@ -68,7 +68,8 @@ class RootController(BaseController):
                 redirect(destino)
             else:
                 flash('O e-mail e/ou a senha fornecidos não conferem', 'error')
-        return render('root/login.html')
+        c.captcha, c.captcha_md5 = captcha()
+        return render('root/login.html', filler_data=request.params)
 
 
     def logout(self):

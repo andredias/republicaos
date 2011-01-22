@@ -47,13 +47,11 @@ button.tridimensional, button.tridimensional h2 {
 }
 
 button.tridimensional {
-    width: 100%;
     vertical-align: middle;
     cursor: pointer;
     text-align: left;
     text-decoration: none;
     padding: 1.5em;
-    margin-bottom: 1.5em;
     -webkit-border-radius: 4em; 
     -moz-border-radius: 4em;
     border-radius: 4em;

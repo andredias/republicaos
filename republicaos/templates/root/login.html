@@ -36,39 +36,61 @@
                         <form name="login" method="post" action="${h.url(controller='root', action='login')}">
                             <p>
                                 <label for="Email">E-mail</label><br />
-                                <input id="Email" class="text placeholder" type="text" tabindex="1" name="email" size="20" value="e-mail" />
+                                <input class="text placeholder" type="text" name="email" size="20" value="e-mail" />
                             </p>
                             <p>
                                 <label for="Passwd">
-                                    Senha: (<a title="Esqueceu a sua senha?" href="/pessoa/esqueceu_senha">?</a>)
+                                    Senha
                                 </label><br />
-                                <input id="password" class="text" type="password" name="senha" tabindex="2" size="10" />
-                            </p>
-                            <p><input type="submit" value="Acessar" /></p>
+                                <input class="text" type="password" name="senha" size="10" />
+                            <button type="submit" class="tridimensional bottom" style="float:right"><h6>Entrar</h6></button></p>
+                            <p><input type="checkbox" name="keep_connected" /> Me mantenha conectado <img src="/images/info-16x16-2.png" class="tip" tip="#tip_keep_connected" /></p>
+                            
+                            <hr />
+                            <p class="small">Esqueceu sua senha? Informe seu e-mail e <a title="Esqueceu a sua senha?" href="/pessoa/esqueceu_senha">clique aqui</a> para criar uma nova senha</p>
                         </form>
                     </div>
+
                     <div class="span-12 last">
                         <h2>Nova Conta</h2>
                         <hr />
                         <form name="registro" method="post" action="${h.url(controller='root', action='registro')}">
                             <p>
-                                <label for="Email">E-mail</label><br />
-                                <input id="Email" class="text placeholder" type="text" tabindex="1" name="email" size="20" value="e-mail" />
+                                <label for="novo_email">E-mail</label><br />
+                                <input class="text placeholder" type="text" name="novo_email" size="20" value="e-mail" />
                             </p>
                             <p>
-                                <label for="Passwd">Senha:</label><br />
-                                <input id="password" class="text" type="password" name="senha" tabindex="2" size="10" />
+                                <label for="nova_senha">Senha <img src="/images/info-16x16-2.png" class="tip" tip="#tip_nova_senha" /></label><br />
+                                <input class="text" type="password" name="nova_senha" size="10" />
                             </p>
                             <p>
-                                <label for="Passwd">Confirme sua Senha:</label><br />
-                                <input id="password" class="text" type="password" name="confirmacao_senha" tabindex="2" size="10" />
-                            </p>
-                            <p><input type="submit" value="Acessar" /></p>
+                                <label for="confirmacao_senha">Confirmação da Senha</label><br />
+                                <input class="text" type="password" name="confirmacao_senha" size="10" />
+                        </p>
+                        <p>
+                            <label for="captcha">${c.captcha} <img src="/images/info-16x16-2.png" class="tip" tip="#tip_captcha" /></label><br />
+                            <input class="text" type="text" name="captcha" size="10" />
+                            <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" />
+                            <button type="submit" class="tridimensional bottom" style="float:right"><h6>Criar Conta</h6></button>
+                        </p>
+                        <p>
+                            <input type="checkbox" name="termos" /> Li e aceito os <a href="${h.url(controller='root', action='termos_uso')}">termos de Uso</a>
+
+                        </p>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+     <div id="tip_keep_connected" style="display:none">
+        <p class="bottom">Da próxima vez que você entrar no Republicaos através desse computador,<br />você já vai ser logado automaticamente</p>
+    </div>
+    <div id="tip_nova_senha" style="display:none">
+        <p class="bottom">A senha deve ter mais de 4 caracteres e pode conter caracteres, números e pontuação</p>
+    </div>
+    <div id="tip_captcha" style="display:none">
+        <p class="bottom">Captcha para evitar SPAM, provando que você é humano e não um programa! :-)</p>
     </div>
     
     <xi:include href="../include/footer.html" />
