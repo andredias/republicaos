@@ -42,19 +42,16 @@ button.thoughtbot:active {
 
 
 
-button.tridimensional, button.tridimensional h2 {
+button.launch, button.tridimensional, button.tridimensional h2 {
     text-shadow: 0 -1px 2px rgba(0,0,0,.5);
 }
 
-button.tridimensional {
+button.launch, button.tridimensional {
     vertical-align: middle;
     cursor: pointer;
     text-align: left;
     text-decoration: none;
     padding: 1.5em;
-    -webkit-border-radius: 4em; 
-    -moz-border-radius: 4em;
-    border-radius: 4em;
     -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.75);
     -moz-box-shadow: 0 2px 5px rgba(0,0,0,.75);
     box-shadow: 0 2px 5px rgba(0,0,0,.75);
@@ -76,7 +73,13 @@ button.tridimensional {
 
 }
 
-button.tridimensional:hover {
+button.tridimensional {
+    -webkit-border-radius: 4em; 
+    -moz-border-radius: 4em;
+    border-radius: 4em;
+}
+
+button.launch:hover, button.tridimensional:hover {
     background: green;
     background: -moz-linear-gradient(top, #9dd53a 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* firefox */
     /*
@@ -106,7 +109,7 @@ button.tridimensional:active, button.tridimensional.pressed {
 }
 
 
-button.tridimensional h6 {
+button.launch, button.tridimensional h6 {
     text-transform: uppercase;
 }
 

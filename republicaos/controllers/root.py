@@ -48,9 +48,11 @@ class FaleconoscoSemCaptchaSchema(Schema):
 
 
 class RootController(BaseController):
+    def __before__(self):
+        c.user = get_user()
+        return
 
     def index(self):
-        c.user = get_user()
         return render('root/home.html', filler_data=request.params)
 
 
@@ -68,6 +70,9 @@ class RootController(BaseController):
                 redirect(destino)
             else:
                 flash('O e-mail e/ou a senha fornecidos não conferem', 'error')
+        elif c.errors:
+            for campo, erro in c.errors.items():
+                flash('%s: %s' % (campo, erro), 'error')
         c.captcha, c.captcha_md5 = captcha()
         return render('root/login.html', filler_data=request.params)
 
@@ -89,7 +94,6 @@ class RootController(BaseController):
     
     @validate(FaleconoscoSchema, alternative_schema=FaleconoscoSemCaptchaSchema, check_function=get_user)
     def faleconosco(self):
-        c.user = get_user()
         if c.valid_data:
             # enviar mensagem
             text = StringIO()
