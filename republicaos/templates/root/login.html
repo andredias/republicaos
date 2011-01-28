@@ -37,7 +37,10 @@
                         <form name="login" method="post" action="${h.url(controller='root', action='login')}">
                             <p>
                                 <label for="Email">E-mail</label><br />
-                                <input class="text" type="email" name="email" size="20" required="True" />
+                                <!--
+                                Genshi ainda não funciona com html5
+                                -->
+                                <input class="text" type="text" name="email" size="20" required="True" />
                             </p>
                             <p>
                                 <label for="Passwd">
@@ -56,14 +59,18 @@
                     <div class="span-12 last">
                         <h2>Nova Conta</h2>
                         <hr />
-                        <form name="registro" method="post" action="${h.url(controller='root', action='registro')}">
+                        <form name="nova_conta" method="post" action="${h.url(controller='pessoa', action='new')}">
                             <p>
-                                <label for="novo_email">E-mail</label><br />
-                                <input class="text" type="email" name="novo_email" required="True" />
+                                <label for="nome">Nome ou Apelido</label><br />
+                                <input class="text" type="text" name="nome" required="True" />
                             </p>
                             <p>
-                                <label for="nova_senha">Senha <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
-                                <input class="text" type="password" name="nova_senha" required="True" pattern="[^\s]{4,}" />
+                                <label for="email">E-mail</label><br />
+                                <input class="text" type="text" name="email" required="True" />
+                            </p>
+                            <p>
+                                <label for="senha">Senha <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
+                                <input class="text" type="password" name="senha" required="True" pattern="[^\s]{4,}" />
                             </p>
                             <p>
                                 <label for="confirmacao_senha">Confirmação da Senha</label><br />
@@ -75,8 +82,7 @@
                                 <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" required="True" />
                             </p>
                             <p>
-                                <input type="checkbox" name="termos" /> Li e aceito os <a href="${h.url(controller='root', action='termos_uso')}">termos de Uso</a>
-
+                                <input type="checkbox" name="aceito_termos" /> Li e aceito os <a href="${h.url(controller='root', action='termos_uso')}">termos de Uso</a>
                             </p>
                             <p class="bottom"><button type="submit" class="launch bottom"><h6>Criar Conta</h6></button></p>
                         </form>

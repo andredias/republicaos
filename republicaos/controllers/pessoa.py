@@ -125,15 +125,14 @@ class PessoaController(BaseController):
                 pendencia = CadastroPendente(**c.valid_data)
             else:
                 pendencia.from_dict(c.valid_data)
-                flash('Já existe um pedido de cadastro pendente para o e-mail fornecido.', 'info')
+                flash('Já existe um pedido de cadastro pendente para o e-mail fornecido. Verifique suas mensagens de e-mail.', 'info')
             Session.commit()
             redirect(url(controller='root', action='index'))
-        c.action = url(controller='pessoa', action='new')
-        c.submit = 'Criar'
-        c.title = 'Crie sua conta'
-        c.voltar_para = url(controller='root', action='index')
+        elif c.errors:
+            for campo, erro in c.errors.items():
+                flash('%s: %s' % (campo, erro), 'error')
         c.captcha, c.captcha_md5 = captcha()
-        return render('pessoa/form.html', filler_data=request.params)
+        return render('root/login.html', filler_data=request.params)
 
 
 

@@ -71,7 +71,8 @@ class ConfirmacaoController(BaseController):
             flash('Bem vindo ao Republicaos, %s!' % cp.nome, 'info')
             redirect(url(controller='pessoa', action='painel', id=user.id))
         else:
-            return render('confirmacao/confirmacao_invalida.html')
+            flash('O link fornecido para confirmação de cadastro não é válido. Por favor, faça um novo pedido de cadastro', 'error')
+            return render('root/login.html')
 
 
     @validate(ConviteMoradorSchema, alternative_schema=ConviteMoradorSchema2,
