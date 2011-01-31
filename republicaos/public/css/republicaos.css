@@ -123,16 +123,16 @@ input, textarea {
     -webkit-border-radius: 1em; 
     -moz-border-radius: 1em;
     border-radius: 1em;
-    background: #FFFFFF url('bg_form.png') left top repeat-x;
     background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
     background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
     box-shadow: rgba(0,0,0, 0.2) 0px 0px 8px;
     -moz-box-shadow: rgba(0,0,0, 0.2) 0px 0px 8px;
     -webkit-box-shadow: rgba(0,0,0, 0.2) 0px 0px 8px;
-	}
+}
 
 input:hover, textarea:hover,
 input:focus, textarea:focus {
-	-webkit-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px;
-	}
+    -webkit-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px;
+}
 
