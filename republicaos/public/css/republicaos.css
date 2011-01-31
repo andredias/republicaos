@@ -46,16 +46,23 @@ a {
 
 }
 
-.footer .links p {
+.footer .links p, .header .links p {
     text-align: right;
 }
 
-.footer a, .footer a:visited {
+.footer a, .footer a:visited,
+.header a, .header a:visited {
     color: #aaa;
     text-decoration: none;
 }
 
-.footer a:hover {
+.header,
+.header a, .header a:visited {
+    color: #ddd;
+}
+
+.footer a:hover,
+.header a:hover {
     text-decoration: underline;
 }
 

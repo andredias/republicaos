@@ -11,7 +11,18 @@ no_logged_user = get_user() == None
             </a>
             
             <div class="span-14 last" style="text-align: right">
-                <a href="${h.url(controller='root', action='login')}"><button class="login shadow">Login &nbsp;·&nbsp; Nova Conta</button></a>
+                <div py:if="c.user" class="links">
+                    <br />
+                    <p style="text-align:right">${c.user} &nbsp;·&nbsp; 
+                        <a href="${h.url(controller='pessoa', action='painel', id=c.user.id)}" title="editar perfil">Perfil</a>
+                        &nbsp;·&nbsp; 
+                        <a href="${h.url(controller='root', action='ajuda', id=c.user.id)}">Ajuda</a>
+                        &nbsp;·&nbsp; 
+                        <a href="${h.url(controller='root', action='logout')}">Sair</a>
+                    </p>
+                </div>
+
+                <a href="${h.url(controller='root', action='login')}" py:if="not c.user"><button class="login shadow">Login &nbsp;·&nbsp; Nova Conta</button></a>
             </div>
         </div>
     </div>
