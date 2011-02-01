@@ -66,6 +66,10 @@ a {
     text-decoration: underline;
 }
 
+a.logotipo:hover {
+    text-decoration: none;
+}
+
 .tecnologias {
     background: #042F32;
     display: none;

@@ -1,0 +1,29 @@
+    <div class="header" xmlns:py="http://genshi.edgewall.org/">
+        <div class="container">
+            <div class="span-24 last links" py:if="c.user">
+                <br />
+                <p>${c.user} &nbsp;·&nbsp; 
+                    <a href="${h.url(controller='pessoa', action='painel', id=c.user.id)}" title="editar perfil">Perfil</a>
+                    &nbsp;·&nbsp; 
+                    <a href="${h.url(controller='root', action='ajuda', id=c.user.id)}">Ajuda</a>
+                    &nbsp;·&nbsp; 
+                    <a href="${h.url(controller='root', action='logout')}">Sair</a>
+                </p>
+            </div>
+            
+            <a href="${h.url('/')}">
+                <div class="span-10 logotipo">
+                    <h1>Republi<span class="caos">caos</span></h1>
+                </div>
+            </a>
+            
+            <div class="span-14 last navegacao">
+                <nav>
+                    <ul py:with="abas=['Visão Geral', 'Movimentações', 'Relatórios']">
+                        <li py:for="aba in abas" py:attrs="dict(class='selected') if c.selected == aba">${aba}</li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+    </div>
