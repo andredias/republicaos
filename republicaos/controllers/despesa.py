@@ -99,7 +99,6 @@ class DespesaController(BaseController):
     @morador_required
     @validate(DespesaSchema)
     def new(self):
-        session['came_from'] = request.path_info
         c.title = 'Novo Tipo de Despesa'
         c.action = url(controller='despesa', action='new', republica_id=c.republica.id)
         filler = {

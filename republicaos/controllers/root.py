@@ -69,7 +69,7 @@ class RootController(BaseController):
                 republicas = list(user.morador_em_republicas)
                 destino = session.pop('came_from', None) or \
                         url(controller='republica', action='show', republica_id=republicas[0].id) if len(republicas) == 1 else \
-                        user.url(controller='pessoa', action='painel', id=user.id)
+                        url(controller='pessoa', action='painel', id=user.id)
                 redirect(destino)
             else:
                 flash('O e-mail e/ou a senha fornecidos não conferem', 'error')
