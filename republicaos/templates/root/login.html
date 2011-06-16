@@ -57,16 +57,16 @@
                     
                     <form name="unico" method="post" action="">
                         <p>
-                            <label for="Email">E-mail</label><br />
+                            <label for="Email">E-mail <span class="required">*</span></label><br />
                             <!--
                             Genshi ainda não funciona com html5
                             -->
-                            <input class="text" type="text" name="email" size="20" required="True" />
+                            <input class="text" type="email" name="email" size="20" required="required" autofocus="autofocus" />
                         </p>
 
                         <p>
-                            <label for="senha">Senha <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
-                            <input class="text" type="password" name="senha" required="True" pattern="[^\s]{4,}" />
+                            <label for="senha">Senha <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
+                            <input class="text" type="password" name="senha" required="required" pattern="[^\s]{4,}" />
                         </p>
 
                         <p class="login">
@@ -75,29 +75,30 @@
 
                         <div class="nova_conta">
                         <p>
-                            <label for="confirmacao_senha">Confirmação da Senha</label><br />
-                            <input class="text" type="password" name="confirmacao_senha" size="10" required="True" />
+                            <label for="confirmacao_senha">Confirmação da Senha <span class="required">*</span></label><br />
+                            <input class="text" type="password" name="confirmacao_senha" size="10" required="required" />
                         </p>
 
                         <p>
-                            <label for="nome">Nome ou Apelido <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_apelido" /></label><br />
-                            <input class="text" type="text" name="nome" required="True" />
+                            <label for="nome">Nome ou Apelido <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_apelido" /></label><br />
+                            <input class="text" type="text" name="nome" required="required" />
                         </p>
 
                         <p>
-                            <label for="captcha">${c.captcha} <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_captcha" /></label><br />
+                            <label for="captcha">${c.captcha} <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_captcha" /></label><br />
                             <input class="text" type="text" name="captcha" size="10" />
-                            <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" required="True" />
+                            <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" required="required" />
                         </p>
                         <p>
-                            <input type="checkbox" name="aceito_termos" /> Li e aceito os <a href="${h.url(controller='root', action='termos_uso')}">termos de Uso</a>
+                            <input type="checkbox" name="aceito_termos" required="required" /> Li e aceito os <a href="${h.url(controller='root', action='termos_uso')}">termos de Uso</a> <span class="required">*</span>
                         </p>
                         </div>
 
                         
                         <hr />
 
-                        <p class="small login">Esqueceu sua senha? Informe seu e-mail e <a href="/pessoa/esqueceu_senha">clique aqui</a> para criar uma nova senha</p>
+                        <p class="login">Esqueceu sua senha? Informe seu e-mail e <a href="/pessoa/esqueceu_senha">clique aqui</a> para criar uma nova senha</p>
+                        <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                         
                         <p class="bottom login"><button type="submit" class="launch bottom"><h6>Entrar</h6></button></p>
                         <p class="bottom nova_conta"><button type="submit" class="launch bottom"><h6>Criar Conta</h6></button></p>

@@ -26,7 +26,7 @@ class TestUsuarioConfirmaTrocaSenha(TestController):
         
         link = ts1.link_confirmacao[:-10] # produzindo um link inválido
         response = self.app.get(url=link)
-        assert 'Link Inválido' in response
+        assert 'O link fornecido para troca de senha não é válido' in response
         
 
         link = ts1.link_confirmacao

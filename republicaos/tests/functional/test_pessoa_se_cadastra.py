@@ -27,12 +27,12 @@ class TestPessoaSeCadastra(TestController):
             }
         )
 
-        assert str(response).count('class="error-message"') == 5
-        assert 'erro_email' in response
-        assert 'erro_nome' in response
-        assert 'erro_confirmacao_senha' in response
-        assert 'erro_aceito_termos' in response
-        assert 'erro_captcha' in response
+        assert str(response).count('class="error"') == 1
+        assert 'email: Um endereço de email deve conter apenas uma @' in response
+        assert 'nome: Missing value' in response
+        assert 'confirmacao_senha: Os campos não são iguais' in response
+        assert 'aceito_termos: Missing value' in response
+        assert 'captcha: Resposta incorreta' in response
     
     
     def test_email_ja_cadastrado(self):
@@ -55,8 +55,8 @@ class TestPessoaSeCadastra(TestController):
             }
         )
         
-        assert str(response).count('class="error-message"') == 1
-        assert 'erro_email' in response
+        assert str(response).count('class="error"') == 1
+        assert 'email: Valor ja registrado no banco de dados' in response
 
 
     def test_email_com_cadastrado_pendente(self):

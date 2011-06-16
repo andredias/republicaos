@@ -147,3 +147,26 @@ input:focus, textarea:focus {
     -moz-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px;
 }
 
+
+/* chrome, safari */  
+::-webkit-input-placeholder {  
+    color:#CCC;  
+    font-style:italic;  
+}  
+  
+/* mozilla */  
+input:-moz-placeholder, textarea:-moz-placeholder {  
+    color:#CCC;  
+    font-style:italic;  
+}  
+  
+/* ie (faux placeholder) */  
+input.placeholder-text, textarea.placeholder-text  {  
+    color:#CCC;  
+    font-style:italic;  
+}  
+
+.required {  
+    font-weight:bold;  
+    color:#F00;  
+}

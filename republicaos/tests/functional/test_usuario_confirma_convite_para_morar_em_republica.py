@@ -33,7 +33,7 @@ class TestUsuarioConfirmaConviteParaMorador(TestController):
         
         # link inexistente
         response = self.app.post(url=link_invalido)
-        assert 'Link Inválido' in response
+        assert 'O link fornecido para confirmação do convite para ser morador da república não é válido' in response
         
         
         # verificação da resposta da confirmação do convite a usuário cadastrado

@@ -71,7 +71,7 @@ class ConfirmacaoController(BaseController):
             flash('Bem vindo ao Republicaos, %s!' % cp.nome, 'info')
             redirect(url(controller='pessoa', action='painel', id=user.id))
         else:
-            flash('O link fornecido para confirmação de cadastro não é válido. Por favor, faça um novo pedido de cadastro', 'error')
+            flash('O link fornecido para confirmação de cadastro não é válido. Por favor, faça um novo pedido de cadastro.', 'error')
             return render('root/login.html')
 
 
@@ -80,7 +80,8 @@ class ConfirmacaoController(BaseController):
     def convite_morador(self, id):
         c.convite = ConviteMorador.get_by(hash=id)
         if not c.convite:
-            return render('confirmacao/confirmacao_invalida.html')
+            flash('O link fornecido para confirmação do convite para ser morador da república não é válido. Por favor, entre em contato com a pessoa que lhe indicou para que ela faça um novo convite.', 'error')
+            return render('root/login.html')
 
         set_user(Pessoa.get_by(email=c.convite.email))
         c.user = get_user()
@@ -117,4 +118,5 @@ class ConfirmacaoController(BaseController):
             Session.commit()
             redirect(url(controller='pessoa', action='edit', id=ts.pessoa.id))
         else:
-            return render('confirmacao/confirmacao_invalida.html')
+            flash('O link fornecido para troca de senha não é válido. Por favor, faça um novo pedido.', 'error')
+            return render('root/login.html')

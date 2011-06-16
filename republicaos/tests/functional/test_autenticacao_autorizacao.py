@@ -26,8 +26,7 @@ class TestAutenticacaoAutorizacao(TestController):
                                 }
                         )
         log.debug('response: %s', response)
-        assert str(response).count('class="error-message"') == 1
-        assert 'erro_senha' in response
+        assert str(response).count('class="error"') == 1
     
     
     def test_login_email_inexistente(self):
