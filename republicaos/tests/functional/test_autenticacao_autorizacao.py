@@ -26,7 +26,7 @@ class TestAutenticacaoAutorizacao(TestController):
                                 }
                         )
         log.debug('response: %s', response)
-        assert str(response).count('class="error"') == 1
+        assert 'erro_senha' in response.body
     
     
     def test_login_email_inexistente(self):
@@ -40,6 +40,7 @@ class TestAutenticacaoAutorizacao(TestController):
                                 'senha':'1234'
                                 }
                         )
+        assert 'class="avisos_panel"' in response
         assert 'O e-mail e/ou a senha fornecidos não conferem' in response
         
     

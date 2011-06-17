@@ -170,3 +170,7 @@ input.placeholder-text, textarea.placeholder-text  {
     font-weight:bold;  
     color:#F00;  
 }
+
+.error-message {
+    color: red;
+}

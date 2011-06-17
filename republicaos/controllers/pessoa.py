@@ -129,8 +129,7 @@ class PessoaController(BaseController):
             Session.commit()
             redirect(url(controller='root', action='index'))
         elif c.errors:
-            for campo, erro in c.errors.items():
-                flash('%s: %s' % (campo, erro), 'error')
+            flash('O formulário não foi preenchido corretamente', 'error')
         c.captcha, c.captcha_md5 = captcha()
         return render('root/login.html', filler_data=request.params)
 
