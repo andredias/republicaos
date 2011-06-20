@@ -44,6 +44,7 @@
 
 <body>
     <xi:include href="../include/header.html" />
+    <xi:include href="../include/form_errors.html" />
     
     <div class="main">
         <div class="container">
@@ -59,15 +60,7 @@
                     <hr />
                     <p><input type="checkbox" name="nova_conta" /> Ainda não tenho uma conta<br /></p>
                     
-                    <py:if test="c.errors">
-                        <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
-                        ${select('.')}
-                        <py:if test="error">
-                        <br />
-                        <span class="error-message" id="erro_${select('@name')}" py:content="error"></span>
-                        </py:if>
-                        </div>
-                    </py:if>
+
                     
                     <form name="unico" method="post" action="">
                         <p>

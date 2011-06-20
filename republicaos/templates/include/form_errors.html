@@ -1,0 +1,9 @@
+<py:if test="c.errors" xmlns:py="http://genshi.edgewall.org/">
+    <div py:match="input|textarea|select" py:strip="" py:with="error = c.errors.get(str(select('@name')))">
+    ${select('.')}
+    <py:if test="error">
+    <br />
+    <span class="error-message" id="erro_${select('@name')}" py:content="error"></span>
+    </py:if>
+    </div>
+</py:if>
