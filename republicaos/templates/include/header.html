@@ -1,24 +1,34 @@
-    <div class="header" xmlns:py="http://genshi.edgewall.org/">
-        <div class="container">
-            <a href="${h.url('/')}" class="logotipo">
-                <div class="span-10">
-                    <h1>Republi<span class="caos">caos</span></h1>
+<?python
+from republicaos.lib.auth import get_user
+user = get_user()
+?>
+    <div xmlns:py="http://genshi.edgewall.org/">
+        <div class="barra_login_user">
+            <div class="container">
+                <div class="span-24">
+                    <div py:if="user" class="links right">
+                        <br />
+                        <p style="text-align:right">${user} &nbsp;·&nbsp; 
+                            <a href="${h.url(controller='pessoa', action='painel', id=user.id)}" title="editar perfil">Perfil</a>
+                            &nbsp;·&nbsp; 
+                            <a href="${h.url(controller='root', action='ajuda', id=user.id)}">Ajuda</a>
+                            &nbsp;·&nbsp; 
+                            <a href="${h.url(controller='root', action='logout')}">Sair</a>
+                        </p>
+                    </div>
+                    <div class="right" py:if="not user">
+                        <a href="${h.url(controller='root', action='login')}">Login</a> &nbsp;|&nbsp; <a href="${h.url(controller='pessoa', action='new')}">Nova Conta</a>
+                    </div>
                 </div>
-            </a>
-            
-            <div class="span-14 last" style="text-align: right">
-                <div py:if="c.user" class="links">
-                    <br />
-                    <p style="text-align:right">${c.user} &nbsp;·&nbsp; 
-                        <a href="${h.url(controller='pessoa', action='painel', id=c.user.id)}" title="editar perfil">Perfil</a>
-                        &nbsp;·&nbsp; 
-                        <a href="${h.url(controller='root', action='ajuda', id=c.user.id)}">Ajuda</a>
-                        &nbsp;·&nbsp; 
-                        <a href="${h.url(controller='root', action='logout')}">Sair</a>
-                    </p>
-                </div>
-
-                <a href="${h.url(controller='root', action='login')}" py:if="not c.user"><button class="login shadow">Login &nbsp;·&nbsp; Nova Conta</button></a>
+            </div>
+        </div>
+        <div class="header">
+            <div class="container">
+                <a href="${h.url('/')}" class="logotipo">
+                    <div class="span-10">
+                        <h1>Republi<span class="caos">caos</span></h1>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
