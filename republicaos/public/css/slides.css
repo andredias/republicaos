@@ -1,3 +1,8 @@
+.slide_banner {
+    background-color: LemonChiffon;
+    z-index: -1;
+}
+
 .slide_box {
     margin-top: 1.5em;
     margin-bottom: 1.5em;
@@ -20,9 +25,10 @@ Ref: http://matthamm.com/box-shadow-curl.html
 
 .sombra_curva {
     position: relative;
-    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.06) inset;
-    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.06) inset;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.06) inset;
+    z-index: 0;
+    -webkit-box-shadow: 0 3px 4px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 0, 0, 0.06) inset;
+    -moz-box-shadow: 0 3px 4px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 0, 0, 0.06) inset;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 0, 0, 0.06) inset;
 }
 
 
@@ -35,9 +41,9 @@ Ref: http://matthamm.com/box-shadow-curl.html
     bottom: 1.5em;
     width: 70%;
     height: 55%;
-    -webkit-box-shadow: 0 18px 16px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 18px 16px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 18px 16px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 18px 16px rgba(0, 0, 0, 0.7);
+    -moz-box-shadow: 0 18px 16px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 18px 16px rgba(0, 0, 0, 0.7);
     -webkit-transform: skew(-15deg) rotate(-3deg);
     -moz-transform: skew(-15deg) rotate(-3deg);
     -ms-transform: skew(-15deg) rotate(-3deg);
