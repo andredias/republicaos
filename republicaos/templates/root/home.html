@@ -24,8 +24,8 @@
         $(function(){
             $('#slides').slides({
                 preload: true,
-                play: 7500,
-                pause: 2500,
+                play: 12500,
+                pause: 5000,
                 hoverPause: true,
                 generatePagination: true
             });
@@ -45,14 +45,23 @@
                     <div id="slides">
                         <div class="slides_container">
                             <div>
-                                <div class="span-11">
+                                <div class="span-12">
                                     <h1 class="titulo">Controle financeiro de república de estudantes</h1>
                                     <h2 class="slogan">Mantendo as contas em ordem</h2>
                                     <p style="display:none">É uma ferramenta web para registrar e dividir as contas comuns entre os moradores de uma república de estudantes.</p>
                                     <p style="display:none">A ideia nasceu da necessidade de uma república formada por alunos da Unicamp que queriam acabar com o uso daquela planilha chata que sempre sobrava para uma pessoa manter.</p>
-
                                 </div>
-                                <div class="span-12 push-1 last center">
+                                <div class="span-11 last center">
+                                    <br />
+                                    <img width="470" src="${h.url('/images/screenshot.jpg')}" class="imagem shadow-blur" />
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="span-12">
+                                    <h1 class="centrado">Como Funciona?</h1>
+                                </div>
+                                <div class="span-11 last center">
                                     <br />
                                     <img width="470" src="${h.url('/images/screenshot.jpg')}" class="imagem shadow-blur" />
                                 </div>
@@ -60,50 +69,46 @@
                             
 
                             <div>
-                                <div class="span-7">
-                                    <h3>Cada um registra seus gastos</h3>
-                                    <hr />
-                                    <p>As contas podem ser distribuídas entre os moradores. Cada pessoa fica responsável por uma ou mais contas e registra quanto gastou no Republicaos.</p>
+                                <div class="span-10">
+                                    <h1 class="step">1</h1>
+                                    <h2>Cada um registra seus gastos</h2>
                                 </div>
-                                <div class="span-14 last center">
+                                <div class="span-13 last center">
                                     <img src="${h.url('/images/funcionamento_1.png')}" />
                                 </div>
                             </div>
 
 
                             <div>
-                                <div class="span-7">
-                                    <h3>Cálculo do Rateio</h3>
-                                    <hr />
-                                    <p>À medida que vão sendo informadas, o Republicaos totaliza as despesas e já calcula a parte de cada morador.</p>
-                                    <p>A divisão das contas considera o número de dias que cada pessoa passou na república, produzindo um rateio mais justo para todos!</p>
+                                <div class="span-10">
+                                    <h1 class="step">2</h1>
+                                    <h2>O Republicaos calcula as quotas</h2>
+                                    <p>A quota é proporcional ao número de dias que cada pessoa passou na república, produzindo um rateio mais justo.</p>
                                 </div>
-                                <div class="span-14 figuras last center">
+                                <div class="span-13 figuras last center">
                                     <img src="${h.url('/images/funcionamento_2.png')}" />
                                 </div>
                             </div>
 
 
                             <div>
-                                <div class="span-7">
-                                    <h3>Acerto de Contas</h3>
-                                    <hr />
-                                    <p>Comparando a quota com os gastos individuais, o Republicaos determina quem gastou a mais ou a menos do que deveria.</p>
+                                <div class="span-10">
+                                    <h1 class="step">3</h1>
+                                    <h2>E informa quem gastou a mais ou a menos</h2>
                                 </div>
-                                <div class="span-14 last center">
+                                <div class="span-13 last center">
                                     <img src="${h.url('/images/funcionamento_3.png')}" />
                                 </div>
                             </div>
 
 
                             <div>
-                                 <div class="span-7">
-                                    <h3>Dia do fechamento</h3>
-                                    <hr />
-                                    <p>No dia do fechamento das contas, quem pagou a menos do que sua quota acerta com quem pagou a mais, zerando as diferenças.</p>
+                                 <div class="span-10">
+                                    <h1 class="step">4</h1>
+                                    <h2>Por fim, os moradores acertam as diferenças</h2>
                                     <p>O Republicaos já informa quanto exatamente cada um deve acertar com o outro.</p>
                                 </div>
-                                <div class="span-14 last center">
+                                <div class="span-13 last center">
                                     <img src="${h.url('/images/funcionamento_4.png')}" />
                                 </div>
                            </div>
@@ -122,7 +127,7 @@
                                     <hr />
                                     <p>Se você já está convencido a usar o Republicaos, crie uma nova conta e depois convoque os outros moradores!</p>
                                     <br /><br />
-                                    <a href="${h.url(controller='root', action='login')}"><button class="tridimensional"><h3 class="bottom">Nova Conta</h3></button></a>
+                                    <a href="${h.url(controller='root', action='login')}"><button class="tridimensional"><h3 class="bottom">Crie uma Nova Conta</h3></button></a>
                                 </div>
                            </div>
 

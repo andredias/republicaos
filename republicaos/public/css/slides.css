@@ -1,6 +1,7 @@
 .slide_banner {
     background-color: Silver;
     z-index: -1;
+    border-top: 1px solid rgba(0, 0, 0, 0.7);
 }
 
 .slide_box {
@@ -134,12 +135,20 @@ para que os botões fiquem do lado de fora
     color:red;
 }
 
+.slides_container .span-10 {
+    width: 390px !important;
+}
+
 .slides_container .span-11 {
     width: 430px !important;
 }
 
 .slides_container .span-12 {
     width: 470px !important;
+}
+
+.slides_container .span-13 {
+    width: 510px !important;
 }
 
 .slides_container .span-7 {
