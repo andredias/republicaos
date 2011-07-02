@@ -1,5 +1,5 @@
 .slide_banner {
-    background-color: LemonChiffon;
+    background-color: Silver;
     z-index: -1;
 }
 
@@ -37,13 +37,13 @@ Ref: http://matthamm.com/box-shadow-curl.html
     content: '';
     z-index: -1;
     position: absolute;
-    left: 2.5em;
+    left: 2.8em;
     bottom: 1.5em;
     width: 70%;
     height: 55%;
-    -webkit-box-shadow: 0 18px 16px rgba(0, 0, 0, 0.7);
-    -moz-box-shadow: 0 18px 16px rgba(0, 0, 0, 0.7);
-    box-shadow: 0 18px 16px rgba(0, 0, 0, 0.7);
+    -webkit-box-shadow: 0 15px 8px rgba(0, 0, 0, 0.7);
+    -moz-box-shadow: 0 15px 8px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 15px 8px rgba(0, 0, 0, 0.7);
     -webkit-transform: skew(-15deg) rotate(-3deg);
     -moz-transform: skew(-15deg) rotate(-3deg);
     -ms-transform: skew(-15deg) rotate(-3deg);
@@ -54,7 +54,7 @@ Ref: http://matthamm.com/box-shadow-curl.html
 
 .sombra_curva:after {
     left: auto;
-    right: 2.5em;
+    right: 2.8em;
     -webkit-transform: skew(15deg) rotate(3deg);
     -moz-transform: skew(15deg) rotate(3deg);
     -ms-transform: skew(15deg) rotate(3deg);
@@ -113,7 +113,7 @@ para que os botões fiquem do lado de fora
     -moz-border-radius: 0.5em;
     -webkit-border-radius: 0.5em;
     background-color: SlateGray;
-    margin: 3px;
+    margin-left: 1em;
     -moz-box-shadow: 0px 1px 3px black, inset 0 1px 2px black;
     -webkit-box-shadow: 0px 1px 3px black, inset 0 1px 2px black;
     box-shadow: 0px 1px 3px black, inset 0 1px 2px black;
@@ -144,6 +144,10 @@ para que os botões fiquem do lado de fora
 
 .slides_container .span-7 {
     width: 270px !important;
+}
+
+.slides_container .span-9 {
+    width: 350px !important;
 }
 
 .slides_container .span-14 {
