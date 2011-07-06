@@ -18,26 +18,29 @@
     <xi:include href="../include/scripts.html" />
     
     <script type="text/javascript"> 
-         
         $(document).ready(function() {
-            $("#bt_nova_conta").click(function () {
-                $('form').attr('action', "${h.url(controller='pessoa', action='new')}");
-                $(".login").hide();
-                $(".login [required]").attr("disabled", "disabled");
-                $(".nova_conta").show();
-                $(".nova_conta [required]").removeAttr("disabled");
+            $("#navigation li a").click(function() {
+                var selected = $("#navigation li.selected a");
+                if (this != selected) {
+                    $(selected).parent().removeClass("selected");
+                    $($(selected).attr("href")).hide();
+                    
+                    $(this).parent().addClass("selected");
+                    $($(this).attr("href")).show();
+                }
             });
-            $("#bt_login").click(function () {
-                $('form').attr('action', "${h.url(controller='root', action='login')}");
-                $(".nova_conta").hide();
-                $(".nova_conta [required]").attr("disabled", "disabled");
-                $(".login").show();
-                $(".login [required]").removeAttr("disabled");
-            });
-            $("#bt_login").click();
+            
+            // Este mesmo arquivo é usado tanto para login quanto para nova conta
+            <py:if test="c.action == 'nova_conta'">
+            // inicia mostrando o formulário de nova conta
+            $("#navigation li a[href='#tab_nova_conta']").click();
+            </py:if>
+            <py:if test="c.action != 'nova_conta'">
+            // inicia com o formulário de login e esconde o outro
+            $("#tab_nova_conta").hide();
+            </py:if>
         });
-
-    </script> 
+    </script>
 
 </head>
 
@@ -47,33 +50,25 @@
     
     <div class="main">
         <div class="container">
-            <br />
-            <div class="span-24 box shadow">
+            <div class="span-24">
                 <xi:include href="../include/flash.html" />
-                <!--
-                <h1 class="titulo">Login</h1>
-                -->
                 <br />
-                <form name="unico" method="post" action="">
-                    <div class="span-11 colborder">
-                        <h2>Login</h2>
-                        <hr />
-                        <div class="nova_conta">
-                            <button class="thoughtbot" id="bt_login" type="button"><h6>Já sou cadastrado!</h6></button>
-                        </div>
-                        <div class="login">
+                <div id="tabs" class="span-12 box shadow">
+                    <ul id="navigation">
+                        <li class="selected"><a href="#tab_login">Login</a></li>
+                        <li><a href="#tab_nova_conta">Nova Conta</a></li>
+                    </ul>
+                    
+                    <div id="tab_login" class="selected">
+                        <form name="login_form" method="post" action="${h.url(controller='root', action='login')}">
                             <p>
-                                <label for="Email"><span class="required">*</span> E-mail</label><br />
+                                <label for="Email">E-mail <span class="required">*</span></label><br />
                                 <input class="text" type="email" name="email" size="20" required="required" autofocus="autofocus" />
                             </p>
 
                             <p>
-                                <label for="senha"><span class="required">*</span> Senha <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
+                                <label for="senha">Senha <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
                                 <input class="text" type="password" name="senha" required="required" pattern="[^\s]{4,}" />
-                            </p>
-
-                            <p class="login">
-                                <input type="checkbox" name="keep_connected" /> Me mantenha conectado <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_keep_connected" />
                             </p>
 
                             <hr />
@@ -81,53 +76,49 @@
                             <p class="login">Esqueceu sua senha? Informe seu e-mail e <a href="/pessoa/esqueceu_senha">clique aqui</a> para criar uma nova senha</p>
                             <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                             
-                            <p class="bottom login"><button type="submit" class="launch bottom"><h6>Entrar</h6></button></p>
-                        </div>
+                            <p class="bottom"><button type="submit" class="launch bottom"><h6>Entrar</h6></button></p>
+                        </form>
+
                     </div>
-                    <div class="span-12 last">
-                        <h2>Nova Conta</h2>
-                        <hr />
-                        <div class="login">
-                            <button class="thoughtbot" id="bt_nova_conta" type="button"><h6>Ainda não tenho uma conta!</h6></button>
-                        </div>
-                        <div class="nova_conta">
+                    
+                    <div id="tab_nova_conta">
+                        <form name="nova_conta_form" method="post" action="${h.url(controller='pessoa', action='new')}">
                             <p>
-                                <label for="Email"><span class="required">*</span> E-mail</label><br />
+                                <label for="Email">E-mail <span class="required">*</span></label><br />
                                 <input class="text" type="email" name="email" size="20" required="required" autofocus="autofocus" />
                             </p>
 
                             <p>
-                                <label for="senha"><span class="required">*</span> Senha <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
+                                <label for="senha">Senha <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
                                 <input class="text" type="password" name="senha" required="required" pattern="[^\s]{4,}" />
                             </p>
-
                             <p>
-                                <label for="confirmacao_senha"><span class="required">*</span> Confirmação da Senha</label><br />
+                                <label for="confirmacao_senha">Confirmação da Senha <span class="required">*</span></label><br />
                                 <input class="text" type="password" name="confirmacao_senha" size="10" required="required" />
                             </p>
 
                             <p>
-                                <label for="nome"><span class="required">*</span> Nome ou Apelido <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_apelido" /></label><br />
+                                <label for="nome">Nome ou Apelido <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_apelido" /></label><br />
                                 <input class="text" type="text" name="nome" required="required" />
                             </p>
 
                             <p>
-                                <label for="captcha"><span class="required">*</span> ${c.captcha} <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_captcha" /></label><br />
+                                <label for="captcha">${c.captcha} <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_captcha" /></label><br />
                                 <input class="text" type="text" name="captcha" size="10" required="required" />
                                 <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" />
                             </p>
                             <p>
                                 <input type="checkbox" name="aceito_termos" required="required" /> Li e aceito os <a href="${h.url(controller='root', action='termos_uso')}">termos de Uso</a> <span class="required">*</span>
                             </p>
-
                             <hr />
 
+                            <p class="login">Esqueceu sua senha? Informe seu e-mail e <a href="/pessoa/esqueceu_senha">clique aqui</a> para criar uma nova senha</p>
                             <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                             
                             <p class="bottom nova_conta"><button type="submit" class="launch bottom"><h6>Criar Conta</h6></button></p>
-                        </div>
+                        </form>
                     </div>
-                </form>
+                </div>
 
             </div>
         </div>
