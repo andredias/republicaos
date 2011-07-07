@@ -22,8 +22,10 @@
             $("#navigation li a").click(function() {
                 var selected = $("#navigation li.selected a");
                 if (this != selected) {
-                    $(selected).parent().removeClass("selected");
-                    $($(selected).attr("href")).hide();
+                    if (selected) {
+                        $(selected).parent().removeClass("selected");
+                        $($(selected).attr("href")).hide();
+                    }
                     
                     $(this).parent().addClass("selected");
                     $($(this).attr("href")).show();
@@ -31,14 +33,13 @@
             });
             
             // Este mesmo arquivo é usado tanto para login quanto para nova conta
-            <py:if test="c.action == 'nova_conta'">
-            // inicia mostrando o formulário de nova conta
-            $("#navigation li a[href='#tab_nova_conta']").click();
-            </py:if>
-            <py:if test="c.action != 'nova_conta'">
-            // inicia com o formulário de login e esconde o outro
-            $("#tab_nova_conta").hide();
-            </py:if>
+            $("[id^='tab_']").hide();
+            $("a[name='esqueci_senha']").click(function() {$("#navigation li a[href='#tab_esqueci_senha']").click();});
+            <py:choose test="c.action">
+                <py:when test="'nova_conta'">$("#navigation li a[href='#tab_nova_conta']").click();</py:when>
+                <py:when test="'esqueci_senha'">$("#navigation li a[href='#tab_esqueci_senha']").click();</py:when>
+                <py:otherwise>$("#navigation li a[href='#tab_login']").click();</py:otherwise>
+            </py:choose>
         });
     </script>
 
@@ -53,13 +54,14 @@
             <div class="span-24">
                 <xi:include href="../include/flash.html" />
                 <br />
-                <div id="tabs" class="span-12 box shadow">
+                <div id="tabs" class="span-12">
                     <ul id="navigation">
-                        <li class="selected"><a href="#tab_login">Login</a></li>
+                        <li><a href="#tab_login">Login</a></li>
                         <li><a href="#tab_nova_conta">Nova Conta</a></li>
+                        <li><a href="#tab_esqueci_senha">Esqueci a senha</a></li>
                     </ul>
                     
-                    <div id="tab_login" class="selected">
+                    <div id="tab_login" class="box shadow">
                         <form name="login_form" method="post" action="${h.url(controller='root', action='login')}">
                             <p>
                                 <label for="Email">E-mail <span class="required">*</span></label><br />
@@ -67,13 +69,11 @@
                             </p>
 
                             <p>
-                                <label for="senha">Senha <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
+                                <label for="senha">Senha <span class="required">*</span></label> <span class="right small"><a href="#" name="esqueci_senha">Esqueci minha senha!</a></span><br />
                                 <input class="text" type="password" name="senha" required="required" pattern="[^\s]{4,}" />
                             </p>
 
                             <hr />
-
-                            <p class="login">Esqueceu sua senha? Informe seu e-mail e <a href="/pessoa/esqueceu_senha">clique aqui</a> para criar uma nova senha</p>
                             <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                             
                             <p class="bottom"><button type="submit" class="launch bottom"><h6>Entrar</h6></button></p>
@@ -81,7 +81,7 @@
 
                     </div>
                     
-                    <div id="tab_nova_conta">
+                    <div id="tab_nova_conta" class="box shadow">
                         <form name="nova_conta_form" method="post" action="${h.url(controller='pessoa', action='new')}">
                             <p>
                                 <label for="Email">E-mail <span class="required">*</span></label><br />
@@ -112,10 +112,20 @@
                             </p>
                             <hr />
 
-                            <p class="login">Esqueceu sua senha? Informe seu e-mail e <a href="/pessoa/esqueceu_senha">clique aqui</a> para criar uma nova senha</p>
                             <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                             
-                            <p class="bottom nova_conta"><button type="submit" class="launch bottom"><h6>Criar Conta</h6></button></p>
+                            <p class="bottom"><button type="submit" class="launch bottom"><h6>Criar Conta</h6></button></p>
+                        </form>
+                    </div>
+                    <div id="tab_esqueci_senha" class="box shadow">
+                        <form name="login_form" method="post" action="${h.url(controller='pessoa', action='esqueci_senha')}">
+                            <p>Informe seu e-mail. Em seguida, lhe enviaremos uma mensagem com um link para recadastrar sua senha.</p>
+                            <p>
+                                <label for="Email">E-mail <span class="required">*</span></label><br />
+                                <input class="text" type="email" name="email" size="20" required="required" autofocus="autofocus" />
+                            </p>
+                            <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
+                            <p class="bottom"><button type="submit" class="launch bottom"><h6>Enviar</h6></button></p>
                         </form>
                     </div>
                 </div>
