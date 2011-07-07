@@ -72,7 +72,8 @@ class ConfirmacaoController(BaseController):
             redirect(url(controller='pessoa', action='painel', id=user.id))
         else:
             flash('O link fornecido para confirmação de cadastro não é válido. Por favor, faça um novo pedido de cadastro.', 'error')
-            return render('root/login.html')
+            c.action = 'login'
+            return render('root/login_nova_conta_esqueci_senha.html')
 
 
     @validate(ConviteMoradorSchema, alternative_schema=ConviteMoradorSchema2,
@@ -81,7 +82,8 @@ class ConfirmacaoController(BaseController):
         c.convite = ConviteMorador.get_by(hash=id)
         if not c.convite:
             flash('O link fornecido para confirmação do convite para ser morador da república não é válido. Por favor, entre em contato com a pessoa que lhe indicou para que ela faça um novo convite.', 'error')
-            return render('root/login.html')
+            c.action = 'login'
+            return render('root/login_nova_conta_esqueci_senha.html')
 
         set_user(Pessoa.get_by(email=c.convite.email))
         c.user = get_user()
@@ -119,4 +121,5 @@ class ConfirmacaoController(BaseController):
             redirect(url(controller='pessoa', action='edit', id=ts.pessoa.id))
         else:
             flash('O link fornecido para troca de senha não é válido. Por favor, faça um novo pedido.', 'error')
-            return render('root/login.html')
+            c.action = 'login'
+            return render('root/login_nova_conta_esqueci_senha.html')

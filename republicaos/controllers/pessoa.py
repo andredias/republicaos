@@ -131,7 +131,8 @@ class PessoaController(BaseController):
         elif c.errors:
             flash('O formulário não foi preenchido corretamente', 'error')
         c.captcha, c.captcha_md5 = captcha()
-        return render('root/login.html', filler_data=request.params)
+        c.action = 'nova_conta'
+        return render('root/login_nova_conta_esqueci_senha.html', filler_data=request.params)
 
 
 
@@ -167,7 +168,7 @@ class PessoaController(BaseController):
     
     
     @validate(TrocaSenhaSchema)
-    def esqueceu_senha(self):
+    def esqueci_senha(self):
         if c.valid_data:
             pessoa = Pessoa.get_by(email = c.valid_data['email'])
             if pessoa:
@@ -177,7 +178,7 @@ class PessoaController(BaseController):
             else:
                 flash('Este endereço de e-mail não está cadastrado no Republicaos!', 'error')
         
-        return render('pessoa/esqueceu_senha.html')
+        return render('root/login_nova_conta_esqueci_senha.html', filler_data=request.params)
     
     @owner_required
     def painel(self, id):

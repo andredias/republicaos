@@ -19,7 +19,7 @@ class TestUsuarioEsqueceuSenha(TestController):
         
         # email não cadastrado
         response = self.app.post(
-                        url=url(controller='pessoa', action='esqueceu_senha'),
+                        url=url(controller='pessoa', action='esqueci_senha'),
                         params={
                                 'email':'abc@def.com.br'
                             },
@@ -29,7 +29,7 @@ class TestUsuarioEsqueceuSenha(TestController):
         
         # usuário autenticado, email não cadastrado
         response = self.app.post(
-                        url=url(controller='pessoa', action='esqueceu_senha'),
+                        url=url(controller='pessoa', action='esqueci_senha'),
                         params={
                                 'email':'abc@def.com.br'
                             },
@@ -40,7 +40,7 @@ class TestUsuarioEsqueceuSenha(TestController):
         
         # email cadastrado
         response = self.app.post(
-                        url=url(controller='pessoa', action='esqueceu_senha'),
+                        url=url(controller='pessoa', action='esqueci_senha'),
                         params={
                                 'email':email
                             },

@@ -77,7 +77,8 @@ class RootController(BaseController):
         elif c.errors:
             flash('O formulário não foi preenchido corretamente', 'error')
         c.captcha, c.captcha_md5 = captcha()
-        return render('root/login.html', filler_data=request.params)
+        c.action = 'login'
+        return render('root/login_nova_conta_esqueci_senha.html', filler_data=request.params)
 
 
     def logout(self):
