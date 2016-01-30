@@ -22,6 +22,12 @@ from republicaos.lib.captcha import captcha
 
 log = logging.getLogger(__name__)
 
+class SolicitacaoCadastroSchema(Schema):
+    allow_extra_fields = True
+    filter_extra_fields = True
+    email = validators.Email(not_empty=True)
+    captcha = Captcha(resposta='captcha_md5', not_empty=True)
+
 
 class PessoaSchema(Schema):
     allow_extra_fields = True
@@ -116,22 +122,25 @@ class PessoaController(BaseController):
         return render('pessoa/index.html')
 
 
-    @validate(PessoaSchema)
-    def new(self):
+    @validate(SolicitacaoCadastroSchema)
+    def pedido_nova_conta(self):
         """GET /pessoa/new: Form to create a new item"""
         if c.valid_data:
-            pendencia = CadastroPendente.get_by(email = c.valid_data['email'])
-            if not pendencia:
-                pendencia = CadastroPendente(**c.valid_data)
-            else:
-                pendencia.from_dict(c.valid_data)
+            email = c.valid_data['email']
+            if Pessoa.get_by(email=email):
+                # esqueceu a senha?
+                flash('E-mail já cadastrado no sistema. Você esqueceu sua senha?', 'warning')
+                redirect(url(controller='pessoa', action='esqueci_senha'))
+            elif CadastroPendente.get_by(email=email):
+                # TODO: e se for pra enviar novamente?
                 flash('Já existe um pedido de cadastro pendente para o e-mail fornecido. Verifique suas mensagens de e-mail.', 'info')
-            Session.commit()
+            else:
+                pendencia = CadastroPendente(email=email)
+                Session.commit()
             redirect(url(controller='root', action='index'))
         elif c.errors:
             flash('O formulário não foi preenchido corretamente', 'error')
         c.captcha, c.captcha_md5 = captcha()
-        c.action = 'nova_conta'
         return render('root/login_nova_conta_esqueci_senha.html', filler_data=request.params)
 
 
@@ -167,17 +176,17 @@ class PessoaController(BaseController):
         return render('pessoa/form.html', filler_data = c.pessoa.to_dict())
     
     
-    @validate(TrocaSenhaSchema)
+    @validate(SolicitacaoCadastroSchema)
     def esqueci_senha(self):
         if c.valid_data:
-            pessoa = Pessoa.get_by(email = c.valid_data['email'])
+            pessoa = Pessoa.get_by(email=c.valid_data['email'])
             if pessoa:
                 TrocaSenha(pessoa=pessoa)
                 Session.commit()
                 redirect(url(controller='root', action='index'))
             else:
                 flash('Este endereço de e-mail não está cadastrado no Republicaos!', 'error')
-        
+        c.captcha, c.captcha_md5 = captcha()
         return render('root/login_nova_conta_esqueci_senha.html', filler_data=request.params)
     
     @owner_required

@@ -23,8 +23,8 @@ class TestUsuarioConfirmaConviteParaMorador(TestController):
                         latitude = 0,
                         longitude = 0)
         Morador(pessoa=p1, republica=republica, entrada=date.today())
-        convite1 = ConviteMorador(nome=p2.nome, email=p2.email, republica=republica, user=p1)
-        convite2 = ConviteMorador(nome='Siclano', email='siclano@republicaos.com.br', republica=republica, user=p1)
+        convite1 = ConviteMorador(email=p2.email, republica=republica, user=p1)
+        convite2 = ConviteMorador(email='siclano@republicaos.com.br', republica=republica, user=p1)
         Session.commit()
         
         link1 = convite1.link_confirmacao
@@ -87,4 +87,10 @@ class TestUsuarioConfirmaConviteParaMorador(TestController):
         assert 'Bem vindo' in response.session['flash'][-1][1]
         assert ConviteMorador.get_by(hash=link2[-40:]) is None
         
-        
+    
+    def test_dois(self):
+        '''
+        Pessoa tem pendentes a ativação do cadastro e o convite para ser morador.
+        Depois de se cadastrar como morador, não pode mais haver nenhum convite pendente
+        '''
+        assert False

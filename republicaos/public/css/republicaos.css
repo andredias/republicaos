@@ -111,7 +111,6 @@ a.logotipo:hover {
     background: Silver;
     border-top: 1px solid rgba(0, 0, 0, 0.7);
     border-bootm: 1px solid rgba(255, 255, 255, 0.7);
-    min-height: 600px;
 }
 
 .main h2 {

@@ -3,8 +3,13 @@
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:py="http://genshi.edgewall.org/">
 
+<?python
+from os.path import basename
+action = basename(request.url)
+?>
+
 <head>
-    <title>Republicaos - Login | Criação de Conta</title>
+    <title>Republicaos - Login | Pedido de Conta | Esqueci a Senha</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
     <link rel="stylesheet" href="${h.url('/css/blueprint/screen.css')}" type="text/css" media="screen, projection" />
@@ -28,15 +33,15 @@
                     }
                     
                     $(this).parent().addClass("selected");
-                    $($(this).attr("href")).show();
+                    $($(this).attr("href")).css('display', 'inline-block'); // show();
                 }
             });
             
             // Este mesmo arquivo é usado tanto para login quanto para nova conta
             $("[id^='tab_']").hide();
             $("a[name='esqueci_senha']").click(function() {$("#navigation li a[href='#tab_esqueci_senha']").click();});
-            <py:choose test="c.action">
-                <py:when test="'nova_conta'">$("#navigation li a[href='#tab_nova_conta']").click();</py:when>
+            <py:choose test="action">
+                <py:when test="'pedido_nova_conta'">$("#navigation li a[href='#tab_nova_conta']").click();</py:when>
                 <py:when test="'esqueci_senha'">$("#navigation li a[href='#tab_esqueci_senha']").click();</py:when>
                 <py:otherwise>$("#navigation li a[href='#tab_login']").click();</py:otherwise>
             </py:choose>
@@ -54,7 +59,7 @@
             <div class="span-24">
                 <xi:include href="../include/flash.html" />
                 <br />
-                <div id="tabs" class="span-12">
+                <div id="tabs">
                     <ul id="navigation">
                         <li><a href="#tab_login">Login</a></li>
                         <li><a href="#tab_nova_conta">Nova Conta</a></li>
@@ -65,65 +70,59 @@
                         <form name="login_form" method="post" action="${h.url(controller='root', action='login')}">
                             <p>
                                 <label for="Email">E-mail <span class="required">*</span></label><br />
-                                <input class="text" type="email" name="email" size="20" required="required" autofocus="autofocus" />
+                                <input class="text" type="email" name="email" required="required" autofocus="autofocus" />
                             </p>
 
                             <p>
-                                <label for="senha">Senha <span class="required">*</span></label> <span class="right small"><a href="#" name="esqueci_senha">Esqueci minha senha!</a></span><br />
-                                <input class="text" type="password" name="senha" required="required" pattern="[^\s]{4,}" />
+                                <label for="senha">Senha <span class="required">*</span></label><br />
+                                <input class="text" type="password" name="senha" required="required" pattern="[^\s]{4,}" /><br />
+                                <span class="small"><a href="#" name="esqueci_senha">Esqueci minha senha!</a></span>
                             </p>
 
                             <hr />
                             <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                             
-                            <p class="bottom"><button type="submit" class="launch bottom"><h6>Entrar</h6></button></p>
+                            <p class="bottom"><button type="submit" class="launch bottom"><h6>Enviar</h6></button></p>
                         </form>
-
                     </div>
                     
                     <div id="tab_nova_conta" class="box shadow">
-                        <form name="nova_conta_form" method="post" action="${h.url(controller='pessoa', action='new')}">
+                        <form name="nova_conta_form" method="post" action="${h.url(controller='pessoa', action='pedido_nova_conta')}">
+                            <p>Informe seu e-mail e lhe enviaremos uma mensagem com um link para ativação da conta.</p>
                             <p>
                                 <label for="Email">E-mail <span class="required">*</span></label><br />
-                                <input class="text" type="email" name="email" size="20" required="required" autofocus="autofocus" />
+                                <input class="text" type="email" name="email" required="required" autofocus="autofocus" />
                             </p>
 
                             <p>
-                                <label for="senha">Senha <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_nova_senha" /></label><br />
-                                <input class="text" type="password" name="senha" required="required" pattern="[^\s]{4,}" />
-                            </p>
-                            <p>
-                                <label for="confirmacao_senha">Confirmação da Senha <span class="required">*</span></label><br />
-                                <input class="text" type="password" name="confirmacao_senha" size="10" required="required" />
-                            </p>
-
-                            <p>
-                                <label for="nome">Nome ou Apelido <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_apelido" /></label><br />
-                                <input class="text" type="text" name="nome" required="required" />
-                            </p>
-
-                            <p>
-                                <label for="captcha">${c.captcha} <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_captcha" /></label><br />
-                                <input class="text" type="text" name="captcha" size="10" required="required" />
-                                <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" />
-                            </p>
-                            <p>
-                                <input type="checkbox" name="aceito_termos" required="required" /> Li e aceito os <a href="${h.url(controller='root', action='termos_uso')}">termos de Uso</a> <span class="required">*</span>
+                                <label for="captcha">${c.captcha} <span class="required">*</span></label><br />
+                                <input class="text" type="text" name="captcha" required="required" />
+                                <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" /><br />
+                                <span class="quiet small">Para evitar SPAM e garantir que você é uma pessoa e não um programa</span>
                             </p>
                             <hr />
 
                             <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                             
-                            <p class="bottom"><button type="submit" class="launch bottom"><h6>Criar Conta</h6></button></p>
+                            <p class="bottom"><button type="submit" class="launch bottom"><h6>Enviar</h6></button></p>
                         </form>
                     </div>
+                    
                     <div id="tab_esqueci_senha" class="box shadow">
                         <form name="login_form" method="post" action="${h.url(controller='pessoa', action='esqueci_senha')}">
                             <p>Informe seu e-mail. Em seguida, lhe enviaremos uma mensagem com um link para recadastrar sua senha.</p>
                             <p>
                                 <label for="Email">E-mail <span class="required">*</span></label><br />
-                                <input class="text" type="email" name="email" size="20" required="required" autofocus="autofocus" />
+                                <input class="text" type="email" name="email" required="required" autofocus="autofocus" />
                             </p>
+
+                            <p>
+                                <label for="captcha">${c.captcha} <span class="required">*</span></label><br />
+                                <input class="text" type="text" name="captcha" size="10" required="required" />
+                                <input type="hidden" name="captcha_md5" value="${c.captcha_md5}" /><br />
+                                <span class="quiet small">Para evitar SPAM e garantir que você é uma pessoa e não um programa</span>
+                            </p>
+                            <hr />
                             <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
                             <p class="bottom"><button type="submit" class="launch bottom"><h6>Enviar</h6></button></p>
                         </form>
@@ -133,19 +132,7 @@
             </div>
         </div>
     </div>
-     <div id="tip_apelido" style="display:none">
-        <p class="bottom">Será usado para lhe identificar no Republicaos</p>
-    </div>
-     <div id="tip_keep_connected" style="display:none">
-        <p class="bottom">Da próxima vez que você entrar no Republicaos através desse computador,<br />você já vai ser logado automaticamente</p>
-    </div>
-    <div id="tip_nova_senha" style="display:none">
-        <p class="bottom">A senha deve ter mais de 4 caracteres ou mais e pode conter letras, números e pontuação</p>
-    </div>
-    <div id="tip_captcha" style="display:none">
-        <p class="bottom">Captcha para evitar SPAM, provando que você é humano e não um programa! :-)</p>
-    </div>
-    
+
     <xi:include href="../include/footer.html" />
 </body>
 </html>

@@ -16,6 +16,7 @@ from decimal import Decimal
 from babel.numbers import format_number, format_decimal, format_percent
 from datetime import date
 from unicodedata import normalize
+from hashlib import sha1
 
 from republicaos.lib.helpers import flash
 
@@ -203,3 +204,13 @@ def strtourl(str):
     '''
     return re.sub('[^a-z0-9]+', '-',
                   normalize('NFKD', str.decode('utf-8')).encode('ASCII', 'ignore').lower())
+
+
+def encrypt(*args):
+    #FIXME: excluir a linha abaixo na versão 1.0.1 do Pylons, quando config já virá populado
+    if testing_app():
+        config['beaker.session.secret'] = '43210'
+    # fim do trecho a se excluído
+    
+    palavra = ''.join(args).join(config['beaker.session.secret'])
+    return sha1(palavra.encode('utf-8')).hexdigest()

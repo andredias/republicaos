@@ -25,6 +25,16 @@ def get_republica_from_convite_morador():
     return c.convite.republica if c.convite else None
 
 
+class CadastroSchema(Schema):
+    allow_extra_fields = True
+    filter_extra_fields = True
+    nome = validators.UnicodeString(not_empty=True, strip=True)
+    senha = validators.UnicodeString(not_empty=True, min=4)
+    confirmacao_senha = validators.UnicodeString()
+    aceito_termos = validators.NotEmpty(messages={'empty': 'Aceite os termos de uso'})
+    chained_validators = [validators.FieldsMatch('senha', 'confirmacao_senha')]
+
+
 class ConviteMoradorSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = True
@@ -62,18 +72,28 @@ def check_convidado_is_user():
 
 
 class ConfirmacaoController(BaseController):
-
-    def cadastro(self, id):
+    
+    @validate(CadastroSchema)
+    def ativacao_nova_conta(self, id):
+        if ConviteMorador.get_by(hash=id):
+            # já possui convite para ser morador
+            redirect(url(controller='confirmacao', action='convite_morador', id=id))
         cp = CadastroPendente.get_by(hash=id)
-        if cp:
-            user = cp.confirma_cadastro()
-            set_user(user)
-            flash('Bem vindo ao Republicaos, %s!' % cp.nome, 'info')
+        if not cp:
+            flash('O link fornecido para confirmação de email não é válido. Por favor, refaça o pedido de nova conta.', 'error')
+            redirect(url(controller='pessoa', action='pedido_nova_conta'))
+        elif c.valid_data:
+            pessoa = Pessoa(email=cp.email, nome=c.valid_data['nome'], senha=c.valid_data['senha'])
+            set_user(pessoa)
+            # cadastrar república
+            # convidar moradores
+            cp.delete()
+            Session.commit()
+            flash('Bem vindo ao Republicaos, %s!' % pessoa.nome, 'info')
             redirect(url(controller='pessoa', action='painel', id=user.id))
-        else:
-            flash('O link fornecido para confirmação de cadastro não é válido. Por favor, faça um novo pedido de cadastro.', 'error')
-            c.action = 'login'
-            return render('root/login_nova_conta_esqueci_senha.html')
+        elif c.errors:
+            flash('O formulário não foi preenchido corretamente', 'error')
+        return render('confirmacao/ativacao_nova_conta.html', filler_data=request.params)
 
 
     @validate(ConviteMoradorSchema, alternative_schema=ConviteMoradorSchema2,
@@ -121,5 +141,4 @@ class ConfirmacaoController(BaseController):
             redirect(url(controller='pessoa', action='edit', id=ts.pessoa.id))
         else:
             flash('O link fornecido para troca de senha não é válido. Por favor, faça um novo pedido.', 'error')
-            c.action = 'login'
             return render('root/login_nova_conta_esqueci_senha.html')

@@ -13,10 +13,10 @@ import csv
 from elixir.events import reconstructor, before_insert, before_update, after_insert
 from decimal     import Decimal
 from republicaos.model import Session
-from hashlib import sha1
 from babel.dates import format_date
 from republicaos.lib.helpers import url
 from republicaos.lib.mail import send_email
+from republicaos.lib.utils import encrypt
 from dateutil.relativedelta import relativedelta
 
 
@@ -42,14 +42,15 @@ class Pessoa(Entity):
     _senha = Field(String(40), required=True)
     email = Field(String(80), required=True, unique=True)
     data_cadastro = Field(Date, required=True, default=date.today)
-
+    
+    
     @classmethod
-    def encrypt_senha(cls, password):
-        return sha1(password).hexdigest()
-
+    def pessoas_que_nao_sao_moradoras(cls):
+        # ver http://markmail.org/message/n76frypvbgs3ev7f
+        pass
 
     def _set_senha(self, password):
-        self._senha = self.encrypt_senha(password)
+        self._senha = encrypt(password)
 
     def _get_senha(self):
         return self._senha
@@ -268,11 +269,11 @@ class TelefoneRegistrado(Entity):
 
 
 class Republica(Entity):
-    nome         = Field(Unicode(90), required = True)
+    nome         = Field(Unicode(90))
     data_criacao = Field(Date, default = date.today, required = True)
-    endereco     = Field(Unicode, required = True)
-    latitude     = Field(Float, required = True)
-    longitude    = Field(Float, required = True)
+    endereco     = Field(Unicode)
+    latitude     = Field(Float)
+    longitude    = Field(Float)
 
     fechamentos           = OneToMany('Fechamento', order_by = '-data')
     tipos_despesa         = OneToMany('TipoDespesa', order_by = 'nome')

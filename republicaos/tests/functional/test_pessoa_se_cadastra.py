@@ -15,23 +15,16 @@ class TestPessoaSeCadastra(TestController):
         Testa se o uso de dados inválidos no cadastro resulta em mensagens de erro
         """
         response = self.app.post(
-            url=url(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='pedido_nova_conta'),
             params={
                 'email': 'abcdefg',
-#               'nome': 'Nome com Acentuação',
-                'senha': '1234',
-                'confirmacao_senha': '5678',
                 'captcha': '3',
                 'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
-#               'aceito_termos': '1',
             }
         )
 
-        #assert str(response).count('class="error-message"') == 5
+        #assert str(response).count('error_') == 2 # com a unificação dos formulários, o erro aparece várias vezes
         assert 'erro_email' in response
-        assert 'erro_nome' in response
-        assert 'erro_confirmacao_senha' in response
-        assert 'erro_aceito_termos' in response
         assert 'erro_captcha' in response
     
     
@@ -43,37 +36,29 @@ class TestPessoaSeCadastra(TestController):
         Session.commit()
         
         response = self.app.post(
-            url=url(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='pedido_nova_conta'),
             params={
                 'email': 'suporte@pronus.eng.br',
-                'nome': 'Nome com Acentuação',
-                'senha': '1234',
-                'confirmacao_senha': '1234',
-                'aceito_termos': '1',
                 'captcha':'2',
                 'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
             }
         )
         
-        #assert str(response).count('class="error-message"') == 1
-        assert 'erro_email' in response
+        assert 'E-mail já cadastrado no sistema. Você esqueceu sua senha?' in response
+        assert urlparse(response.response.location).path == url(controller='pessoa', action='esqueci_senha')
 
 
     def test_email_com_cadastrado_pendente(self):
         """
         Usa um endereço de e-mail que já tem pedido de cadastro pendente
         """
-        CadastroPendente(nome='Fulano', email='abc@xyz.com', senha='1234')
+        CadastroPendente(email='abc@xyz.com')
         Session.commit()
         
         response = self.app.post(
-            url=url(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='pedido_nova_conta'),
             params={
                 'email': 'suporte@pronus.eng.br',
-                'nome': 'Nome com Acentuação',
-                'senha': '1234',
-                'confirmacao_senha': '1234',
-                'aceito_termos': '1',
                 'captcha':'2',
                 'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
             }
@@ -86,15 +71,11 @@ class TestPessoaSeCadastra(TestController):
         Testa resultado com todos os dados válidos
         '''
         response = self.app.post(
-            url=url(controller='pessoa', action='new'),
+            url=url(controller='pessoa', action='pedido_nova_conta'),
             params={
                 'email': 'suporte@pronus.eng.br',
-                'nome': 'Nome com Acentuação',
-                'senha': '1234',
-                'confirmacao_senha': '1234',
-                'aceito_termos': '1',
                 'captcha': '2',
-                'captcha_md5' : 'c81e728d9d4c2f636f067f89cc14862c',
+                'captcha_md5': 'c81e728d9d4c2f636f067f89cc14862c',
             },
             # status esperado. Verifica automaticamente. Veja
             # http://pylonsbook.com/en/1.0/testing.html#functional-testing

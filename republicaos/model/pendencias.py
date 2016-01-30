@@ -12,7 +12,8 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from republicaos.model import Session, Pessoa
 from republicaos.lib.mail import send_email
-from hashlib import sha1
+from republicaos.lib.utils import encrypt
+
 from pylons import config
 
 from paste.request import construct_url
@@ -27,29 +28,18 @@ log = logging.getLogger(__name__)
 
 dias_expiracao = 7
 
-def hash_calc(*args):
-    #FIXME: excluir a linha abaixo na versão 1.0.1 do Pylons, quando config já virá populado
-    from republicaos.lib.utils import testing_app
-    if testing_app():
-        config['beaker.session.secret'] = '1234'
-    # fim do trecho a se excluído
-    
-    palavra = ''.join(args).join(config['beaker.session.secret'])
-    return sha1(palavra.encode('utf-8')).hexdigest()
 
 class CadastroPendente(Entity):
     using_options(tablename = 'cadastro_pendente')
 
     hash = Field(String(40), primary_key = True)
-    nome =  Field(Unicode(30), required=True)
-    _senha = Field(String(40), required=True)
     email = Field(String(80), required=True, unique=True)
     data_pedido = Field(DateTime, required=True, default=datetime.now)
 
     #TODO: ver como fica a tradução com o Babel
     subject = 'Republicaos: verificação de endereço de e-mail'
     mensagem_confirmacao = '''
-Oi %(nome)s,
+Oi,
 
 Recebemos sua soliticação de cadastro no Republicaos. Para completar o processo, é necessário que você confirme o recebimento desta mensagem de ativação. Para isto, basta clicar no link abaixo:
 
@@ -64,41 +54,28 @@ Atenciosamente,
 --
 Equipe Republicaos'''
 
-    def _set_senha(self, password):
-        self._senha = sha1(password).hexdigest()
-
-    def _get_senha(self):
-        return self._senha
-
-    senha = property(_get_senha, _set_senha)
-
     @before_insert
     def _set_hash(self):
-        self.hash = hash_calc(self.nome, self.senha, self.email)
+        self.hash = encrypt(self.email)
 
-
-    def confirma_cadastro(self):
-        pessoa = Pessoa(nome=self.nome, _senha=self._senha, email=self.email)
-        self.delete()
-        Session.commit()
-        return pessoa
 
     @property
     def link_confirmacao(self):
+        action = 'ativacao_nova_conta'
         try:
             url_ = construct_url(request.environ, script_name = url(controller='confirmacao',
-                            action='cadastro', id=self.hash), with_path_info=False)
+                            action=action, id=self.hash), with_path_info=False)
         except TypeError:
             # fora de uma chamada a uma requisição, request não fica registrado
             # acontece em alguns casos de teste
-            url_ = url(controller='confirmacao', action='cadastro', id=self.hash)
+            url_ = url(controller='confirmacao', action=action, id=self.hash)
         return url_
 
 
     @after_insert
     @after_update
     def enviar_pedido_confirmacao(self):
-        mensagem = self.mensagem_confirmacao % {'nome':self.nome, 'link':self.link_confirmacao}
+        mensagem = self.mensagem_confirmacao % {'link':self.link_confirmacao}
         log.debug('CADASTRO_PENDENTE: enviar_pedido_confirmacao: %s' % mensagem)
         send_email(to_address=self.email, message=mensagem, subject=self.subject)
         try:
@@ -132,7 +109,7 @@ Equipe Republicaos'''
 
     @before_insert
     def _set_hash(self):
-        self.hash = hash_calc(self.pessoa.nome, self.pessoa.email)
+        self.hash = encrypt(self.pessoa.nome, self.pessoa.email)
 
     @property
     def link_confirmacao(self):
@@ -161,17 +138,19 @@ class ConviteMorador(Entity):
     using_options(tablename = 'convite_morador')
 
     hash = Field(String(40), primary_key = True)
-    nome =  Field(Unicode(30), required=True)
     email = Field(String(80), required=True)
     entrada = Field(Date, default=date.today())
     data_pedido = Field(DateTime, required=True, default=datetime.now)
     user = ManyToOne('Pessoa', required=True)
     republica = ManyToOne('Republica', required=True)
+    
+    # restrição abaixo não seria mais necessária já que o hash vai ser
+    # calculado só com o e-mail, garantindo no máx um convite por e-mail
     using_table_options(UniqueConstraint('email', 'republica_id'))
     
     subject = 'Republicaos: Convite de %(anfitriao)s para ingressar na república %(republica)s'
     mensagem = '''
-Oi %(nome)s,
+Oi,
 
 %(anfitriao)s está lhe convidando para ingressar como morador na república %(republica)s. Para isto, basta clicar no link abaixo:
 
@@ -195,7 +174,7 @@ Equipe Republicaos'''
 
     @before_insert
     def _set_hash(self):
-        self.hash = hash_calc(self.email, str(self.republica.id))
+        self.hash = encrypt(self.email)
 
     @property
     def link_confirmacao(self):
@@ -213,8 +192,8 @@ Equipe Republicaos'''
     def enviar_mensagem(self):
         assunto = self.subject % {'anfitriao':self.user.nome, 'republica':self.republica.nome}
         mensagem = self.mensagem % {
-                'nome':self.nome,
-                'anfitriao':self.user.nome,
+                #'nome':self.nome,
+                'anfitriao':self.user.nome or self.user.email,
                 'republica':self.republica.nome,
                 'link':self.link_confirmacao
             }
@@ -228,12 +207,11 @@ Equipe Republicaos'''
     
     
     @classmethod
-    def convidar_moradores(cls, emails, nomes, user, republica, entrada):
+    def convidar_moradores(cls, emails, user, republica, entrada):
         if isinstance(emails, basestring):
             emails=[emails]
-        if isinstance(nomes, basestring):
-            nomes=[nomes]
-        for email, nome in izip(emails, nomes):
+
+        for email in emails:
             pessoa = Pessoa.get_by(email=email)
             if pessoa and republica in pessoa.morador_em_republicas:
                 try:
@@ -246,8 +224,7 @@ Equipe Republicaos'''
                 continue
             convite = ConviteMorador.get_by(email=email, republica=republica)
             if not convite:
-                convite = ConviteMorador(
-                            nome=nome, email=email, user=user, republica=republica, entrada=entrada)
+                convite = ConviteMorador(email=email, user=user, republica=republica, entrada=entrada)
                 Session.commit()
             else:
                 convite.enviar_mensagem()

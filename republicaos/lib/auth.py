@@ -7,6 +7,7 @@ from republicaos.model import Pessoa, Republica
 from republicaos.lib.helpers import flash
 from republicaos.lib.base import BaseController
 from pylons.controllers.util import abort, redirect
+from republicaos.lib.utils import encrypt
 
 from pylons import config, url
 
@@ -26,7 +27,7 @@ log = logging.getLogger(__name__)
 
 
 def check_user(email, senha):
-    return Pessoa.get_by(email=email, _senha=Pessoa.encrypt_senha(senha))
+    return Pessoa.get_by(email=email, _senha=encrypt(senha))
 
 
 def get_user():

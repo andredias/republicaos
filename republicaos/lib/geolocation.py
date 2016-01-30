@@ -2,18 +2,19 @@
 
 from __future__ import unicode_literals
 
-from geopy import geocoders
-from geopy.geocoders.google import GQueryError
+#from geopy import geocoders
+#from geopy.geocoders.google import GQueryError
 
 import logging
 
 log = logging.getLogger(__name__)
 
-google_maps_key = 'ABQIAAAAHRqgRmxQbkyHyirlX_JpPRQoPehvsauJ6O2L6pog4iZEmTcm-BTJGzUeSM_AGG7HJPaKsOHKxmPGVw'
-geocoder = geocoders.Google(google_maps_key)
+#google_maps_key = 'ABQIAAAAHRqgRmxQbkyHyirlX_JpPRQoPehvsauJ6O2L6pog4iZEmTcm-BTJGzUeSM_AGG7HJPaKsOHKxmPGVw'
+#geocoder = geocoders.Google(google_maps_key)
 
 def geolocation(endereco):
     log.debug('endereco: %s', endereco)
+    return (0, 0)
     if isinstance(endereco, unicode):
         endereco = endereco.encode('utf-8')
     try:

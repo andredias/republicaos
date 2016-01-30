@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+
+<?python
+from os.path import basename
+action = basename(request.url)
+?>
+
+<head>
+    <title>Republicaos - Ativação de Nova Conta</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+    <link rel="stylesheet" href="${h.url('/css/blueprint/screen.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/blueprint/print.css')}" type="text/css" media="print" />
+    <!--[if lt IE 8]><link rel="stylesheet" href="${h.url('/css/blueprint/ie.css')}" type="text/css" media="screen, projection" /><![endif]-->
+
+    <link rel="stylesheet" href="${h.url('/css/republicaos.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/buttons.css')}" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="${h.url('/css/avisos.css')}" type="text/css" media="screen, projection" />
+    
+    <xi:include href="../include/scripts.html" />
+
+</head>
+
+<body>
+    <xi:include href="../include/header.html" />
+    <xi:include href="../include/form_errors.html" />
+    
+    <div class="main">
+        <div class="container">
+            <div class="span-24">
+                <xi:include href="../include/flash.html" />
+                <br />
+                <div class="span-12">
+                   <form name="nova_conta_form" method="post" action="${h.url(controller='pessoa', action='pedido_nova_conta')}">
+                        <p>
+                            <label for="Email">E-mail <span class="required">*</span></label><br />
+                            <input type="email" name="email" size="20" required="required" autofocus="autofocus" />
+                        </p>
+                        <p>
+                            <label for="senha">Senha <span class="required">*</span></label><br />
+                            <input type="password" name="senha" required="required" pattern="[^\s]{4,}" />
+                        </p>
+                        <p>
+                            <label for="confirmacao_senha">Confirmação da Senha <span class="required">*</span></label><br />
+                            <input type="password" name="confirmacao_senha" size="10" required="required" />
+                        </p>
+
+                        <p>
+                            <label for="nome">Nome ou Apelido <span class="required">*</span> <img src="/images/info-16x16-2.png" class="tip" tip_ref="#tip_apelido" /></label><br />
+                            <input type="text" name="nome" required="required" />
+                        </p>
+
+                        <hr />
+                        <p>
+                            <label for="nome_republica">Nome</label><br />
+                            <input type="text" name="nome_republica" />
+                        </p>
+                        <p>
+                            <label for="endereco">Endereço</label><br />
+                            <textarea name="endereco" cols="30" rows="3"></textarea>
+                        </p>
+                        <p>
+                            <label for="convites">Convidar outros moradores</label><br />
+                            <textarea name="convites" cols="30" rows="5"><textarea>
+                        </p>
+
+                        <p class="small"><span class="required">*</span> preenchimento do campo é obrigatório</p>
+                        
+                        <p class="bottom"><button type="submit" class="launch bottom"><h6>Criar Conta</h6></button></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <xi:include href="../include/footer.html" />
+</body>
+</html>
